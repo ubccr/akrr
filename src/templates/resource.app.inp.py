@@ -1,0 +1,11 @@
+appKernelRunEnvironmentTemplate="""
+#Load application environment
+module load mpich
+
+#set executable location if needed
+#EXE=`which <>`
+
+#set how to run app kernel
+RUN_APPKERNEL="mpirun -n $AKRR_CORES $EXE input_file"
+"""
+

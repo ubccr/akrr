@@ -1,0 +1,73 @@
+24    #Scale
+16    #Edgefactor
+64    #num_bfs_roots
+1     #Use pure OpenMP Implementation for single node
+1     #Run performance section
+1     #Use only performance section for TEPS calculation
+1     #Run validation
+300   #Time for performance section in seconds
+1000  #Max number of cycles
+3516586 268432547 # [ 0] bfs_roots edge_visit_count
+3611407 268432547 # [ 1] bfs_roots edge_visit_count
+2064498 268432547 # [ 2] bfs_roots edge_visit_count
+153835 268432547 # [ 3] bfs_roots edge_visit_count
+7631025 268432547 # [ 4] bfs_roots edge_visit_count
+13904934 268432547 # [ 5] bfs_roots edge_visit_count
+12734806 268432547 # [ 6] bfs_roots edge_visit_count
+5640247 268432547 # [ 7] bfs_roots edge_visit_count
+14748537 268432547 # [ 8] bfs_roots edge_visit_count
+7219880 268432547 # [ 9] bfs_roots edge_visit_count
+11674873 268432547 # [10] bfs_roots edge_visit_count
+3383624 268432547 # [11] bfs_roots edge_visit_count
+2158480 268432547 # [12] bfs_roots edge_visit_count
+6186332 268432547 # [13] bfs_roots edge_visit_count
+10363590 268432547 # [14] bfs_roots edge_visit_count
+1577832 268432547 # [15] bfs_roots edge_visit_count
+8777423 268432547 # [16] bfs_roots edge_visit_count
+16074179 268432547 # [17] bfs_roots edge_visit_count
+2296940 268432547 # [18] bfs_roots edge_visit_count
+7859376 268432547 # [19] bfs_roots edge_visit_count
+4378246 268432547 # [20] bfs_roots edge_visit_count
+13687611 268432547 # [21] bfs_roots edge_visit_count
+2988035 268432547 # [22] bfs_roots edge_visit_count
+1249858 268432547 # [23] bfs_roots edge_visit_count
+683229 268432547 # [24] bfs_roots edge_visit_count
+10507953 268432547 # [25] bfs_roots edge_visit_count
+9513187 268432547 # [26] bfs_roots edge_visit_count
+3231890 268432547 # [27] bfs_roots edge_visit_count
+10285745 268432547 # [28] bfs_roots edge_visit_count
+11648611 268432547 # [29] bfs_roots edge_visit_count
+16669142 268432547 # [30] bfs_roots edge_visit_count
+5059283 268432547 # [31] bfs_roots edge_visit_count
+11320093 268432547 # [32] bfs_roots edge_visit_count
+14408940 268432547 # [33] bfs_roots edge_visit_count
+3521204 268432547 # [34] bfs_roots edge_visit_count
+11157121 268432547 # [35] bfs_roots edge_visit_count
+11114102 268432547 # [36] bfs_roots edge_visit_count
+582137 268432547 # [37] bfs_roots edge_visit_count
+13370138 268432547 # [38] bfs_roots edge_visit_count
+11639868 268432547 # [39] bfs_roots edge_visit_count
+5454874 268432547 # [40] bfs_roots edge_visit_count
+13354061 268432547 # [41] bfs_roots edge_visit_count
+14549916 268432547 # [42] bfs_roots edge_visit_count
+2807118 268432547 # [43] bfs_roots edge_visit_count
+2447291 268432547 # [44] bfs_roots edge_visit_count
+2834565 268432547 # [45] bfs_roots edge_visit_count
+14307738 268432547 # [46] bfs_roots edge_visit_count
+4819936 268432547 # [47] bfs_roots edge_visit_count
+11052793 268432547 # [48] bfs_roots edge_visit_count
+7127623 268432547 # [49] bfs_roots edge_visit_count
+1762140 268432547 # [50] bfs_roots edge_visit_count
+5992116 268432547 # [51] bfs_roots edge_visit_count
+5482575 268432547 # [52] bfs_roots edge_visit_count
+15715742 268432547 # [53] bfs_roots edge_visit_count
+8261584 268432547 # [54] bfs_roots edge_visit_count
+8233140 268432547 # [55] bfs_roots edge_visit_count
+644962 268432547 # [56] bfs_roots edge_visit_count
+13179097 268432547 # [57] bfs_roots edge_visit_count
+12422670 268432547 # [58] bfs_roots edge_visit_count
+5935300 268432547 # [59] bfs_roots edge_visit_count
+14585437 268432547 # [60] bfs_roots edge_visit_count
+920869 268432547 # [61] bfs_roots edge_visit_count
+4383672 268432547 # [62] bfs_roots edge_visit_count
+4247541 268432547 # [63] bfs_roots edge_visit_count

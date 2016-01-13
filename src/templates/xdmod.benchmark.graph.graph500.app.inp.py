@@ -1,0 +1,13 @@
+appKernelRunEnvironmentTemplate="""
+#Load application environment
+module load intel/13.1 intel-mpi/4.1.1
+module list
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+export I_MPI_FABRICS_LIST="tcp"
+
+#set how to run app kernel
+#only run one process per node
+RUN_APPKERNEL="srun --ntasks-per-node=1 -c $AKRR_CORES_PER_NODE -n $AKRR_NODES -N $AKRR_NODES {appKerDir}/{executable} {appKerDir}/{input} $AKRR_CORES_PER_NODE"
+"""
+

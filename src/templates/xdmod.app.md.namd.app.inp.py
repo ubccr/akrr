@@ -1,0 +1,16 @@
+appKernelRunEnvironmentTemplate="""
+#Load application environment
+module load namd
+export CONV_RSH=ssh
+
+#set executable location
+EXE=`which namd2`
+charmrun_bin=`which charmrun`
+
+#prepare nodelist for charmmrun
+for n in $AKRR_NODELIST; do echo host $n>>nodelist; done
+
+#set how to run app kernel
+RUN_APPKERNEL="$charmrun_bin  +p$AKRR_CORES ++nodelist nodelist $EXE ./input.namd"
+"""
+

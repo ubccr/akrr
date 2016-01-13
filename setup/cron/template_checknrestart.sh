@@ -1,0 +1,1 @@
+33 * * * * __AKRR_DIR/bin/checknrestart.sh

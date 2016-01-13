@@ -1,0 +1,109 @@
+name = """xdmod.benchmark.io.mpi-tile-io"""
+
+info = """MPI-Tile-IO
+
+MPI-Tile-IO measures the performance of a storage system under a noncontiguous access workload.
+It uses the MPI IO library to read and write a 2D and 3D grid (which is distributed evenly among all MPI processes) 
+against a single file, and it reports the aggregate I/O throughput
+"""
+
+nickname = """xdmod.benchmark.io.mpi-tile-io.@ncpus@"""
+uri = """file:///home/charngda/Inca-Reporter//xdmod.benchmark.io.mpi-tile-io"""
+context = '''@batchpre@ -nodes=:@ppn@:@ncpus@ -walllimit=@walllimit@ -type=@batchFeature@ -exec="@@"'''
+resourceSetName = """defaultGrid"""
+action = """add"""
+schedule = [
+    """? ? 0-31/13 * *""",
+]
+arg_version = """no"""
+arg_verbose = 1
+arg_help = """no"""
+arg_bin_path = """@bin_path@"""
+arg_log = 5
+walllimit=20
+
+
+ErrorsCollecting="""
+########################################################################################################################
+Blacklight
+Executing /opt/sgi/mpt/mpt-2.04/bin/mpirun -np 16 ./mpi-tile-io --write_file --filename /brashear/charngda/218047/test_mpi-tile-io_indep --mem_usage 50m
+# mpi-tile-io run on bl1.psc.teragrid.org
+# processes available: 16
+# processes used: 16
+# filename: /brashear/charngda/218047/test_mpi-tile-io_indep
+# collective IO: no
+# header size: 0 bytes
+# global dataset topology: 10240x10240 elements
+# processes topology: 4x4
+# local dataset topology: 2560x2560 elements
+# local dataset memory usage: 52428800 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+MPI: Global rank 0 is aborting with error code -1.
+     Process ID: 987907, Host: bl1.psc.teragrid.org, Program: /usr/uo/3/charngda/appker/blacklight/mpi-tile-io/src/mpi-tile-io
+
+MPI: --------stack traceback-------
+MPI: Attaching to program: /proc/987907/exe, process 987907
+MPI: Try: zypper install -C "debuginfo(build-id)=4e9fa1a2c1141fc0123a142783efd044c40bdaaf"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=3f06bcfc74f9b01780d68e89b8dce403bef9b2e3"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=fb1cdc5d96ff99a36af81d2ada33b148e2f69f99"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=f607b21f9a513c99bba9539050c01236d19bf22b"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=c1807b5762068e6c5f4a6a0ed48d9d4469965351"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=d44cbcbbcbdc9ed66abdcd82fa04fb4140bc155e"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=f69d3b06516c61cfab7d00c9ef86c41936dfc017"
+MPI: (no debugging symbols found)...done.
+MPI: [Thread debugging using libthread_db enabled]
+MPI: Try: zypper install -C "debuginfo(build-id)=7bcdd7deb661fbb367edf63273568fc962aefbed"
+MPI: (no debugging symbols found)...done.
+MPI: Try: zypper install -C "debuginfo(build-id)=02c78a8ec7997130f18f6c4fdef78ed36b853133"
+MPI: (no debugging symbols found)...done.
+MPI: 0x00002aebab9b1a55 in waitpid () from /lib64/libc.so.6
+MPI: (gdb) #0  0x00002aebab9b1a55 in waitpid () from /lib64/libc.so.6
+MPI: #1  0x00002aebaadeaba4 in mpi_sgi_system (command=<value optimized out>)
+MPI:     at sig.c:88
+MPI: #2  MPI_SGI_stacktraceback (command=<value optimized out>) at sig.c:271
+MPI: #3  0x00002aebaad76641 in print_traceback (ecode=-1) at abort.c:168
+MPI: #4  0x00002aebaad768eb in PMPI_Abort (comm=<value optimized out>, 
+MPI:     errorcode=-1) at abort.c:59
+MPI: #5  0x0000000000403357 in main ()
+MPI: (gdb) A debugging session is active.
+MPI: 
+MPI:     Inferior 1 [process 987907] will be detached.
+MPI: 
+MPI: Quit anyway? (y or n) [answered Y; input not from terminal]
+MPI: Detaching from program: /proc/987907/exe, process 987907
+
+MPI: -----stack traceback ends-----
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+ERROR at mpi-cube-io.c:773 Reason: MPI_File_write failed on /brashear/charngda/218047/test_mpi-tile-io_indep in 0x5 mode. MPI error message is: I/O error
+Aborting...
+MPI: MPI_COMM_WORLD rank 0 has terminated without calling MPI_Finalize()
+MPI: aborting job
+"""

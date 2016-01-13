@@ -1,0 +1,14 @@
+*.pyc
+/1.xml
+/inca.xml
+/nohup.out
+/out
+/build
+/cfg
+/comptasks
+/data
+/.project
+/.pydevproject
+\#*
+.#*
+

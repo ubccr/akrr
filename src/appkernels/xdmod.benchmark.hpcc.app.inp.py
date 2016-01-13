@@ -1,0 +1,54 @@
+info = """HPC Challenge Benchmark suite.
+
+http://icl.cs.utk.edu/hpcc/
+
+It consists of 
+a) High Performance LINPACK, which solves a linear system of equations and measures the floating-point performance, 
+b) Parallel Matrix Transpose (PTRANS), which measures total communications capacity of the interconnect, 
+c) MPI Random Access, which measures the rate of random updates of remote memory, 
+d) Fast Fourier Transform, which measures the floating-point performance of double-precision complex one-dimensional Discrete Fourier Transform.
+
+Version 1.4.1
+"""
+
+
+theoreticalGFlopsPerCore={
+    'edge':2.27*4, #Note that edge has two different CPU types
+    'edge12core':2.4*4,
+}
+
+walllimit=40 #used to be 20
+parser="xdmod.benchmark.hpcc.py"
+
+executable="execs/hpcc/hpcc"
+input="inputs/hpcc/hpccinf.txt.{akrrPPN}x{akrrNNodes}"
+
+runScriptPreRun="""#create working dir
+mkdir workdir
+cd workdir
+
+#Copy inputs
+cp {appKerDir}/{input} ./hpccinf.txt
+
+EXE={appKerDir}/{executable}
+"""
+
+akrrRunAppKernelTemplate="""#Execute AppKer
+writeToGenInfo "appKerStartTime" "`date`"
+$RUN_APPKERNEL >> $AKRR_APP_STDOUT_FILE 2>&1
+writeToGenInfo "appKerEndTime" "`date`"
+"""
+
+runScriptPostRun="""cat hpccoutf.txt  >> $AKRR_APP_STDOUT_FILE 2>&1
+
+cd ..
+
+writeToGenInfo "cpuSpeed" "`grep 'cpu MHz' /proc/cpuinfo`"
+
+#clean-up
+if [ "${{AKRR_DEBUG=no}}" = "no" ]
+then
+        echo "Deleting input files"
+        rm -rf workdir
+fi
+"""

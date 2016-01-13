@@ -1,0 +1,50 @@
+### Enzo build information:
+### Compiled: Thu May 15 11:01:52 2014
+### Machine name: tacc-stampede
+### Branch: unknown
+### Changeset: unknown
+###
+### Use this as a compile settings file by renaming
+### it Make.settings.<keyword> and moving it to
+### either src/enzo or .enzo in your home directory.
+### Then, type "make load-config-<keyword>" to load
+### compiler options.
+###
+### The current compile options are shown below.
+### For more information on the meaning of the
+### options, consult src/enzo/Make.config.settings.
+
+PARAMETER_MAX_SUBGRIDS = 100000
+PARAMETER_MAX_BARYONS = 30
+PARAMETER_MAX_TASKS_PER_NODE = 8
+PARAMETER_MEMORY_POOL_SIZE = 100000
+CONFIG_INTEGERS = 64
+CONFIG_PARTICLE_IDS = 64
+CONFIG_PRECISION = 64
+CONFIG_PARTICLES = 64
+CONFIG_INITS = 64
+CONFIG_IO = 32
+CONFIG_USE_MPI = yes
+CONFIG_OBJECT_MODE = 64
+CONFIG_TASKMAP = no
+CONFIG_PACKED_AMR = yes
+CONFIG_PACKED_MEM = no
+CONFIG_LCAPERF = no
+CONFIG_PAPI = no
+CONFIG_PYTHON = no
+CONFIG_NEW_PROBLEM_TYPES = no
+CONFIG_OOC_BOUNDARY = no
+CONFIG_ACCELERATION_BOUNDARY = yes
+CONFIG_ENZO_PERFORMANCE = yes
+CONFIG_OPT = aggressive
+CONFIG_TESTING = no
+CONFIG_TPVEL = no
+CONFIG_PHOTON = yes
+CONFIG_HYPRE = no
+CONFIG_EMISSIVITY = no
+CONFIG_NEW_GRID_IO = yes
+CONFIG_FAST_SIB = yes
+CONFIG_USE_HDF4 = no
+CONFIG_BITWISE_IDENTICALITY = no
+CONFIG_ECUDA = no
+CONFIG_GRAVITY_4S = no
