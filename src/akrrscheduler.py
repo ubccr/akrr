@@ -880,7 +880,6 @@ class akrrScheduler:
                     print "-"*120
             if Verbose: 
                 print "#"*120
-            break
         db.commit()
         cur.close()
         print "Reprocessing complete"
