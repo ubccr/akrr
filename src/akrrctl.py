@@ -433,7 +433,7 @@ def new_task_parsed(args):
     time_end = args.time_end# if args.time_end else '05:00'
     repeat_in = args.periodicity
     nodes = args.nodes
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else list(nodes)
+    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
 
     for node in node_list:
         if time_start!=None and time_end!=None:
@@ -499,7 +499,7 @@ def wall_time_parsed(args):
     nodes = args.nodes
     walltime = args.walltime
     comments = args.comments
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else list(nodes)
+    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
 
     for nodes in node_list:
         data = {
@@ -547,6 +547,7 @@ def batch_job_parsed(args):
     resource = akrr.FindResourceByName(args.resource)
     app = akrr.FindAppByName(args.appkernel)
     nodes = args.nodes
+    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
     print_only=args.print_only
     verbose=args.verbose
 
@@ -554,7 +555,7 @@ def batch_job_parsed(args):
     if not verbose:
         sys.stdout = sys.stderr = str_io
     from akrrtaskappker import akrrTaskHandlerAppKer
-    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (nodes,),"{}","{}")
+    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (node_list[0],),"{}","{}")
     if print_only:
         taskHandler.GenerateBatchJobScript()
     else:
