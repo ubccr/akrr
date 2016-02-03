@@ -555,7 +555,9 @@ def batch_job_parsed(args):
     if not verbose:
         sys.stdout = sys.stderr = str_io
     from akrrtaskappker import akrrTaskHandlerAppKer
-    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (node_list[0],),"{}","{}")
+#    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (node_list[0],),"{}","{}")
+    # test arbitrary resourceParam like WLMheader stuff
+    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'SlUrM':'--foo','slurm':'#SBATCH --mail=maya','nnodes':%s}" % (node_list[0],),"{}","{}")
     if print_only:
         taskHandler.GenerateBatchJobScript()
     else:

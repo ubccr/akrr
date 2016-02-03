@@ -9,7 +9,7 @@ import re
 import copy
 import MySQLdb
 
-from akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
+from akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs,wlmHeaderPatterns
 from akrrappkeroutputparser import AppKerOutputParser
  
 class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
@@ -60,9 +60,17 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                     appkernelOnResource=self.app['appkernelOnResource']['default']
                 
             #print "#"*80
-            for di in [self.resource,self.app,appkernelOnResource,dbdefaults,self.resourceParam, self.appParam]:
+            for di in [self.resource,self.app,appkernelOnResource,dbdefaults,self.appParam]:
                 batchvars.update(di)
-            
+
+            # treat self.resourceParam individual to allow for case insensitivity
+            tmpresourceParamDict={}
+            for k in self.resourceParam.keys():
+                if k.lower() in tmpresourceParamDict:
+                    tmpresourceParamDict[k.lower()] += ","+self.resourceParam[k]
+                else:
+                    tmpresourceParamDict[k.lower()] = self.resourceParam[k]
+            batchvars.update(tmpresourceParamDict)
                      
             #get autowalltime limit
             try:
@@ -105,7 +113,15 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             except Exception as e:
                 pass
             
-            
+            #parse WLM settings in batchvars (i.e. self.resourceParam)
+            if 'slurm' in batchvars and self.resource['batchScheduler']=='slurm':
+                WLMheader=""
+                for item in batchvars.get('slurm','').split(","):
+                    #check whether syntax is at least close to what SLURM expects
+                    if re.match(wlmHeaderPatterns['slurm'], item):
+                        WLMheader+="%s\n"%(item)
+                batchvars['sbatchheader']=WLMheader
+
             #calculate NNodes and NCores
             tmpNNodes=None
             tmpNCores=None
@@ -433,15 +449,15 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                     self.RemoteJobID=int(fin.read().strip())
                     print "Master task's RemoteJobID is ",self.RemoteJobID
                     fin.close()
-                        
+
             if hasattr(self, 'ReportFormat'):#i.e. fatal error and the last one is already in status/statusinfo
                 if self.ReportFormat=="Error":
                     self.ToDoNextString="PushToDB"
                     self.WriteErrorXML(resultFile)
                     return datetime.timedelta(seconds=3)
-            
+
             (batchJobDir,stdoutFile,stderrFile,appstdoutFile,taskexeclogFile)=self.GetResultFiles(raiseError=True)
-            
+
             #get the performance data
             parserfilename=os.path.join(akrr.curdir,"appkernelsparsers",self.app['parser'])
             import imp
@@ -462,6 +478,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                                                              stderr=stderrFile,
                                                              geninfo=os.path.join(batchJobDir,"gen.info"),
                                                              appKerNResVars=appKerNResVars)
+
             if performance==None:
                 self.status="ERROR: Job have not finished successfully"
                 self.statusinfo=""

@@ -23,7 +23,6 @@ submitCommands = {
     'slurm'       : "sbatch $scriptPath"
 }
 
-
 jidExtractPatterns = {
     'cobalt'      : r'^(\d+)',
     'dqs'         : r'job (\d+)',
@@ -35,6 +34,11 @@ jidExtractPatterns = {
     'sge'         : r'job (\d+)',
     'shell'       : r'',                                # N/A,
     'slurm'       : r'^Submitted batch job (\d+)'
+}
+
+wlmHeaderPatterns = {
+    'loadleveler' : r'^\#\@\s+.+',
+    'slurm'       : r'^\#SBATCH\s+[-]{1,2}.+'
 }
 
 # Commands to detect that the job is still queued or running
@@ -90,6 +94,15 @@ class akrrTaskHandlerBase:
     def __init__(self,task_id,resourceName,appName,resourceParam,appParam,taskParam,timeToSubmit=None,repetition=None,timeStamp=None):
         self.resourceName=resourceName
         self.appName=appName
+
+        # check whether resourceParam is a real dict
+        if resourceParam.strip()[0] != '{' or resourceParam.strip()[-1] != '}':
+            raise AssertionError('provided resourceParam must not be python dict like.')
+        tmpString=re.sub(r"[{}]*","",resourceParam.strip())
+        for item in tmpString.split(','):
+            if not re.match(r"\s*[\'\"]+\w+[\'\"]+\s*:\s*([\'\"]+.+[\'\"]+|\d+)", item):
+                raise AssertionError('provided resourceParam must not be python dict like.')
+
         self.resourceParam=eval(resourceParam)
         self.appParam=eval(appParam)
         self.taskParam=copy.deepcopy(akrr.default_task_params)
@@ -104,8 +117,6 @@ class akrrTaskHandlerBase:
         #just check that resource and app exists
         self.resource = akrr.FindResourceByName(self.resourceName)
         self.app = akrr.FindAppByName(self.appName)
-        
-        
         
         self.timeStamp=self.CreateLocalDirectoryForTask()
         #set a directory for task already should exists
