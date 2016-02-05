@@ -615,6 +615,10 @@ class akrrScheduler:
         print "\n"+"#"*120
         print "# Got into the running loop on "+datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         print "#"*120+"\n"
+
+        sys.stdout.flush()
+        sys.stderr.flush()
+
         numBigFails=0
         while True:
             try:
@@ -854,9 +858,8 @@ class akrrScheduler:
                 th=akrrtask.akrrGetTaskHandlerFromPkl(picklefilename)
                 th.statefilename=thFN
                 th.SetDirNames(akrr.completed_tasks_dir)
-                
-                
                 ths.append(th)
+
             ths[-1].ProccessResults(Verbose)
             ths[-1].PushToDBRaw(cur,task_id,time_finished,Verbose)
             #akrrtask.akrrDumpTaskHandler(ths[-1])
@@ -870,7 +873,8 @@ class akrrScheduler:
                     SET status=%s,statusinfo=%s
                     WHERE task_id=%s ;''',(ths[-1].status,ths[-1].statusinfo,task_id))
                 self.dbCon.commit()
-            if Verbose and 0: 
+
+            if Verbose:
                 print "States history:"
                 print "-"*120
                 for th in ths:
@@ -880,10 +884,11 @@ class akrrScheduler:
                     print "-"*120
             if Verbose: 
                 print "#"*120
+
         db.commit()
         cur.close()
         print "Reprocessing complete"
-            #return
+
     def reprocess2(self,Verbose=True):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
         
@@ -1787,9 +1792,7 @@ def akrrServerStart():
         sys.stdout, sys.stderr = old_stdout, old_stderr
         raise Exception, "%s [%d]" % (e.strerror, e.errno)
     
-   
-    
-    
+
     if (pid == 0):  #i.e. first child
         
         #print "pid of 1 child",os.getpid()
@@ -1814,9 +1817,9 @@ def akrrServerStart():
         if redirected_filename!=None:
             this_stdout = open(redirected_filename,'a')
             this_stderr = open(redirected_filename,'a')
-             
             sys.stdout = this_stdout
             sys.stderr = this_stderr
+
         dt=0.25
         t0=time.time()
         while time.time()-t0<10.0 and not os.path.isfile(logname):
@@ -1831,18 +1834,25 @@ def akrrServerStart():
         REST_API_up=False
         in_the_main_loop=False
         t0=time.time()
+
         while time.time()-t0<20.0:
             line=logfile.readline()
             if len(line)!=0:
-                print line,
+                t = str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+                print "%s: parent is up and waiting"%(t)
+                #print line,
                 if line.count("Listening on ")>0:
                     REST_API_up=True
                 if line.count("Got into the running loop on ")>0:
-                    in_the_main_loop=True    
+                    in_the_main_loop=True
                 if REST_API_up and in_the_main_loop:
                     break
             else:
                 time.sleep(dt)
+
+        t = str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        print "%s: parent is up and finalizing"%(t)
+
         if not REST_API_up:
             print "AKRR REST API is not up.\n Something is wrong"
             kill_child_processes(os.getpid())
