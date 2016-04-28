@@ -174,26 +174,24 @@ def resource_validation_and_deployment():
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
     parameters_types=[
-        ['info',                        types.StringType,       False,False],
-        ['localScratch',                types.StringType,       False,True],
-        ['batchJobTemplate',            types.StringType,       False,True],
-        ['remoteAccessNode',            types.StringType,       False,True],
-        ['name',                        types.StringType,       False,False],
-        ['akrrCommonCommandsTemplate',   types.StringType,       False,True],
-        ['networkScratch',              types.StringType,       False,True],
-        ['ppn',                         types.IntType,          False,True],
-        #['akrrStartAppKerTemplate',      types.StringType,       False,True],
-        ['remoteCopyMethod',            types.StringType,       False,True],
-        ['sshUserName',                 types.StringType,       False,True],
-        ['sshPassword',                 types.StringType,       True, False],
-        ['sshPrivateKeyFile',           types.StringType,       True, False],
-        ['sshPrivateKeyPassword',       types.StringType,       True, False],
-        ['batchScheduler',              types.StringType,       False,True],
-        ['remoteAccessMethod',          types.StringType,       False,True],
-        ['appKerDir',                   types.StringType,       False,True],
-        ['akrrCommonCleanupTemplate',    types.StringType,       False,True],
-        #['nodeListSetterTemplate',      types.StringType,       False,True],
-        ['akrrData',                     types.StringType,       False,True]
+        ['info',                        [types.StringType],       False,False],
+        ['localScratch',                [types.StringType],       False,True],
+        ['batchJobTemplate',            [types.StringType],       False,True],
+        ['remoteAccessNode',            [types.StringType, types.ListType], False,True],
+        ['name',                        [types.StringType],       False,False],
+        ['akrrCommonCommandsTemplate',  [types.StringType],       False,True],
+        ['networkScratch',              [types.StringType],       False,True],
+        ['ppn',                         [types.IntType],          False,True],
+        ['remoteCopyMethod',            [types.StringType],       False,True],
+        ['sshUserName',                 [types.StringType],       False,True],
+        ['sshPassword',                 [types.StringType],       True, False],
+        ['sshPrivateKeyFile',           [types.StringType],       True, False],
+        ['sshPrivateKeyPassword',       [types.StringType],       True, False],
+        ['batchScheduler',              [types.StringType],       False,True],
+        ['remoteAccessMethod',          [types.StringType],       False,True],
+        ['appKerDir',                   [types.StringType],       False,True],
+        ['akrrCommonCleanupTemplate',   [types.StringType],       False,True],
+        ['akrrData',                    [types.StringType],       False,True]
     ]
     
     for variable,ttype,nulable,must in parameters_types:
@@ -205,7 +203,8 @@ def resource_validation_and_deployment():
         if type(resource[variable])==types.NoneType and nulable==False:
             logerr("Syntax error in "+resource_param_filename+"\nVariable %s can not be None"%(variable,))
             exit()
-        if type(resource[variable])!=ttype and not (type(resource[variable])==types.NoneType and nulable==True):
+        if type(resource[variable]) not in ttype \
+           and not (type(resource[variable])==types.NoneType and nulable==True):
             logerr("Syntax error in "+resource_param_filename+
                    "\nVariable %s should be %s"%(variable,str(ttype))+
                    ". But it is "+str(type(resource[variable])))

@@ -60,24 +60,24 @@ def verifyResourceParams(resource):
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
     parameters_types=[
-        ['info',                        types.StringType,       False,False],
-        ['localScratch',                types.StringType,       False,True],
-        ['batchJobTemplate',            types.StringType,       False,True],
-        ['remoteAccessNode',            types.StringType,       False,True],
-        ['name',                        types.StringType,       False,False],
-        ['akrrCommonCommandsTemplate',   types.StringType,       False,True],
-        ['networkScratch',              types.StringType,       False,True],
-        ['ppn',                         types.IntType,          False,True],
-        ['remoteCopyMethod',            types.StringType,       False,True],
-        ['sshUserName',                 types.StringType,       False,True],
-        ['sshPassword',                 types.StringType,       True, False],
-        ['sshPrivateKeyFile',           types.StringType,       True, False],
-        ['sshPrivateKeyPassword',       types.StringType,       True, False],
-        ['batchScheduler',              types.StringType,       False,True],
-        ['remoteAccessMethod',          types.StringType,       False,True],
-        ['appKerDir',                   types.StringType,       False,True],
-        ['akrrCommonCleanupTemplate',    types.StringType,       False,True],
-        ['akrrData',                     types.StringType,       False,True]
+        ['info',                        [types.StringType],       False,False],
+        ['localScratch',                [types.StringType],       False,True],
+        ['batchJobTemplate',            [types.StringType],       False,True],
+        ['remoteAccessNode',            [types.StringType, types.ListType], False,True],
+        ['name',                        [types.StringType],       False,False],
+        ['akrrCommonCommandsTemplate',  [types.StringType],       False,True],
+        ['networkScratch',              [types.StringType],       False,True],
+        ['ppn',                         [types.IntType],          False,True],
+        ['remoteCopyMethod',            [types.StringType],       False,True],
+        ['sshUserName',                 [types.StringType],       False,True],
+        ['sshPassword',                 [types.StringType],       True, False],
+        ['sshPrivateKeyFile',           [types.StringType],       True, False],
+        ['sshPrivateKeyPassword',       [types.StringType],       True, False],
+        ['batchScheduler',              [types.StringType],       False,True],
+        ['remoteAccessMethod',          [types.StringType],       False,True],
+        ['appKerDir',                   [types.StringType],       False,True],
+        ['akrrCommonCleanupTemplate',   [types.StringType],       False,True],
+        ['akrrData',                    [types.StringType],       False,True]
     ]
     
     for variable,ttype,nulable,must in parameters_types:
@@ -87,7 +87,8 @@ def verifyResourceParams(resource):
             continue
         if type(resource[variable])==types.NoneType and nulable==False:
             raise TypeError("Syntax error in "+resource['name']+"\nVariable %s can not be None"%(variable,))
-        if type(resource[variable])!=ttype and not (type(resource[variable])==types.NoneType and nulable==True):
+        if type(resource[variable]) not in ttype \
+           and not (type(resource[variable])==types.NoneType and nulable==True):
             raise TypeError("Syntax error in "+resource['name']+
                    "\nVariable %s should be %s"%(variable,str(ttype))+
                    ". But it is "+str(type(resource[variable])))
@@ -557,7 +558,10 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
 
 def sshResource(resource, command=None):
     name = resource['name']
-    headnode = resource.get('remoteAccessNode', name)
+    if type(resource.get('remoteAccessNode', name)) == types.StringType:
+        headnodelist = [resource.get('remoteAccessNode', name)]
+    else: # must already be types.ListType
+        headnodelist = resource.get('remoteAccessNode', [])
     remoteAccessMethod = resource.get('remoteAccessMethod', 'ssh')
     username = resource.get('sshUserName', None)
     sshPassword = resource.get('sshPassword', None)
@@ -565,17 +569,25 @@ def sshResource(resource, command=None):
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
     logfile = sys.stdout
-    #logfile=None
 
-    rsh = sshAccess(headnode, ssh=remoteAccessMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    command=command)
-    return rsh
+    for node in headnodelist:
+        try:
+            rsh = sshAccess(node, ssh=remoteAccessMethod, username=username, password=sshPassword,
+                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
+                            logfile=logfile, command=command)
+            return rsh
+        except Exception,e:
+            # try alternative headnode
+            if node != headnodelist[-1]: continue
+            raise Exception(e)
 
 
 def scpFromResource(resource, pwd1, pwd2, opt=""):
     name = resource['name']
-    remotemachine = resource.get('remoteAccessNode', name)
+    if type(resource.get('remoteAccessNode', name)) == types.StringType:
+        headnodelist = [resource.get('remoteAccessNode', name)]
+    else: # must already be types.ListType
+        headnodelist = resource.get('remoteAccessNode', [])
     remoteInvocationMethod = resource.get('remoteCopyMethod', 'scp') + " " + opt + " "
     username = resource.get('sshUserName', None)
     sshPassword = resource.get('sshPassword', None)
@@ -583,42 +595,57 @@ def scpFromResource(resource, pwd1, pwd2, opt=""):
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
     logfile = sys.stdout
-    #logfile=None
     pwd1fin = ""
-    if username != None:
-        pwd1fin += " %s@%s:%s" % (username, remotemachine, pwd1)
-    else:
-        pwd1fin += " %s:%s" % (remotemachine, pwd1)
 
-    rsh = sshAccess(remotemachine, ssh=remoteInvocationMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    pwd1=pwd1fin, pwd2=pwd2)
-    return rsh
+    for node in headnodelist:
+        try:
+            if username != None:
+                pwd1fin += " %s@%s:%s" % (username, node, pwd1)
+            else:
+                pwd1fin += " %s:%s" % (node, pwd1)
+
+            rsh = sshAccess(node, ssh=remoteInvocationMethod, username=username, password=sshPassword,
+                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
+                            logfile=logfile, pwd1=pwd1fin, pwd2=pwd2)
+            return rsh
+        except Exception,e:
+            # try alternative headnode
+            if node != headnodelist[-1]: continue
+            raise Exception(e)
 
 
 def scpToResource(resource, pwd1, pwd2, opt="",logfile=None):
     if logfile==None:
         logfile=sys.stdout
     name = resource['name']
-    remotemachine = resource.get('remoteAccessNode', name)
+    if type(resource.get('remoteAccessNode', name)) == types.StringType:
+        headnodelist = [resource.get('remoteAccessNode', name)]
+    else: # must already be types.ListType
+        headnodelist = resource.get('remoteAccessNode', [])
     remoteInvocationMethod = resource.get('remoteCopyMethod', 'scp') + " " + opt + " "
     username = resource.get('sshUserName', None)
     sshPassword = resource.get('sshPassword', None)
     sshPrivateKeyFile = resource.get('sshPrivateKeyFile', None)
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
-    #logfile = sys.stdout
-    #logfile=None
+    logfile = sys.stdout
     pwd2fin = ""
-    if username != None:
-        pwd2fin += " %s@%s:%s" % (username, remotemachine, pwd2)
-    else:
-        pwd2fin += " %s:%s" % (remotemachine, pwd2)
 
-    rsh = sshAccess(remotemachine, ssh=remoteInvocationMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    pwd1=pwd1, pwd2=pwd2fin)
-    return rsh
+    for node in headnodelist:
+        try:
+            if username != None:
+                pwd2fin += " %s@%s:%s" % (username, node, pwd2)
+            else:
+                pwd2fin += " %s:%s" % (node, pwd2)
+
+            rsh = sshAccess(node, ssh=remoteInvocationMethod, username=username, password=sshPassword,
+                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
+                            logfile=logfile, pwd1=pwd1, pwd2=pwd2fin)
+            return rsh
+        except Exception,e:
+            # try alternative headnode
+            if node != headnodelist[-1]: continue
+            raise Exception(e)
 
 
 def sshCommandNoReturn(sh, cmd):
