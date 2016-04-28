@@ -19,7 +19,7 @@ pp = pprint.PrettyPrinter(indent=4)
 import json
 
 import xml.etree.ElementTree as ET
-
+SLEEPING_TIME=15
 
 #modify python_path
 curdir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) 
@@ -62,7 +62,7 @@ def CheckDirSimple(sh,d):
     msg=akrr.sshCommand(sh,cmd)
     #print msg
     if msg.strip()=="test":
-        cmd="rm "+os.path.join(d,'akrrtestwrite')
+        cmd="rm -f "+os.path.join(d,'akrrtestwrite')
         akrr.sshCommand(sh,cmd)
         return (True,"Directory exist and accessible for read/write")
     else:
@@ -373,7 +373,8 @@ if __name__ == '__main__':
             r = akrrrestclient.put('/active_tasks/'+str(task_id), data=payload)
         except:
             pass
-        time.sleep(5)
+        print "sleeping for %d secs"%SLEEPING_TIME
+        time.sleep(SLEEPING_TIME)
     ###############################################################################################
     #analysing the output
     log("\n\nTest job is completed analyzing output\n",highlight="ok")

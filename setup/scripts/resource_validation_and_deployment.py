@@ -22,7 +22,7 @@ except:
 args=None
 verbose=True
 
-
+SLEEPING_TIME=15
 
 #import requests
 import json
@@ -66,7 +66,7 @@ def CheckDirSimple(sh,d):
     msg=akrr.sshCommand(sh,cmd)
     #print msg
     if msg.strip()=="test":
-        cmd="rm "+os.path.join(d,'akrrtestwrite')
+        cmd="rm -f "+os.path.join(d,'akrrtestwrite')
         akrr.sshCommand(sh,cmd)
         return (True,"Directory exist and accessible for read/write")
     else:
@@ -334,7 +334,7 @@ def resource_validation_and_deployment():
             log("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
             warningCount+=1
         
-        out=akrr.sshCommand(rsh,"rm execs.tar.gz  inputs.tar.gz")
+        out=akrr.sshCommand(rsh,"rm -f execs.tar.gz  inputs.tar.gz")
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
     except Exception,e:
@@ -398,7 +398,7 @@ def resource_validation_and_deployment():
         try:
             payload={'resource':resource_name,
                      'app':app_name,
-                     'resource_param':"{'nnodes':2}",
+                     'resource_param':"{'nnodes':1}",
                      'task_param':"{'test_run':True}"
                      }
             r = akrrrestclient.post('/scheduled_tasks', data=payload)
@@ -479,7 +479,7 @@ def resource_validation_and_deployment():
             r = akrrrestclient.put('/active_tasks/'+str(task_id), data=payload)
         except:
             pass
-        time.sleep(5)
+        time.sleep(SLEEPING_TIME)
     ###############################################################################################
     #analysing the output
     log("\n\n")
