@@ -790,21 +790,39 @@ class akrrScheduler:
             if count >=5:
                 break
                
-    def reprocessCompletedTasks(self,Verbose=False):
+    def reprocessCompletedTasks(self, resource, appkernel, time_start, time_end, Verbose=False):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
         
         print """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
-        print "Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print "Current time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print "Resource:",resource
+        print "Application kernel:", appkernel
+        if time_start!=None and time_end!=None:
+            print "Time frame: from ",time_start,"till",time_end
+        if time_start==None and time_end!=None:
+            print "Time frame: till",time_end
+        if time_start!=None and time_end==None:
+            print "Time frame: from ",time_start
         
-        self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
-            FROM COMPLETEDTASKS
-            WHERE resource LIKE "blacklight" and time_finished > "2013-05-01" and app LIKE "%ior%"
-            ORDER BY task_id DESC;''')
+        
+        sqlquote="SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id\n"
+        sqlquote+="FROM COMPLETEDTASKS\n"
+        cond=[]
+        if resource!=None:
+            cond.append("resource LIKE \""+resource+"\"\n")
+        if appkernel!=None:
+            cond.append("app LIKE \""+appkernel+"\"\n")
+        if time_start!=None:
+            cond.append("time_finished >= \""+time_start+"\"\n")
+        if time_end!=None:
+            cond.append("time_finished <= \""+time_end+"\"\n")
+        if len(cond)>0:
+            sqlquote+="WHERE\n"+" AND ".join(cond)
+        sqlquote+="ORDER BY task_id ASC;"
+        
+        self.dbCur.execute(sqlquote)
         
         tasks=self.dbCur.fetchall()
-        
-        import MySQLdb
-
         
         db,cur=akrr.getExportDB()
         if Verbose: print "#"*120
@@ -818,14 +836,13 @@ class akrrScheduler:
                 print "TaskDir:",TaskDir
                 print "-"*120
                 print "status: %s"%(status)
-                print "statusinfo:"
-                print statusinfo
+                #print "statusinfo:"
+                #print statusinfo
                 print "="*120
             
             #Get All States
             ths=[]
             
-            import pickle
             procTaskDir=os.path.join(TaskDir,'proc')
             thsFNs=[]
             for f in os.listdir(procTaskDir):
@@ -840,11 +857,11 @@ class akrrScheduler:
                 
                 
                 ths.append(th)
-            ths[-1].ProccessResults(True)
-            ths[-1].PushToDBRaw(cur,task_id,time_finished,True)
+            ths[-1].ProccessResults(Verbose)
+            ths[-1].PushToDBRaw(cur,task_id,time_finished,Verbose)
             #akrrtask.akrrDumpTaskHandler(ths[-1])
             if re.match("ERROR:", ths[-1].status, re.M):
-               print "Done with errors:",TaskDir, ths[-1].status
+                print "Done with errors:",TaskDir, ths[-1].status
             if ths[-1].status!=status or ths[-1].statusinfo!=statusinfo:
                 print "status changed"
                 print status
@@ -863,7 +880,6 @@ class akrrScheduler:
                     print "-"*120
             if Verbose: 
                 print "#"*120
-            
         db.commit()
         cur.close()
         print "Reprocessing complete"

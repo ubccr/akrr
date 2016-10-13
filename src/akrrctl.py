@@ -6,6 +6,7 @@ functionality.
 from util import logging as log
 import akrr
 import akrrrestclient
+import akrrscheduler
 import random
 import datetime
 import os
@@ -468,7 +469,20 @@ def new_task_parsed(args):
                       e.args[0] if len(e.args) > 0 else '',
                       e.args[1] if len(e.args) > 1 else '')
 
-
+def reprocess_parsed(args):
+    if not (args.resource and args.appkernel):
+        parser.error(
+            'Please provide a resource, app')
+        exit(1)
+    resource=args.resource
+    appkernel=args.appkernel
+    time_start=args.time_start
+    time_end=args.time_end
+    verbose=args.verbose
+    
+    sch=akrrscheduler.akrrScheduler(AddingNewTasks=True)
+    sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
+    
 def wall_time_parsed(args):
 
     if not args.list and not (args.resource and
@@ -666,7 +680,15 @@ if __name__ == '__main__':
                                    help='Print generated batch job script')
     batch_job_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
     batch_job_parser.set_defaults(func=batch_job_parsed)
-
+    
+    reprocess = subparsers.add_parser('reprocess',
+        description='Reparce the output from previously executed tasks')
+    reprocess.add_argument('-r', '--resource', help='resource for update')
+    reprocess.add_argument('-a', '--appkernel', help='application kernel for update')
+    reprocess.add_argument('-t0', '--time_start', help='Start time for update')
+    reprocess.add_argument('-t1', '--time_end', help='End time for update')
+    reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
+    reprocess.set_defaults(func=reprocess_parsed)
     # PARSE: the command line parameters the user provided.
     cli_args = parser.parse_args()
 
