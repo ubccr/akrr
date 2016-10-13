@@ -1,0 +1,68 @@
+walllimit=30
+
+parser="xdmod.benchmark.io.mdtest.py"
+
+#path to run script relative to AppKerDir on particular resource
+executable="execs"
+input="inputs"
+
+#common commands among resources to be executed prior the application kernel execution
+#usually copying of input parameters, application signature calculation
+runScriptPreRun="""#create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d {networkScratch}/namd.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+case $AKRR_NODES in
+1)
+    ITER=20
+    ;;
+2)
+    ITER=10
+    ;;
+4)
+    ITER=5
+    ;;
+8)
+    ITER=2
+    ;;
+*)
+    ITER=1
+    ;;
+esac
+
+"""
+
+akrrRunAppKernelTemplate="""#Execute AppKer
+writeToGenInfo "appKerStartTime" "`date`"
+
+echo "#Testing single directory" >> $AKRR_APP_STDOUT_FILE 2>&1
+$RUNMPI $EXE -v -I 32 -z 0 -b 0 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
+
+echo "#Testing single directory per process" >> $AKRR_APP_STDOUT_FILE 2>&1
+$RUNMPI $EXE -v -I 32 -z 0 -b 0 -i $ITER -u >> $AKRR_APP_STDOUT_FILE 2>&1
+
+echo "#Testing single tree directory" >> $AKRR_APP_STDOUT_FILE 2>&1
+$RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
+ 
+echo "#Testing single tree directory per process" >> $AKRR_APP_STDOUT_FILE 2>&1
+$RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER -u >> $AKRR_APP_STDOUT_FILE 2>&1
+
+writeToGenInfo "appKerEndTime" "`date`"
+"""
+#common commands among resources to be executed after the application kernel execution
+#usually cleaning up
+runScriptPostRun="""
+#clean-up
+cd $AKRR_TASK_WORKDIR
+if [ "${{AKRR_DEBUG=no}}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+"""
+
