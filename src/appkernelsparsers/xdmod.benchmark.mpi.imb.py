@@ -168,6 +168,8 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 j+=1
                 if j<len(lines):
                     m=re.match(r'^\s+([1-9]\d*)\s+\d+',lines[j])
+                    if lines[j].count('IMB_init_buffers_iter')>0:
+                        break
                 else:
                     break
             metricName=Metrics[metric][0]
