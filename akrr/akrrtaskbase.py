@@ -1,4 +1,4 @@
-import akrr
+import akrrcfg
 import os
 import sys
 #namdSizes
@@ -8,7 +8,7 @@ import copy
 import re
 
 
-active_task_default_attempt_repeat=akrr.active_task_default_attempt_repeat
+active_task_default_attempt_repeat=akrrcfg.active_task_default_attempt_repeat
 
 submitCommands = {
     'cobalt'      : "cqsub `cat $scriptPath`",
@@ -70,7 +70,7 @@ killExprs['pbssgi']=killExprs['pbs']
 
 
 def GetLocalTaskDir(resourceName,appName,timeStamp):
-    taskDir=os.path.join(akrr.data_dir,resourceName,appName,timeStamp)
+    taskDir=os.path.join(akrrcfg.data_dir,resourceName,appName,timeStamp)
     if not os.path.isdir(taskDir):
             raise IOError("Directory %s does not exist or is not directory."%(taskDir))
     return taskDir
@@ -92,7 +92,7 @@ class akrrTaskHandlerBase:
         self.appName=appName
         self.resourceParam=eval(resourceParam)
         self.appParam=eval(appParam)
-        self.taskParam=copy.deepcopy(akrr.default_task_params)
+        self.taskParam=copy.deepcopy(akrrcfg.default_task_params)
         self.taskParam.update(eval(taskParam))
         self.timeToSubmit=timeToSubmit
         self.repetition=repetition
@@ -102,14 +102,14 @@ class akrrTaskHandlerBase:
         self.app = None
         
         #just check that resource and app exists
-        self.resource = akrr.FindResourceByName(self.resourceName)
-        self.app = akrr.FindAppByName(self.appName)
+        self.resource = akrrcfg.FindResourceByName(self.resourceName)
+        self.app = akrrcfg.FindAppByName(self.appName)
         
         
         
         self.timeStamp=self.CreateLocalDirectoryForTask()
         #set a directory for task already should exists
-        self.SetDirNames(akrr.data_dir)
+        self.SetDirNames(akrrcfg.data_dir)
         self.remoteTaskDir=self.GetRemoteTaskDir(self.resource['akrrdata'],self.appName,self.timeStamp)
         
         self.oldstatus="Does not exist"
@@ -143,29 +143,29 @@ class akrrTaskHandlerBase:
         return True
     def CreateLocalDirectoryForTask(self):
         #create a directory for task
-        resourceDir=os.path.join(akrr.data_dir,self.resourceName)
+        resourceDir=os.path.join(akrrcfg.data_dir,self.resourceName)
         appDir=os.path.join(resourceDir,self.appName)
         timeStamp=datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
         taskDir=os.path.join(appDir,timeStamp)
         #print timeStamp
         #print taskDir
         
-        if not os.path.isdir(akrr.data_dir):
-            raise IOError("Directory %s does not exist or is not directory."%(akrr.data_dir))
+        if not os.path.isdir(akrrcfg.data_dir):
+            raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.data_dir))
         if not os.path.isdir(resourceDir):
             print "Directory %s does not exist, creating it."%(resourceDir)
             os.mkdir(resourceDir)
         if not os.path.isdir(appDir):
             print "Directory %s does not exist, creating it."%(appDir)
             os.mkdir(appDir)
-        if not os.path.isdir(akrr.completed_tasks_dir):
-            raise IOError("Directory %s does not exist or is not directory."%(akrr.completed_tasks_dir))
-        if not os.path.isdir(os.path.join(akrr.completed_tasks_dir,self.resourceName)):
-            print "Directory %s does not exist, creating it."%(os.path.join(akrr.completed_tasks_dir,self.resourceName))
-            os.mkdir(os.path.join(akrr.completed_tasks_dir,self.resourceName))
-        if not os.path.isdir(os.path.join(akrr.completed_tasks_dir,self.resourceName,self.appName)):
-            print "Directory %s does not exist, creating it."%(os.path.join(akrr.completed_tasks_dir,self.resourceName,self.appName))
-            os.mkdir(os.path.join(akrr.completed_tasks_dir,self.resourceName,self.appName))
+        if not os.path.isdir(akrrcfg.completed_tasks_dir):
+            raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.completed_tasks_dir))
+        if not os.path.isdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName)):
+            print "Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName))
+            os.mkdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName))
+        if not os.path.isdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName)):
+            print "Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName))
+            os.mkdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName))
             
         while os.path.exists(taskDir)==True:
             print os.path.exists(taskDir)
@@ -195,12 +195,12 @@ class akrrTaskHandlerBase:
         self.status="Activating"
         
         #find resource
-        self.resource = akrr.FindResourceByName(self.resourceName)
+        self.resource = akrrcfg.FindResourceByName(self.resourceName)
         if self.resource.get('active',True)==False:
-            raise akrr.akrrError(akrr.ERROR_CANT_CONNECT,"%s is marked as inactive in AKRR"%(self.resourceName))
+            raise akrrcfg.akrrError(akrrcfg.ERROR_CANT_CONNECT,"%s is marked as inactive in AKRR"%(self.resourceName))
         
         #find app
-        self.app = akrr.FindAppByName(self.appName)
+        self.app = akrrcfg.FindAppByName(self.appName)
         
         
         self.CreateBatchJobScriptAndSubmitIt()
@@ -220,7 +220,7 @@ class akrrTaskHandlerBase:
 #            wE=waitExprs[self.resource['batchScheduler']]
 #            cmd =Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
 #            rege=Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
-#            msg=akrr.sshResource(self.resource,cmd)
+#            msg=akrrcfg.sshResource(self.resource,cmd)
 #            matchObj= wE[1](rege,msg,wE[3])
 #            if matchObj:
 #                print "Still in queue. Either waiting or running"
@@ -304,7 +304,7 @@ class akrrTaskHandlerBase:
             raise IOError("can not remove remote task folder. The folder should be in akrrdata")
         
         print "removing remote task folder:\n\t%s"%(self.remoteTaskDir)
-        msg=akrr.sshResource(self.resource,"rm -rf \"%s\""%(self.remoteTaskDir))
+        msg=akrrcfg.sshResource(self.resource,"rm -rf \"%s\""%(self.remoteTaskDir))
         print msg
         
   
