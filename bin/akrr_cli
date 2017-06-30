@@ -12,6 +12,6 @@ if os.path.isdir(akrr_mod_dir):
     sys.path.append(os.path.abspath(os.path.dirname(akrr_mod_dir)))
 
 
-import akrr.akrrscheduler
+import akrr.akrr_cli
 
-akrr.akrrscheduler.akrrd_main()
+akrr.akrr_cli.akrr_cli()

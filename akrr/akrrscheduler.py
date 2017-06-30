@@ -2107,7 +2107,8 @@ def update_app_ker_launchers():
             #restore schedule functionality
             os.kill(pid,signal.SIGUSR2)
         raise
-def MainFunction():
+    
+def akrrd_main():
     parser = argparse.ArgumentParser(description="""Application Kernel Remote Runner (AKRR) daemon launcher.
     Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
     """)
@@ -2197,4 +2198,4 @@ def MainFunction():
         if log_file2:log_file2.close()
                     
 if __name__ == '__main__':
-    MainFunction()
+    akrrd_main()

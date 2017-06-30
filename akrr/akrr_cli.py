@@ -587,7 +587,8 @@ def batch_job_parsed(args):
     if print_only:
         log.info('Removing generated files from file-system as only batch job script printing was requested')
         taskHandler.DeleteLocalFolder()
-if __name__ == '__main__':
+
+def akrr_cli():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers()
 
@@ -694,3 +695,6 @@ if __name__ == '__main__':
 
     # EXECUTE: the function provided in the '.set_defaults(func=...)'
     cli_args.func(cli_args)
+    
+if __name__ == '__main__':
+    akrr_cli()

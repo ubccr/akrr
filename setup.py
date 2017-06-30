@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """ setup script for Application Kernels Remote Runner (AKRR) """
-from setuptools import setup
+from setuptools import setup,find_packages
 import sys
 import os
 
@@ -25,13 +25,13 @@ setup(name='akrr',
     license='LGPLv3',
     author='Nikolay A Simakov',
     author_email='nikolays@buffalo.edu',
-    url='https://github.com/ubccr/akrr',
-    scripts=['bin/akrrd'],
-    packages = ['akrr'],
-    package_dir={'akrr': 'src/akrr'},
+    url='https://github.com/ubccr/akrrcfg',
+    scripts=['bin/akrrd','bin/akrr_cli','bin/akrr_setup'],
+    packages = ['akrr','akrr/util','akrr/models','akrr/appkernelsparsers'],#find_packages('.'),
     requires=['MySQLdb'],
+    package_data={'akrr':['templates/*.inp.py','templates/*.inp.py','appkernels/*.inp.py']}
 )
-#    packages=['akrr'],
+#    packages=['akrrcfg'],
 #       data_files=[(confpath,                         ['config/config.json']),
 #                   ('share/supremm/templates/slurm',       ['config/templates/slurm/slurm-epilog',  'config/templates/slurm/slurm-prolog']),
 #                   ('share/supremm/templates/pmlogger',    ['config/templates/pmlogger/control',    'config/templates/pmlogger/pmlogger-supremm.config']),
@@ -42,7 +42,7 @@ setup(name='akrr',
 #       ],
 #     scripts=[
 #         "src/__init__.py",
-#         "src/akrr.py",
+#         "src/akrrcfg.py",
 #         "src/akrrappkeroutputparser.py",
 #         "src/akrrctl.py",
 #         "src/akrrlogging.py",
