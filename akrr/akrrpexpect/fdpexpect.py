@@ -21,7 +21,7 @@ PEXPECT LICENSE
 
 '''
 
-from pexpect import spawn, ExceptionPexpect
+from akrr.akrrpexpect import spawn, ExceptionPexpect
 import os
 
 __all__ = ['fdspawn']

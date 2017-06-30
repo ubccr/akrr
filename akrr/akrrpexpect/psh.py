@@ -24,9 +24,9 @@ PEXPECT LICENSE
 
 '''
 
-import pexpect, re
+import akrr.akrrpexpect, re
 
-class ExceptionPsh(pexpect.ExceptionPexpect):
+class ExceptionPsh(akrr.akrrpexpect.ExceptionPexpect):
     '''Raised for Psh exceptions.
     '''
 

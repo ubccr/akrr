@@ -112,7 +112,7 @@ class ExceptionPexpect(Exception):
         is not included. '''
 
         tblist = traceback.extract_tb(sys.exc_info()[2])
-        tblist = [item for item in tblist if 'pexpect/__init__' not in item[0]]
+        tblist = [item for item in tblist if 'akrrpexpect/__init__' not in item[0]]
         tblist = traceback.format_list(tblist)
         return ''.join(tblist)
 

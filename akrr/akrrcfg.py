@@ -13,23 +13,55 @@ import MySQLdb.cursors
 import copy
 
 from akrrlogging import *
+from util import which
 
 #log("initial loading",highlight="ok")
 # directory of this file
 curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-#Append paths to 3rd party libraries
-if (curdir + "/../3rd_party") not in sys.path:
-    sys.path.insert(0,curdir + "/../3rd_party")
-    #sys.path.append(curdir + "/../3rd_party/pexpect-2.3")
-    sys.path.insert(0,curdir + "/../3rd_party/pexpect-3.2")
-    sys.path.insert(0,curdir + "/../3rd_party/requests-2.3.0")
+#AKRR configuration can be in three places
+# 1) AKRR_CONF if AKRR_CONF enviroment variable is defined
+# 2) ~/akrr/etc/akrr.conf if initiated from RPM or global python install
+# 3) <path to AKRR sources>/etc/akrr.conf for in source installation
+
+in_src_install=False
+
+akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+akrr_bin_dir = None
+if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrrd')):
+    akrr_bin_dir=os.path.join(os.path.dirname(akrr_mod_dir),'bin')
+    akrrd_fullpath=os.path.join(akrr_bin_dir,'akrrd')
+    in_src_install=True
+else:
+    akrrd_fullpath=which('akrrd')
+    akrr_bin_dir=os.path.dirname(akrrd_fullpath)
+
+#determin akrr_home
+akrr_cfg=os.getenv("AKRR_CONF")
+if akrr_cfg==None:
+    if in_src_install:
+        akrr_home=os.path.dirname(akrr_mod_dir)
+        akrr_cfg=os.path.join(akrr_home,'etc','akrr.conf')
+        #log.info("In-source installation, AKRR configuration is in "+akrr_cfg)
+    else:
+        akrr_home=os.path.expanduser("~/akrr")
+        akrr_cfg=os.path.expanduser("~/akrr/etc/akrr.conf")
+        #log.info("AKRR configuration is in "+akrr_cfg)
+    
+else:
+    akrr_home=os.path.dirname(os.path.dirname(akrr_cfg))
+    #log.info("AKRR_CONF is set. AKRR configuration is in "+akrr_cfg)
+    
 
 #location of akrr cfg directory
-akrrcfgdir = os.path.abspath(os.path.join(curdir, "./../cfg"))
+akrrcfgdir = os.path.dirname(akrr_cfg)
+
+
+#load default values
+from akrrcfgdefault import *
 
 #load akrr params
-execfile(akrrcfgdir + "/akrr.inp.py")
+execfile(akrrcfgdir + "/akrr.conf")
 
 #set default values for unset variables
 #make absolute paths from relative
@@ -100,8 +132,8 @@ def loadResource(resource_name):
     raises error if can not load
     """
     try:
-        default_resource_cfg_filename=os.path.join(curdir,"default.resource.inp.py")
-        resource_cfg_filename=os.path.join(akrrcfgdir,'resources',resource_name,"resource.inp.py")
+        default_resource_cfg_filename=os.path.join(curdir,'default_conf',"default.resource.conf")
+        resource_cfg_filename=os.path.join(akrrcfgdir,'resources',resource_name,"resource.conf")
         
         if not os.path.isfile(default_resource_cfg_filename):
             akrrError(ERROR_GENERAL,"Default resource configuration file do not exists (%s)!"%default_resource_cfg_filename)
@@ -221,8 +253,8 @@ def loadApp(app_name):
     raises error if can not load
     """
     try:
-        default_app_cfg_filename=os.path.join(curdir,"default.app.inp.py")
-        app_cfg_filename=os.path.join(curdir,'appkernels',app_name+".app.inp.py")
+        default_app_cfg_filename=os.path.join(curdir,"default_conf","default.app.conf")
+        app_cfg_filename=os.path.join(curdir,'default_conf',app_name+".app.conf")
         
         if not os.path.isfile(default_app_cfg_filename):
             akrrError(ERROR_GENERAL,"Default application kernel configuration file do not exists (%s)!"%default_app_cfg_filename)
@@ -240,7 +272,7 @@ def loadApp(app_name):
         #load resource specific parameters
         for resource_name in os.listdir(os.path.join(akrrcfgdir, "resources")):
             if resource_name not in ['notactive','templates']:
-                resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.inp.py")
+                resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
                     tmp=copy.deepcopy(app['appkernelOnResource']['default'])
                     execfile(resource_specific_app_cfg_filename,tmp)
@@ -274,9 +306,11 @@ def loadAllApp():
     load all resources from configuration directory
     """
     global apps
-    for fl in os.listdir(os.path.join(curdir,'appkernels')):
-        if fl.endswith(".app.inp.py"):
-            app_name=re.sub('.app.inp.py$','',fl)
+    for fl in os.listdir(os.path.join(curdir,'default_conf')):
+        if fl=="default.app.conf":
+            continue
+        if fl.endswith(".app.conf"):
+            app_name=re.sub('.app.conf$','',fl)
             #log("loading "+app_name)
             try:
                 app=loadApp(app_name)
@@ -307,7 +341,7 @@ def FindAppByName(app_name):
     #check if new resources was added
     for resource_name in os.listdir(os.path.join(akrrcfgdir, "resources")):
         if resource_name not in ['notactive','templates']:
-            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.inp.py")
+            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.conf")
             if os.path.isfile(resource_specific_app_cfg_filename):
                 if resource_name not in app['appkernelOnResource']:
                     reloadAppCfg=True
@@ -317,7 +351,7 @@ def FindAppByName(app_name):
     #check if new resources were removed
     for resource_name in app['appkernelOnResource']:
         if resource_name not in ['default']:
-            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.inp.py")
+            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.conf")
             if not os.path.isfile(resource_specific_app_cfg_filename):
                 reloadAppCfg=True
             
@@ -355,7 +389,7 @@ promptsCollection={}
 
 def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKeyFile=None, PrivateKeyPassword=None,
               logfile=None, command=None, pwd1=None, pwd2=None):
-    """login to remote machine and return pexpect.spawn instance.
+    """login to remote machine and return akrrpexpect.spawn instance.
     if command!=None will execute commands and return the output"""
     #pack command line and arguments
     cmd = ssh
@@ -394,9 +428,9 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
 
     rsh = None
     try:
-        import pexpect
+        import akrrpexpect
 
-        rsh = pexpect.spawn(cmd)  #, logfile=logfile)
+        rsh = akrrpexpect.spawn(cmd)  #, logfile=logfile)
         #rsh.setwinsize(256,512)
 
         rsh.logfile_read = logfile
@@ -431,7 +465,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             i=-1
             try:
                 i = rsh.expect(expect, timeout=sshTimeoutNew)
-            except pexpect.TIMEOUT,e:
+            except akrrpexpect.TIMEOUT,e:
                 if mode == 'ssh' and command == None:
                     #add prompts
                     if countPasses==0:
@@ -514,14 +548,14 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
         rsh.remotemachine=remotemachine
         if logfile != None: logfile.flush()
         #print expect[i]
-    except pexpect.TIMEOUT as e:
-        #print "pexpect.TIMEOUT"
+    except akrrpexpect.TIMEOUT as e:
+        #print "akrrpexpect.TIMEOUT"
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
         raise akrrError(ERROR_CANT_CONNECT,
                        "Timeout period elapsed prior establishing the connection to %s." % (remotemachine) + msg, e)
-    except pexpect.EOF as e:
+    except akrrpexpect.EOF as e:
         ExeCUTEd_SucCeSsFully = False
         if command != None:
             ll = rsh.before.splitlines(False)
