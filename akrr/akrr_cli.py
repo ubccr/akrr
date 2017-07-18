@@ -654,45 +654,19 @@ def setup_handler(args):
 
 def daemon_handler(args):
     """AKRR daemon handler"""
-    import subprocess
-    import akrrcfg
-    daemon_script=os.path.join(akrrcfg.akrr_bin_dir,'akrrd')
+    if args.action=='check':
+        return check_daemon(args)
     
-    if args.command=='start':
-        status=subprocess.call(sys.executable+" "+daemon_script+" start", shell=True)
-        if status!=0:
-            log.error("Probably, cannot start AKRR daemon")
-            exit(status)
-    elif args.command=='stop':
-        status=subprocess.call(sys.executable+" "+daemon_script+" stop", shell=True)
-        if status!=0:
-            log.error("Probably, cannot stop AKRR daemon")
-            exit(status)
-    elif args.command=='restart':
-        os.chdir(akrrcfg.akrr_home)
-        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}checknrestart stop
-        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}checknrestart start
-        a=" -a -o "+os.path.join(akrrcfg.data_dir,'checknrestart')
-
-        status=subprocess.call(sys.executable+" "+daemon_script+a+" stop", shell=True)
-        #if status!=0:
-        #    log.error("Probably, cannot stop AKRR daemon")
-        #    exit(status)
-        status+=subprocess.call(sys.executable+" "+daemon_script+a+" start", shell=True)
-        if status!=0:
-            log.error("Probably, there was some problem with AKRR daemon restart")
-            exit(status)
-    elif args.command=='checknrestart':
-        os.chdir(akrrcfg.akrr_home)
-        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}/checknrestart checknrestart
-        a=" -a -o "+os.path.join(akrrcfg.data_dir,'checknrestart')
+    import akrrcfg
         
-        status+=subprocess.call(sys.executable+" "+daemon_script+a+" checknrestart", shell=True)
-        if status!=0:
-            log.error("Probably, there was some problem with AKRR daemon restart")
-            exit(status)
-    else:
-        raise Exception("Unknown comman for AKRR daemon: "+args.command)
+    if args.cron and args.action in ['checknrestart','restart']:
+        args.append=True
+        args.output_file=os.path.join(akrrcfg.data_dir,'checknrestart')
+    
+    import akrr.akrrscheduler
+
+    akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
+    
 def akrr_cli():
     parser = argparse.ArgumentParser(description='command line interface to AKRR')
     subparsers = parser.add_subparsers()
@@ -796,18 +770,27 @@ def akrr_cli():
     reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
     reprocess.set_defaults(func=reprocess_parsed)
     
-    daemon_parser = subparsers.add_parser('daemon',
-        description='Daemon Handler')
-    daemon_parser.add_argument('command',
-                               choices=['start', 'stop', 'restart','checknrestart'],
-                               help='operations with AKRR daemon')
+    #Daemon control
+    daemon_parser = subparsers.add_parser('daemon',description="""Application Kernel Remote Runner (AKRR) daemon launcher.
+    Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
+    """)
+    daemon_parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
+    daemon_parser.add_argument('-a', '--append', action='store_true', help="append stdout and stderr to file rather then overwrite")
+    daemon_parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
+    
+    daemon_subparsers = daemon_parser.add_subparsers(title='commands',dest='action');
+    daemon_subparsers.add_parser('start', help='launch Application Remote Runner in daemon mode')
+    daemon_subparsers.add_parser('stop', help='terminate Application Remote Runner')
+    daemon_subparsers.add_parser('restart', help='restart AKRR daemon')
+    daemon_subparsers.add_parser('check', help='Check AKRR Daemon Status')
+    daemon_subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
+    daemon_subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
+    daemon_subparsers.add_parser('status', help='print current status of Application Remote Runner')
+    daemon_subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
+
     daemon_parser.set_defaults(func=daemon_handler)
     
-    
-    check_daemon_parser = subparsers.add_parser('check_daemon',
-        description='Check AKRR Daemon Status')
-    check_daemon_parser.set_defaults(func=check_daemon)
-    
+    #setup parser
     setup_parser = subparsers.add_parser('setup',
         description='Initial AKRR Setup')
     setup_parser.set_defaults(func=setup_handler)
