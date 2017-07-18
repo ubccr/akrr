@@ -26,10 +26,10 @@ setup(name='akrr',
     author='Nikolay A Simakov',
     author_email='nikolays@buffalo.edu',
     url='https://github.com/ubccr/akrrcfg',
-    scripts=['bin/akrrd','bin/akrr_cli','bin/akrr_setup'],
+    scripts=['bin/akrrd','bin/akrr'],
     packages = ['akrr','akrr/util','akrr/models','akrr/appkernelsparsers'],#find_packages('.'),
-    requires=['MySQLdb'],
-    package_data={'akrr':['templates/*.inp.py','templates/*.inp.py','appkernels/*.inp.py']}
+    requires=['MySQLdb','requests','bottle'],
+    package_data={'akrr':['templates/*.conf','default_conf/*.inp.py']}
 )
 #    packages=['akrrcfg'],
 #       data_files=[(confpath,                         ['config/config.json']),

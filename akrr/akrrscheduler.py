@@ -16,7 +16,7 @@ import subprocess
 import socket
 import inspect
 
-from akrrappkeroutputparser import AppKerOutputParser
+from appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
 akrrscheduler=None
 import akrrlogging

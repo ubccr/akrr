@@ -4,24 +4,16 @@ functionality.
 
 """
 from util import logging as log
-import akrrcfg
-import akrrrestclient
-import akrrscheduler
+
 import random
 import datetime
 import os
 import sys
 import cStringIO
-import inspect
+import argparse
 
-try:
-    import argparse
-except:
-    #add argparse directory to path and try again
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    argparsedir=os.path.abspath(os.path.join(curdir,"..","3rd_party","argparse-1.3.0"))
-    if argparsedir not in sys.path:sys.path.append(argparsedir)
-    import argparse
+from util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+#NOTE: do not globally import akrrcfg or other modules which invoke akrrcfg
 
 def tuples_to_dict(*tuples):
     """
@@ -46,6 +38,8 @@ def insert_resources(resources):
                       mod_appkernel.resource database.
     :return: void
     """
+    import akrrcfg
+    
     if resources is not None and len(resources) > 0:
 
         parameters = tuple([(resource['name'], int(resource['id']), False) for (resource) in resources])
@@ -74,6 +68,7 @@ def insert_resource(resource):
     :param resource:
     :return: void
     """
+    import akrrcfg
     if resource is not None:
         name, id = resource
         connection, cursor = akrrcfg.getAKDB()
@@ -97,6 +92,7 @@ def retrieve_resources():
 
     :return: a dict representation of the resourcefact table ( name, id )
     """
+    import akrrcfg
     connection, cursor = akrrcfg.getXDDB(True)
     with connection:
         cursor.execute("""
@@ -116,6 +112,7 @@ def retrieve_resource(resource, exact):
     :param resource: the name of the resource to retrieve
     :return: a json encoded version of the record in `modw`.`resourcefact` identified by
     """
+    import akrrcfg
     if resource is None or len(resource) < 1:
         raise AssertionError('provided resource must not be empty.')
 
@@ -156,6 +153,7 @@ def retrieve_tasks(resource, application):
         'application': application,
         'resource': resource
     }
+    import akrrrestclient
 
     try:
         akrrrestclient.get_token()
@@ -235,12 +233,13 @@ def calculate_random_start_time(start_time, periodicity, time_start, time_end):
     :return a new datetime.datetime with a randomized day / time constrained by
             the provided periodicity and time_start / time_end
     """
-    time_to_start = akrrcfg.getDatatimeTimeToStart(start_time).replace(
+    
+    time_to_start = getDatatimeTimeToStart(start_time).replace(
         hour=0,
         minute=0,
         second=0,
         microsecond=0)
-    repeat_in = akrrcfg.getTimeDeltaRepeatIn(periodicity)
+    repeat_in = getTimeDeltaRepeatIn(periodicity)
 
     if time_to_start and repeat_in:
         spans_multiple_days = repeat_in.days > 1
@@ -354,8 +353,10 @@ def on_parsed(args):
     data = {
         'application': args.application if args.application else ''
     }
-
+    
     try:
+        import akrrrestclient
+        
         result = akrrrestclient.put(
             '/resources/{0}/on'.format(args.resource),
             data=data)
@@ -390,6 +391,8 @@ def off_parsed(args):
     }
 
     try:
+        import akrrrestclient
+        
         result = akrrrestclient.put(
             '/resources/{0}/off'.format(args.resource),
             data=data)
@@ -423,7 +426,7 @@ def new_task_parsed(args):
     if not (args.resource and
             args.appkernel and
             args.nodes):
-        parser.error(
+        log.error(
             'Please provide a resource, application and node count.')
         exit(1)
     resource = args.resource
@@ -450,6 +453,8 @@ def new_task_parsed(args):
             'resource_param': "{'nnodes':%s}" % (node,)
         }
         try:
+            import akrrrestclient
+            
             result = akrrrestclient.post(
                 '/scheduled_tasks',
                 data=data)
@@ -471,7 +476,7 @@ def new_task_parsed(args):
 
 def reprocess_parsed(args):
     if not (args.resource and args.appkernel):
-        parser.error(
+        log.error(
             'Please provide a resource, app')
         exit(1)
     resource=args.resource
@@ -480,6 +485,7 @@ def reprocess_parsed(args):
     time_end=args.time_end
     verbose=args.verbose
     
+    import akrrscheduler
     sch=akrrscheduler.akrrScheduler(AddingNewTasks=True)
     sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
     
@@ -489,7 +495,7 @@ def wall_time_parsed(args):
                               args.appkernel and
                               args.nodes and
                               args.walltime):
-        parser.error(
+        log.error(
             'Please provide a resource, app, node count and wall time.')
         exit(1)
 
@@ -509,6 +515,8 @@ def wall_time_parsed(args):
             'comments':comments
         }
         try:
+            import akrrrestclient
+            
             result = akrrrestclient.post(
                 '/walltime/%s/%s'%(resource,app),
                 data=data) if not listing else \
@@ -541,9 +549,10 @@ def batch_job_parsed(args):
     if not (args.resource and
           args.appkernel and
           args.nodes):
-        parser.error(
+        log.error(
             'Please provide a resource, application kernel and node count.')
         exit(1)
+    import akrrcfg
     resource = akrrcfg.FindResourceByName(args.resource)
     app = akrrcfg.FindAppByName(args.appkernel)
     nodes = args.nodes
@@ -588,8 +597,104 @@ def batch_job_parsed(args):
         log.info('Removing generated files from file-system as only batch job script printing was requested')
         taskHandler.DeleteLocalFolder()
 
+def check_daemon(args):
+    import akrrcfg
+    from requests.auth import HTTPBasicAuth
+    import requests
+    #modify python_path so that we can get /src on the path
+    
+    ssl_verify = False
+    
+    restapi_host = akrrcfg.restapi_host
+    if akrrcfg.restapi_host!="":
+        restapi_host=akrrcfg.restapi_host
+    #set full address
+    api_url = 'https://'+restapi_host+':'+str(akrrcfg.restapi_port)+akrrcfg.restapi_apiroot
+    ssl_cert=None
+    #akrr.restapi_certfile
+    # Holds the user token returned by the auth request.
+    token = None
+    
+    
+    def populate_token():
+        request = requests.get(api_url + "/token", auth=HTTPBasicAuth(akrrcfg.restapi_rw_username, akrrcfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
+        if request.status_code == 200:
+            global token
+            token = request.json()['data']['token']
+        else:
+            log.error('Something went wrong when attempting to contact the REST API.')
+    
+        return token is not None
+    
+    
+    def is_api_up():
+        request = requests.get(api_url + "/scheduled_tasks", auth=(token, ""), verify=ssl_verify, cert=ssl_cert)
+        if request.status_code == 200:
+            return True
+        else:
+            log.error('Unable to successfully contact the REST API: {0}: {1}', request.status_code, request.text)
+            return False
+
+    log.info('Beginning check of the AKRR Rest API...')
+    token_populated = populate_token()
+    if token_populated:
+        is_up = is_api_up()
+        if is_up:
+            log.info('REST API is up and running!')
+        else:
+            exit(1)
+    else:
+        log.error('Unable to retrieve authentication token.')
+        exit(1)
+    
+def setup_handler(args):
+    """call routine for initial AKRR setup"""
+    import  akrr.akrrsetup
+    return akrr.akrrsetup.akrr_setup()
+
+def daemon_handler(args):
+    """AKRR daemon handler"""
+    import subprocess
+    import akrrcfg
+    daemon_script=os.path.join(akrrcfg.akrr_bin_dir,'akrrd')
+    
+    if args.command=='start':
+        status=subprocess.call(sys.executable+" "+daemon_script+" start", shell=True)
+        if status!=0:
+            log.error("Probably, cannot start AKRR daemon")
+            exit(status)
+    elif args.command=='stop':
+        status=subprocess.call(sys.executable+" "+daemon_script+" stop", shell=True)
+        if status!=0:
+            log.error("Probably, cannot stop AKRR daemon")
+            exit(status)
+    elif args.command=='restart':
+        os.chdir(akrrcfg.akrr_home)
+        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}checknrestart stop
+        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}checknrestart start
+        a=" -a -o "+os.path.join(akrrcfg.data_dir,'checknrestart')
+
+        status=subprocess.call(sys.executable+" "+daemon_script+a+" stop", shell=True)
+        #if status!=0:
+        #    log.error("Probably, cannot stop AKRR daemon")
+        #    exit(status)
+        status+=subprocess.call(sys.executable+" "+daemon_script+a+" start", shell=True)
+        if status!=0:
+            log.error("Probably, there was some problem with AKRR daemon restart")
+            exit(status)
+    elif args.command=='checknrestart':
+        os.chdir(akrrcfg.akrr_home)
+        #${PYTHON_APP} akrrscheduler.py -a -o ${__DATA_DIR}/checknrestart checknrestart
+        a=" -a -o "+os.path.join(akrrcfg.data_dir,'checknrestart')
+        
+        status+=subprocess.call(sys.executable+" "+daemon_script+a+" checknrestart", shell=True)
+        if status!=0:
+            log.error("Probably, there was some problem with AKRR daemon restart")
+            exit(status)
+    else:
+        raise Exception("Unknown comman for AKRR daemon: "+args.command)
 def akrr_cli():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='command line interface to AKRR')
     subparsers = parser.add_subparsers()
 
     query_parser = subparsers.add_parser('query',
@@ -690,6 +795,23 @@ def akrr_cli():
     reprocess.add_argument('-t1', '--time_end', help='End time for update')
     reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
     reprocess.set_defaults(func=reprocess_parsed)
+    
+    daemon_parser = subparsers.add_parser('daemon',
+        description='Daemon Handler')
+    daemon_parser.add_argument('command',
+                               choices=['start', 'stop', 'restart','checknrestart'],
+                               help='operations with AKRR daemon')
+    daemon_parser.set_defaults(func=daemon_handler)
+    
+    
+    check_daemon_parser = subparsers.add_parser('check_daemon',
+        description='Check AKRR Daemon Status')
+    check_daemon_parser.set_defaults(func=check_daemon)
+    
+    setup_parser = subparsers.add_parser('setup',
+        description='Initial AKRR Setup')
+    setup_parser.set_defaults(func=setup_handler)
+    
     # PARSE: the command line parameters the user provided.
     cli_args = parser.parse_args()
 

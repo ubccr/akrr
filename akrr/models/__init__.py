@@ -1,1 +1,1 @@
-from util.functional import __or
+from akrr.util.functional import __or

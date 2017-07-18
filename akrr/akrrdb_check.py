@@ -8,7 +8,7 @@ if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
 from util import logging as log
-import akrr
+import akrrcfg
 
 # Attempt to import MySQL, if it's not there then we'll exit out and notify the
 # user and blow up.
@@ -113,7 +113,7 @@ def akrrdb_check():
         exit(1)
 
     # CHECK: the akrr db
-    akrr_ok = check_rw_db(akrr.getDB,
+    akrr_ok = check_rw_db(akrrcfg.getDB,
                       "Checking 'mod_akrr' Database / User privileges...",
                       "'mod_akrr' Database check complete - Status: {0}")
 
@@ -122,12 +122,12 @@ def akrrdb_check():
 
 
     # Check: the app_kernel db
-    app_kernel_ok = check_rw_db(akrr.getAKDB,
+    app_kernel_ok = check_rw_db(akrrcfg.getAKDB,
                              "Checking 'mod_appkernel' Database / User privileges...",
                              "'mod_appkernel' Database check complete - Status: {0}")
 
     # CHECK: the XDMoD db
-    xdmod_ok = check_r_db(akrr.getXDDB,
+    xdmod_ok = check_r_db(akrrcfg.getXDDB,
                           "Checking 'modw' Database / User privileges...",
                           "'modw' Database check complete - Status: {0}")
 

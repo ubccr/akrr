@@ -28,7 +28,7 @@ except:
     import argparse
 
 # finally import akrr since src is now on the path.
-import akrr
+import akrrcfg
 
 # Attempt to import MySQL, if it's not there then we'll exit out and notify the
 # user and blow up.
@@ -378,7 +378,8 @@ INSERT INTO `akrr_err_regexp` VALUES
             (25,'xdmod.benchmark.hpcc','1;2;4;8;16'),
             (27,'xdmod.benchmark.io.ior','1;2;4;8'),
             (28,'xdmod.benchmark.graph.graph500','1;2;4;8'),
-            (29,'xdmod.app.astro.enzo','1;2;4;8');
+            (29,'xdmod.app.astro.enzo','1;2;4;8')
+        ON DUPLICATE KEY UPDATE id=VALUES(id);
         """)
     )
 
@@ -387,7 +388,7 @@ INSERT INTO `akrr_err_regexp` VALUES
         population_statements,
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",
-        akrr.getDB
+        akrrcfg.getDB
     )
 
 
@@ -802,7 +803,8 @@ INSERT INTO `app_kernel_def` VALUES
 (25, 'HPCC', 'xdmod.benchmark.hpcc', 'node', 0, '<a href="http://icl.cs.utk.edu/hpcc/" target="_blank" alt="hpcc">HPC Challenge Benchmark</a> suite. It consists of a) High Performance LINPACK, which solves a linear system of equations and measures the floating-point performance, b) Parallel Matrix Transpose (PTRANS), which measures total communications capacity of the interconnect, c) MPI Random Access, which measures the rate of random updates of remote memory, d) Fast Fourier Transform, which measures the floating-point performance of double-precision complex one-dimensional Discrete Fourier Transform. ', 0,NULL),
 (27, 'IOR', 'xdmod.benchmark.io.ior', 'node', 0, 'IOR (Interleaved-Or-Random) measures the performance of a storage system under simple access patterns. It uses four different I/O interfaces: POSIX, MPI IO, HDF (Hierarchical Data Format), and Parallel NetCDF (Network Common Data Form) to read and write contiguous chunks of data against either a single file (N-to-1 mode) or N files (N-to-N mode), and it reports the aggregate I/O throughput.', 0,NULL),
 (28, 'Graph500', 'xdmod.benchmark.graph.graph500', 'node', 0, '<a href="http://www.graph500.org" target="_blank" alt="graph500">Graph 500</a> is a benchmark designed to measure the performance of graph algorithms, an increasingly important workload in the data-intensive analytics applications.\r\n<p>\r\nCurrently Graph 500 benchmark contains one computational kernel: the breadth-first search. The input is a pre-generated graph created with the following parameters:  SCALE=16 and edgefactor=16. These translate to, on a per MPI process basis,  2^SCALE=65536 vertices and 65536*edgefactor=1.04 million edges.', 0,NULL),
-(29, 'Enzo', 'xdmod.app.astro.enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>', 0,NULL);
+(29, 'Enzo', 'xdmod.app.astro.enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>', 0,NULL)
+ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
         """),
     )
 
@@ -812,7 +814,7 @@ INSERT INTO `app_kernel_def` VALUES
         population_statements,
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",
-        akrr.getAKDB
+        akrrcfg.getAKDB
     )
 
 

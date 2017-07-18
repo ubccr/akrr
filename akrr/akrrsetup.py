@@ -38,7 +38,7 @@ if "check_output" not in dir( subprocess ): # duck punch it in!
 
 
 from util import logging as log
-
+from util import which
 try:
     import MySQLdb
     import MySQLdb.cursors
@@ -47,25 +47,6 @@ except Exception,e:
     For example by running on Ubuntu:
          sudo apt-get install python2.7-mysqldb""")
     raise e
-
-def which(program):
-    import os
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
-
-    fpath, fname = os.path.split(program)
-    if fpath:
-        if is_exe(program):
-            return program
-    else:
-        for path in os.environ["PATH"].split(os.pathsep):
-            path = path.strip('"')
-            exe_file = os.path.join(path, program)
-            if is_exe(exe_file):
-                return exe_file
-
-    return None
-
 
 
 #AKRR configuration can be in three places
@@ -91,26 +72,17 @@ akrr_cfg=os.getenv("AKRR_CONF")
 if akrr_cfg==None:
     if in_src_install:
         akrr_home=os.path.dirname(akrr_mod_dir)
-        akrr_cfg=os.path.join(akrr_home,'etc','akrr.inp.py')
+        akrr_cfg=os.path.join(akrr_home,'etc','akrr.conf')
         log.info("In-source installation, AKRR configuration will be in "+akrr_cfg)
     else:
         akrr_home=os.path.expanduser("~/akrr")
-        akrr_cfg=os.path.expanduser("~/akrr/etc/akrr.inp.py")
+        akrr_cfg=os.path.expanduser("~/akrr/etc/akrr.conf")
         log.info("AKRR configuration will be in "+akrr_cfg)
     
 else:
     akrr_home=os.path.dirname(os.path.dirname(akrr_cfg))
     log.info("AKRR_CONF is set. AKRR configuration will be in "+akrr_cfg)
     
-
-
-
-
-
-print(akrr_bin_dir)
-print(akrrd_fullpath)
-
-
 
 
 class InstallAKRR:
@@ -127,7 +99,7 @@ class InstallAKRR:
         if(os.path.exists(akrr_cfg)):
             msg="This is a fresh installation script. "+akrr_home+\
                      " contains previous AKRR installation. Either uninstall it or see documentation on updates.\n\n";
-            msg+="To uninstall AKRR manually:\n\t1)remove $AKRR_HOME/cfg/akrrcfg.inp.py\n\t\trm $AKRR_HOME/cfg/akrrcfg.inp.py\n"
+            msg+="To uninstall AKRR manually:\n\t1)remove "+akrr_cfg+"\n\t\trm "+akrr_cfg+"\n"
             msg+="\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
             msg+="\t\tDROP DATABASE mod_appkernel;\n"
             msg+="\t\tDROP DATABASE mod_akrr;\n\n"
@@ -203,6 +175,27 @@ run (This user must have privileges to create users and databases):""")
                 break
             except Exception,e:
                 log.error("Entered credential is not valid. Please try again.")
+    def init_dir(self):
+        try:
+            if not os.path.isdir(akrr_home):
+                os.makedirs(akrr_home)
+            if not os.path.isdir(os.path.join(akrr_home,'etc')):
+                os.makedirs(os.path.join(akrr_home,'etc'))
+            if not os.path.isdir(os.path.join(akrr_home,'etc','resources')):
+                os.makedirs(os.path.join(akrr_home,'etc','resources'))
+            if not os.path.isdir(os.path.join(akrr_home,'etc','resources')):
+                os.makedirs(os.path.join(akrr_home,'etc','resources'))
+            if not os.path.isdir(os.path.join(akrr_home,'log')):
+                os.makedirs(os.path.join(akrr_home,'log'))
+            if not os.path.isdir(os.path.join(akrr_home,'log','data')):
+                os.makedirs(os.path.join(akrr_home,'log','data'))
+            if not os.path.isdir(os.path.join(akrr_home,'log','comptasks')):
+                os.makedirs(os.path.join(akrr_home,'log','comptasks'))
+            if not os.path.isdir(os.path.join(akrr_home,'log','akrrd')):
+                os.makedirs(os.path.join(akrr_home,'log','akrrd'))
+        except Exception,e:
+            log.error("Can not create directories: "+str(e))
+            exit(1)
     def init_mysql_dbs(self):
         try:
             log.info("Creating AKRR databases and granting permissions for AKRR user.")
@@ -284,7 +277,7 @@ run (This user must have privileges to create users and databases):""")
 
     def generate_settings_file(self):
         log.info("Generating Settings File...")
-        with open(os.path.join(akrr_mod_dir,'templates','akrr.src.inp.py'),'r') as f:
+        with open(os.path.join(akrr_mod_dir,'templates','akrr.conf'),'r') as f:
             akrr_inp_template=f.read()
         restapi_rw_password=self.get_random_password()
         restapi_ro_password=self.get_random_password()
@@ -307,31 +300,31 @@ run (This user must have privileges to create users and databases):""")
             chmod -R o-rwx {akrr_home}
             """.format(akrr_home=akrr_home), shell=True)
     def db_check(self):
-        import akrrcfg
-        akrrcfg.akrrdb_check()
+        import akrrdb_check
+        akrrdb_check.akrrdb_check()
     def generate_tables(self):
-        import akrrcfg
-        akrrcfg.args = type("Args", (object,), {})()
-        akrrcfg.args.verbose=True
-        akrrcfg.args.test=False
-        akrrcfg.args.host=None
-        akrrcfg.args.user=None
-        akrrcfg.args.password=None
-        akrrcfg.args.db=None
+        import akrrgenerate_tables
+        akrrgenerate_tables.args = type("Args", (object,), {})()
+        akrrgenerate_tables.args.verbose=True
+        akrrgenerate_tables.args.test=False
+        akrrgenerate_tables.args.host=None
+        akrrgenerate_tables.args.user=None
+        akrrgenerate_tables.args.password=None
+        akrrgenerate_tables.args.db=None
         # SETUP: the mod_akrr database tables
-        akrrcfg.setup_mod_akrr()
+        akrrgenerate_tables.setup_mod_akrr()
     
         # SETUP: the mod_app_kernel tables
-        akrrcfg.setup_mod_appkernel()
+        akrrgenerate_tables.setup_mod_appkernel()
     def start_daemon(self):
         """Start the daemon"""
-        daemon_script=os.path.join(akrr_home,'src','akrrscheduler.py')
+        daemon_script=os.path.join(akrr_bin_dir,'akrrd')
         status=subprocess.call(sys.executable+" "+daemon_script+" start", shell=True)
         if status!=0:exit(status)
     def check_daemon(self):
         """Check that the daemon is running"""
-        check_daemon=os.path.join(akrr_home,'setup','scripts','akrrcheck_daemon.py')
-        status=subprocess.call(sys.executable+" "+check_daemon, shell=True)
+        check_daemon=os.path.join(akrr_bin_dir,'akrr')
+        status=subprocess.call(sys.executable+" "+check_daemon+" check_daemon", shell=True)
         if status!=0:exit(status)
     
     def ask_cron_email(self):
@@ -360,8 +353,8 @@ run (This user must have privileges to create users and databases):""")
         """Install cron scripts."""
         if self.cronemail:mail="MAILTO = "+self.cronemail
         else: mail=None
-        restart="50 23 * * * "+akrr_home+"/bin/restart.sh"
-        checknrestart="33 * * * * "+akrr_home+"/bin/checknrestart.sh"
+        restart="50 23 * * * "+akrr_bin_dir+"/akrr daemon restart"
+        checknrestart="33 * * * * "+akrr_bin_dir+"/akrr daemon checknrestart"
         
         try:
             crontanContent=subprocess.check_output("crontab -l", shell=True)
@@ -446,6 +439,7 @@ def akrr_setup():
     install.ask_cron_email()
     
     install.init_mysql_dbs()
+    install.init_dir()
     install.generate_self_signed_certificate()
     install.generate_settings_file()
     install.set_permission_on_files()

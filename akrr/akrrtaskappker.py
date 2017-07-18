@@ -10,7 +10,7 @@ import copy
 import MySQLdb
 
 from akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
-from akrrappkeroutputparser import AppKerOutputParser
+from appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
  
 class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
     """Task Handler for AppKernel execution and processing"""
