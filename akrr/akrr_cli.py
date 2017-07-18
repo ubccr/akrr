@@ -650,7 +650,7 @@ def check_daemon(args):
 def setup_handler(args):
     """call routine for initial AKRR setup"""
     import  akrr.akrrsetup
-    return akrr.akrrsetup.akrr_setup()
+    return akrr.akrrsetup.akrr_setup(stand_alone=args.stand_alone)
 
 def daemon_handler(args):
     """AKRR daemon handler"""
@@ -793,6 +793,7 @@ def akrr_cli():
     #setup parser
     setup_parser = subparsers.add_parser('setup',
         description='Initial AKRR Setup')
+    setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
     setup_parser.set_defaults(func=setup_handler)
     
     # PARSE: the command line parameters the user provided.

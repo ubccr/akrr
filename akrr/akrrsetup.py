@@ -95,6 +95,7 @@ class InstallAKRR:
         self.sql_root_name=None
         self.sql_root_password=None
         self.cronemail=None
+        self.stand_alone=False
     def check_previous_installation(self):
         if(os.path.exists(akrr_cfg)):
             msg="This is a fresh installation script. "+akrr_home+\
@@ -141,16 +142,29 @@ class InstallAKRR:
                     self.xd_user_password=password
                     break
                 log.error("Entered passwords do not match. Please try again.")
-    def get_db(dictCursor=True,user=None,password=None,host='localhost',port=3306,db_name='mysql'):
+    def get_db(self, dictCursor=True,user=None,password=None,host='localhost',port=3306,db_name='mysql'):
+        try:
+            import akrrcfg
+        except Exception,e:
+            if user==None or password==None:
+                log.error("Can not get DB credentials AKRR config is not set up yet")
+        
         if dictCursor:
-            db = MySQLdb.connect(host=host, port=port, user=cfg.akrr_db_user if user==None else user,
-                                 passwd=cfg.akrr_db_passwd if password==None else password, db=db_name,
+            db = MySQLdb.connect(host=host, port=port, user=akrrcfg.akrr_db_user if user==None else user,
+                                 passwd=akrrcfg.akrr_db_passwd if password==None else password, db=db_name,
                                  cursorclass=MySQLdb.cursors.DictCursor)
         else:
-            db = MySQLdb.connect(host=host, port=port, user=cfg.akrr_db_user if user==None else user,
-                                 passwd=cfg.akrr_db_passwd if password==None else password, db=db_name)
+            db = MySQLdb.connect(host=host, port=port, user=akrrcfg.akrr_db_user if user==None else user,
+                                 passwd=akrrcfg.akrr_db_passwd if password==None else password, db=db_name)
         cur = db.cursor()
         return db, cur
+    
+    def db_exist(self,cur,name):
+        cur.execute("""SHOW databases LIKE %s""",(name,))
+        r=cur.fetchall()
+        return len(r)>0
+
+   
     def get_random_password(self):
         length = 16
         chars = string.ascii_letters + string.digits
@@ -217,7 +231,7 @@ run (This user must have privileges to create users and databases):""")
                 cur_root.execute("CREATE DATABASE IF NOT EXISTS mod_akrr")
                 while cur_root.nextset() is not None: pass
             # ENSURE: That the `mod_appkernel` database is created.
-            if 'mod_appkernel' not in dbsNames:
+            if 'mod_appkernel' not in dbsNames and not self.stand_alone:
                 cur_root.execute("CREATE DATABASE IF NOT EXISTS mod_appkernel")
                 while cur_root.nextset() is not None: pass
             # ENSURE: That the user that will be used by AKRR is created with the correct privileges.
@@ -233,11 +247,17 @@ run (This user must have privileges to create users and databases):""")
             
             while cur_root.nextset() is not None: pass
             # ENSURE: That the AKRR modw user is created w/ the correct privileges
-            cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, '%', self.xd_user_password))
-            cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, 'localhost', self.xd_user_password))
-            cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, hostname, self.xd_user_password))
+            modw_exists=self.db_exist(cur_root,'modw')
+            if modw_exists:
+                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, '%', self.xd_user_password))
+                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, 'localhost', self.xd_user_password))
+                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, hostname, self.xd_user_password))
+                
+                while cur_root.nextset() is not None: pass
             
-            while cur_root.nextset() is not None: pass
+            if not modw_exists and not self.stand_alone:
+                raise Exception("Can not access modw db (XDMoD) and this is not stand alone installation")
+            
             # ENSURE: That the newly granted privileges are flushed into active service.
             cur_root.execute("FLUSH PRIVILEGES")
             while cur_root.nextset() is not None: pass
@@ -301,7 +321,8 @@ run (This user must have privileges to create users and databases):""")
             """.format(akrr_home=akrr_home), shell=True)
     def db_check(self):
         import akrrdb_check
-        akrrdb_check.akrrdb_check()
+        if not akrrdb_check.akrrdb_check(mod_appkernel=not self.stand_alone,modw=not self.stand_alone):
+            exit(1)
     def generate_tables(self):
         import akrrgenerate_tables
         akrrgenerate_tables.args = type("Args", (object,), {})()
@@ -324,7 +345,7 @@ run (This user must have privileges to create users and databases):""")
     def check_daemon(self):
         """Check that the daemon is running"""
         check_daemon=os.path.join(akrr_bin_dir,'akrr')
-        status=subprocess.call(sys.executable+" "+check_daemon+" check_daemon", shell=True)
+        status=subprocess.call(sys.executable+" "+check_daemon+" daemon check", shell=True)
         if status!=0:exit(status)
     
     def ask_cron_email(self):
@@ -427,16 +448,19 @@ run (This user must have privileges to create users and databases):""")
             for l in bashcontentNew:
                 f.write(l)
         log.info("Appended AKRR records to $HOME/.bashrc")
-        
-def akrr_setup():
+
+def akrr_setup(install_cron_scripts=True,stand_alone=False):
     install=InstallAKRR()
+    install.stand_alone=stand_alone
+    
     #check 
     install.check_previous_installation()
     #was in prep
     install.read_akrr_creds()
     install.read_modw_creds()
     install.read_sql_root_creds()
-    install.ask_cron_email()
+    if install_cron_scripts:
+        install.ask_cron_email()
     
     install.init_mysql_dbs()
     install.init_dir()
@@ -448,7 +472,8 @@ def akrr_setup():
     install.generate_tables()
     install.start_daemon()
     install.check_daemon()
-    install.install_cron_scripts()
+    if install_cron_scripts:
+        install.install_cron_scripts()
     install.update_bashrc()
     
 if __name__ == '__main__':

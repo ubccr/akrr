@@ -105,40 +105,47 @@ def check_r_db(connection_func, pre_msg, post_msg):
 
     return success
 
-def akrrdb_check():
+def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
 
     # CHECK: to make sure that we have MySQL drivers before continuing.
     if not mysql_available:
         log.error("Unable to find MySQLdb. Please install MySQLdb for python before running this script again.")
-        exit(1)
+        return False
+    
+    overall_success = True
 
     # CHECK: the akrr db
     akrr_ok = check_rw_db(akrrcfg.getDB,
                       "Checking 'mod_akrr' Database / User privileges...",
                       "'mod_akrr' Database check complete - Status: {0}")
 
-
-
-
+    if mod_akrr:
+        overall_success = overall_success and akrr_ok
 
     # Check: the app_kernel db
     app_kernel_ok = check_rw_db(akrrcfg.getAKDB,
                              "Checking 'mod_appkernel' Database / User privileges...",
                              "'mod_appkernel' Database check complete - Status: {0}")
 
+    if mod_appkernel:
+        overall_success = overall_success and app_kernel_ok
+        
     # CHECK: the XDMoD db
     xdmod_ok = check_r_db(akrrcfg.getXDDB,
                           "Checking 'modw' Database / User privileges...",
                           "'modw' Database check complete - Status: {0}")
+    
+    if modw:
+        overall_success = overall_success and xdmod_ok
 
     # DETERMINE: whether or not everything passed.
-    overall_success = akrr_ok and app_kernel_ok and xdmod_ok
 
     if overall_success:
         log.info("All Databases / User privileges check out!")
+        return True
     else:
         log.error("One or more of the required databases and their required users ran into a problem. Please take note of the previous messages, correct the issue and re-run this script.")
-        exit(1)
+        return False
 
 if __name__ == '__main__':
     akrrdb_check()
