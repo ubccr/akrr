@@ -601,7 +601,10 @@ def check_daemon(args):
     import akrrcfg
     from requests.auth import HTTPBasicAuth
     import requests
-    #modify python_path so that we can get /src on the path
+    
+    from requests.packages.urllib3.exceptions import SecurityWarning
+    #requests.packages.urllib3.disable_warnings(SecurityWarning)
+    
     
     ssl_verify = False
     
@@ -610,24 +613,20 @@ def check_daemon(args):
         restapi_host=akrrcfg.restapi_host
     #set full address
     api_url = 'https://'+restapi_host+':'+str(akrrcfg.restapi_port)+akrrcfg.restapi_apiroot
-    ssl_cert=None
-    #akrr.restapi_certfile
-    # Holds the user token returned by the auth request.
-    token = None
-    
+    ssl_cert=akrrcfg.restapi_certfile
+    ssl_verify=ssl_cert
     
     def populate_token():
         request = requests.get(api_url + "/token", auth=HTTPBasicAuth(akrrcfg.restapi_rw_username, akrrcfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
         if request.status_code == 200:
-            global token
             token = request.json()['data']['token']
+            return token
         else:
             log.error('Something went wrong when attempting to contact the REST API.')
+            return None
     
-        return token is not None
     
-    
-    def is_api_up():
+    def is_api_up(token):
         request = requests.get(api_url + "/scheduled_tasks", auth=(token, ""), verify=ssl_verify, cert=ssl_cert)
         if request.status_code == 200:
             return True
@@ -636,9 +635,10 @@ def check_daemon(args):
             return False
 
     log.info('Beginning check of the AKRR Rest API...')
-    token_populated = populate_token()
-    if token_populated:
-        is_up = is_api_up()
+    # Holds the user token returned by the auth request.
+    token = populate_token()
+    if token !=None:
+        is_up = is_api_up(token)
         if is_up:
             log.info('REST API is up and running!')
         else:
@@ -650,7 +650,7 @@ def check_daemon(args):
 def setup_handler(args):
     """call routine for initial AKRR setup"""
     import  akrr.akrrsetup
-    return akrr.akrrsetup.akrr_setup(stand_alone=args.stand_alone)
+    return akrr.akrrsetup.akrr_setup()
 
 def daemon_handler(args):
     """AKRR daemon handler"""
@@ -793,7 +793,7 @@ def akrr_cli():
     #setup parser
     setup_parser = subparsers.add_parser('setup',
         description='Initial AKRR Setup')
-    setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
+    #setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
     setup_parser.set_defaults(func=setup_handler)
     
     # PARSE: the command line parameters the user provided.

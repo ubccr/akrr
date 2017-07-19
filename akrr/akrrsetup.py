@@ -353,13 +353,13 @@ run (This user must have privileges to create users and databases):""")
         akrrgenerate_tables.setup_mod_appkernel()
     def start_daemon(self):
         """Start the daemon"""
-        daemon_script=os.path.join(akrr_bin_dir,'akrrd')
-        status=subprocess.call(sys.executable+" "+daemon_script+" start", shell=True)
+        akrr_cli=os.path.join(akrr_bin_dir,'akrr')
+        status=subprocess.call(akrr_cli+" daemon start", shell=True)
         if status!=0:exit(status)
     def check_daemon(self):
         """Check that the daemon is running"""
-        check_daemon=os.path.join(akrr_bin_dir,'akrr')
-        status=subprocess.call(sys.executable+" "+check_daemon+" daemon check", shell=True)
+        akrr_cli=os.path.join(akrr_bin_dir,'akrr')
+        status=subprocess.call(akrr_cli+" daemon check", shell=True)
         if status!=0:exit(status)
     
     def ask_cron_email(self):
@@ -388,8 +388,8 @@ run (This user must have privileges to create users and databases):""")
         """Install cron scripts."""
         if self.cronemail:mail="MAILTO = "+self.cronemail
         else: mail=None
-        restart="50 23 * * * "+akrr_bin_dir+"/akrr daemon restart"
-        checknrestart="33 * * * * "+akrr_bin_dir+"/akrr daemon checknrestart"
+        restart="50 23 * * * "+akrr_bin_dir+"/akrr daemon -cron restart"
+        checknrestart="33 * * * * "+akrr_bin_dir+"/akrr daemon -cron checknrestart"
         
         try:
             crontanContent=subprocess.check_output("crontab -l", shell=True)
@@ -417,14 +417,14 @@ run (This user must have privileges to create users and databases):""")
                         else:
                             crontanContent[i]="#"+crontanContent[i]
                         mailUpdated=True
-                if l.count("restart.sh")>0:
+                if l.count("akrr") and l.count("daemon") and l.count("restart")>0:
                     restartThere=True
-                if l.count("checknrestart.sh")>0:
+                if l.count("akrr") and l.count("daemon") and l.count("checknrestart")>0:
                     checknrestartThere=True
         if mailUpdated:
             log.info("Cron's MAILTO was updated")
         if ((self.cronemail!=None and mailThere) or (self.cronemail==None and mailThere==False)) and restartThere and checknrestartThere and mailUpdated==False:
-            log.warning("All entries found. No modifications necessary.")
+            log.warning("All AKRR crond entries found. No modifications necessary.")
             return
         if self.cronemail!=None and mailThere==False:
             crontanContent.insert(0, mail+"\n")
@@ -455,7 +455,6 @@ run (This user must have privileges to create users and databases):""")
                     if not inAKRR:bashcontentNew.append(l)
                     if l.count(akrrHeader+' [End]')>0:inAKRR=False
         bashcontentNew.append("\n"+akrrHeader+" [Start]\n")
-        bashcontentNew.append("export AKRR_HOME=\"{0}\"\n".format(akrr_home))
         bashcontentNew.append("export PATH=\"{0}/bin:$PATH\"\n".format(akrr_home))
         bashcontentNew.append(akrrHeader+" [End]\n\n")
         with open(os.path.expanduser('~/.bashrc'),'w') as f:
@@ -489,7 +488,9 @@ def akrr_setup(install_cron_scripts=True,stand_alone=False):
     install.check_daemon()
     if install_cron_scripts:
         install.install_cron_scripts()
-    install.update_bashrc()
+    
+    if in_src_install:
+        install.update_bashrc()
     
 if __name__ == '__main__':
     akrr_setup() 

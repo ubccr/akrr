@@ -28,13 +28,13 @@ in_src_install=False
 
 akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 akrr_bin_dir = None
-if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrrd')):
+if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrr')):
     akrr_bin_dir=os.path.join(os.path.dirname(akrr_mod_dir),'bin')
-    akrrd_fullpath=os.path.join(akrr_bin_dir,'akrrd')
+    akrr_cli_fullpath=os.path.join(akrr_bin_dir,'akrr')
     in_src_install=True
 else:
-    akrrd_fullpath=which('akrrd')
-    akrr_bin_dir=os.path.dirname(akrrd_fullpath)
+    akrr_cli_fullpath=which('akrr')
+    akrr_bin_dir=os.path.dirname(akrr_cli_fullpath)
 
 #determin akrr_home
 akrr_cfg=os.getenv("AKRR_CONF")
@@ -70,6 +70,8 @@ if data_dir[0] != '/':
 if completed_tasks_dir[0] != '/':
     completed_tasks_dir = os.path.abspath(os.path.join(akrrcfgdir, completed_tasks_dir))
 
+if restapi_certfile != '/':
+    restapi_certfile = os.path.abspath(os.path.join(akrrcfgdir, restapi_certfile))
 #wrongfields technical fields from loading python file which we don't want to 
 #see in resource and app kernel parameters dict
 wrongfieldsdict = {}
