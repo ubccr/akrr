@@ -44,8 +44,11 @@ try:
     import MySQLdb.cursors
 except Exception,e:
     log.error("""python module MySQLdb is not available. Install it!
-    For example by running on Ubuntu:
-         sudo apt-get install python2.7-mysqldb""")
+    For example by running on
+        RedHat or CentOS:
+            sudo yum install MySQL-python
+        Ubuntu:
+            sudo apt-get install python2.7-mysqldb""")
     raise e
 
 
@@ -58,13 +61,13 @@ in_src_install=False
 
 akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 akrr_bin_dir = None
-if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrrd')):
+if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrr')):
     akrr_bin_dir=os.path.join(os.path.dirname(akrr_mod_dir),'bin')
-    akrrd_fullpath=os.path.join(akrr_bin_dir,'akrrd')
+    akrr_fullpath=os.path.join(akrr_bin_dir,'akrr')
     in_src_install=True
 else:
-    akrrd_fullpath=which('akrrd')
-    akrr_bin_dir=os.path.dirname(akrrd_fullpath)
+    akrr_fullpath=which('akrr')
+    akrr_bin_dir=os.path.dirname(akrr_fullpath)
 
 
 #determin akrr_home
@@ -107,7 +110,18 @@ class InstallAKRR:
             
             log.error(msg)
             exit(1)
+    def check_utils(self):
+        from distutils.spawn import find_executable
         
+        errmsg=""
+        if not find_executable('ssh'):
+            errmsg+="Can not find ssh in PATH, please install it.\n"
+        if not find_executable('openssl'):
+            errmsg+="Can not find openssl in PATH, please install it.\n"
+        
+        if errmsg!="":
+            log.error(errmsg)
+            exit(1)
     def read_akrr_creds(self):
         log.info("Before Installation continues we need to setup the database.")
 
@@ -454,6 +468,7 @@ def akrr_setup(install_cron_scripts=True,stand_alone=False):
     install.stand_alone=stand_alone
     
     #check 
+    install.check_utils()
     install.check_previous_installation()
     #was in prep
     install.read_akrr_creds()
