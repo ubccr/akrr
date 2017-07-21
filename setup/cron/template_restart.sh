@@ -1,1 +1,0 @@
-50 23 * * * __AKRR_DIR/bin/restart.sh
