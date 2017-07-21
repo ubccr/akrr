@@ -12,6 +12,7 @@ import MySQLdb.cursors
 
 import copy
 
+from akrr import get_akrr_dirs
 from akrrlogging import *
 from util import which
 
@@ -19,49 +20,18 @@ from util import which
 # directory of this file
 curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-#AKRR configuration can be in three places
-# 1) AKRR_CONF if AKRR_CONF enviroment variable is defined
-# 2) ~/akrr/etc/akrr.conf if initiated from RPM or global python install
-# 3) <path to AKRR sources>/etc/akrr.conf for in source installation
+akrr_dirs=get_akrr_dirs()
 
-in_src_install=False
-
-akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-akrr_bin_dir = None
-if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrr')):
-    akrr_bin_dir=os.path.join(os.path.dirname(akrr_mod_dir),'bin')
-    akrr_cli_fullpath=os.path.join(akrr_bin_dir,'akrr')
-    in_src_install=True
-else:
-    akrr_cli_fullpath=which('akrr')
-    akrr_bin_dir=os.path.dirname(akrr_cli_fullpath)
-
-#determin akrr_home
-akrr_cfg=os.getenv("AKRR_CONF")
-if akrr_cfg==None:
-    if in_src_install:
-        akrr_home=os.path.dirname(akrr_mod_dir)
-        akrr_cfg=os.path.join(akrr_home,'etc','akrr.conf')
-        #log.info("In-source installation, AKRR configuration is in "+akrr_cfg)
-    else:
-        akrr_home=os.path.expanduser("~/akrr")
-        akrr_cfg=os.path.expanduser("~/akrr/etc/akrr.conf")
-        #log.info("AKRR configuration is in "+akrr_cfg)
-    
-else:
-    akrr_home=os.path.dirname(os.path.dirname(akrr_cfg))
-    #log.info("AKRR_CONF is set. AKRR configuration is in "+akrr_cfg)
-
-
-
-#location of akrr cfg directory
-cfg_dir = os.path.dirname(akrr_cfg)
-
-#directory with templates
-templates_dir=os.path.join(akrr_mod_dir,'templates')
-
-#directory with appkernels inputs and some script archives
-appker_repo_dir=os.path.join(akrr_mod_dir,'appker_repo')
+in_src_install=akrr_dirs['in_src_install']
+akrr_mod_dir=akrr_dirs['akrr_mod_dir']
+akrr_bin_dir=akrr_dirs['akrr_bin_dir']
+akrr_cli_fullpath=akrr_dirs['akrr_cli_fullpath']
+akrr_cfg=akrr_dirs['akrr_cfg']
+akrr_home=akrr_dirs['akrr_home']
+cfg_dir=akrr_dirs['cfg_dir']
+templates_dir=akrr_dirs['templates_dir']
+default_dir=akrr_dirs['default_dir']
+appker_repo_dir=akrr_dirs['appker_repo_dir']
 
 #load default values
 from akrrcfgdefault import *
@@ -140,7 +110,7 @@ def loadResource(resource_name):
     raises error if can not load
     """
     try:
-        default_resource_cfg_filename=os.path.join(curdir,'default_conf',"default.resource.conf")
+        default_resource_cfg_filename=os.path.join(default_dir,"default.resource.conf")
         resource_cfg_filename=os.path.join(cfg_dir,'resources',resource_name,"resource.conf")
         
         if not os.path.isfile(default_resource_cfg_filename):
@@ -261,8 +231,8 @@ def loadApp(app_name):
     raises error if can not load
     """
     try:
-        default_app_cfg_filename=os.path.join(curdir,"default_conf","default.app.conf")
-        app_cfg_filename=os.path.join(curdir,'default_conf',app_name+".app.conf")
+        default_app_cfg_filename=os.path.join(default_dir,"default.app.conf")
+        app_cfg_filename=os.path.join(default_dir,app_name+".app.conf")
         
         if not os.path.isfile(default_app_cfg_filename):
             akrrError(ERROR_GENERAL,"Default application kernel configuration file do not exists (%s)!"%default_app_cfg_filename)
@@ -280,7 +250,7 @@ def loadApp(app_name):
         #load resource specific parameters
         for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
             if resource_name not in ['notactive','templates']:
-                resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".conf")
+                resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
                     tmp=copy.deepcopy(app['appkernelOnResource']['default'])
                     execfile(resource_specific_app_cfg_filename,tmp)
@@ -433,11 +403,10 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
     
     
     #Try to get access
+    import akrr.akrrpexpect as akrrpexpect
 
     rsh = None
     try:
-        import akrrpexpect
-
         rsh = akrrpexpect.spawn(cmd)  #, logfile=logfile)
         #rsh.setwinsize(256,512)
 

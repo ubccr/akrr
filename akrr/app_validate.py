@@ -4,7 +4,6 @@ import sys
 import os
 import inspect
 import traceback
-import types
 import cStringIO
 
 import MySQLdb
@@ -19,26 +18,11 @@ pp = pprint.PrettyPrinter(indent=4)
 import json
 
 import xml.etree.ElementTree as ET
+#import akrrcfg
 
-
-#modify python_path
-curdir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) 
-if (curdir+"/../../src") not in sys.path:
-    sys.path.append(curdir+"/../../src")
-
-try:
-    import argparse
-except:
-    #add argparse directory to path and try again
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    argparsedir=os.path.abspath(os.path.join(curdir,"..","..","3rd_party","argparse-1.3.0"))
-    if argparsedir not in sys.path:sys.path.append(argparsedir)
-    import argparse
-    
-#import akrr
-#import log
-#import akrrrestclient
 from akrrlogging import *
+
+verbose=False
 
 def CheckDirSimple(sh,d):
     """
@@ -47,34 +31,35 @@ def CheckDirSimple(sh,d):
     return True,message if can write there
     return False,message if can not write there
     """
+    import akrrcfg
     dir(sh)
     cmd="if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi"%(d)
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     if msg.find("DOESNOTEXIST")>=0:
         return (None,"Directory %s:%s does not exists!"%(sh.remotemachine,d))
     
     cmd="echo test > "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     #print msg
     cmd="cat "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     #print msg
     if msg.strip()=="test":
         cmd="rm "+os.path.join(d,'akrrtestwrite')
-        akrr.sshCommand(sh,cmd)
+        akrrcfg.sshCommand(sh,cmd)
         return (True,"Directory exist and accessible for read/write")
     else:
         return (False,"Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
     
 def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
-        
+    import akrrcfg
     status,msg=CheckDirSimple(sh, d)
     if tryToCreate==True and status==None:
         log("Directory %s:%s does not exists, will try to create it"%(sh.remotemachine,d))
         cmd="mkdir \"%s\""%(d)
-        akrr.sshCommand(sh,cmd)
+        akrrcfg.sshCommand(sh,cmd)
         status,msg=CheckDirSimple(sh, d)
     if exitOnFail==False:
         return status,msg
@@ -88,22 +73,10 @@ def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
         logerr("Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
         exit()
 
-if __name__ == '__main__':
-    # TIME: to get to parsing
-    parser = argparse.ArgumentParser('Validation of app kernel installation on resource')
-
-    # SETUP: the arguments that we're going to support
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    parser.add_argument('resource', help="name of resource for validation and deployment'")
-    parser.add_argument('appkernel', help="name of resource for validation and deployment'")
-    parser.add_argument('-n', '--nnodes', default=2,type=int,
-                        help="number of nodes (default: 2)")
-    # PARSE: them arguments
-    args = parser.parse_args()
-    verbose=args.verbose
-    resource_name=args.resource
-    app_name=args.appkernel
-    nnodes=args.nnodes
+def app_validate(resource,appkernel,nnodes,verbose=False):
+    globals()['verbose']=verbose
+    resource_name=resource
+    app_name=appkernel
     
         
     errorCount=0
@@ -111,11 +84,15 @@ if __name__ == '__main__':
         
     log("Validating "+app_name+" application kernel installation on "+resource_name)
     
-    default_resource_param_filename=os.path.abspath(curdir+"/../../src/default.resource.inp.py")
-    resource_param_filename=os.path.abspath(curdir+"/../../cfg/resources/"+resource_name+"/resource.inp.py")
+    from akrr import get_akrr_dirs
     
-    default_app_param_filename=os.path.abspath(curdir+"/../../src/default.app.inp.py")
-    app_ker_param_filename=os.path.abspath(curdir+"/../../src/appkernels/"+app_name+".app.inp.py")
+    akrr_dirs=get_akrr_dirs()
+    
+    default_resource_param_filename=os.path.abspath(os.path.join(akrr_dirs['default_dir'],"default.resource.conf"))
+    resource_param_filename=os.path.abspath(os.path.join(akrr_dirs['cfg_dir'],"resources",resource_name,"resource.conf"))
+    
+    default_app_param_filename=os.path.abspath(os.path.join(akrr_dirs['default_dir'],"default.app.conf"))
+    app_ker_param_filename=os.path.abspath(os.path.join(akrr_dirs['default_dir'],app_name+".app.conf"))
     ###############################################################################################
     #validating resource parameter file
     
@@ -131,29 +108,29 @@ if __name__ == '__main__':
         tmp={}
         execfile(default_resource_param_filename,tmp)
         execfile(resource_param_filename,tmp)
-    except Exception,e:
+    except Exception:
         logerr("Can not load resource from """+resource_param_filename+"\n"+
                "Probably invalid syntax, see full error report below",traceback.format_exc())
-        exit()
+        exit(1)
     #check syntax
     try:
         tmp={}
         execfile(default_app_param_filename,tmp)
         execfile(app_ker_param_filename,tmp)
-    except Exception,e:
+    except Exception:
         logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
                "Probably invalid syntax, see full error report below",traceback.format_exc())
-        exit()
+        exit(1)
     
     #now we can load akrr
-    import akrr
+    import akrrcfg
     import akrrrestclient
-    from resource_validation_and_deployment import makeResultsSummary
+    from resource_deploy import makeResultsSummary
 
-    resource=akrr.FindResourceByName(resource_name)
+    resource=akrrcfg.FindResourceByName(resource_name)
     log("Syntax of %s is correct and all necessary parameters are present."%resource_param_filename,highlight="ok")
     
-    app=akrr.FindAppByName(app_name)
+    app=akrrcfg.FindAppByName(app_name)
     #check the presence of runScript[resource]
     #if resource_name not in app['runScript'] and 'default' not in app['runScript']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
@@ -164,7 +141,7 @@ if __name__ == '__main__':
     #check if AK is in DB
     if True:
         #add entry to mod_appkernel.resource
-        dbAK,curAK=akrr.getAKDB(True)
+        dbAK,curAK=akrrcfg.getAKDB(True)
             
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()
@@ -176,7 +153,7 @@ if __name__ == '__main__':
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()[0]
         #add entry to mod_akrr.resource
-        db,cur=akrr.getDB(True)
+        db,cur=akrrcfg.getDB(True)
             
         cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
         ak_in_DB = cur.fetchall()
@@ -197,7 +174,7 @@ if __name__ == '__main__':
     str_io=cStringIO.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh=akrr.sshResource(resource)
+        rsh=akrrcfg.sshResource(resource)
         
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
@@ -273,7 +250,7 @@ if __name__ == '__main__':
     
     #check if the test job is already submitted
     task_id=None
-    test_job_lock_filename=os.path.join(akrr.data_dir,resource_name+"_"+app_name+"_test_task.dat")
+    test_job_lock_filename=os.path.join(akrrcfg.data_dir,resource_name+"_"+app_name+"_test_task.dat")
     if os.path.isfile(test_job_lock_filename):
         fin=open(test_job_lock_filename,"r")
         task_id=int(fin.readline())
@@ -436,7 +413,7 @@ if __name__ == '__main__':
                 exit(1)
             if True:
                 #add entry to mod_appkernel.resource
-                dbAK,curAK=akrr.getAKDB(True)
+                dbAK,curAK=akrrcfg.getAKDB(True)
                     
                 curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
                 ak_in_AKDB = curAK.fetchall()
@@ -448,7 +425,7 @@ if __name__ == '__main__':
                 curAK.execute('''UPDATE app_kernel_def SET enabled=1,visible=1  WHERE ak_base_name=%s''', (app_name,))
                 dbAK.commit()
                 #add entry to mod_akrr.resource
-                db,cur=akrr.getDB(True)
+                db,cur=akrrcfg.getDB(True)
                     
                 cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
                 ak_in_DB = cur.fetchall()
@@ -470,6 +447,23 @@ if __name__ == '__main__':
     if(errorCount==0 and warningCount==0):
         log("\nDONE, you can move to next step!\n",highlight="ok")
     os.remove(test_job_lock_filename)
+   
+ 
+if __name__ == '__main__':
+    import argparse
     
+    # TIME: to get to parsing
+    parser = argparse.ArgumentParser('Validation of app kernel installation on resource')
+
+    # SETUP: the arguments that we're going to support
+    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+    parser.add_argument('-n', '--nnodes', default=2,type=int,
+                        help="number of nodes (default: 2)")
+    parser.add_argument('resource', help="name of resource for validation and deployment'")
+    parser.add_argument('appkernel', help="name of resource for validation and deployment'")
+
+    # PARSE: them arguments
+    args = parser.parse_args()
     
+    app_validate(args.resource,args.appkernel,args.nnodes,verbose=args.verbose)
     

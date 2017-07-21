@@ -660,6 +660,14 @@ def resource_deploy_handler(args):
     import akrr.resource_deploy
     return akrr.resource_deploy.resource_deploy(args.resource,verbose=args.verbose)
 
+def app_add_handler(args):
+    import akrr.app_add
+    return akrr.app_add.app_add(args.resource,args.appkernel,verbose=args.verbose)
+
+def app_validate_handler(args):
+    import akrr.app_validate
+    return akrr.app_validate.app_validate(args.resource,args.appkernel,args.nnodes,verbose=args.verbose)
+
 def daemon_handler(args):
     """AKRR daemon handler"""
     if args.action=='check':
@@ -811,7 +819,7 @@ def akrr_cli():
         description='resource manipulation')
     resource_subparsers = resource_parser.add_subparsers()
     add_resource_parser = resource_subparsers.add_parser('add',
-        description='add new resource to AKRR, deploy input files')
+        description='add new resource to AKRR')
     add_resource_parser.add_argument('-t', '--test', action='store_true', help="No files will actually be created, only their names will be outputed to the console.")
     add_resource_parser.add_argument('-m', '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
     add_resource_parser.set_defaults(func=resource_add_handler)
@@ -821,9 +829,22 @@ def akrr_cli():
     deploy_resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
     deploy_resource_parser.set_defaults(func=resource_deploy_handler)
     
-    #resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
-    #resource_parser.set_defaults(func=resource_handler)
+    #new appkernel
+    app_parser = subparsers.add_parser('app',
+        description='appkernel on resource manipulation')
+    app_subparsers = app_parser.add_subparsers()
+    app_add_parser = app_subparsers.add_parser('add',
+        description='add new appkernel to resource')
+    app_add_parser.add_argument('resource', help="name of resource to where appkernel is added'")
+    app_add_parser.add_argument('appkernel', help="name of appkernel to add'")
+    app_add_parser.set_defaults(func=app_add_handler)
     
+    app_validate_parser = app_subparsers.add_parser('validate',
+        description='Validation of app kernel installation on resource')
+    app_validate_parser.add_argument('-n', '--nnodes', default=2,type=int, help="number of nodes (default: 2)")
+    app_validate_parser.add_argument('resource', help="name of resource for validation and deployment'")
+    app_validate_parser.add_argument('appkernel', help="name of resource for validation and deployment'")
+    app_validate_parser.set_defaults(func=app_validate_handler)
     
     # PARSE: the command line parameters the user provided.
     cli_args = parser.parse_args()

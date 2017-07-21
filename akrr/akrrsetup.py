@@ -54,8 +54,8 @@ except Exception,e:
 
 #AKRR configuration can be in three places
 # 1) AKRR_CONF if AKRR_CONF enviroment variable is defined
-# 2) ~/akrr/etc/akrr.inp.py if initiated from RPM or global python install
-# 3) <path to AKRR sources>/etc/akrr.inp.py for in source installation
+# 2) ~/akrr/etc/akrr.conf if initiated from RPM or global python install
+# 3) <path to AKRR sources>/etc/akrr.conf for in source installation
 
 in_src_install=False
 

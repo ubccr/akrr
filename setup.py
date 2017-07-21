@@ -19,7 +19,7 @@ setup(name='akrr',
     author_email='nikolays@buffalo.edu',
     url='https://github.com/ubccr/akrrcfg',
     scripts=['bin/akrr'],
-    packages = ['akrr','akrr/util','akrr/models','akrr/appkernelsparsers'],
+    packages = ['akrr','akrr/util','akrr/models','akrr/appkernelsparsers','akrr/akrrpexpect'],
     requires=['MySQLdb','requests','bottle'],
     package_data={'akrr':['templates/*.conf','default_conf/*.conf','appker_repo/inputs.tar.gz','appker_repo/execs.tar.gz']}
 )
