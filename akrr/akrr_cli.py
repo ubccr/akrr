@@ -652,6 +652,14 @@ def setup_handler(args):
     import  akrr.akrrsetup
     return akrr.akrrsetup.akrr_setup()
 
+def resource_add_handler(args):
+    import akrr.resource_add
+    return akrr.resource_add.resource_add(minimalistic=args.minimalistic,verbose=args.verbose)
+
+def resource_deploy_handler(args):
+    import akrr.resource_deploy
+    return akrr.resource_deploy.resource_deploy(args.resource,verbose=args.verbose)
+
 def daemon_handler(args):
     """AKRR daemon handler"""
     if args.action=='check':
@@ -669,6 +677,8 @@ def daemon_handler(args):
     
 def akrr_cli():
     parser = argparse.ArgumentParser(description='command line interface to AKRR')
+    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+    
     subparsers = parser.add_subparsers()
 
     query_parser = subparsers.add_parser('query',
@@ -795,6 +805,25 @@ def akrr_cli():
         description='Initial AKRR Setup')
     #setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
     setup_parser.set_defaults(func=setup_handler)
+    
+    #new_resource
+    resource_parser = subparsers.add_parser('resource',
+        description='resource manipulation')
+    resource_subparsers = resource_parser.add_subparsers()
+    add_resource_parser = resource_subparsers.add_parser('add',
+        description='add new resource to AKRR, deploy input files')
+    add_resource_parser.add_argument('-t', '--test', action='store_true', help="No files will actually be created, only their names will be outputed to the console.")
+    add_resource_parser.add_argument('-m', '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
+    add_resource_parser.set_defaults(func=resource_add_handler)
+    
+    deploy_resource_parser = resource_subparsers.add_parser('deploy',
+        description='deploy input files and scripts to resource')
+    deploy_resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
+    deploy_resource_parser.set_defaults(func=resource_deploy_handler)
+    
+    #resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
+    #resource_parser.set_defaults(func=resource_handler)
+    
     
     # PARSE: the command line parameters the user provided.
     cli_args = parser.parse_args()

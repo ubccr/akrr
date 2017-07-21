@@ -51,27 +51,33 @@ if akrr_cfg==None:
 else:
     akrr_home=os.path.dirname(os.path.dirname(akrr_cfg))
     #log.info("AKRR_CONF is set. AKRR configuration is in "+akrr_cfg)
-    
+
+
 
 #location of akrr cfg directory
-akrrcfgdir = os.path.dirname(akrr_cfg)
+cfg_dir = os.path.dirname(akrr_cfg)
 
+#directory with templates
+templates_dir=os.path.join(akrr_mod_dir,'templates')
+
+#directory with appkernels inputs and some script archives
+appker_repo_dir=os.path.join(akrr_mod_dir,'appker_repo')
 
 #load default values
 from akrrcfgdefault import *
 
 #load akrr params
-execfile(akrrcfgdir + "/akrr.conf")
+execfile(cfg_dir + "/akrr.conf")
 
 #set default values for unset variables
 #make absolute paths from relative
 if data_dir[0] != '/':
-    data_dir = os.path.abspath(os.path.join(akrrcfgdir, data_dir))
+    data_dir = os.path.abspath(os.path.join(cfg_dir, data_dir))
 if completed_tasks_dir[0] != '/':
-    completed_tasks_dir = os.path.abspath(os.path.join(akrrcfgdir, completed_tasks_dir))
+    completed_tasks_dir = os.path.abspath(os.path.join(cfg_dir, completed_tasks_dir))
 
 if restapi_certfile != '/':
-    restapi_certfile = os.path.abspath(os.path.join(akrrcfgdir, restapi_certfile))
+    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
 #wrongfields technical fields from loading python file which we don't want to 
 #see in resource and app kernel parameters dict
 wrongfieldsdict = {}
@@ -135,7 +141,7 @@ def loadResource(resource_name):
     """
     try:
         default_resource_cfg_filename=os.path.join(curdir,'default_conf',"default.resource.conf")
-        resource_cfg_filename=os.path.join(akrrcfgdir,'resources',resource_name,"resource.conf")
+        resource_cfg_filename=os.path.join(cfg_dir,'resources',resource_name,"resource.conf")
         
         if not os.path.isfile(default_resource_cfg_filename):
             akrrError(ERROR_GENERAL,"Default resource configuration file do not exists (%s)!"%default_resource_cfg_filename)
@@ -173,7 +179,7 @@ def loadAllResources():
     load all resources from configuration directory
     """
     global resources
-    for resource_name in os.listdir(akrrcfgdir + "/resources"):
+    for resource_name in os.listdir(cfg_dir + "/resources"):
         if resource_name not in ['notactive','templates']:
             # log("loading "+resource_name)
             try:
@@ -208,7 +214,7 @@ loadAllResources()
 #
 if not os.path.isfile(restapi_certfile):
     #assuming it is relative to akrrcfg
-    restapi_certfile = os.path.abspath(os.path.join(akrrcfgdir, restapi_certfile))
+    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
 if not os.path.isfile(restapi_certfile):
     raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
 
@@ -272,9 +278,9 @@ def loadApp(app_name):
             if wrongfields.count(key)>0:continue
             app[key]=val
         #load resource specific parameters
-        for resource_name in os.listdir(os.path.join(akrrcfgdir, "resources")):
+        for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
             if resource_name not in ['notactive','templates']:
-                resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".conf")
+                resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
                     tmp=copy.deepcopy(app['appkernelOnResource']['default'])
                     execfile(resource_specific_app_cfg_filename,tmp)
@@ -341,9 +347,9 @@ def FindAppByName(app_name):
         reloadAppCfg=True
     
     #check if new resources was added
-    for resource_name in os.listdir(os.path.join(akrrcfgdir, "resources")):
+    for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
         if resource_name not in ['notactive','templates']:
-            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.conf")
+            resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
             if os.path.isfile(resource_specific_app_cfg_filename):
                 if resource_name not in app['appkernelOnResource']:
                     reloadAppCfg=True
@@ -353,7 +359,7 @@ def FindAppByName(app_name):
     #check if new resources were removed
     for resource_name in app['appkernelOnResource']:
         if resource_name not in ['default']:
-            resource_specific_app_cfg_filename=os.path.join(akrrcfgdir, "resources",resource_name,app_name+".app.conf")
+            resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
             if not os.path.isfile(resource_specific_app_cfg_filename):
                 reloadAppCfg=True
             

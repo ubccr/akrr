@@ -12,12 +12,12 @@ import MySQLdb
 
 #Set proper path for stand alone test runs
 if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../../src'))
+    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../..'))
 
 
 import akrr
-import akrrappkeroutputparser
-from akrrappkeroutputparser import AppKerOutputParser,total_seconds
+import akrr.appkernelsparsers.akrrappkeroutputparser
+from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,total_seconds
 
 #graph500/run input$numCores
 

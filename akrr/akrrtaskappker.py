@@ -10,7 +10,7 @@ import copy
 import MySQLdb
 
 from akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
-from appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
  
 class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
     """Task Handler for AppKernel execution and processing"""
@@ -443,7 +443,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             (batchJobDir,stdoutFile,stderrFile,appstdoutFile,taskexeclogFile)=self.GetResultFiles(raiseError=True)
             
             #get the performance data
-            parserfilename=os.path.join(akrrcfg.curdir,"appkernelsparsers",self.app['parser'])
+            parserfilename=os.path.join(akrrcfg.akrr_mod_dir,"appkernelsparsers",self.app['parser'])
             import imp
             with open(parserfilename, 'rb') as fp:
                 thisAppKerParser = imp.load_module(

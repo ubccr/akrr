@@ -1,6 +1,5 @@
 """Validate resource parameters and deploy app. kernel stack to remote resource"""
 import sys
-import inspect
 import traceback
 import cStringIO
 import datetime
@@ -10,16 +9,8 @@ import copy
 import os
 import types
 
-try:
-    import argparse
-except:
-    #add argparse directory to path and try again
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    argparsedir=os.path.abspath(os.path.join(curdir,"..","..","3rd_party","argparse-1.3.0"))
-    if argparsedir not in sys.path:sys.path.append(argparsedir)
-    import argparse
+import argparse
 
-args=None
 verbose=True
 
 
@@ -32,15 +23,11 @@ import xml.etree.ElementTree as ET
 import pprint
 pp = pprint.PrettyPrinter(indent=4)
 
-#modify python_path
-curdir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) 
-if (curdir+"/../../src") not in sys.path:
-    sys.path.append(curdir+"/../../src")
 
-#if __name__ != '__main__':
-import akrr
+
+import akrrcfg
 import akrrrestclient
-#import akrr
+
 from akrrlogging import *
 
 
@@ -53,21 +40,21 @@ def CheckDirSimple(sh,d):
     """
     dir(sh)
     cmd="if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi"%(d)
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     if msg.find("DOESNOTEXIST")>=0:
         return (None,"Directory %s:%s does not exists!"%(sh.remotemachine,d))
     
     cmd="echo test > "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     #print msg
     cmd="cat "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrr.sshCommand(sh,cmd)
+    msg=akrrcfg.sshCommand(sh,cmd)
     #print msg
     if msg.strip()=="test":
         cmd="rm "+os.path.join(d,'akrrtestwrite')
-        akrr.sshCommand(sh,cmd)
+        akrrcfg.sshCommand(sh,cmd)
         return (True,"Directory exist and accessible for read/write")
     else:
         return (False,"Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
@@ -77,7 +64,7 @@ def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
     if tryToCreate==True and status==None:
         log("Directory %s:%s does not exists, will try to create it"%(sh.remotemachine,d))
         cmd="mkdir -p \"%s\""%(d)
-        akrr.sshCommand(sh,cmd)
+        akrrcfg.sshCommand(sh,cmd)
         status,msg=CheckDirSimple(sh, d)
     if exitOnFail==False:
         return status,msg
@@ -90,6 +77,7 @@ def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
     else:
         logerr("Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
         exit()
+        
 def makeResultsSummary(verbose,resource_name,app_name,completed_tasks,akrr_xdmod_instanceinfo,akrr_errmsg):
     def addFileRef(comment,filename,addIfExists=True):
         if os.path.exists(filename):
@@ -97,7 +85,7 @@ def makeResultsSummary(verbose,resource_name,app_name,completed_tasks,akrr_xdmod
         else:
             return comment+": "+"Not Present"+"\n"
     
-    task_dir=os.path.join(akrr.completed_tasks_dir,resource_name,app_name,completed_tasks['datetimestamp'])
+    task_dir=os.path.join(akrrcfg.completed_tasks_dir,resource_name,app_name,completed_tasks['datetimestamp'])
     
     msg=""
     #if verbosity==0:
@@ -118,32 +106,15 @@ def makeResultsSummary(verbose,resource_name,app_name,completed_tasks,akrr_xdmod
     msg+="\t"+addFileRef("Task execution logs",os.path.join(task_dir,'proc','log'))
     #else:
     return msg
-def resource_validation_and_deployment():
-    
-    # TIME: to get to parsing
-    parser = argparse.ArgumentParser('Resource configuration validation and deployment')
 
-    # SETUP: the arguments that we're going to support
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    parser.add_argument('resource', help="name of resource for validation and deployment'")
-    # PARSE: them arguments
-    
-    args = parser.parse_args()
-    global verbose
-    verbose=args.verbose
-    
-    if len(sys.argv)!=2:
-        print __doc__
-        print "format:"
-        print "  python "+__file__+" resource_name"
-        exit()
+def resource_deploy(resource_name,verbose=False):
+    globals()['verbose']=verbose
     
     errorCount=0
     warningCount=0
     
-    resource_name=sys.argv[1]
-    default_resource_param_filename=os.path.abspath(curdir+"/../../src/default.resource.inp.py")
-    resource_param_filename=os.path.abspath(curdir+"/../../cfg/resources/"+resource_name+"/resource.inp.py")
+    default_resource_param_filename=os.path.join(akrrcfg.akrr_mod_dir,"default_conf","default.resource.conf")
+    resource_param_filename=os.path.join(akrrcfg.cfg_dir,"resources",resource_name,"resource.conf")
     app_name='test'
     
     ###############################################################################################
@@ -169,7 +140,7 @@ def resource_validation_and_deployment():
     #now we can load akrr
     #import akrr
     #import akrrrestclient
-    resource=akrr.FindResourceByName(resource_name)
+    resource=akrrcfg.FindResourceByName(resource_name)
     
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
@@ -225,7 +196,7 @@ def resource_validation_and_deployment():
     str_io=cStringIO.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh=akrr.sshResource(resource)
+        rsh=akrrcfg.sshResource(resource)
         
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
@@ -242,7 +213,7 @@ def resource_validation_and_deployment():
     
     ###############################################################################################
     log("Checking if shell is BASH\n")
-    msg=akrr.sshCommand(rsh,"echo $BASH")
+    msg=akrrcfg.sshCommand(rsh,"echo $BASH")
     if msg.count("bash")>0:
         log("Shell is BASH\n",highlight="ok")
     else:
@@ -293,18 +264,18 @@ def resource_validation_and_deployment():
     str_io=cStringIO.StringIO()
     try:
         #sys.stdout = sys.stderr = str_io
-        akrr.sshCommand(rsh,"cd %s"%resource['appKerDir'])
-        out=akrr.sshCommand(rsh,"ls "+resource['appKerDir'])
+        akrrcfg.sshCommand(rsh,"cd %s"%resource['appKerDir'])
+        out=akrrcfg.sshCommand(rsh,"ls "+resource['appKerDir'])
         files_in_appKerDir=out.strip().split()
         
         if not ("inputs" in files_in_appKerDir or "inputs/" in files_in_appKerDir):
             log("Copying app. kernel input tarball to %s"%resource['appKerDir'])
-            akrr.scpToResource(resource,curdir+"/../../appker_repo/inputs.tar.gz",resource['appKerDir'],logfile=str_io)
+            akrrcfg.scpToResource(resource,akrrcfg.appker_repo_dir+"/inputs.tar.gz",resource['appKerDir'],logfile=str_io)
             log("Unpacking app. kernel input files to %s/inputs"%resource['appKerDir'])
             
-            print >>str_io, akrr.sshCommand(rsh,"tar xvfz %s/inputs.tar.gz"%resource['appKerDir'])
+            print >>str_io, akrrcfg.sshCommand(rsh,"tar xvfz %s/inputs.tar.gz"%resource['appKerDir'])
             
-            out=akrr.sshCommand(rsh,"df -h %s/inputs"%resource['appKerDir'])
+            out=akrrcfg.sshCommand(rsh,"df -h %s/inputs"%resource['appKerDir'])
             if out.count("No such file or directory")==0:
                 log("App. kernel input files are in %s/inputs\n"%resource['appKerDir'],highlight="ok")
             else:
@@ -319,12 +290,12 @@ def resource_validation_and_deployment():
         if not ("execs" in files_in_appKerDir or "execs/" in files_in_appKerDir):
             log("Copying app. kernel execs tarball to %s"%resource['appKerDir'])
             log("It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
-            akrr.scpToResource(resource,curdir+"/../../appker_repo/execs.tar.gz",resource['appKerDir'],logfile=str_io)
+            akrrcfg.scpToResource(resource,akrrcfg.appker_repo_dir+"/execs.tar.gz",resource['appKerDir'],logfile=str_io)
             log("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs"%resource['appKerDir'])
             
-            print >>str_io, akrr.sshCommand(rsh,"tar xvfz %s/execs.tar.gz"%resource['appKerDir'])
+            print >>str_io, akrrcfg.sshCommand(rsh,"tar xvfz %s/execs.tar.gz"%resource['appKerDir'])
             
-            out=akrr.sshCommand(rsh,"df -h %s/execs"%resource['appKerDir'])
+            out=akrrcfg.sshCommand(rsh,"df -h %s/execs"%resource['appKerDir'])
             if out.count("No such file or directory")==0:
                 log("HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in %s/execs\n"%resource['appKerDir'],highlight="ok")
             else:
@@ -335,7 +306,7 @@ def resource_validation_and_deployment():
             log("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
             warningCount+=1
         
-        out=akrr.sshCommand(rsh,"rm execs.tar.gz  inputs.tar.gz")
+        out=akrrcfg.sshCommand(rsh,"rm execs.tar.gz  inputs.tar.gz")
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
     except Exception,e:
@@ -348,7 +319,7 @@ def resource_validation_and_deployment():
         exit()
     #
     log("Testing app.signature calculator on headnode\n")
-    out=akrr.sshCommand(rsh,"%s/execs/bin/appsigcheck.sh `which md5sum`"%(resource['appKerDir'],))
+    out=akrrcfg.sshCommand(rsh,"%s/execs/bin/appsigcheck.sh `which md5sum`"%(resource['appKerDir'],))
     if out.count("===ExeBinSignature===")>0 and out.count("MD5:")>0:
         log("App.signature calculator is working on headnode\n",highlight="ok")
     else:
@@ -380,7 +351,7 @@ def resource_validation_and_deployment():
     
     #check if the test job is already submitted
     task_id=None
-    test_job_lock_filename=os.path.join(akrr.data_dir,resource_name+"_test_task.dat")
+    test_job_lock_filename=os.path.join(akrrcfg.data_dir,resource_name+"_test_task.dat")
     if os.path.isfile(test_job_lock_filename):
         fin=open(test_job_lock_filename,"r")
         task_id=int(fin.readline())
@@ -598,12 +569,12 @@ def resource_validation_and_deployment():
     str_io=cStringIO.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh=akrr.sshResource(resource)
+        rsh=akrrcfg.sshResource(resource)
         
         NumberOfUnknownHosts=0
         for node in set(nodes):
             print node
-            out=akrr.sshCommand(rsh,"ping -c 1 %s"%node)
+            out=akrrcfg.sshCommand(rsh,"ping -c 1 %s"%node)
             if out.count("unknown host")>0:
                 NumberOfUnknownHosts+=1
             
@@ -646,10 +617,10 @@ def resource_validation_and_deployment():
         str_io=cStringIO.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            rsh=akrr.sshResource(resource)
+            rsh=akrrcfg.sshResource(resource)
             akrrHeader='AKRR Remote Resource Environment Variables'
             
-            out=akrr.sshCommand(rsh,'''if [ -e $HOME/.bashrc ]
+            out=akrrcfg.sshCommand(rsh,'''if [ -e $HOME/.bashrc ]
 then
    if [[ `grep "\#'''+akrrHeader+''' \[Start\]" $HOME/.bashrc` == *"'''+akrrHeader+''' [Start]"* ]]
    then
@@ -659,7 +630,7 @@ then
        tail -n "+$(( $(grep -n '\#'''+akrrHeader+''' \[End\]' $HOME/.bashrc_akrrbak | head -n 1 | cut -d ":" -f 1) + 1 ))" $HOME/.bashrc_akrrbak  >> $HOME/.bashrc
    fi
 fi''')
-            out=akrr.sshCommand(rsh,'''
+            out=akrrcfg.sshCommand(rsh,'''
 echo "Appending AKRR records to $HOME/.bashrc"
 echo "#'''+akrrHeader+''' [Start]" >> $HOME/.bashrc
 echo "export AKRR_NETWORK_SCRATCH=\\"'''+resource['networkScratch']+'''\\"" >> $HOME/.bashrc
@@ -684,7 +655,7 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
             exit()
         #enabling resource for execution
         try:
-            dbAK,curAK=akrr.getAKDB(True)
+            dbAK,curAK=akrrcfg.getAKDB(True)
             
             curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
             resource_in_AKDB = curAK.fetchall()
@@ -731,7 +702,18 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
     if(errorCount==0 and warningCount==0):
         log("\nDONE, you can move to next step!\n",highlight="ok")
     os.remove(test_job_lock_filename)
-    
+
+
 if __name__ == '__main__':
-    resource_validation_and_deployment()
+    # TIME: to get to parsing
+    parser = argparse.ArgumentParser('Resource configuration validation and deployment')
+
+    # SETUP: the arguments that we're going to support
+    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+    parser.add_argument('resource', help="name of resource for validation and deployment'")
+    # PARSE: them arguments
+    
+    args = parser.parse_args()
+    
+    resource_deploy(args.resource,args.verbose)
     

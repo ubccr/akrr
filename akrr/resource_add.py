@@ -6,30 +6,17 @@ the default resource templates.
 ###############################################################################
 # IMPORTS
 ###############################################################################
-import inspect
 import sys
 import os
 import getpass
 import cStringIO
 import traceback
 import re
-#modify python_path so that we can get /src on the path
-curdir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-if (curdir+"/../../src") not in sys.path:
-    sys.path.append(curdir+"/../../src")
 
-import akrr
+import akrrcfg
 import util.logging as logging
-import resource_validation_and_deployment
 
-try:
-    import argparse
-except:
-    #add argparse directory to path and try again
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    argparsedir=os.path.abspath(os.path.join(curdir,"..","..","3rd_party","argparse-1.3.0"))
-    if argparsedir not in sys.path:sys.path.append(argparsedir)
-    import argparse
+import akrr.resource_deploy
 
 # Attempt to import MySQL, if it's not there then we'll exit out and notify the
 # user blow
@@ -45,16 +32,15 @@ except ImportError:
 ###############################################################################
 
 # global variable to hold the script arguments
-args = None
-
-config_dir = os.path.join(curdir, '../../cfg/')
-
-resources_dir = os.path.join(config_dir, 'resources/')
+config_dir = akrrcfg.cfg_dir
+resources_dir = os.path.join(config_dir, 'resources')
 
 resourceName=None
-
+verbose=False
+test=False
+minimalistic=False
 rsh=None
-#variables for template with defalt values
+#variables for template with default values
 info = None
 ppn = None
 remoteAccessNode = None
@@ -63,7 +49,7 @@ remoteCopyMethod='scp'
 sshUserName = None
 sshPassword = None
 sshPassword4thisSession = None
-sshPrivateKeyFile = None#'/home/mikola/.ssh/id_rsa_test'
+sshPrivateKeyFile = None
 sshPrivateKeyPassword=None
 
 networkScratch=None
@@ -90,7 +76,7 @@ def open_file(file_path, privs):
     if file_path and isinstance(file_path, basestring) and privs and isinstance(privs, basestring):
 
         # ADD: Some verbosity
-        if args.verbose:
+        if verbose:
             logging.info("Opening with privs [{0}]: {1}", privs, file_path)
 
         try:
@@ -99,7 +85,7 @@ def open_file(file_path, privs):
             file_handle = open(file_path, privs)
 
             # LET: the verbose users know we succeeded
-            if args.verbose:
+            if verbose:
                 logging.info('Successfully preformed open [{0}] on {1}', privs, file_path)
 
             # RETURN: the file_handle
@@ -126,7 +112,7 @@ def read_from_file(file_handle):
     if file_handle and isinstance(file_handle, file):
 
         # ADDING: verbose logging before the operation.
-        if args.verbose:
+        if verbose:
             logging.info('Attempting to read in contents of {0}', file_handle.name)
 
         try:
@@ -135,7 +121,7 @@ def read_from_file(file_handle):
             contents = file_handle.read()
 
             # PROVIDE: the user some verbose success logging.
-            if args.verbose:
+            if verbose:
                 logging.info('Successfully read the contents of {0}', file_handle.name)
 
             # RETURN: the contents of the file.
@@ -165,12 +151,12 @@ def write_to_file(file_handle, lines):
         return
     if lines:
         try:
-            if args.verbose:
+            if verbose:
                 logging.info("Writing {0} lines to {1}", len(lines), file_handle.name)
 
             file_handle.writelines(lines)
 
-            if args.verbose:
+            if verbose:
                 logging.info("Successfully wrote {0} lines to {1}", len(lines), file_handle.name)
 
         except IOError, e:
@@ -188,12 +174,12 @@ def close_file(file_handle):
     """
     if file_handle and isinstance(file_handle, file):
         try:
-            if args.verbose:
+            if verbose:
                 logging.info('Attempting to close the file {0}', file_handle.name)
 
             file_handle.close()
 
-            if args.verbose:
+            if verbose:
                 logging.info('Successfully closed the file {0}', file_handle.name)
         except IOError, e:
             logging.error('There was an error encountered while closing {0}. {1}: {2}', file_handle.name, e.args[0], e.args[1])
@@ -209,7 +195,7 @@ def retrieve_resources():
     :return: a tuple of strings containing the name of the resources.
     """
     try:
-        connection, cursor = akrr.getXDDB()
+        connection, cursor = akrrcfg.getXDDB()
 
         # PROVIDES: automatic resource cleanup
         with connection:
@@ -221,7 +207,7 @@ def retrieve_resources():
         sys.exit(1)
 
     # PROVIDE: a little bit of verbosity to the masses.
-    if args.verbose:
+    if verbose:
         logging.info("Retrieved {0} Resource records...", len(rows) if rows else 0)
 
     return rows
@@ -281,7 +267,7 @@ def create_resource_template(file_path, queue, contents):
     for v in ['remoteAccessNode','remoteAccessMethod','remoteCopyMethod',
               'sshUserName','sshPassword','sshPrivateKeyFile','sshPrivateKeyPassword',
               'networkScratch','localScratch','akrrData','appKerDir','batchScheduler']:
-              contents=update_template(contents,v)
+        contents=update_template(contents,v)
     contents+="\n\n"
     
     #contents=re.sub(r'^ppn\s*=\s*.*$','ppn = %d'%ppn,contents,flags=re.M)
@@ -293,7 +279,7 @@ def create_resource_template(file_path, queue, contents):
 
 
 
-    if not args.test:
+    if not test:
         output_file = open_file(output_path, privs)
         write_to_file(output_file, contents)
         close_file(output_file)
@@ -315,19 +301,19 @@ def generate_default_templates(resources):
         logging.warning("No resources found. No files to create.")
     else:
 
-        slurm_template_contents = retrieve_queue_template(os.path.join(akrr.curdir, 'templates','template.{0}.inp.py'), 'slurm')
-        pbs_template_contents = retrieve_queue_template(os.path.join(akrr.curdir, 'templates', 'template.{0}.inp.py'), 'pbs')
+        slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.curdir, 'templates','template.{0}.conf'), 'slurm')
+        pbs_template_contents = retrieve_queue_template(os.path.join(akrrcfg.curdir, 'templates', 'template.{0}.conf'), 'pbs')
 
         queues = {'slurm': slurm_template_contents, 'pbs': pbs_template_contents}
 
         for resource in resources:
-            if args.verbose:
+            if verbose:
                 logging.info("Creating Resource Template: {0} ", resource[0] + "")
 
-            if not args.test:
+            if not test:
                 for queue, contents in queues.iteritems():
 
-                    file_path = os.path.join(resources_dir, resource[0] + 'resource.inp.py')
+                    file_path = os.path.join(resources_dir, resource[0] + 'resource.conf')
 
                     create_resource_template(file_path, queue, contents)
 
@@ -336,24 +322,24 @@ def generate_default_templates(resources):
 def generate_resource_config(resource_id, resource_name, queuing_system):
     logging.info("Initiating %s at AKRR"%(resource_name,))
     
-    slurm_template_contents = retrieve_queue_template(os.path.join(akrr.curdir, 'templates', 'template.{0}.inp.py'), 'slurm')
-    pbs_template_contents = retrieve_queue_template(os.path.join(akrr.curdir, 'templates', 'template.{0}.inp.py'), 'pbs')
+    slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'slurm')
+    pbs_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'pbs')
 
     queues = {'slurm': slurm_template_contents, 'pbs': pbs_template_contents}
     
 
-    if not args.test:
+    if not test:
         os.mkdir(os.path.join(resources_dir, resource_name),0700)
     
-    file_path = os.path.abspath(os.path.join(resources_dir, resource_name, 'resource.inp.py'))
+    file_path = os.path.abspath(os.path.join(resources_dir, resource_name, 'resource.conf'))
     global resource_cfg_filename
     resource_cfg_filename=file_path
     
     create_resource_template(file_path, queues[queuing_system], queues[queuing_system])
         
-    if not args.test:    
+    if not test:    
         #add entry to mod_appkernel.resource
-        dbAK,curAK=akrr.getAKDB(True)
+        dbAK,curAK=akrrcfg.getAKDB(True)
             
         curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
         resource_in_AKDB = curAK.fetchall()
@@ -366,7 +352,7 @@ def generate_resource_config(resource_id, resource_name, queuing_system):
         resource_in_AKDB = curAK.fetchall()
         resource_id_in_AKDB=resource_in_AKDB[0]['resource_id']
         #add entry to mod_akrr.resource
-        db,cur=akrr.getDB(True)
+        db,cur=akrrcfg.getDB(True)
             
         cur.execute('''SELECT * FROM resources WHERE name=%s''', (resource_name,))
         resource_in_DB = cur.fetchall()
@@ -383,7 +369,7 @@ def validate_resource_id(resource_id,resources):
         resource_id=long(resource_id)
     except:
         return False
-    for resource_name,resource_id2 in resources:
+    for _,resource_id2 in resources:
         if int(resource_id2)==int(resource_id):
             return True
     if resource_id==0:
@@ -402,7 +388,7 @@ def validate_resource_name(resource_name):
     
     
     #check the entry in mod_appkernel
-    dbAK,curAK=akrr.getAKDB(True)
+    dbAK,curAK=akrrcfg.getAKDB(True)
         
     curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
     resource_in_AKDB = curAK.fetchall()
@@ -411,7 +397,7 @@ def validate_resource_name(resource_name):
         return False
     
     #check the entry in mod_akrr
-    db,cur=akrr.getDB(True)
+    db,cur=akrrcfg.getDB(True)
         
     cur.execute('''SELECT * FROM resources WHERE name=%s''', (resource_name,))
     resource_in_DB = cur.fetchall()
@@ -451,7 +437,7 @@ def checkConnectionToResource():
         str_io=cStringIO.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            akrr.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+            akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
                     PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
                     command='ls')
             
@@ -463,7 +449,7 @@ def checkConnectionToResource():
         except Exception,e:
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
-            if args.verbose:
+            if verbose:
                 logging.info("Had attempted to access resource without password and failed, below is resource response")
                 print "="*80
                 print str_io.getvalue()
@@ -495,7 +481,7 @@ def checkConnectionToResource():
                         print
                         str_io=cStringIO.StringIO()
                         sys.stdout = sys.stderr = str_io
-                        akrr.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
+                        akrrcfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
                             PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
                             command='')
                     
@@ -509,7 +495,7 @@ def checkConnectionToResource():
                     except Exception,e:
                         sys.stdout=sys.__stdout__
                         sys.stderr=sys.__stderr__
-                        if args.verbose:
+                        if verbose:
                             logging.info("Had attempted to add public key to list of authorized keys on head node and failed, below is resource response")
                             print "="*80
                             print str_io.getvalue()
@@ -519,10 +505,11 @@ def checkConnectionToResource():
                         if authorizeKeyCount>=3:
                             break
                 if authorizeKeyCount<3:
-                     continue       
+                    continue       
             break
     return successfullyConnected
 def getRemoteAccessMethod():
+    global resourceName
     global remoteAccessNode
     global remoteAccessMethod
     global remoteCopyMethod
@@ -652,7 +639,7 @@ def getRemoteAccessMethod():
                 if sshPrivateKeyPassword.strip()=="":
                     sshPrivateKeyPassword=None
                 #copy keys
-                akrr.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
+                akrrcfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
                             PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
                             command='')
                 askForUserName=not askForUserName
@@ -668,7 +655,7 @@ def getRemoteAccessMethod():
         
         str_io=cStringIO.StringIO()
         sys.stdout = sys.stderr = str_io
-        rsh=akrr.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+        rsh=akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
                     PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=sys.stdout,
                     command=None)
         sys.stdout=sys.__stdout__
@@ -688,13 +675,14 @@ def getSytemCharacteristics():
             logging.error("Incorrect entry, try again.")
     
 def getFileSytemAccessPoints():
+    global resourceName
     global networkScratch
     global localScratch
     global akrrData
     global appKerDir
     
-    homeDir=akrr.sshCommand(rsh,"echo $HOME").strip()
-    scratchNetworkDir=akrr.sshCommand(rsh,"echo $SCRATCH").strip()
+    homeDir=akrrcfg.sshCommand(rsh,"echo $HOME").strip()
+    scratchNetworkDir=akrrcfg.sshCommand(rsh,"echo $SCRATCH").strip()
     
     #localScratch
     localScratchDefault="/tmp"
@@ -703,7 +691,7 @@ def getFileSytemAccessPoints():
         localScratch=raw_input("[%s]"%localScratchDefault)
         if localScratch.strip()=="":
             localScratch=localScratchDefault
-        status,msg=resource_validation_and_deployment.CheckDirSimple(rsh, localScratch)
+        status,msg=akrr.resource_deploy.CheckDirSimple(rsh, localScratch)
         if status:
             logging.info(msg)
             print
@@ -713,7 +701,7 @@ def getFileSytemAccessPoints():
             logging.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
             print
             break
-    localScratch=akrr.sshCommand(rsh,"echo %s"%(localScratch,)).strip()
+    localScratch=akrrcfg.sshCommand(rsh,"echo %s"%(localScratch,)).strip()
     #networkScratch
     networkScratchDefault=""
     if scratchNetworkDir!="":
@@ -733,7 +721,7 @@ def getFileSytemAccessPoints():
             continue
         
         
-        status,msg=resource_validation_and_deployment.CheckDir(rsh, networkScratch,exitOnFail=False,tryToCreate=True)
+        status,msg=akrr.resource_deploy.CheckDir(rsh, networkScratch,exitOnFail=False,tryToCreate=True)
         if status:
             logging.info(msg)
             networkScratchVisible=True
@@ -744,7 +732,7 @@ def getFileSytemAccessPoints():
             #logging.warning('network scratch might be have a different location on head node, so if it is by design it is ok')
             #print
             break
-    networkScratch=akrr.sshCommand(rsh,"echo %s"%(networkScratch,)).strip()
+    networkScratch=akrrcfg.sshCommand(rsh,"echo %s"%(networkScratch,)).strip()
     #appKerDir
     appKerDirDefault=os.path.join(homeDir,"appker",resourceName)   
     while True:                    
@@ -752,14 +740,14 @@ def getFileSytemAccessPoints():
         appKerDir=raw_input("[%s]"%appKerDirDefault)
         if appKerDir.strip()=="":
             appKerDir=appKerDirDefault
-        status,msg=resource_validation_and_deployment.CheckDir(rsh, appKerDir,exitOnFail=False,tryToCreate=True)
+        status,msg=akrr.resource_deploy.CheckDir(rsh, appKerDir,exitOnFail=False,tryToCreate=True)
         if status:
             logging.info(msg)
             print
             break
         else:
             logging.error(msg)
-    appKerDir=akrr.sshCommand(rsh,"echo %s"%(appKerDir,)).strip()
+    appKerDir=akrrcfg.sshCommand(rsh,"echo %s"%(appKerDir,)).strip()
     #akrrData
     akrrDataDefault=os.path.join(homeDir,"akrrdata",resourceName)
     if networkScratchVisible:
@@ -769,14 +757,14 @@ def getFileSytemAccessPoints():
         akrrData=raw_input("[%s]"%akrrDataDefault)
         if akrrData.strip()=="":
             akrrData=akrrDataDefault
-        status,msg=resource_validation_and_deployment.CheckDir(rsh, akrrData,exitOnFail=False,tryToCreate=True)
+        status,msg=akrr.resource_deploy.CheckDir(rsh, akrrData,exitOnFail=False,tryToCreate=True)
         if status:
             logging.info(msg)
             print
             break
         else:
             logging.error(msg) 
-    akrrData=akrr.sshCommand(rsh,"echo %s"%(akrrData,)).strip()
+    akrrData=akrrcfg.sshCommand(rsh,"echo %s"%(akrrData,)).strip()
     #remoteAccessMethod = 'ssh'
     #remoteCopyMethod='scp'
     #sshPassword = None
@@ -785,24 +773,32 @@ def getFileSytemAccessPoints():
 ###############################################################################
 # SCRIPT ENTRY POINT
 ###############################################################################
-if __name__ == '__main__':
+def resource_add(minimalistic=False,test=False,verbose=False):
     #global batchScheduler
+    global resourceName
+    global remoteAccessNode
+    global remoteAccessMethod
+    global remoteCopyMethod
+    global sshUserName
+    global sshPassword
+    global sshPrivateKeyFile
+    global sshPrivateKeyPassword
+    global networkScratch
+    global localScratch
+    global akrrData
+    global appKerDir
+    global batchScheduler
+    global batchJobHeaderTemplate
+    
     logging.info("Beginning Initiation of New Resource...")
+    globals()['verbose']=verbose
+    globals()['test']=test
+    globals()['minimalistic']=minimalistic
+
     # CHECK: To see if we were able to import MySQLdb
     if not mysql_available:
         logging.error("Unable to find MySQLdb. Please install this python library before re-running .")
         exit(1)
-
-    # TIME: to get to parsing
-    parser = argparse.ArgumentParser()
-
-    # SETUP: the arguments that we're going to support
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    parser.add_argument('-t', '--test', action='store_true', help="No files will actually be created, only their names will be outputed to the console.")
-    parser.add_argument('-m', '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
-
-    # PARSE: them arguments
-    args = parser.parse_args()
 
     logging.info("Retrieving Resources from XDMoD Database...")
     # RETRIEVE: the resources from XDMoD
@@ -815,14 +811,18 @@ if __name__ == '__main__':
         print "%11d  %-40s"%(resource_id,resource_name)
     print
     
-    while True:
-        logging.input('Enter resource_id for import (enter 0 for no match):')
-        resource_id=raw_input()
-        if validate_resource_id(resource_id,resources):
-            break
-        print "Incorrect resource_id try again"
-    print
-    resource_id=int(resource_id)
+    if len(resources)>0:
+        while True:
+            logging.input('Enter resource_id for import (enter 0 for no match):')
+            resource_id=raw_input()
+            if validate_resource_id(resource_id,resources):
+                break
+            print "Incorrect resource_id try again"
+        print
+        resource_id=int(resource_id)
+    else:
+        resource_id=0
+    
     if resource_id<=0:#i.e. no match from XDMoD DB
         resource_id=None
     
@@ -849,15 +849,16 @@ if __name__ == '__main__':
         logging.error("Incorrect queuing_system try again")
         logging.input('Enter queuing system on resource (slurm or pbs): ')
         queuing_system=raw_input()
+    
     batchScheduler=queuing_system
     print
     
-    if args.minimalistic==False:
+    if minimalistic==False:
         getRemoteAccessMethod()
         getSytemCharacteristics()
         getFileSytemAccessPoints()
     
-    if args.verbose:
+    if verbose:
         logging.info("summary of parameters")
         print "remoteAccessNode",remoteAccessNode
         print "remoteAccessMethod",remoteAccessMethod
@@ -878,12 +879,11 @@ if __name__ == '__main__':
     logging.info('Initiation of new resource is completed.')
     logging.info('    Edit batchJobHeaderTemplate variable in '+resource_cfg_filename)
     logging.info('    and move to resource validation and deployment step.')
-    print
-    print "Execute following command to setup environment variable for future setup convenience:"
-    print "export RESOURCE=%s"%(resource_name,)
-    print
+    logging.info('    i.e. execute:')
+    logging.info('        akrr resource deploy '+resource_name)
     # GENERATE: the
     #generate_default_templates(resources)
 
-
+if __name__ == '__main__':
+    resource_add()
 

@@ -148,9 +148,9 @@ class AppKerOutputParser:
             
             j=0
             while j<len(lines):
-               m=re.search(r'===ExeBinSignature===(.+)',lines[j])
-               if m:ExeBinSignature+=m.group(1).strip()+'\n'
-               j+=1
+                m=re.search(r'===ExeBinSignature===(.+)',lines[j])
+                if m:ExeBinSignature+=m.group(1).strip()+'\n'
+                j+=1
             
             
             ExeBinSignature=os.popen('echo "%s"|gzip -9|base64 -w 0'%(ExeBinSignature)).read()
@@ -281,8 +281,8 @@ class AppKerOutputParser:
         return r
 
 def testParser(jobdir,processAppKerOutput):
-    import akrrtask
-    taskHandler=akrrtask.akrrGetTaskHandlerFromJobDir(jobdir)
+    import akrr.akrrtask
+    taskHandler=akrr.akrrtask.akrrGetTaskHandlerFromJobDir(jobdir)
     if taskHandler!=None:
         appKerNResVars={}
         appKerNResVars['resource']=taskHandler.resource

@@ -5,9 +5,9 @@ import sys
 
 #Set proper path for stand alone test runs
 if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../../src'))
+    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../..'))
 
-from akrrappkeroutputparser import AppKerOutputParser,testParser,total_seconds
+from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,testParser,total_seconds
 
 
 def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appKerNResVars=None):
