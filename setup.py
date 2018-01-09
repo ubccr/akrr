@@ -6,7 +6,7 @@ import os
 
 
 setup(name='akrr',
-    version='1.0.1',
+    version='2.0.0',
     description='Application Kernels Remote Runner',
     long_description='Periodical execution of application kernels (applications with input parameters) on HPC resources for performance monitoring',
     classifiers=[
