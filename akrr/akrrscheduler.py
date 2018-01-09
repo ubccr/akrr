@@ -298,6 +298,7 @@ class akrrScheduler:
                 if akrrtask.log_file!=None:
                     akrrtask.RedirectStdoutBack()
                 return traceback.format_exc()
+
             
         
         
@@ -365,14 +366,20 @@ class akrrScheduler:
             self.dbCur.execute('''SELECT FatalErrorsCount,FailsToSubmitToTheQueue FROM ACTIVETASKS
                 WHERE task_id=%s;''',(task_id,))
             (FatalErrorsCount,FailsToSubmitToTheQueue)=self.dbCur.fetchall()[0]
+
+            while not self.ResultsQueue.empty():
+                r=self.ResultsQueue.get()
+                self.Results[r['pid']]=r
             
+            p.join(0.5)
+
             if p.is_alive():
                 dt=datetime.datetime.today()-self.Workers[iP]['timestarted']
                 if dt > self.max_wall_time_for_task_handlers:
                     p.terminate()#will handle it next round
                 iP+=1
                 continue
-            
+           
             status="None"
             statusinfo="None"
             repeatein=None
