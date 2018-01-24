@@ -126,6 +126,9 @@ completed_tasks_dir = "../comptasks"
 #Number of sub-processes (workers) to handle tasks  
 max_task_handlers = 4
 
+#redirect task processing to log file
+redirect_task_processing_to_log_file=True
+
 # The 'id' of the pickling protocol to use.
 task_pickling_protocol = 0
 

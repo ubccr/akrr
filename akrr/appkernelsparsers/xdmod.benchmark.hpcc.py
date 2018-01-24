@@ -153,7 +153,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     if hpccVersion:
         parser.setParameter("App:Version", hpccVersion)
     
-    for k,v in Params.iteritems():
+    for k,v in Params.items():
         if not k in values:
             continue
         val=values[k]
@@ -164,7 +164,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             v[1]=None
         parser.setParameter( "Input:" + v[0],val, v[1])
     
-    for k,v in Metrics.iteritems():
+    for k,v in Metrics.items():
         if not k in values:
             continue
         val=values[k]
@@ -196,7 +196,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 resname=appKerNResVars['resource']['name']
                 if resname in appKerNResVars['app']['theoreticalGFlopsPerCore']:
                     theoreticalGFlops=appKerNResVars['app']['theoreticalGFlopsPerCore'][resname] * numCores
-                    print "theoreticalGFlops",resname,theoreticalGFlops
+                    print("theoreticalGFlops",resname,theoreticalGFlops)
     
     if theoreticalGFlops==None and MHz!=None:        
             # Most modern x86 & POWER processors are superscale and can issue 4 instructions per cycle
@@ -211,9 +211,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(Verbose=True)
+        print("parsing complete:",parser.parsingComplete(Verbose=True))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
     
     #return complete XML overwize return None
     return parser.getXML()
@@ -222,7 +222,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print("Proccessing Output From",jobdir)
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),geninfo=os.path.join(jobdir,"gen.info"))
     
     

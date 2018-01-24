@@ -1,7 +1,7 @@
 import string
 import random
 
-from functional import __or
+from .functional import __or
 
 
 def generateChars(*args, **kwargs):

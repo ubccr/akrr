@@ -1,9 +1,18 @@
 
+#Debug flag, if True then akrr executed in debug mode, launched as akrr daemon startdeb
+#it also imply daemon is executed in foreground 
+debug=False
+#If not None overwrite max_task_handlers, 0 means executed by main thread
+debug_max_task_handlers=None
+#If not None overwrite redirect_task_processing_to_log_file
+debug_redirect_task_processing_to_log_file=None
+
+
 def get_akrr_dirs():
     """return akrr directories"""
     import os
     import inspect
-    from util import which
+    from .util import which
     
     #AKRR configuration can be in three places
     # 1) AKRR_CONF if AKRR_CONF enviroment variable is defined

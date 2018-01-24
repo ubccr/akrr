@@ -1,9 +1,7 @@
-import akrrcfg
-import akrrtask
+from . import akrrcfg
+from . import akrrtask
 import time
 import os
-
-import MySQLdb
 
 import sys
 import datetime
@@ -16,12 +14,12 @@ import subprocess
 import socket
 import inspect
 
-from appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
-import util.logging as log
+from .util import logging as log
 
 akrrscheduler=None
-import akrrlogging
+from . import akrrlogging
 
 try:
     import argparse
@@ -122,7 +120,7 @@ class akrrScheduler:
                 if resource_enabled.get(resource,0)==0 or appkernel_enabled.get(app,0)==0:
                     continue
             
-            print "\n>>> "+timenow+" "+">"*96
+            print("\n>>> "+timenow+" "+">"*96)
             
             TaskActivated=False
             TaskHandler=None
@@ -132,15 +130,15 @@ class akrrScheduler:
             self.dbCon.commit()
             self.dbCon.commit()
             try:
-                print "Activating Task Number "+str(task_id)
-                print "The start time is %s."%(time_to_start)
-                print "The repeat period is %s."%(repeat_in)
-                print "resource:",resource
-                print "resource parameters:",resource_param
-                print "application kernel:",app
-                print "application kernel parameters:",app_param
-                print "task parameters:", task_param
-                print "parent_task_id:", parent_task_id
+                print("Activating Task Number "+str(task_id))
+                print("The start time is %s."%(time_to_start))
+                print("The repeat period is %s."%(repeat_in))
+                print("resource:",resource)
+                print("resource parameters:",resource_param)
+                print("application kernel:",app)
+                print("application kernel parameters:",app_param)
+                print("task parameters:", task_param)
+                print("parent_task_id:", parent_task_id)
                 
                 if akrrcfg.FindResourceByName(resource).get('active',True)==False:
                     raise akrrcfg.akrrError(akrrcfg.ERROR_CANT_CONNECT,"%s is marked as inactive in AKRR"%(self.resourceName))
@@ -152,13 +150,13 @@ class akrrScheduler:
                 raws=self.dbCur.fetchall()
                 if len(raws)>0:
                     StartTaskExecution=False
-                    print "Resource (%s) is under maintenance:"
+                    print("Resource (%s) is under maintenance:")
                     for raw in raws:
-                        print raw
+                        print(raw)
                     if repeat_in!=None:
-                        print "This app. kernel is scheduled for repeat run, thus will skip this run"
+                        print("This app. kernel is scheduled for repeat run, thus will skip this run")
                     else:
-                        print "Will postpone the execution by one day"
+                        print("Will postpone the execution by one day")
                         self.dbCur.execute('''UPDATE SCHEDULEDTASKS
                             SET time_to_start=%s
                             WHERE task_id=%s ;''',(time_to_start+datetime.timedelta(days=1),task_id))
@@ -189,13 +187,13 @@ class akrrScheduler:
                     if repeat_in!=None:
                         match = re.match( r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
                         if not match:
-                            print "ERROR: Unknown repeat_in format, will set it to None"
+                            print("ERROR: Unknown repeat_in format, will set it to None")
                             repeat_in=None
                         else:
                             g=match.group(1,2,3,4,5,6)
                             tao=(int(g[0]),int(g[1]),int(g[2]),int(g[3]),int(g[4]),int(g[5]))
                             if tao[0]==0 and tao[1]==0 and tao[2]==0 and tao[3]==0 and tao[4]==0 and tao[5]==0:
-                                print "ERROR: repeat_in is zero will set it to None"
+                                print("ERROR: repeat_in is zero will set it to None")
                                 repeat_in=None
                         
                     #Schedule next
@@ -210,8 +208,8 @@ class akrrScheduler:
                         at0=datetime.datetime(*t0)
                         adt=datetime.timedelta(tao[2],tao[5],0,0,tao[4],tao[3])
                         current_time=datetime.datetime.now()
-                        print tao,adt
-                        print t0,at0
+                        print(tao,adt)
+                        print(t0,at0)
                         
                                               
                         at1=at0+adt
@@ -228,7 +226,7 @@ class akrrScheduler:
                                 m-=12
                             at1=at1.replace(year=y,month=m)
                         nexttime=at1.strftime("%Y-%m-%d %H:%M:%S")
-                        print "Schedule another task for ",nexttime
+                        print("Schedule another task for ",nexttime)
                         self.addTask(nexttime,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id)
                         #self.dbCon.commit()
                 if self.bRunScheduledTasks==False:
@@ -252,7 +250,7 @@ class akrrScheduler:
                     WHERE task_id=%s;''',(task_id,))
                 self.dbCon.commit()
             
-            print "<"*120
+            print("<"*120)
     def runActiveTasks_StartTheStep(self):
         """For task with expired next_check_time and currently not handled
         start a proccess to handle it"""
@@ -261,7 +259,8 @@ class akrrScheduler:
             try:
                 #Redirect logging
                 taskDir=akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)
-                akrrtask.RedirectStdoutToLog(os.path.join(taskDir,'proc','log'))
+                if akrrcfg.redirect_task_processing_to_log_file:
+                    akrrtask.RedirectStdoutToLog(os.path.join(taskDir,'proc','log'))
                 
                 #Do the task
                 th=akrrtask.akrrGetTaskHandler(resourceName,appName,timeStamp)
@@ -289,12 +288,13 @@ class akrrScheduler:
                 })
                 
                 #Redirect logging back
-                akrrtask.RedirectStdoutBack()
+                if akrrcfg.redirect_task_processing_to_log_file:
+                    akrrtask.RedirectStdoutBack()
                 
 
                 return 0        
             except Exception as e:
-                print traceback.format_exc()
+                print(traceback.format_exc())
                 if akrrtask.log_file!=None:
                     akrrtask.RedirectStdoutBack()
                 return traceback.format_exc()
@@ -311,11 +311,19 @@ class akrrScheduler:
         
         iTasksSend=0
         for row in tasksToCheck:
+            if self.maxTaskHandlers==0:
+                # Executing task by main thread
+                (task_id,resourceName,appName,timeStamp,FatalErrorsCount,FailsToSubmitToTheQueue)=row
+                print("\n%s: Working on:\n\t%s"%(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)))
+                StartTheStep(resourceName,appName,timeStamp,self.ResultsQueue,0,FailsToSubmitToTheQueue)
+            
+                
             if len(self.Workers)>=self.maxTaskHandlers:
+                #all workers are busy skipping the 
                 return
             
             (task_id,resourceName,appName,timeStamp,FatalErrorsCount,FailsToSubmitToTheQueue)=row
-            print "\n%s: Working on:\n\t%s"%(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp))
+            print("\n%s: Working on:\n\t%s"%(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)))
             try:
                 p = multiprocessing.Process(target=StartTheStep, args=(resourceName,appName,timeStamp,self.ResultsQueue,0,FailsToSubmitToTheQueue))
                 p.start()
@@ -333,9 +341,9 @@ class akrrScheduler:
                 
                 iTasksSend+=1
             except Exception as e:
-                print "# Exception ##########"
-                print traceback.format_exc()
-                print
+                print("# Exception ##########")
+                print(traceback.format_exc())
+                print()
                 self.AddFatalErrorsForTaskCount(task_id)
                 #raise
         
@@ -400,9 +408,9 @@ class akrrScheduler:
                 while not self.ResultsQueue.empty(): # organized results in dict with pid keys
                     r=self.ResultsQueue.get()
                     self.Results[r['pid']]=r
-                if not self.Results.has_key(pid): # process finished abnormally
-                    print "ERROR: the process was finished but results was not sent."
-                    print "       at this point treat it as forcibly terminated"
+                if pid not in self.Results: # process finished abnormally
+                    print("ERROR: the process was finished but results was not sent.")
+                    print("       at this point treat it as forcibly terminated")
                     status="Task handler process was terminated."
                     statusinfo="the process was finished but results was not sent. At this point treat it as forcibly terminated"
                     repeatein=self.repeat_after_forcible_termination
@@ -432,7 +440,7 @@ class akrrScheduler:
                 th.ReportFormat="Error"
                 th.ProccessResults()
                 if th.PushToDB() !=None:
-                    print "Error: Can not push to DB"
+                    print("Error: Can not push to DB")
                 akrrtask.akrrDumpTaskHandler(th)
                 status=copy.deepcopy(th.status)
                 statusinfo=copy.deepcopy(th.statusinfo)
@@ -469,9 +477,9 @@ class akrrScheduler:
                     self.dbCur.execute('''DELETE FROM ACTIVETASKS
                         WHERE task_id=%s;''',(task_id,))
                 except Exception as e:
-                    print "# Exception ##########"
-                    print traceback.format_exc()
-                    print
+                    print("# Exception ##########")
+                    print(traceback.format_exc())
+                    print()
                     self.dbCon.rollback()
                     self.dbCon.rollback()
                     
@@ -490,9 +498,9 @@ class akrrScheduler:
                 #now the last thing moving the directory
                 taskdir=os.path.join(akrrcfg.data_dir,resource,app,datetimestamp)
                 comptasksdir=os.path.join(akrrcfg.completed_tasks_dir,resource,app)
-                print "Task is completed moving its working directory from:"
-                print "\t%s"%(taskdir)
-                print "to:\n\t%s"%(os.path.join(comptasksdir,datetimestamp))
+                print("Task is completed moving its working directory from:")
+                print("\t%s"%(taskdir))
+                print("to:\n\t%s"%(os.path.join(comptasksdir,datetimestamp)))
                 import shutil
                 shutil.move(taskdir,comptasksdir)
                 #clean error list
@@ -525,26 +533,26 @@ class akrrScheduler:
             or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid")))
         
         fout = open(os.path.join(akrrcfg.data_dir,"akrr.pid"),"w")
-        print >>fout, os.getpid()
-        print "AKRR Scheduler PID is", os.getpid()
+        print(os.getpid(), file=fout)
+        print("AKRR Scheduler PID is", os.getpid())
         fout.close()
         
         #set signal handling
         def SEGTERMHandler(signum, stack):
-            print "Received termination signal. Actual signal is ",signum,"."
-            print "Going to clean up ..."
+            print("Received termination signal. Actual signal is ",signum,".")
+            print("Going to clean up ...")
             self.bRunScheduledTasks=False
             self.bRunActiveTasks_StartTheStep=False
             self.bRunActiveTasks_CheckTheStep=True
             self.LastOpSignal="SEGTERM"
         def NoNewTasks(signum, stack):
-            print "Activation of new tasks is postponed."
+            print("Activation of new tasks is postponed.")
             self.bRunScheduledTasks=False
             self.bRunActiveTasks_StartTheStep=False
             self.bRunActiveTasks_CheckTheStep=True
             self.LastOpSignal="Run"
         def NewTasksOn(signum, stack):
-            print "Activation of new tasks is allowed."
+            print("Activation of new tasks is allowed.")
             self.bRunScheduledTasks=True
             self.bRunActiveTasks_StartTheStep=True
             self.bRunActiveTasks_CheckTheStep=True
@@ -555,8 +563,8 @@ class akrrScheduler:
         signal.signal(signal.SIGUSR2,NewTasksOn)
         
         #start rest api
-        import akrrrestapi
-        print "Starting REST-API Service"
+        from . import akrrrestapi
+        print("Starting REST-API Service")
         self.proc_queue_to_master=multiprocessing.Queue(1)
         self.proc_queue_from_master=multiprocessing.Queue(1)
         self.restapi_proc = multiprocessing.Process(target=akrrrestapi.start_rest_api,args=(self.proc_queue_to_master,self.proc_queue_from_master))
@@ -577,7 +585,6 @@ class akrrScheduler:
             self.dbCur.execute('''SELECT task_id,statusupdatetime,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,resource_param,app_param,task_param,group_id 
                         FROM ACTIVETASKS;''')
             
-            import MySQLdb
             db,cur=akrrcfg.getExportDB()
             change=False
             
@@ -604,26 +611,26 @@ class akrrScheduler:
                 dbConnected=True
             except Exception as e:
                 akrrcfg.printException()
-                print "Will try to reconnect!\n"
+                print("Will try to reconnect!\n")
             
             if dbConnected:
                 return True
             
             if attemptsToReconnect>3*360:
-                print "Have tried %d to reconnect to DB and failed\n"%attemptsToReconnect
+                print("Have tried %d to reconnect to DB and failed\n"%attemptsToReconnect)
                 raise e
             
             if attemptsToReconnect>0:
-                print "Have tried %d to reconnect to DB and failed. Will wait for 10 sec and tried again\n"%attemptsToReconnect
+                print("Have tried %d to reconnect to DB and failed. Will wait for 10 sec and tried again\n"%attemptsToReconnect)
                 time.sleep(10)
             
             self.dbCon,self.dbCur=akrrcfg.getDB()
             attemptsToReconnect+=1
             
     def runLoop(self):
-        print "\n"+"#"*120
-        print "# Got into the running loop on "+datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        print "#"*120+"\n"
+        print("\n"+"#"*120)
+        print("# Got into the running loop on "+datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+        print("#"*120+"\n")
         numBigFails=0
         while True:
             try:
@@ -642,33 +649,33 @@ class akrrScheduler:
                 self.runREST_API_requests()
                 
                 if self.LastOpSignal=="SEGTERM":
-                    print "Trying to shut down REST API..."
+                    print("Trying to shut down REST API...")
                     if self.restapi_proc.is_alive():
                         self.restapi_proc.terminate()
                     if self.restapi_proc.is_alive():
-                        print "REST API PID",self.restapi_proc.pid
+                        print("REST API PID",self.restapi_proc.pid)
                         os.kill(self.restapi_proc.pid,signal.SIGKILL)
                     if len(self.Workers)==0 and self.restapi_proc.is_alive()==False:
-                        print "There is no active proccesses handling the task"
-                        print "REST API is down"
-                        print "Safely exiting from the loop"
-                        print "\n"+"#"*120
-                        print "# Got out of loop on "+datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-                        print "#"*120+"\n"
+                        print("There is no active proccesses handling the task")
+                        print("REST API is down")
+                        print("Safely exiting from the loop")
+                        print("\n"+"#"*120)
+                        print("# Got out of loop on "+datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+                        print("#"*120+"\n")
                         return
                     time.sleep(0.05)
                 else:
                     time.sleep(akrrcfg.scheduled_tasks_loop_sleep_time)
-            except Exception,e:
-                print traceback.format_exc()
+            except Exception as e:
+                print(traceback.format_exc())
                 numBigFails+=1;
                 time.sleep(10)
                 if numBigFails> 360:
-                    print "Too many errors"
+                    print("Too many errors")
                     if self.restapi_proc.is_alive():
                         self.restapi_proc.terminate()
                     if self.restapi_proc.is_alive():
-                        print "REST API PID",self.restapi_proc.pid
+                        print("REST API PID",self.restapi_proc.pid)
                         os.kill(self.restapi_proc.pid,signal.SIGKILL)
                     for w in self.Workers:
                         if w['p'].is_alive():
@@ -688,8 +695,8 @@ class akrrScheduler:
         
         request=self.proc_queue_to_master.get()
         
-        print request
-        print globals().keys()
+        print(request)
+        print(list(globals().keys()))
         try:
             if request['fun'] in globals():
                 globals()[request['fun']](*(request['args']),**(request['kargs']))
@@ -699,12 +706,12 @@ class akrrScheduler:
                       }
             else:
                 raise Exception("Unimplemented method")
-        except Exception,e:
+        except Exception as e:
             response={
                       "success":False,
                       "message":str(e)
             }
-            print traceback.format_exc()
+            print(traceback.format_exc())
         self.proc_queue_from_master.put(response)
         
     def monitor(self):
@@ -714,16 +721,16 @@ class akrrScheduler:
             
             pid=akrrGetPIDofServer()
             if pid==None:
-                print "AKRR Server is down"
+                print("AKRR Server is down")
             else:
-                print "AKRR Server is up and it's PID is %d"%(pid)
+                print("AKRR Server is up and it's PID is %d"%(pid))
             
-            print "Scheduled Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+            print("Scheduled Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
             self.dbCur.execute('''SELECT * FROM SCHEDULEDTASKS ORDER BY time_to_start ASC;''')
             tasks=self.dbCur.fetchall()
             for row in tasks:
-                print row
-            print "Active Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+                print(row)
+            print("Active Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
             #self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
             
             self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,next_check_time,task_lock,status,statusinfo,statusupdatetime
@@ -731,9 +738,9 @@ class akrrScheduler:
                 ORDER BY next_check_time,time_to_start ASC;''')
             tasks=self.dbCur.fetchall()
             for row in tasks:
-                print row
+                print(row)
             
-            print "Completed Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+            print("Completed Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
             #self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
             
             self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,statusinfo,time_finished
@@ -742,22 +749,22 @@ class akrrScheduler:
             
             tasks=self.dbCur.fetchall()
             for row in tasks[:3]:
-                print row
+                print(row)
             time.sleep(1)
     def status(self):
         """like monitor only print once"""
         pid=akrrGetPIDofServer()
         if pid==None:
-            print "AKRR Server is down"
+            print("AKRR Server is down")
         else:
-            print "AKRR Server is up and it's PID is %d"%(pid)
+            print("AKRR Server is up and it's PID is %d"%(pid))
         
-        print "Scheduled Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print("Scheduled Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         self.dbCur.execute('''SELECT * FROM SCHEDULEDTASKS ORDER BY time_to_start ASC;''')
         tasks=self.dbCur.fetchall()
         for row in tasks:
-            print row
-        print "Active Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+            print(row)
+        print("Active Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         #self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
         
         self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,next_check_time,task_lock,status,statusinfo,statusupdatetime
@@ -766,14 +773,14 @@ class akrrScheduler:
         tasks=self.dbCur.fetchall()
         for row in tasks:
             (task_id,resource,app,datetimestamp,next_check_time,task_lock,status,statusinfo,statusupdatetime)=row
-            print "-"*120
-            print "%-10d %-14s %-40s %-25s %-20s %6d"%(task_id,resource,app,datetimestamp,next_check_time,task_lock)
-            print "\t%s"%(datetimestamp),status
-            print statusinfo
+            print("-"*120)
+            print("%-10d %-14s %-40s %-25s %-20s %6d"%(task_id,resource,app,datetimestamp,next_check_time,task_lock))
+            print("\t%s"%(datetimestamp),status)
+            print(statusinfo)
             
             
         
-        print "Completed Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print("Completed Tasks (%s) :"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         #self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
         
         self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,statusinfo,time_finished
@@ -782,8 +789,8 @@ class akrrScheduler:
         
         tasks=self.dbCur.fetchall()
         for row in tasks[:3]:
-            print row
-        print "\nTasks completed with errors (last 5):"
+            print(row)
+        print("\nTasks completed with errors (last 5):")
         self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
             ORDER BY time_finished  DESC;''')
@@ -794,7 +801,7 @@ class akrrScheduler:
             (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
             if re.match("ERROR:", status, re.M):
                TaskDir=akrrtask.GetLocalTaskDir(resource,app,datetimestamp,False)
-               print "Done with errors: %s %5d %s\n"%(time_finished,task_id,TaskDir),resource_param,app_param,task_param,group_id,"\n", status,"\n", statusinfo
+               print("Done with errors: %s %5d %s\n"%(time_finished,task_id,TaskDir),resource_param,app_param,task_param,group_id,"\n", status,"\n", statusinfo)
                count+=1
             if count >=5:
                 break
@@ -802,16 +809,16 @@ class akrrScheduler:
     def reprocessCompletedTasks(self, resource, appkernel, time_start, time_end, Verbose=False):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
         
-        print """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
-        print "Current time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
-        print "Resource:",resource
-        print "Application kernel:", appkernel
+        print("""Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling""")
+        print("Current time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
+        print("Resource:",resource)
+        print("Application kernel:", appkernel)
         if time_start!=None and time_end!=None:
-            print "Time frame: from ",time_start,"till",time_end
+            print("Time frame: from ",time_start,"till",time_end)
         if time_start==None and time_end!=None:
-            print "Time frame: till",time_end
+            print("Time frame: till",time_end)
         if time_start!=None and time_end==None:
-            print "Time frame: from ",time_start
+            print("Time frame: from ",time_start)
         
         
         sqlquote="SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id\n"
@@ -834,20 +841,20 @@ class akrrScheduler:
         tasks=self.dbCur.fetchall()
         
         db,cur=akrrcfg.getExportDB()
-        if Verbose: print "#"*120
+        if Verbose: print("#"*120)
         for row in tasks:
             (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
             TaskDir=akrrtask.GetLocalTaskDir(resource,app,datetimestamp,False)
             if Verbose:
-                print "task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id)
-                print "resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp)
-                print "resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param)
-                print "TaskDir:",TaskDir
-                print "-"*120
-                print "status: %s"%(status)
+                print("task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id))
+                print("resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp))
+                print("resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param))
+                print("TaskDir:",TaskDir)
+                print("-"*120)
+                print("status: %s"%(status))
                 #print "statusinfo:"
                 #print statusinfo
-                print "="*120
+                print("="*120)
             
             #Get All States
             ths=[]
@@ -870,34 +877,34 @@ class akrrScheduler:
             ths[-1].PushToDBRaw(cur,task_id,time_finished,Verbose)
             #akrrtask.akrrDumpTaskHandler(ths[-1])
             if re.match("ERROR:", ths[-1].status, re.M):
-                print "Done with errors:",TaskDir, ths[-1].status
+                print("Done with errors:",TaskDir, ths[-1].status)
             if ths[-1].status!=status or ths[-1].statusinfo!=statusinfo:
-                print "status changed"
-                print status
-                print ths[-1].status
+                print("status changed")
+                print(status)
+                print(ths[-1].status)
                 self.dbCur.execute('''UPDATE COMPLETEDTASKS
                     SET status=%s,statusinfo=%s
                     WHERE task_id=%s ;''',(ths[-1].status,ths[-1].statusinfo,task_id))
                 self.dbCon.commit()
             if Verbose and 0: 
-                print "States history:"
-                print "-"*120
+                print("States history:")
+                print("-"*120)
                 for th in ths:
-                    print th.statefilename
-                    print th.status
-                    print th.statusinfo
-                    print "-"*120
+                    print(th.statefilename)
+                    print(th.status)
+                    print(th.statusinfo)
+                    print("-"*120)
             if Verbose: 
-                print "#"*120
+                print("#"*120)
         db.commit()
         cur.close()
-        print "Reprocessing complete"
+        print("Reprocessing complete")
             #return
     def reprocess2(self,Verbose=True):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
         
-        print """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
-        print "Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print("""Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling""")
+        print("Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         
         self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
@@ -908,7 +915,7 @@ class akrrScheduler:
         
         self.dbCur.execute("TRUNCATE TABLE  akrr_errmsg")
         
-        if Verbose: print "#"*120
+        if Verbose: print("#"*120)
         for row in tasks:
             (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
             TaskDir=None
@@ -918,15 +925,15 @@ class akrrScheduler:
                 pass
             
             if Verbose:
-                print "task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id)
-                print "resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp)
-                print "resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param)
-                print "TaskDir:",TaskDir
-                print "-"*120
-                print "status: %s"%(status)
-                print "statusinfo:"
-                print statusinfo
-                print "="*120
+                print("task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id))
+                print("resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp))
+                print("resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param))
+                print("TaskDir:",TaskDir)
+                print("-"*120)
+                print("status: %s"%(status))
+                print("statusinfo:")
+                print(statusinfo)
+                print("="*120)
             
             appstdoutFileContent=None
             stdoutFileContent=None
@@ -1005,7 +1012,7 @@ class akrrScheduler:
                     
                     if hasattr(th, 'ReportFormat'):#i.e. fatal error and the last one is already in status/statusinfo
                         if th.ReportFormat=="Error":
-                            print "Error"
+                            print("Error")
                     
                     for d in os.listdir(jobfilesDir):
                         if re.match("batchJob",d):
@@ -1055,7 +1062,7 @@ class akrrScheduler:
                     
                     
                     if 1:#completed==None:
-                        print appstdoutFile,stdoutFile,stderrFile
+                        print(appstdoutFile,stdoutFile,stderrFile)
                         if appstdoutFile!=None:
                             fin=open(appstdoutFile,"r")
                             appstdoutFileContent=fin.read()
@@ -1103,8 +1110,8 @@ class akrrScheduler:
     def reprocess_add_nodes(self,Verbose=True):
         """reprocess_add_nodes"""
         
-        print """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
-        print "Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print("""Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling""")
+        print("Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         
         self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
@@ -1113,7 +1120,7 @@ class akrrScheduler:
         tasks=self.dbCur.fetchall()
         
         pass
-        if Verbose: print "#"*120
+        if Verbose: print("#"*120)
         for row in tasks:
             (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
             TaskDir=None
@@ -1123,15 +1130,15 @@ class akrrScheduler:
                 pass
             
             if Verbose:
-                print "task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id)
-                print "resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp)
-                print "resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param)
-                print "TaskDir:",TaskDir
-                print "-"*120
-                print "status: %s"%(status)
-                print "statusinfo:"
-                print statusinfo
-                print "-"*120
+                print("task_id:  %-10d     started:      %s    finished: %s    group_id: %s"%(task_id,time_to_start,time_finished,group_id))
+                print("resource: %-14s application: %-40s timestamp: %s"%(resource,app,datetimestamp))
+                print("resource_param: %s    app_param: %s    task_param: %s    "%(resource_param,app_param,task_param))
+                print("TaskDir:",TaskDir)
+                print("-"*120)
+                print("status: %s"%(status))
+                print("statusinfo:")
+                print(statusinfo)
+                print("-"*120)
             
             appstdoutFileContent=None
             stdoutFileContent=None
@@ -1202,15 +1209,15 @@ class akrrScheduler:
                 #print "*"*112
                 if nodes!=None:
                     if Verbose:
-                        print "UPDATING nodes:", nodes
-                        print "="*120
+                        print("UPDATING nodes:", nodes)
+                        print("="*120)
                     self.dbCur.execute("""UPDATE akrr_xdmod_instanceinfo
                         SET nodes=%s
                         WHERE instance_id=%s""",
                         (nodes,task_id))
     def erran_task(self,task_id,resource,app):
         #Get applicable reg_exp
-        print task_id,resource,app
+        print(task_id,resource,app)
         
         #Get appstdout,stderr,stdout
         self.dbCur.execute('''SELECT appstdout,stderr,stdout
@@ -1267,14 +1274,14 @@ class akrrScheduler:
         #push results to db
         if rslt!=None:
             regres,stc_name,reg_exp_id,reg_exp,reg_exp_opt=rslt
-            print "\treg_exp_id=",reg_exp_id
-            print "\treg_exp=",reg_exp
-            print "\tfound_in=",stc_name
+            print("\treg_exp_id=",reg_exp_id)
+            print("\treg_exp=",reg_exp)
+            print("\tfound_in=",stc_name)
             self.dbCur.execute('''UPDATE  akrr_errmsg
             SET err_regexp_id=%s
             WHERE task_id=%s;''',(reg_exp_id,task_id))
         else:
-            print "\tUnknown Error"
+            print("\tUnknown Error")
             self.dbCur.execute('''UPDATE  akrr_errmsg
             SET err_regexp_id=%s
             WHERE task_id=%s;''',(1000,task_id))
@@ -1284,35 +1291,35 @@ class akrrScheduler:
     def erran(self,dataFrom,dataTo,Verbose=True):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
         
-        print """Reprocess the output from Completed task"""
-        print "Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        print("""Reprocess the output from Completed task""")
+        print("Time: %s"%(str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
         
-        print "Analysing period:",dataFrom,dataTo
+        print("Analysing period:",dataFrom,dataTo)
         self.dbCur.execute('''SELECT instance_id,resource,reporter
             FROM akrr_xdmod_instanceinfo
             WHERE status=0 AND collected >= %s AND collected < %s
             ORDER BY collected ASC;''',(dataFrom,dataTo))
         
         tasks=self.dbCur.fetchall()
-        print "Total number of task to process:",len(tasks)
+        print("Total number of task to process:",len(tasks))
         for raw in tasks:
             task_id,resource,app=raw
             self.erran_task(task_id,resource,app)
-        print "Done"
+        print("Done")
         
     def addTaskNR(self,time_to_start,repeat_in,resource,app,resource_param="{}",app_param="{}",task_param="{}",group_id="None",parent_task_id=None):
         try:
             return self.addTask(time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id)
         except Exception as e:
-            print "ERROR"+">"*80
-            print traceback.format_exc()
-            print "ERROR"+"<"*80
+            print("ERROR"+">"*80)
+            print(traceback.format_exc())
+            print("ERROR"+"<"*80)
             return None
         
     def addTask(self,time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id,only_checking=False):
         """Check the format and add task to schedule"""
-        print ">"*120
-        print "Adding new task\n"
+        print(">"*120)
+        print("Adding new task\n")
                 
         #determine timeToStart
         timeToStart=None
@@ -1362,13 +1369,13 @@ class akrrScheduler:
         #check if app exists
         akrrcfg.FindAppByName(app)
         #determine repeatIn
-        print "The start time is %s."%(timeToStart.strftime("%Y-%m-%d %H:%M:%S"))
-        print "The repeat period is %s."%(repeatInFin)
-        print "resource:",resource
-        print "resource parameters:",resource_param
-        print "application kernel:",app
-        print "application kernel parameters:",app_param
-        print "task parameters:", task_param
+        print("The start time is %s."%(timeToStart.strftime("%Y-%m-%d %H:%M:%S")))
+        print("The repeat period is %s."%(repeatInFin))
+        print("resource:",resource)
+        print("resource parameters:",resource_param)
+        print("application kernel:",app)
+        print("application kernel parameters:",app_param)
+        print("task parameters:", task_param)
         task_id=None
         if not only_checking:
             self.dbCur.execute('''INSERT INTO SCHEDULEDTASKS (time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id)
@@ -1391,8 +1398,8 @@ class akrrScheduler:
 #                         WHERE task_id=%s""",
 #                         (m_task_id,m_task_id))
 #                 self.dbCon.commit()
-        print "task id:", task_id
-        print "<"*120
+        print("task id:", task_id)
+        print("<"*120)
         return task_id
 
 def akrrValidateTaskVariableValue(k,v):
@@ -1432,21 +1439,21 @@ def akrrValidateTaskVariableValue(k,v):
             
     if k=='resource_param':
         v2=eval(v)
-        print v2['nnodes'],isinstance(v2['nnodes'], ( int, long ) )
+        print(v2['nnodes'],isinstance(v2['nnodes'], int ))
         if 'nnodes' not in v2:
             raise IOError('nnodes must be present in '+k)
-        if not isinstance(v2['nnodes'], ( int, long ) ):
+        if not isinstance(v2['nnodes'], int ):
             raise IOError("incorrect format for resource_param['nnodes'] must be integer")
     if k=="resource":
         try:
             akrrcfg.FindResourceByName(v)
-        except Exception,e:
+        except Exception as e:
             akrrlogging.logerr(str(e),traceback.format_exc())
             raise IOError('Unknown resource: '+v)
     if k=="app":
         try:
             akrrcfg.FindAppByName(v)
-        except Exception,e:
+        except Exception as e:
             akrrlogging.logerr(str(e),traceback.format_exc())
             raise IOError('Unknown application kernel: '+v)
     if k=="next_check_time":
@@ -1509,7 +1516,7 @@ def akrrDeleteTask(task_id,removeFromScheduledQueue=True,removeFromActiveQueue=T
         db.commit()
     
     if removeFromActiveQueue==True and active_task!=None:
-        print "Trying to remove task from ACTIVETASKS"
+        print("Trying to remove task from ACTIVETASKS")
         t0=datetime.datetime.now()
         while active_task['task_lock']!=0:
             #i.e. one of child process is working on this task, will wait till it finished
@@ -1530,7 +1537,7 @@ def akrrDeleteTask(task_id,removeFromScheduledQueue=True,removeFromActiveQueue=T
         CanBeSafelyRemoved=th.Terminate()
         
         if CanBeSafelyRemoved:
-            print "The task can be safely removed"
+            print("The task can be safely removed")
             #remove from DB
             cur.execute('''DELETE FROM ACTIVETASKS
                 WHERE task_id=%s;''',(task_id,))
@@ -1584,7 +1591,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     """
     update task parameters
     """
-    print "Akrr Update Task Parameters: %r" % (task_id, )
+    print("Akrr Update Task Parameters: %r" % (task_id, ))
 
     db,cur=akrrcfg.getDB(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
@@ -1595,7 +1602,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     active_task=None
     complete_task=None
     
-    print "Length of Possible Tasks: %r" % ( len(possible_task), )
+    print("Length of Possible Tasks: %r" % ( len(possible_task), ))
     if len(possible_task)==1:
         #task still in scheduled_tasks queue
         scheduled_task=possible_task[0]
@@ -1618,15 +1625,15 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
                 raise IOError("""Task %d is not in queue"""%(task_id))
     
     if scheduled_task!=None:
-        possible_keys_to_change=scheduled_task.keys()
+        possible_keys_to_change=list(scheduled_task.keys())
         possible_keys_to_change.remove('task_id')
         possible_keys_to_change.remove('parent_task_id')
         possible_keys_to_change.remove('app')
         possible_keys_to_change.remove('resource')
         
-        print "Scheduled Task Keys: %r" % (scheduled_task.keys(), )
-        print "Possible Keys: %r" % (possible_keys_to_change, )
-        print "New Params: %r " % (new_param, )
+        print("Scheduled Task Keys: %r" % (list(scheduled_task.keys()), ))
+        print("Possible Keys: %r" % (possible_keys_to_change, ))
+        print("New Params: %r " % (new_param, ))
         #pack mysql update
         update_set_var=[]
         update_set_value=[]
@@ -1655,7 +1662,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
             task=active_task
         if task==None:
             task=complete_task
-        print task
+        print(task)
         
         if task['parent_task_id']!=None:
             task_id=task['task_id']
@@ -1717,9 +1724,9 @@ def akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=False):
     if pid!=None:
         #if here means that previous session was crushed
         if bDeletePIDFileIfPIDdoesNotExist:
-            print """WARNING:File %s exists meaning that another AKRR Scheduler
+            print("""WARNING:File %s exists meaning that another AKRR Scheduler
             process is already working with this directory.
-            or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid"))
+            or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid")))
             os.remove(os.path.join(akrrcfg.data_dir,"akrr.pid"))
             return None
         else:
@@ -1764,12 +1771,12 @@ def akrrServerStart():
     if not os.path.isdir(akrrcfg.data_dir):
         raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.data_dir))
     if not os.path.isdir(os.path.join(akrrcfg.data_dir,"srv")):
-        print "Directory %s does not exist, creating it."%(os.path.join(akrrcfg.data_dir,"srv"))
+        print("Directory %s does not exist, creating it."%(os.path.join(akrrcfg.data_dir,"srv")))
         os.mkdir(os.path.join(akrrcfg.data_dir,"srv"))
     logname=os.path.join(akrrcfg.data_dir,"srv",datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f")+".log")
     while os.path.exists(logname)==True:
         logname=os.path.join(akrrcfg.data_dir,"srv",datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f")+".log")
-    print "Writing logs to:\n\t%s"%(logname)
+    print("Writing logs to:\n\t%s"%(logname))
     #createDaemon
     #this was adopted with a minor changes from Chad J. Schroeder  daemonization script
     #http://code.activestate.com/recipes/278731-creating-a-daemon-the-python-way/
@@ -1786,9 +1793,9 @@ def akrrServerStart():
         
     try:
         pid = os.fork()
-    except OSError, e:
+    except OSError as e:
         sys.stdout, sys.stderr = old_stdout, old_stderr
-        raise Exception, "%s [%d]" % (e.strerror, e.errno)
+        raise Exception("%s [%d]" % (e.strerror, e.errno))
     
    
     
@@ -1799,8 +1806,8 @@ def akrrServerStart():
         os.setsid() #set to be session leader
         try:
             pid = os.fork()
-        except OSError, e:
-            raise Exception, "%s [%d]" % (e.strerror, e.errno)
+        except OSError as e:
+            raise Exception("%s [%d]" % (e.strerror, e.errno))
         if (pid == 0):  #i.e. grand child
             os.setsid() #set to be session leader
             os.chdir(akrrcfg.data_dir)
@@ -1825,11 +1832,11 @@ def akrrServerStart():
         while time.time()-t0<10.0 and not os.path.isfile(logname):
             time.sleep(dt)
         if not os.path.isfile(logname):
-            print "AKRR Server have not start logging yet. Something is wrong!"
+            print("AKRR Server have not start logging yet. Something is wrong!")
             kill_child_processes(os.getpid())
             os._exit(1) #i.e. parent of first child is exiting here
         
-        print "following log:",logname
+        print("following log:",logname)
         logfile = open(logname,"r")
         REST_API_up=False
         in_the_main_loop=False
@@ -1837,7 +1844,7 @@ def akrrServerStart():
         while time.time()-t0<20.0:
             line=logfile.readline()
             if len(line)!=0:
-                print line,
+                print(line, end=' ')
                 if line.count("Listening on ")>0:
                     REST_API_up=True
                 if line.count("Got into the running loop on ")>0:
@@ -1847,16 +1854,16 @@ def akrrServerStart():
             else:
                 time.sleep(dt)
         if not REST_API_up:
-            print "AKRR REST API is not up.\n Something is wrong"
+            print("AKRR REST API is not up.\n Something is wrong")
             kill_child_processes(os.getpid())
             os._exit(1) #i.e. parent of first child is exiting here
         if not in_the_main_loop:
-            print "AKRR Server have not reached the loop.\n Something is wrong"
+            print("AKRR Server have not reached the loop.\n Something is wrong")
             kill_child_processes(os.getpid())
             os._exit(1) #i.e. parent of first child is exiting here
         
         #if here everything should be fine
-        print "\nAKRR Server successfully reached the loop."
+        print("\nAKRR Server successfully reached the loop.")
         os._exit(0) #i.e. parent of first child is exiting here
     
     if 0:
@@ -1874,8 +1881,8 @@ def akrrServerStart():
                     sys.stderr.close()
                     sys.stderr = sys.__stderr__
     if 0:
-        print "Redirect the standard I/O to\n\t%s"%(logname)
-        print "AKRR Server PID is",os.getpid()
+        print("Redirect the standard I/O to\n\t%s"%(logname))
+        print("AKRR Server PID is",os.getpid())
     if 0:
         #sys.stdout.flush()
         #sys.stderr.flush()
@@ -1884,9 +1891,9 @@ def akrrServerStart():
         sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
         #sys.stdout.flush()
         #sys.stderr.flush()
-        print "ssss",s
+        print("ssss",s)
         s=str(sys.stdout)+" "+str(sys.stderr)
-        print "SSss",s
+        print("SSss",s)
         #s=str(sys.stdout)+" "+str(sys.stderr)
         #print "SSss",s
     
@@ -1896,7 +1903,7 @@ def akrrServerStart():
     if (maxfd == resource.RLIM_INFINITY):
         maxfd = 1024
     
-    print
+    print()
     #print "Redirect the standard I/O to\n\t%s"%(logname)
     # Iterate through and close all file descriptors.
     for fd in range(maxfd-1, -1,-1):
@@ -1921,9 +1928,9 @@ def akrrServerStart():
         
     if 0:
         fout = open("/home/mikola/work/akrr_ci/akrr/out2",'w')
-        print >>fout,f1
-        print >>fout,f2
-        print f1,f2,fout
+        print(f1, file=fout)
+        print(f2, file=fout)
+        print(f1,f2,fout)
         fout.close()
     
     if 0:
@@ -1939,7 +1946,7 @@ def akrrServerStart():
         #os.dup2(1, 2)
     
     #finally 
-    print "Starting Application Remote Runner"
+    print("Starting Application Remote Runner")
     #akrrcfg.PrintOutResourceAndAppSummary()
     global akrrscheduler
     akrrscheduler=akrrScheduler()
@@ -1980,10 +1987,10 @@ def akrrServerCheckNRestart():
     t=str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
     
     if pid==None:
-        print "%s: AKRR server is down will start it"%(t,)
+        print("%s: AKRR server is down will start it"%(t,))
         akrrServerStart()
     else:
-        print "%s: AKRR Server is up and it's PID is %d"%(t,pid)
+        print("%s: AKRR Server is up and it's PID is %d"%(t,pid))
     return None
 def akrrDeleteTaskWithExternalServerInterupt(task_id):
     """remove the task from AKRR server"""
@@ -2012,14 +2019,14 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
             WHERE task_id=%s ;''',(task_id,))
             tasksToRemove=sch.ScheduledTasksCur.fetchone()
             if tasksToRemove ==None:
-                print "Task %d was removed from SCHEDULEDTASKS."%(task_id)
+                print("Task %d was removed from SCHEDULEDTASKS."%(task_id))
         else:
             #check if the task is in ACTIVETASKS
             sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
                 WHERE task_id=%s ;''',(task_id,))
             tasksToRemove=sch.ActiveTasksCur.fetchone()
             if tasksToRemove !=None:
-                print "Trying to remove task from ACTIVETASKS"
+                print("Trying to remove task from ACTIVETASKS")
                 (task_lock,status)=tasksToRemove
                 while task_lock!=0:
                     sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
@@ -2040,7 +2047,7 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
                     
                     
                 if CanBeSafelyRemoved:
-                    print "The task can be safely removed"
+                    print("The task can be safely removed")
                     #Redirect logging back
                     #akrrtask.RedirectStdoutBack()
                     
@@ -2054,27 +2061,27 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
                     
                     
                 else:
-                    print "Task can NOT be remove safely. Unimplemented status:"
-                    print "\t%s"%(status)
+                    print("Task can NOT be remove safely. Unimplemented status:")
+                    print("\t%s"%(status))
                     
                 #check again
                 sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
                     WHERE task_id=%s ;''',(task_id,))
                 tasksToRemove=sch.ActiveTasksCur.fetchone()
                 if tasksToRemove ==None:
-                    print "Task %d was removed from ACTIVETASKS."%(task_id)
+                    print("Task %d was removed from ACTIVETASKS."%(task_id))
                 else:
-                    print "Task %d was NOT removed from ACTIVETASKS."%(task_id)
+                    print("Task %d was NOT removed from ACTIVETASKS."%(task_id))
             else:
-                print "Task %d is NOT in SCHEDULEDTASKS or ACTIVETASKS."%(task_id)
+                print("Task %d is NOT in SCHEDULEDTASKS or ACTIVETASKS."%(task_id))
         
         if pid!=None:
             #restore schedule functionality
             os.kill(pid,signal.SIGUSR2)
     except Exception as e:
-        print "# Exception ##########"
-        print traceback.format_exc()
-        print
+        print("# Exception ##########")
+        print(traceback.format_exc())
+        print()
         if pid!=None:
             #restore schedule functionality
             os.kill(pid,signal.SIGUSR2)
@@ -2092,32 +2099,32 @@ def update_app_ker_launchers():
         akrrcfg.PrintOutResourceAndAppSummary()
         
         for r in akrrcfg.resources:
-            print "="*80
-            print r['name'],r['AppKerLaunchersDir']
+            print("="*80)
+            print(r['name'],r['AppKerLaunchersDir'])
             try:
                 msg=akrrcfg.sshResource(r,command="rm -rf %s/*"%(r['AppKerLaunchersDir']))
                 for subdir in ["bin", "lib", "tests", "tmp"]:
                     msg=akrrcfg.scpToResource(r,akrrcfg.AppKerLaunchersDir+'/'+subdir,r['AppKerLaunchersDir'],"-r")
             except Exception as e:
-                print "# Exception ##########"
-                print traceback.format_exc()
+                print("# Exception ##########")
+                print(traceback.format_exc())
 
         if pid!=None:
             #restore schedule functionality
             os.kill(pid,signal.SIGUSR2)
     except Exception as e:
-        print "# Exception ##########"
-        print traceback.format_exc()
-        print
+        print("# Exception ##########")
+        print(traceback.format_exc())
+        print()
         if pid!=None:
             #restore schedule functionality
             os.kill(pid,signal.SIGUSR2)
         raise
     
 def akrrd_main2(action='', append=False, output_file=None):
-    
+    print(akrrcfg.max_task_handlers)
     if action=='startdeb':
-        print "Starting Application Remote Runner"
+        print("Starting Application Remote Runner")
         #check if AKRR already up
         pid=akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
         if pid!=None:
@@ -2157,8 +2164,8 @@ def akrrd_main2(action='', append=False, output_file=None):
             try:
                 akrrServerStop()
             except Exception as e:
-                print "# Exception ##########"
-                print traceback.format_exc()
+                print("# Exception ##########")
+                print(traceback.format_exc())
             akrrServerStart()
 #         elif(sys.argv[1]=='checknrestart'):
 #             akrrServerCheckNRestart()

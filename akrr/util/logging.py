@@ -1,9 +1,8 @@
 """
 Provide standardized logging output
 """
-import sys
 
-import colorize
+from . import colorize
 
 
 class LogLevel(object):
@@ -26,7 +25,6 @@ def __log(level, message, *args):
     :param args: the arguments message is to be formatted with.
     :return: void
     """
-    import sys
     if not level:
         raise AssertionError('Must provide a level in order to log a message')
     if message:
@@ -50,13 +48,7 @@ def __log(level, message, *args):
         write('[' + colorize.purple(LogLevel.messages.get(level)) + ']: ' + formatted_message)
 
 def write(message):
-
-    if isinstance(sys.stdout, file):
-        sys.stdout.write(message)
-    elif isinstance(sys.stdout, object):
-        instance = sys.stdout()
-        instance.write(message)
-
+    print(message)
 
 def error(message, *args):
     __log(LogLevel.ERROR, message, *args)
@@ -74,3 +66,4 @@ def input(message, *args):
     
 def debug(message, *args):
     __log(LogLevel.DEBUG, message, *args)
+    

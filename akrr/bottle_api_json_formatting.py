@@ -8,16 +8,24 @@ from bottle import template
 from bottle import tob
 from bottle import ERROR_PAGE_TEMPLATE
 
-import json
-import datetime
-
-class jsonEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            encoded_object = str(obj)
-        else:
-            encoded_object =json.JSONEncoder.default(self, obj)
-        return encoded_object
+# Co-opted the Bottle json import strategy
+try:
+    #pylint: disable=F0401 
+    from json import dumps as json_dumps
+except ImportError: # pragma: no cover
+    try: 
+        #pylint: disable=F0401 
+        from simplejson import dumps as json_dumps
+    except ImportError:
+        try: 
+            #pylint: disable=F0401
+            from django.utils.simplejson import dumps as json_dumps
+        except ImportError:
+            #pylint: disable=W0613
+            def json_dumps(data):
+                ''' Place holder for lack of appropriate json lib '''
+                raise ImportError(
+                    'JSON support requires Python 2.6 or simplejson.')
 
 
 class JsonFormatting(object):
@@ -44,7 +52,6 @@ class JsonFormatting(object):
         self.function_original = None
         self.supported_types = supported_types
         self.ALL_TYPES = JsonFormatting.ALL_TYPES
-        self.indent=4
 
     def setup(self, app):
         ''' Handle plugin install '''
@@ -52,34 +59,20 @@ class JsonFormatting(object):
         self.function_type = type(app.default_error_handler)
         self.function_original = app.default_error_handler
         self.app.default_error_handler = self.function_type(
-                self.custom_error_handler, app, Bottle)
+                self.custom_error_handler, app)
 
     #pylint: disable=W0613
     def apply(self, callback, route):
         ''' Handle route callbacks '''
-        if not json.dumps: 
+        if not json_dumps: 
             return callback
         def wrapper(*a, **ka):
             ''' Encapsulate the result in json '''
             output = callback(*a, **ka)
             if self.in_supported_types(request.headers.get('Accept', '')):
-                #response_object = self.get_response_object(0)
-                response_object = {
-                                   "success":True,
-                                   "message":"success",
-                                   "data":None
-                                   }
+                response_object = self.get_response_object(0)
                 response_object['data'] = output
-                
-                if type(output) is dict and "success" in output and "message" in output:
-                    if "data" in output:
-                        if len(output.keys())==3:
-                            response_object=output
-                    else:
-                        if len(output.keys())==2:
-                            response_object=output
-                
-                json_response = json.dumps(response_object,indent=self.indent, cls=jsonEncoder)
+                json_response = json_dumps(response_object)
                 response.content_type = 'application/json'
                 return json_response
             else:
@@ -122,27 +115,18 @@ class JsonFormatting(object):
         ''' Monkey patch method for json formatting error responses '''
         # when the accept type matches the jsonFormatting configuration
         if self.in_supported_types(request.headers.get('Accept', '')):
-            message=error.body
-            if message==None:
-                message=error.status_line
-            if message==None:
-                message="None"
-            response_object = {
-                   "success":False,
-                   "message":message,
-            }
-            #response_object = self.get_response_object(1)
-            #response_object['error'] = {
-            #        'status_code': error.status_code,
-            #        'status': error.status_line,
-            #        'message': error.body,
-            #    }
+            response_object = self.get_response_object(1)
+            response_object['error'] = {
+                    'status_code': error.status_code,
+                    'status': error.status_line,
+                    'message': error.body,
+                }
             if self.debug:
                 response_object['debug'] = {
                         'exception': repr(error.exception),
                         'traceback': error.traceback,
                     }
-            json_response = json.dumps(response_object,indent=self.indent)
+            json_response = json_dumps(response_object)
             response.content_type = 'application/json'
             return json_response
         else:

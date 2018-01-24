@@ -3,16 +3,16 @@ A script that will provide command line access to the Application Remote Runner
 functionality.
 
 """
-from util import logging as log
+from .util import logging as log
 
 import random
 import datetime
 import os
 import sys
-import cStringIO
+import io
 import argparse
 
-from util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+from .util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
 #NOTE: do not globally import akrrcfg or other modules which invoke akrrcfg
 
 def tuples_to_dict(*tuples):
@@ -38,7 +38,7 @@ def insert_resources(resources):
                       mod_appkernel.resource database.
     :return: void
     """
-    import akrrcfg
+    from . import akrrcfg
     
     if resources is not None and len(resources) > 0:
 
@@ -68,7 +68,7 @@ def insert_resource(resource):
     :param resource:
     :return: void
     """
-    import akrrcfg
+    from . import akrrcfg
     if resource is not None:
         name, id = resource
         connection, cursor = akrrcfg.getAKDB()
@@ -92,7 +92,7 @@ def retrieve_resources():
 
     :return: a dict representation of the resourcefact table ( name, id )
     """
-    import akrrcfg
+    from . import akrrcfg
     connection, cursor = akrrcfg.getXDDB(True)
     with connection:
         cursor.execute("""
@@ -112,7 +112,7 @@ def retrieve_resource(resource, exact):
     :param resource: the name of the resource to retrieve
     :return: a json encoded version of the record in `modw`.`resourcefact` identified by
     """
-    import akrrcfg
+    from . import akrrcfg
     if resource is None or len(resource) < 1:
         raise AssertionError('provided resource must not be empty.')
 
@@ -153,11 +153,11 @@ def retrieve_tasks(resource, application):
         'application': application,
         'resource': resource
     }
-    import akrrrestclient
+    from . import akrrrestclient
 
     try:
         akrrrestclient.get_token()
-    except StandardError:
+    except Exception:
         log.error('''
                 An error occured while attempting to retrieve a token
                 from the REST API.
@@ -175,7 +175,7 @@ def retrieve_tasks(resource, application):
                 result.status_code,
                 result.text)
         return result
-    except StandardError, e:
+    except Exception as e:
         log.error('''
                 An error occured while communicating
                 with the REST API.
@@ -355,7 +355,7 @@ def on_parsed(args):
     }
     
     try:
-        import akrrrestclient
+        from . import akrrrestclient
         
         result = akrrrestclient.put(
             '/resources/{0}/on'.format(args.resource),
@@ -371,7 +371,7 @@ def on_parsed(args):
                 'something went wrong. {0}:{1}',
                 result.status_code,
                 result.text)
-    except StandardError, e:
+    except Exception as e:
         log.error('''
             An error occured while communicating
             with the REST API.
@@ -391,7 +391,7 @@ def off_parsed(args):
     }
 
     try:
-        import akrrrestclient
+        from . import akrrrestclient
         
         result = akrrrestclient.put(
             '/resources/{0}/off'.format(args.resource),
@@ -408,7 +408,7 @@ def off_parsed(args):
                 'something went wrong. {0}:{1}',
                 result.status_code,
                 result.text)
-    except StandardError, e:
+    except Exception as e:
         log.error('''
             An error occured while communicating
             with the REST API.
@@ -453,7 +453,7 @@ def new_task_parsed(args):
             'resource_param': "{'nnodes':%s}" % (node,)
         }
         try:
-            import akrrrestclient
+            from . import akrrrestclient
             
             result = akrrrestclient.post(
                 '/scheduled_tasks',
@@ -465,7 +465,7 @@ def new_task_parsed(args):
                     'something went wrong. {0}:{1}',
                     result.status_code,
                     result.text)
-        except StandardError, e:
+        except Exception as e:
             log.error('''
             An error occured while communicating
             with the REST API.
@@ -485,7 +485,7 @@ def reprocess_parsed(args):
     time_end=args.time_end
     verbose=args.verbose
     
-    import akrrscheduler
+    from . import akrrscheduler
     sch=akrrscheduler.akrrScheduler(AddingNewTasks=True)
     sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
     
@@ -515,7 +515,7 @@ def wall_time_parsed(args):
             'comments':comments
         }
         try:
-            import akrrrestclient
+            from . import akrrrestclient
             
             result = akrrrestclient.post(
                 '/walltime/%s/%s'%(resource,app),
@@ -534,7 +534,7 @@ def wall_time_parsed(args):
                 log.error('something went wrong. {0}:{1}',
                           result.status_code,
                           result.text)
-        except StandardError, e:
+        except Exception as e:
             import traceback
             log.error('''
             An error occured while communicating
@@ -543,7 +543,7 @@ def wall_time_parsed(args):
             '''.strip(),
                       e.args[0] if len(e.args) > 0 else '',
                       e.args[1] if len(e.args) > 1 else '')
-            print traceback.print_exc()
+            print(traceback.print_exc())
 
 def batch_job_parsed(args):
     if not (args.resource and
@@ -552,17 +552,17 @@ def batch_job_parsed(args):
         log.error(
             'Please provide a resource, application kernel and node count.')
         exit(1)
-    import akrrcfg
+    from . import akrrcfg
     resource = akrrcfg.FindResourceByName(args.resource)
     app = akrrcfg.FindAppByName(args.appkernel)
     nodes = args.nodes
     print_only=args.print_only
     verbose=args.verbose
 
-    str_io=cStringIO.StringIO()
+    str_io=io.StringIO()
     if not verbose:
         sys.stdout = sys.stderr = str_io
-    from akrrtaskappker import akrrTaskHandlerAppKer
+    from .akrrtaskappker import akrrTaskHandlerAppKer
     taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (nodes,),"{}","{}")
     if print_only:
         taskHandler.GenerateBatchJobScript()
@@ -573,7 +573,7 @@ def batch_job_parsed(args):
 
     if taskHandler.status.count("ERROR")>0:
         log.error('Batch job script was not generated see log below!')
-        print str_io.getvalue()
+        print(str_io.getvalue())
         log.error('Batch job script was not generated see log above!')
 
 
@@ -585,10 +585,10 @@ def batch_job_parsed(args):
 
         if print_only:
             log.info('Below is content of generated batch job script:')
-            print jobScriptContent
+            print(jobScriptContent)
         else:
             log.info("Local copy of batch job script is "+jobScriptFullPath)
-            print
+            print()
             log.info("Application kernel working directory on "+resource['name']+" is "+taskHandler.remoteTaskDir)
             log.info("Batch job script location on "+resource['name']+" is "+os.path.join(taskHandler.remoteTaskDir,taskHandler.JobScriptName))
     else:
@@ -598,7 +598,7 @@ def batch_job_parsed(args):
         taskHandler.DeleteLocalFolder()
 
 def check_daemon(args):
-    import akrrcfg
+    from . import akrrcfg
     from requests.auth import HTTPBasicAuth
     import requests
     
@@ -673,15 +673,23 @@ def daemon_handler(args):
     if args.action=='check':
         return check_daemon(args)
     
-    import akrrcfg
+    from . import akrrcfg
         
     if args.cron and args.action in ['checknrestart','restart']:
         args.append=True
         args.output_file=os.path.join(akrrcfg.data_dir,'checknrestart')
     
+    import akrr
     import akrr.akrrscheduler
-
-    akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
+    
+    if args.action=="startdeb":
+        akrr.debug=True
+        
+        if args.debug_max_task_handlers is not None:
+            #akrr.debug_max_task_handlers=args.debug_max_task_handlers
+            akrrcfg.max_task_handlers = args.debug_max_task_handlers
+    
+    return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
     
 def akrr_cli():
     parser = argparse.ArgumentParser(description='command line interface to AKRR')
@@ -804,7 +812,12 @@ def akrr_cli():
     daemon_subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
     daemon_subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
     daemon_subparsers.add_parser('status', help='print current status of Application Remote Runner')
-    daemon_subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
+    startdeb_daemon_subparsers=daemon_subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
+    startdeb_daemon_subparsers.add_argument(
+        '-th', '--max-task-handlers',
+        dest='debug_max_task_handlers',
+        default=None,type=int,
+        help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
 
     daemon_parser.set_defaults(func=daemon_handler)
     

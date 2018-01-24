@@ -1,4 +1,4 @@
-import akrrcfg
+from . import akrrcfg
 import os
 import sys
 #namdSizes
@@ -153,38 +153,38 @@ class akrrTaskHandlerBase:
         if not os.path.isdir(akrrcfg.data_dir):
             raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.data_dir))
         if not os.path.isdir(resourceDir):
-            print "Directory %s does not exist, creating it."%(resourceDir)
+            print("Directory %s does not exist, creating it."%(resourceDir))
             os.mkdir(resourceDir)
         if not os.path.isdir(appDir):
-            print "Directory %s does not exist, creating it."%(appDir)
+            print("Directory %s does not exist, creating it."%(appDir))
             os.mkdir(appDir)
         if not os.path.isdir(akrrcfg.completed_tasks_dir):
             raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.completed_tasks_dir))
         if not os.path.isdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName)):
-            print "Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName))
+            print("Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName)))
             os.mkdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName))
         if not os.path.isdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName)):
-            print "Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName))
+            print("Directory %s does not exist, creating it."%(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName)))
             os.mkdir(os.path.join(akrrcfg.completed_tasks_dir,self.resourceName,self.appName))
             
         while os.path.exists(taskDir)==True:
-            print os.path.exists(taskDir)
+            print(os.path.exists(taskDir))
             timeStamp=datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
             taskDir=os.path.join(appDir,timeStamp)
-        print "Creating task directory: %s"%(taskDir)
+        print("Creating task directory: %s"%(taskDir))
         os.mkdir(taskDir)
-        print "Creating task directories: \n\t%s\n\t%s"%(os.path.join(taskDir,"jobfiles"),os.path.join(taskDir,"proc"))
+        print("Creating task directories: \n\t%s\n\t%s"%(os.path.join(taskDir,"jobfiles"),os.path.join(taskDir,"proc")))
         os.mkdir(os.path.join(taskDir,"jobfiles"))
         os.mkdir(os.path.join(taskDir,"proc"))
         return timeStamp
     def IamDone(self):
-        print "IamDone",self.taskDir
+        print("IamDone",self.taskDir)
         time.sleep(1)
         self.status="Done"
         self.statusinfo="IamDone"
         return None
     def FirstStep(self):
-        print "IamDone",self.taskDir
+        print("IamDone",self.taskDir)
         time.sleep(1)
         self.status="FirstStep"
         self.statusinfo="FirstStep"
@@ -242,7 +242,7 @@ class akrrTaskHandlerBase:
 #            self.status="Done"
     def CopyOutputFilesFromRemoteMachine(self):
         self.status="Copying output files from remote machine"
-        print self.status
+        print(self.status)
         exit(0)
         self.status="Output files was copied from remote machine"
     def ProcessOutput(self):
@@ -262,7 +262,7 @@ class akrrTaskHandlerBase:
         wd=os.getcwd()
         os.chdir(self.taskDir)
         
-        print "Writing JobScript to:",os.path.join(self.taskDir,self.JobScriptName)
+        print("Writing JobScript to:",os.path.join(self.taskDir,self.JobScriptName))
         fout=open(os.path.join(self.taskDir,self.JobScriptName),'w')
         
         #arg_bin_path=self.app['arg_bin_path']
@@ -303,9 +303,9 @@ class akrrTaskHandlerBase:
         if os.path.commonprefix([rt,ad])!=ad:
             raise IOError("can not remove remote task folder. The folder should be in akrrdata")
         
-        print "removing remote task folder:\n\t%s"%(self.remoteTaskDir)
+        print("removing remote task folder:\n\t%s"%(self.remoteTaskDir))
         msg=akrrcfg.sshResource(self.resource,"rm -rf \"%s\""%(self.remoteTaskDir))
-        print msg
+        print(msg)
         
   
     def WriteErrorXML(self, filename,bCDATA=False):
@@ -337,7 +337,7 @@ class akrrTaskHandlerBase:
         try:
             tree = ET.fromstring(content)
         except:
-            print "Cannot write readable XML file, will try CDATA declaration"
+            print("Cannot write readable XML file, will try CDATA declaration")
             content="""<body>
  <xdtas>
   <batchJob>
@@ -352,7 +352,7 @@ class akrrTaskHandlerBase:
             try:
                 tree = ET.fromstring(content)
             except:
-                print "Cannot write readable XML file!!!"
+                print("Cannot write readable XML file!!!")
                 #raise
         
         fout=open(filename,"w")

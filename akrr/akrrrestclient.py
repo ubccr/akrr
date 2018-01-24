@@ -7,7 +7,7 @@ which might change
 
 
 """
-import akrrcfg
+from . import akrrcfg
 import os
 import random
 import string

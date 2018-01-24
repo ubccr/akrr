@@ -119,7 +119,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         
         j+=1
     if ior_output_version==None:
-        print "ERROR: unknown version of IOR output!!!"
+        print("ERROR: unknown version of IOR output!!!")
     
     
     testsPassed=0
@@ -378,9 +378,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(Verbose=True)
+        print("parsing complete:",parser.parsingComplete(Verbose=True))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
     
     #return complete XML overwize return None
     return parser.getXML()
@@ -389,7 +389,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print("Proccessing Output From",jobdir)
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),geninfo=os.path.join(jobdir,"gen.info"))
     
     

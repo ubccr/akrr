@@ -1,7 +1,7 @@
 """
 Responsible for serving the RESTful AKRR API.
 """
-import akrrcfg
+from . import akrrcfg
 
 apiroot = akrrcfg.restapi_apiroot
 import os
@@ -11,21 +11,21 @@ import time
 import re
 import traceback
 import datetime
-from util import logging as log
+from .util import logging as log
 
 import bottle
-import bottle_api_json_formatting
+from . import bottle_api_json_formatting
 from bottle import Bottle, run, redirect, response, request, get, post, put, delete, error, HTTPError
 
 from json import dumps
-from models.task import Task
-from util.generators import generateNumber, generateChars
-from urllib import quote
+from .models.task import Task
+from .util.generators import generateNumber, generateChars
+from urllib.parse import quote
 
-import akrrscheduler
+from . import akrrscheduler
 
-import MySQLdb
-import MySQLdb.cursors
+import pymysql
+import pymysql.cursors
 
 import logging
 
@@ -104,7 +104,7 @@ def validateTaskVariableValue(k, v):
     return value or reformated value"""
     try:
         return akrrscheduler.akrrValidateTaskVariableValue(k, v)
-    except Exception, e:
+    except Exception as e:
         raise bottle.HTTPError(400, str(e))
 
 ###############################################################################
@@ -121,14 +121,14 @@ def generate_token():
     N = 32
     new_token = ''.join(
         random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(N))
-    while new_token in issued_tokens.keys():
+    while new_token in list(issued_tokens.keys()):
         new_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
     return new_token
 
 
 def check_expired_tokens():
     "check and delete expired tokens"
-    tokens = issued_tokens.keys()
+    tokens = list(issued_tokens.keys())
     epoch_time = int(time.time())
     for token in tokens:
         if issued_tokens[token]['expiration'] < epoch_time:
@@ -225,8 +225,8 @@ def create_scheduled_tasks():
               'task_param': '{}',
               'group_id': ''}
 
-    for k in bottle.request.forms.keys():
-        print "Received: %r=>%r" % (k, bottle.request.forms[k])
+    for k in list(bottle.request.forms.keys()):
+        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -235,14 +235,14 @@ def create_scheduled_tasks():
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    import akrrscheduler
+    from . import akrrscheduler
 
     sch = akrrscheduler.akrrScheduler(AddingNewTasks=True)
     try:
         task_id = sch.addTask(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
                               params['resource_param'], params['app_param'], params['task_param'],
                               params['group_id'], None)
-    except Exception, e:
+    except Exception as e:
         raise bottle.HTTPError(400, 'Can not submit task to scheduled_tasks queue:' + traceback.format_exc())
     del sch
 
@@ -319,7 +319,7 @@ def update_scheduled_tasks(task_id):
 
     update_values = {}
 
-    for k in bottle.request.forms.keys():
+    for k in list(bottle.request.forms.keys()):
         update_values[k] = validateTaskVariableValue(k, bottle.request.forms[k])
 
     if len(possible_task) == 1:
@@ -334,7 +334,7 @@ def update_scheduled_tasks(task_id):
                     "success": True,
                     "message": "Task successfully updated!",
                 }
-            except Exception, e:
+            except Exception as e:
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
@@ -387,7 +387,7 @@ def delete_scheduled_task_by_id(task_id):
                     "success": True,
                     "message": "Task successfully deleted!",
                 }
-            except Exception, e:
+            except Exception as e:
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
@@ -440,14 +440,14 @@ def get_active_tasks(task_id):
     if len(task) == 1:
         task=task[0]
         try:
-            import akrrtask
+            from . import akrrtask
             taskDir=akrrtask.GetLocalTaskDir(task['resource'],task['app'],task['datetimestamp'])
             logFile=os.path.join(taskDir,'proc','log')
             with open(logFile,"r") as fin:
                 logFileContent=fin.read()
            
             task['log']=logFileContent
-        except Exception,e:
+        except Exception as e:
             raise e
             task['log']='Log file can not be found'
 
@@ -464,15 +464,15 @@ def update_active_tasks(task_id):
     the updatable parameter is next_check_time, i.e. renew status
     """
     # check input
-    if len(bottle.request.forms.keys()) == 1 and 'next_check_time' not in bottle.request.forms.keys():
+    if len(list(bottle.request.forms.keys())) == 1 and 'next_check_time' not in list(bottle.request.forms.keys()):
         raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
-    if len(bottle.request.forms.keys()) > 1 and 'next_check_time' in bottle.request.forms.keys():
+    if len(list(bottle.request.forms.keys())) > 1 and 'next_check_time' in list(bottle.request.forms.keys()):
         raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
         #raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
     update_values = {}
-    for k in bottle.request.forms.keys():
+    for k in list(bottle.request.forms.keys()):
         update_values[k] = validateTaskVariableValue(k, bottle.request.forms[k])
-    if 'next_check_time' not in bottle.request.forms.keys():
+    if 'next_check_time' not in list(bottle.request.forms.keys()):
         update_values['next_check_time']=validateTaskVariableValue('next_check_time',datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     # get task
@@ -535,7 +535,7 @@ def delete_active_tasks(task_id):
                     "success": True,
                     "message": "Task successfully deleted!",
                 }
-            except Exception, e:
+            except Exception as e:
                 raise bottle.HTTPError(400, str(e))
     else:
         return {
@@ -610,7 +610,7 @@ def get_tasks(task_id):
     try:
         r = get_scheduled_tasks(task_id)
         return {'queue': 'scheduled_tasks', 'data': r}
-    except bottle.HTTPError, e:
+    except bottle.HTTPError as e:
         if e.status_code == 404 and e.body == 'No tasks found with that id.':
             pass
         else:
@@ -619,7 +619,7 @@ def get_tasks(task_id):
     try:
         r = get_active_tasks(task_id)
         return {'queue': 'active_tasks', 'data': r}
-    except bottle.HTTPError, e:
+    except bottle.HTTPError as e:
         if e.status_code == 404 and e.body == 'No tasks found with that id.':
             pass
         else:
@@ -628,7 +628,7 @@ def get_tasks(task_id):
     try:
         r = get_completed_tasks(task_id)
         return {'queue': 'completed_tasks', 'data': r}
-    except bottle.HTTPError, e:
+    except bottle.HTTPError as e:
         if e.status_code == 404 and e.body == 'No tasks found with that id.':
             pass
         else:
@@ -683,18 +683,18 @@ def _get_resource_apps(resource, application):
 
     parameters = ("%{0}%".format(resource), "%{0}%".format(application)) if resource and application else \
         ("%{0}%".format(application), ) if application else ("%{0}%".format(resource), ) if resource else ()
-    print query, parameters
+    print(query, parameters)
     rows = None
     try:
         connection, cursor = akrrcfg.getDB(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -790,11 +790,11 @@ def _get_resource_app_status(resource, application):
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -817,7 +817,7 @@ def get_unique_tasks():
         resource = request.query.resource
         application = request.query.app
         status = request.query.status
-    except UnicodeError, e:
+    except UnicodeError as e:
         log.error("There was a problem while trying to extract the query parameters from the request. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -842,7 +842,7 @@ def get_resources():
     try:
         resource_filter = request.query.resource
         exact_flag = request.query.exact
-    except UnicodeError, e:
+    except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
 
     # DETERMINE: which query we need to run based on the parameters supplied.
@@ -871,11 +871,11 @@ def get_resources():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -901,7 +901,7 @@ def get_kernels():
     try:
         kernel_filter = request.query.kernel
         disabled = str_to_bool(request.query.disabled)
-    except UnicodeError, e:
+    except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:kernels. {0}: {1}", e.args[0], e.args[1])
 
     query = """
@@ -957,11 +957,11 @@ def get_kernels():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1062,20 +1062,20 @@ def _turn_resource_on(resource, application):
                                                    and resource_exists and app_kernel_exists else \
             ((resource,), (resource,))
 
-    queries_and_parameters = zip(queries, parameters)
+    queries_and_parameters = list(zip(queries, parameters))
     try:
         connection, cursor = akrrcfg.getDB()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
-                print query, parameter
+                print(query, parameter)
                 result += cursor.execute(query, parameter)
         return result
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1233,20 +1233,20 @@ def _turn_resource_off(resource, application):
                                                 and resource_exists and app_kernel_exists else \
             ((resource,), (resource,))
 
-    queries_and_parameters = zip(queries, parameters)
+    queries_and_parameters = list(zip(queries, parameters))
     try:
         connection, cursor = akrrcfg.getDB()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
-                print query, parameter
+                print(query, parameter)
                 result += cursor.execute(query, parameter)
         return result
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1266,7 +1266,7 @@ def turn_resource_on(resource):
     # ATTEMPT: to retrieve any query parameters
     try:
         application_filter = request.forms.application
-    except UnicodeError, e:
+    except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
 
     return {'updated': _turn_resource_on(resource, application_filter)}
@@ -1286,7 +1286,7 @@ def turn_resource_off(resource):
     # ATTEMPT: to retrieve any query parameters
     try:
         application_filter = request.forms.application
-    except UnicodeError, e:
+    except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
 
     return {'updated': _turn_resource_off(resource, application_filter)}
@@ -1309,11 +1309,11 @@ def get_walltime_all():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1341,11 +1341,11 @@ def get_walltime(walltime_id):
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1374,8 +1374,8 @@ def upsert_walltime(resource,app):
               'comments':""
     }
 
-    for k in bottle.request.forms.keys():
-        print "Received: %r=>%r" % (k, bottle.request.forms[k])
+    for k in list(bottle.request.forms.keys()):
+        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -1410,11 +1410,11 @@ def upsert_walltime(resource,app):
 
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1441,8 +1441,8 @@ def get_walltime(resource,app):
               'comments':""
     }
 
-    for k in bottle.request.forms.keys():
-        print "Received: %r=>%r" % (k, bottle.request.forms[k])
+    for k in list(bottle.request.forms.keys()):
+        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -1468,11 +1468,11 @@ def get_walltime(resource,app):
 
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1492,8 +1492,8 @@ def update_walltime_by_id(walltime_id):
               'comments':""
     }
 
-    for k in bottle.request.forms.keys():
-        print "Received: %r=>%r" % (k, bottle.request.forms[k])
+    for k in list(bottle.request.forms.keys()):
+        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -1524,11 +1524,11 @@ def update_walltime_by_id(walltime_id):
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1555,18 +1555,18 @@ def delete_walltime(walltime_id):
                     WHERE id = %s''',(walltime_id,))
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
-    except MySQLdb.MySQLError, e:
+    except pymysql.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
-    except StandardError, e:
+    except Exception as e:
         log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'deleted': False}
 
 def start_rest_api(m_proc_queue_to_master=None, m_proc_queue_from_master=None):
-    print "Starting REST-API Service"
+    print("Starting REST-API Service")
     # make sure that reloading is off and debugging is turned on.
     issued_tokens['test'] = {'token': 'test', 'expiration': int(time.time()) + akrrcfg.restapi_token_expiration_time,
                              'read': True, 'write': True}

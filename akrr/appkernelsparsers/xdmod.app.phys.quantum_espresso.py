@@ -108,10 +108,10 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         j+=1
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(True)
-        if hasattr(parser, 'successfulRun'):print "successfulRun",parser.successfulRun
+        print("parsing complete:",parser.parsingComplete(True))
+        if hasattr(parser, 'successfulRun'):print("successfulRun",parser.successfulRun)
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
         
     
     #return complete XML overwize return None
@@ -121,7 +121,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print("Proccessing Output From",jobdir)
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),geninfo=os.path.join(jobdir,"gen.info"))
     
     

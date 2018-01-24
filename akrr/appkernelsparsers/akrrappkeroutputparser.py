@@ -131,8 +131,8 @@ class AppKerOutputParser:
                         
                     self.geninfo=gi
         except:
-            print "ERROR: Can not process gen.info file"
-            print traceback.format_exc()
+            print("ERROR: Can not process gen.info file")
+            print((traceback.format_exc()))
         self.setParameter("RunEnv:Nodes",self.nodesList)
         
         if appstdout!=None:
@@ -195,9 +195,9 @@ class AppKerOutputParser:
             
             
             
-            print lines
-            print self.filesExistance
-            print self.dirAccess
+            print(lines)
+            print((self.filesExistance))
+            print((self.dirAccess))
 
     def parsingComplete(self,Verbose=False):
         """i.e. app output was having all mandatory parameters and statistics"""
@@ -207,13 +207,13 @@ class AppKerOutputParser:
         for v in self.parameters:p.append(v[0])
         for v in self.mustHaveParameters:
             if p.count(v)==0:
-                if Verbose: print "Must have parameter, %s, is not present"%(v,)
+                if Verbose: print(("Must have parameter, %s, is not present"%(v,)))
                 complete=False
         p=[]
         for v in self.statistics:p.append(v[0])
         for v in self.mustHaveStatistics:
             if p.count(v)==0:
-                if Verbose: print "Must have statistic, %s, is not present"%(v,)
+                if Verbose: print(("Must have statistic, %s, is not present"%(v,)))
                 complete=False
         if self.completeOnPartialMustHaveStatistics and complete==False:
             
@@ -268,11 +268,11 @@ class AppKerOutputParser:
         """print set parameters and statistics as part of code to set them as must have"""
         pars=self.getUniqueParameters()
         for par in pars:
-            print "parser.setMustHaveParameter('%s')"%(par[0],)
-        print
+            print(("parser.setMustHaveParameter('%s')"%(par[0],)))
+        print()
         pars=self.getUniqueStatistic()
         for par in pars:
-            print "parser.setMustHaveStatistic('%s')"%(par[0],)
+            print(("parser.setMustHaveStatistic('%s')"%(par[0],)))
     def getDateTimeLocal(self,datestr):
         """Return local datatime, will convert the other zones to local. If original datestr does not have
         zone information assuming it is already local"""

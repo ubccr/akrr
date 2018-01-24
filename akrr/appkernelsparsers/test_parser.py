@@ -49,17 +49,17 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if stdout!=None:
         if hasattr(parser,'filesExistance'):
-            for k,v in parser.filesExistance.iteritems():
+            for k,v in list(parser.filesExistance.items()):
                 parser.setStatistic(k+" exists",int(v))
         if hasattr(parser,'dirAccess'):
-            for k,v in parser.dirAccess.iteritems():
+            for k,v in list(parser.dirAccess.items()):
                 parser.setStatistic(k+" accessible",int(v))
     
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete()
+        print(("parsing complete:",parser.parsingComplete()))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print((parser.getXML()))
     
     #return complete XML overwize return None
     return parser.getXML()
@@ -68,7 +68,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print(("Proccessing Output From",jobdir))
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),
                         stdout=os.path.join(jobdir,"stdout"),
                         stderr=os.path.join(jobdir,"stderr"),

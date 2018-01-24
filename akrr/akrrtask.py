@@ -1,4 +1,4 @@
-import akrrcfg
+from . import akrrcfg
 import os
 import sys
 #namdSizes
@@ -7,8 +7,8 @@ import time
 
 import re
 
-from akrrtaskappker import akrrTaskHandlerAppKer
-from akrrtaskbundle import akrrTaskHandlerBundle
+from .akrrtaskappker import akrrTaskHandlerAppKer
+from .akrrtaskbundle import akrrTaskHandlerBundle
 
 
 def GetLocalTaskDir(resourceName,appName,timeStamp,TaskIsActive=True):
@@ -46,7 +46,7 @@ def RedirectStdoutToLog(logfilename):
     sys.stdout = log_file
     
     timenow=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-    print ">>> "+timenow+" "+">"*96
+    print(">>> "+timenow+" "+">"*96)
     
 def RedirectStdoutBack():
     global original_stderr
@@ -57,7 +57,7 @@ def RedirectStdoutBack():
         
         
         timenow=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        print "<<< "+timenow+" "+"<"*96+"\n"
+        print("<<< "+timenow+" "+"<"*96+"\n")
         
         sys.stderr=original_stderr
         sys.stdout=original_stdout
@@ -87,7 +87,7 @@ def akrrGetTaskHandler(resourceName,appName,timeStamp):
     if LastPickledState<0:
         raise IOError("Can not find pickeled file (%s) for task handler"%(procTaskDir+"/*.st"))
     picklefilename=os.path.join(procTaskDir,"%06d.st"%(LastPickledState))
-    print "Read pickeled task handler from:\n\t%s\n"%(picklefilename)
+    print("Read pickeled task handler from:\n\t%s\n"%(picklefilename))
     return akrrGetTaskHandlerFromPkl(picklefilename)
 
 def akrrGetTaskHandlerFromJobDir(job_dir):
@@ -102,17 +102,13 @@ def akrrGetTaskHandlerFromJobDir(job_dir):
         if LastPickledState<0:
             raise IOError("Can not find pickeled file (%s) for task handler"%(procTaskDir+"/*.st"))
         picklefilename=os.path.join(procTaskDir,"%06d.st"%(LastPickledState))
-        print "Read pickeled task handler from:\n\t%s\n"%(picklefilename)
+        print("Read pickeled task handler from:\n\t%s\n"%(picklefilename))
         return akrrGetTaskHandlerFromPkl(picklefilename)
     return None
     
 def akrrGetTaskHandlerFromPkl(picklefilename):
     import pickle
-    fin=None
-    if akrrcfg.task_pickling_protocol==0:
-        fin=open(picklefilename,"r")
-    else:
-        fin=open(picklefilename,"rb")
+    fin=open(picklefilename,"rb")
     th=pickle.load(fin)
     fin.close()
     import copy
@@ -140,14 +136,11 @@ def akrrDumpTaskHandler(th):
     th.resource = None
     th.app = None
     
-    fout=None
-    if akrrcfg.task_pickling_protocol==0:
-        fout=open(picklefilename,"w")
-    else:
-        fout=open(picklefilename,"wb")
+    fout=open(picklefilename,"wb")
     pickle.dump(th,fout,akrrcfg.task_pickling_protocol)
     fout.close()
-    print "\nSaved pickeled task handler to:\n\t%s"%(picklefilename)
+    
+    print("\nSaved pickeled task handler to:\n\t%s"%(picklefilename))
     th.resource = resource
     th.app = app
 #if __name__ == '__main__':  
@@ -178,18 +171,18 @@ def akrrDumpTaskHandler(th):
 #        time.sleep(60)
 if __name__ == "__main__":
     """stand alone testing"""
-    print "stand alone testing"
+    print("stand alone testing")
     if len(sys.argv)<=1:
-        print "wrong number of arguments"
+        print("wrong number of arguments")
         exit()
     
     akrrcfg.PrintOutResourceAndAppSummary()
     
     if sys.argv[1]=="start":
         if len(sys.argv)<5:
-            print "Not enough arguments"
+            print("Not enough arguments")
             exit()
-        print  sys.argv
+        print(sys.argv)
         resourceName=sys.argv[2]
         appName=sys.argv[3]
         resourceParam=sys.argv[4]
@@ -201,13 +194,13 @@ if __name__ == "__main__":
         if len(sys.argv)>8:groupID=sys.argv[7]
         task_id=1
         
-        print "resourceName:",resourceName
-        print "appName:",appName
-        print "resourceParam:",resourceParam
-        print "appParam:",appParam
-        print "taskParam:",taskParam
-        print "groupID:",groupID
-        print 
+        print("resourceName:",resourceName)
+        print("appName:",appName)
+        print("resourceParam:",resourceParam)
+        print("appParam:",appParam)
+        print("taskParam:",taskParam)
+        print("groupID:",groupID)
+        print() 
         
         TaskHandler=akrrGetNewTaskHandler(task_id,resourceName,appName,resourceParam,appParam,taskParam,timeStamp='test')
         TaskHandler.CreateBatchJobScriptAndSubmitIt()

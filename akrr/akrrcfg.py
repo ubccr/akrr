@@ -7,14 +7,14 @@ import re
 import traceback
 import types
 
-import MySQLdb
-import MySQLdb.cursors
+import pymysql
+import pymysql.cursors
 
 import copy
 
 from akrr import get_akrr_dirs
-from akrrlogging import *
-from util import which
+from .akrrlogging import *
+from .util import which
 
 #log("initial loading",highlight="ok")
 # directory of this file
@@ -34,10 +34,10 @@ default_dir=akrr_dirs['default_dir']
 appker_repo_dir=akrr_dirs['appker_repo_dir']
 
 #load default values
-from akrrcfgdefault import *
+from .akrrcfgdefault import *
 
 #load akrr params
-execfile(cfg_dir + "/akrr.conf")
+exec(open(cfg_dir + "/akrr.conf").read())
 
 #set default values for unset variables
 #make absolute paths from relative
@@ -51,8 +51,8 @@ if restapi_certfile != '/':
 #wrongfields technical fields from loading python file which we don't want to 
 #see in resource and app kernel parameters dict
 wrongfieldsdict = {}
-exec 'wrongfieldsdict="wrongfieldsdict"' in wrongfieldsdict
-wrongfields = wrongfieldsdict.keys()
+exec('wrongfieldsdict="wrongfieldsdict"', wrongfieldsdict)
+wrongfields = list(wrongfieldsdict.keys())
 
 ###################################################################################################
 #
@@ -70,24 +70,24 @@ def verifyResourceParams(resource):
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
     parameters_types=[
-        ['info',                        types.StringType,       False,False],
-        ['localScratch',                types.StringType,       False,True],
-        ['batchJobTemplate',            types.StringType,       False,True],
-        ['remoteAccessNode',            types.StringType,       False,True],
-        ['name',                        types.StringType,       False,False],
-        ['akrrCommonCommandsTemplate',   types.StringType,       False,True],
-        ['networkScratch',              types.StringType,       False,True],
-        ['ppn',                         types.IntType,          False,True],
-        ['remoteCopyMethod',            types.StringType,       False,True],
-        ['sshUserName',                 types.StringType,       False,True],
-        ['sshPassword',                 types.StringType,       True, False],
-        ['sshPrivateKeyFile',           types.StringType,       True, False],
-        ['sshPrivateKeyPassword',       types.StringType,       True, False],
-        ['batchScheduler',              types.StringType,       False,True],
-        ['remoteAccessMethod',          types.StringType,       False,True],
-        ['appKerDir',                   types.StringType,       False,True],
-        ['akrrCommonCleanupTemplate',    types.StringType,       False,True],
-        ['akrrData',                     types.StringType,       False,True]
+        ['info',                        str,       False,False],
+        ['localScratch',                str,       False,True],
+        ['batchJobTemplate',            str,       False,True],
+        ['remoteAccessNode',            str,       False,True],
+        ['name',                        str,       False,False],
+        ['akrrCommonCommandsTemplate',   str,       False,True],
+        ['networkScratch',              str,       False,True],
+        ['ppn',                         int,          False,True],
+        ['remoteCopyMethod',            str,       False,True],
+        ['sshUserName',                 str,       False,True],
+        ['sshPassword',                 str,       True, False],
+        ['sshPrivateKeyFile',           str,       True, False],
+        ['sshPrivateKeyPassword',       str,       True, False],
+        ['batchScheduler',              str,       False,True],
+        ['remoteAccessMethod',          str,       False,True],
+        ['appKerDir',                   str,       False,True],
+        ['akrrCommonCleanupTemplate',    str,       False,True],
+        ['akrrData',                     str,       False,True]
     ]
     
     for variable,ttype,nulable,must in parameters_types:
@@ -95,9 +95,9 @@ def verifyResourceParams(resource):
             raise NameError("Syntax error in "+resource['name']+"\nVariable %s is not set"%(variable,))
         if variable not in resource:
             continue
-        if type(resource[variable])==types.NoneType and nulable==False:
+        if type(resource[variable])==type(None) and nulable==False:
             raise TypeError("Syntax error in "+resource['name']+"\nVariable %s can not be None"%(variable,))
-        if type(resource[variable])!=ttype and not (type(resource[variable])==types.NoneType and nulable==True):
+        if type(resource[variable])!=ttype and not (type(resource[variable])==type(None) and nulable==True):
             raise TypeError("Syntax error in "+resource['name']+
                    "\nVariable %s should be %s"%(variable,str(ttype))+
                    ". But it is "+str(type(resource[variable])))
@@ -119,10 +119,10 @@ def loadResource(resource_name):
             akrrError(ERROR_GENERAL,"Resource configuration file do not exists (%s)!"%resource_cfg_filename)
         
         tmp={}
-        execfile(default_resource_cfg_filename,tmp)
-        execfile(resource_cfg_filename,tmp)
+        exec(open(default_resource_cfg_filename).read(),tmp)
+        exec(open(resource_cfg_filename).read(), tmp)
         resource={}
-        for key,val in tmp.iteritems():
+        for key,val in tmp.items():
             if inspect.ismodule(val):continue
             if wrongfields.count(key)>0:continue
             resource[key]=val
@@ -142,7 +142,7 @@ def loadResource(resource_name):
         verifyResourceParams(resource)
         
         return resource
-    except Exception,e:
+    except Exception as e:
         raise akrrError(ERROR_GENERAL,"Can not load resource configuration for "+resource_name+":\n"+str(e))
 def loadAllResources():
     """
@@ -155,7 +155,7 @@ def loadAllResources():
             try:
                 resource=loadResource(resource_name)
                 resources[resource_name]=resource
-            except Exception,e:
+            except Exception as e:
                 logerr(str(e),traceback.format_exc())
 
 def FindResourceByName(resource_name):
@@ -204,11 +204,11 @@ def verifyAppParams(app):
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
     parameters_types=[
-        ['parser',               types.StringType,      False,True],
-        ['executable',           types.StringType,       True,True],
-        ['input',                types.StringType,       True,True],
-        ['walllimit',            types.IntType,         False,True],
-        ['runScript',            types.DictType,        False,False]
+        ['parser',               str,      False,True],
+        ['executable',           str,       True,True],
+        ['input',                str,       True,True],
+        ['walllimit',            int,         False,True],
+        ['runScript',            dict,        False,False]
     ]
     
     for variable,ttype,nulable,must in parameters_types:
@@ -216,9 +216,9 @@ def verifyAppParams(app):
             raise NameError("Syntax error in "+app['name']+"\nVariable %s is not set"%(variable,))
         if variable not in app:
             continue
-        if type(app[variable])==types.NoneType and nulable==False:
+        if type(app[variable])==type(None) and nulable==False:
             raise TypeError("Syntax error in "+app['name']+"\nVariable %s can not be None"%(variable,))
-        if type(app[variable])!=ttype and not (type(app[variable])==types.NoneType and nulable==True):
+        if type(app[variable])!=ttype and not (type(app[variable])==type(None) and nulable==True):
             raise TypeError("Syntax error in "+app['name']+
                    "\nVariable %s should be %s"%(variable,str(ttype))+
                    ". But it is "+str(type(app[variable])))
@@ -240,10 +240,10 @@ def loadApp(app_name):
             akrrError(ERROR_GENERAL,"application kernel configuration file do not exists (%s)!"%app_cfg_filename)
         
         tmp={}
-        execfile(default_app_cfg_filename,tmp)
-        execfile(app_cfg_filename,tmp)
+        exec(open(default_app_cfg_filename).read(), tmp)
+        exec(open(app_cfg_filename).read(), tmp)
         app={}
-        for key,val in tmp.iteritems():
+        for key,val in tmp.items():
             if inspect.ismodule(val):continue
             if wrongfields.count(key)>0:continue
             app[key]=val
@@ -253,9 +253,9 @@ def loadApp(app_name):
                 resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
                     tmp=copy.deepcopy(app['appkernelOnResource']['default'])
-                    execfile(resource_specific_app_cfg_filename,tmp)
+                    exec(compile(open(resource_specific_app_cfg_filename).read(), resource_specific_app_cfg_filename, 'exec'),tmp)
                     app['appkernelOnResource'][resource_name]={}
-                    for key,val in tmp.iteritems():
+                    for key,val in tmp.items():
                         if inspect.ismodule(val):continue
                         if wrongfields.count(key)>0:continue
                         app['appkernelOnResource'][resource_name][key]=val
@@ -276,7 +276,7 @@ def loadApp(app_name):
         verifyAppParams(app)
         
         return app
-    except Exception,e:
+    except Exception as e:
         raise akrrError(ERROR_GENERAL,"Can not load app configuration for "+app_name+":\n"+str(e)+traceback.format_exc())
 
 def loadAllApp():
@@ -293,7 +293,7 @@ def loadAllApp():
             try:
                 app=loadApp(app_name)
                 apps[app_name]=app
-            except Exception,e:
+            except Exception as e:
                 logerr(str(e),traceback.format_exc())
 
 def FindAppByName(app_name):
@@ -342,17 +342,17 @@ def FindAppByName(app_name):
 loadAllApp()
 
 def PrintOutResourceAndAppSummary():
-    print ">" * 112
-    print "# Resources:"
-    print "#" * 112
-    for k,r in resources.iteritems():
-        print r['name']
-    print "#" * 112
-    print "# Applications:"
-    print "#" * 112
-    for k,a in apps.iteritems():
-        print a['name'], "'walllimit':" + str(a['walllimit'])
-    print "<" * 112
+    print(">" * 112)
+    print("# Resources:")
+    print("#" * 112)
+    for k,r in resources.items():
+        print(r['name'])
+    print("#" * 112)
+    print("# Applications:")
+    print("#" * 112)
+    for k,a in apps.items():
+        print(a['name'], "'walllimit':" + str(a['walllimit']))
+    print("<" * 112)
 #PrintOutResourceAndAppSummary()
 
 
@@ -367,7 +367,7 @@ promptsCollection={}
 
 def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKeyFile=None, PrivateKeyPassword=None,
               logfile=None, command=None, pwd1=None, pwd2=None):
-    """login to remote machine and return akrrpexpect.spawn instance.
+    """login to remote machine and return pexpect.spawn instance.
     if command!=None will execute commands and return the output"""
     #pack command line and arguments
     cmd = ssh
@@ -395,7 +395,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
     else:
         command = pwd2
         cmd += " %s %s" % (pwd1, pwd2)
-    print cmd
+    print(cmd)
     
     #find the prompt
     #if 
@@ -403,11 +403,11 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
     
     
     #Try to get access
-    import akrr.akrrpexpect as akrrpexpect
+    from . import pexpect
 
     rsh = None
     try:
-        rsh = akrrpexpect.spawn(cmd)  #, logfile=logfile)
+        rsh = pexpect.spawn(cmd)  #, logfile=logfile)
         #rsh.setwinsize(256,512)
 
         rsh.logfile_read = logfile
@@ -442,7 +442,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             i=-1
             try:
                 i = rsh.expect(expect, timeout=sshTimeoutNew)
-            except akrrpexpect.TIMEOUT,e:
+            except pexpect.TIMEOUT as e:
                 if mode == 'ssh' and command == None:
                     #add prompts
                     if countPasses==0:
@@ -525,14 +525,14 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
         rsh.remotemachine=remotemachine
         if logfile != None: logfile.flush()
         #print expect[i]
-    except akrrpexpect.TIMEOUT as e:
-        #print "akrrpexpect.TIMEOUT"
+    except pexpect.TIMEOUT as e:
+        #print "pexpect.TIMEOUT"
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
         raise akrrError(ERROR_CANT_CONNECT,
                        "Timeout period elapsed prior establishing the connection to %s." % (remotemachine) + msg, e)
-    except akrrpexpect.EOF as e:
+    except pexpect.EOF as e:
         ExeCUTEd_SucCeSsFully = False
         if command != None:
             ll = rsh.before.splitlines(False)
@@ -684,21 +684,21 @@ def replaceATvarAT(s, ds):
 def printException(Str=None):
     import traceback
 
-    print "###### Exception ######" + ">" * 97
+    print("###### Exception ######" + ">" * 97)
     if Str != None:
-        print Str
-        print "-" * 120
-    print traceback.format_exc()
-    print "###### Exception ######" + "<" * 97
+        print(Str)
+        print("-" * 120)
+    print(traceback.format_exc())
+    print("###### Exception ######" + "<" * 97)
 
 
 def CleanUnicode(s):
     if s == None: return None
     replacements = {
-        u'\u2018': "'",
-        u'\u2019': "'",
+        '\u2018': "'",
+        '\u2019': "'",
     }
-    for src, dest in replacements.iteritems():
+    for src, dest in replacements.items():
         s = s.replace(src, dest)
     return s
 
@@ -723,10 +723,10 @@ def formatRecursively(s, d, keepDoubleBrakets=False):
 
 def getDB(dictCursor=False):
     if dictCursor:
-        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
-                             passwd=akrr_db_passwd, db=akrr_db_name, cursorclass=MySQLdb.cursors.DictCursor)
+        db = pymysql.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
+                             passwd=akrr_db_passwd, db=akrr_db_name, cursorclass=pymysql.cursors.DictCursor)
     else:
-        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
+        db = pymysql.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
                              passwd=akrr_db_passwd, db=akrr_db_name)
     cur = db.cursor()
     return (db, cur)
@@ -734,10 +734,10 @@ def getDB(dictCursor=False):
 
 def getAKDB(dictCursor=False):
     if dictCursor:
-        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
-                             passwd=ak_db_passwd, db=ak_db_name, cursorclass=MySQLdb.cursors.DictCursor)
+        db = pymysql.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
+                             passwd=ak_db_passwd, db=ak_db_name, cursorclass=pymysql.cursors.DictCursor)
     else:
-        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
+        db = pymysql.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
                              passwd=ak_db_passwd, db=ak_db_name)
     cur = db.cursor()
     return db, cur
@@ -745,22 +745,22 @@ def getAKDB(dictCursor=False):
 
 def getXDDB(dictCursor=False):
     if dictCursor:
-        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
-                             passwd=xd_db_passwd, db=xd_db_name, cursorclass=MySQLdb.cursors.DictCursor)
+        db = pymysql.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
+                             passwd=xd_db_passwd, db=xd_db_name, cursorclass=pymysql.cursors.DictCursor)
     else:
-        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
+        db = pymysql.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
                              passwd=xd_db_passwd, db=xd_db_name)
     cur = db.cursor()
     return db, cur
 
 def getExportDB(dictCursor=False):
     if dictCursor:
-        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
-                             passwd=export_db_passwd, db=export_db_name, cursorclass=MySQLdb.cursors.DictCursor)
+        db = pymysql.connect(host=export_db_host, port=export_db_port, user=export_db_user,
+                             passwd=export_db_passwd, db=export_db_name, cursorclass=pymysql.cursors.DictCursor)
     else:
-        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
+        db = pymysql.connect(host=export_db_host, port=export_db_port, user=export_db_user,
                              passwd=export_db_passwd, db=export_db_name)
     cur = db.cursor()
     return (db, cur)
 
-from util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+from .util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart

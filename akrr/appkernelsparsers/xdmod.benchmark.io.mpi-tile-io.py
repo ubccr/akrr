@@ -159,7 +159,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     parser.successfulRun=False
     j=-1
     while j<len(lines)-1:
-        for k,v in pm.iteritems():
+        for k,v in pm.items():
             m=v['refun'](v['re'],lines[j])
             if m: v['val']=m.group(1).strip()
 
@@ -230,9 +230,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(Verbose=True)
+        print("parsing complete:",parser.parsingComplete(Verbose=True))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
     #Print out missing parameters for debug purpose
     parser.parsingComplete(Verbose=True)
     #return complete XML overwize return None
@@ -242,7 +242,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print("Proccessing Output From",jobdir)
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),geninfo=os.path.join(jobdir,"gen.info"))
     
     

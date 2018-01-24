@@ -1,4 +1,4 @@
-import akrrcfg
+from . import akrrcfg
 import os
 import sys
 #namdSizes
@@ -7,10 +7,9 @@ import time
 import traceback
 import re
 import copy
-import MySQLdb
 import random
 
-from akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
+from .akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
 
 class akrrTaskHandlerBundle(akrrTaskHandlerBase):
     """Task Handler for Bundled tasks"""
@@ -42,7 +41,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         return subTaskInfo
     
     def CheckIfSubtasksCreatedJobScripts(self):
-        print "CheckIfSubtasksCreatedJobScripts"
+        print("CheckIfSubtasksCreatedJobScripts")
         #Get current status of subtasks
         subTaskInfo=self.GetSubTaskInfo()
         
@@ -77,7 +76,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         
     def CreateBatchJobScriptAndSubmitIt(self):
         self.JobScriptName=self.appName+".job"
-        print "### Creating batch job script and submitting it to remote machine"
+        print("### Creating batch job script and submitting it to remote machine")
         
         
         #as a current bypass will create a job script remotely and copy it here
@@ -160,7 +159,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             #calculate NNodes and NCores
             tmpNNodes=None
             tmpNCores=None
-            if batchvars.has_key('nnodes'):
+            if 'nnodes' in batchvars:
                 tmpNNodes=batchvars['nnodes']
                 tmpNCores=tmpNNodes*batchvars['ppn']
             else:
@@ -242,8 +241,8 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             sh.close(force=True)
             del sh
             sh=None
-            print "\nRemoteJobID=",self.RemoteJobID
-            print "copying files from remote machine"
+            print("\nRemoteJobID=",self.RemoteJobID)
+            print("copying files from remote machine")
             msg=akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
             
             #update DB time_submitted_to_queue
@@ -307,7 +306,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
     def CheckTheJobOnRemoteMachine(self):
         sh=None
         try:
-            print "### Checking the job status on remote machine"
+            print("### Checking the job status on remote machine")
             from string import Template
             wE=waitExprs[self.resource['batchScheduler']]
             cmd =Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
@@ -323,16 +322,16 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             
             matchObj= wE[1](rege,msg,wE[3])
             if matchObj:
-                print "Still in queue. Either waiting or running"
+                print("Still in queue. Either waiting or running")
                 if datetime.datetime.today()-self.TimeJobSubmetedToRemoteQueue>self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue):
-                    print "ERROR:"
-                    print "Job exceeds the maximal time in queue (%s). And will be terminated."%(str(self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue)))
-                    print "Removing job from remote queue."
+                    print("ERROR:")
+                    print("Job exceeds the maximal time in queue (%s). And will be terminated."%(str(self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue))))
+                    print("Removing job from remote queue.")
                     self.Terminate()
-                    print "copying files from remote machine"
+                    print("copying files from remote machine")
                     akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
                     #print msg
-                    print "Deleting all files from remote machine"
+                    print("Deleting all files from remote machine")
                     self.DeleteRemoteFolder()
                     self.status="ERROR: Job exceeds the maximal time in queue (%s) and was terminated."%(str(self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue)))
                     self.statusinfo="\nLast Status report:\n"+msg
@@ -347,11 +346,11 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 self.statusinfo=msg
                 return active_task_default_attempt_repeat
             else:
-                print "Not in queue. Either exited with error or executed successfully."
-                print "copying files from remote machine"
+                print("Not in queue. Either exited with error or executed successfully.")
+                print("copying files from remote machine")
                 msg=akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
                 #print msg
-                print "Deleting all files from remote machine"
+                print("Deleting all files from remote machine")
                 self.DeleteRemoteFolder()
                 self.status="Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
                 self.statusinfo="Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
@@ -431,7 +430,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             self.statusinfo="Waiting for subtasks to proccess results"
             return datetime.timedelta(minutes=5)
     def ProccessResults(self,Verbose=True):
-        if Verbose:print "Processing the output"
+        if Verbose:print("Processing the output")
         try:
             jobfilesDir=os.path.join(self.taskDir,"jobfiles")
             resultFile=os.path.join(self.taskDir,"result.xml")
@@ -477,7 +476,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 self.ToDoNextString="PushToDB"
             return datetime.timedelta(seconds=3)
         except:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             self.status="ERROR: Error happens during processing of output."
             self.statusinfo=traceback.format_exc()
             self.FatalErrorsCount+=1
@@ -524,7 +523,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 self.ToDoNextString="IamDone"
                 return None
     def PushToDBRaw(self,cur,task_id,time_finished,Verbose=True):
-        print "Pushing to DB"
+        print("Pushing to DB")
         
                 
         
@@ -745,7 +744,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         #print body
             #cur.execute("""SELECT * FROM akrr_xdmod_instanceinfo WHERE instance_id=%s""",(task_id,))
         if raw!=None: #.i.e. new entry
-            print "Updating"
+            print("Updating")
             cur.execute("""UPDATE akrr_xdmod_instanceinfo
 SET instance_id=%s,collected=%s,committed=%s,resource=%s,executionhost=%s,reporter=%s,
 reporternickname=%s,status=%s,message=%s,stderr=%s,body=%s,memory=%s,cputime=%s,walltime=%s,job_id=%s,nodes=%s
@@ -798,7 +797,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         #(instance_id,akrrcfg.CleanUnicode(appstdoutFileContent),akrrcfg.CleanUnicode(stderrFileContent),akrrcfg.CleanUnicode(stdoutFileContent)))
                 
     def IamDone(self):
-        print "Done",self.taskDir
+        print("Done",self.taskDir)
         self.status="Done"
         self.statusinfo="Done"
         self.ToDoNextString="IamDone"
@@ -825,7 +824,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             kE=killExprs[self.resource['batchScheduler']]
             cmd =Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
             msg=akrrcfg.sshResource(self.resource,cmd)
-            print msg
+            print(msg)
             self.status="Task is probably removed from remote queue."
             self.statusinfo=copy.deepcopy(msg)
             self.ToDoNextString="IamDone"
@@ -838,6 +837,6 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             self.status="ERROR Can not remove job from queue on remote resource"
             self.statusinfo=traceback.format_exc()
             self.FatalErrorsCount+=1
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return active_task_default_attempt_repeat
 

@@ -7,15 +7,15 @@ cur_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))
 if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
-from util import logging as log
-import akrrcfg
+from .util import logging as log
+from . import akrrcfg
 
 # Attempt to import MySQL, if it's not there then we'll exit out and notify the
 # user and blow up.
 try:
     import MySQLdb
     mysql_available = True
-except ImportError, e:
+except ImportError as e:
     mysql_available = False
 
 
@@ -50,17 +50,17 @@ def check_rw_db(connection_func, pre_msg, post_msg):
                 else:
                     log.error(post_msg, success)
 
-        except MySQLdb.MySQLError, e:
+        except MySQLdb.MySQLError as e:
             log.error('Unable to create a table w/ the provided username. {0}: {1}', e.args[0], e.args[1])
 
         connection, cursor = connection_func()
         try:
             with connection:
                 cursor.execute("DROP TABLE CREATE_ME;")
-        except MySQLdb.MySQLError, e:
+        except MySQLdb.MySQLError as e:
             log.error('Unable to drop the table created to check permissions. {0}: {1}', e.args[0], e.args[1])
 
-    except MySQLdb.MySQLError, e:
+    except MySQLdb.MySQLError as e:
         log.error('Unable to connect to Database. {0}: {1}', e.args[0], e.args[1])
 
     return success
@@ -97,10 +97,10 @@ def check_r_db(connection_func, pre_msg, post_msg):
                 else:
                     log.error(post_msg, success)
 
-        except MySQLdb.MySQLError, e:
+        except MySQLdb.MySQLError as e:
             log.error('Unable to select from `modw`.`resourcefact`. {0}: {1}', e.args[0], e.args[1])
 
-    except MySQLdb.MySQLError, e:
+    except MySQLdb.MySQLError as e:
         log.error('Unable to connect to Database. {0}: {1}', e.args[0], e.args[1])
 
     return success

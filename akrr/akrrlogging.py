@@ -32,15 +32,15 @@ def log(message,highlight="none"):
     Function that will log the provided message to stdout.
     """
     if highlight=="ok" or highlight.lower()[0]=='o':
-        print bcolors.OKGREEN+message+bcolors.ENDC
+        print(bcolors.OKGREEN+message+bcolors.ENDC)
     elif highlight=="warning" or highlight.lower()[0]=='w':
-        print bcolors.WARNING+message+bcolors.ENDC
+        print(bcolors.WARNING+message+bcolors.ENDC)
     elif highlight=="error" or highlight.lower()[0]=='e':
-        print bcolors.FAIL+message+bcolors.ENDC
+        print(bcolors.FAIL+message+bcolors.ENDC)
     elif highlight=="blue" or highlight.lower()[0]=='b':
-        print bcolors.OKBLUE+message+bcolors.ENDC   
+        print(bcolors.OKBLUE+message+bcolors.ENDC)   
     else:
-        print message
+        print(message)
 def logstr(message,highlight="none"):
     """
     Function that will higlight string
@@ -59,18 +59,18 @@ def logerr(message,message2=None):
     """
     Function that will log the provided message to stdout.
     """
-    print bcolors.FAIL
-    print ">ERROR"+">"*74
-    print
-    print message
-    print bcolors.ENDC
+    print(bcolors.FAIL)
+    print(">ERROR"+">"*74)
+    print()
+    print(message)
+    print(bcolors.ENDC)
     if message2!=None:
-        print bcolors.FAIL
-        print "="*80
-        print bcolors.ENDC
-        print
-        print message2
+        print(bcolors.FAIL)
+        print("="*80)
+        print(bcolors.ENDC)
+        print()
+        print(message2)
     
-    print bcolors.FAIL+"<ERROR"+"<"*74
-    print bcolors.ENDC
+    print(bcolors.FAIL+"<ERROR"+"<"*74)
+    print(bcolors.ENDC)
 

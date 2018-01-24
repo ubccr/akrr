@@ -8,7 +8,6 @@ import re
 import os
 import sys
 import traceback
-import MySQLdb
 
 #Set proper path for stand alone test runs
 if __name__ == "__main__":
@@ -16,6 +15,7 @@ if __name__ == "__main__":
 
 
 import akrr
+import akrr.akrrcfg
 import akrr.appkernelsparsers.akrrappkeroutputparser
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,total_seconds
 
@@ -52,9 +52,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     totalSubtasks=0
     successfulSubtasks=0
     try:
-        db=MySQLdb.connect(host=akrr.export_db_host,user=akrr.export_db_user,
-                      passwd=akrr.export_db_passwd,db=akrr.export_db_name)
-        cur=db.cursor()
+        db,cur=akrr.akrrcfg.getExportDB()
         
         for subTaskId in appKerNResVars['subTasksId']:
             cur.execute('''SELECT instance_id,status FROM akrr_xdmod_instanceinfo
@@ -69,7 +67,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         cur.close()
         del db
     except:
-        print traceback.format_exc()
+        print(traceback.format_exc())
     
     parser.setStatistic("Success Rate", successRate)
     parser.setStatistic("Successful Subtasks", successfulSubtasks)
@@ -78,9 +76,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         
     if __name__ == "__main__":
         #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(Verbose=True)
+        print("parsing complete:",parser.parsingComplete(Verbose=True))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
     
     #return complete XML overwize return None
     return parser.getXML()
@@ -89,7 +87,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
+    print("Proccessing Output From",jobdir)
     processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"),geninfo=os.path.join(jobdir,"gen.info"))
     
     
