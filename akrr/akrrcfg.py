@@ -390,7 +390,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             cmd += " %s" % (remotemachine)
 
         if command != None and ssh!='ssh-copy-id':
-            cmdarg.append("\"%s;echo %s\"" % (command, sshCommandStartEcho))
+            cmdarg.append("\" %s;echo %s\"" % (command, sshCommandStartEcho))
             cmd += " \"echo %s;%s;echo %s\"" % (sshCommandStartEcho, command, sshCommandEndEcho)
     else:
         command = pwd2
@@ -407,7 +407,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
 
     rsh = None
     try:
-        rsh = pexpect.spawn(cmd)  #, logfile=logfile)
+        rsh = pexpect.spawn(cmd, encoding='utf-8')  #, logfile=logfile)
         #rsh.setwinsize(256,512)
 
         rsh.logfile_read = logfile
@@ -454,7 +454,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     else:
                         #assuming it has unrecognized prompt
                         #lets try to sent it
-                        rsh.sendline("export PS1='%s '" % (shellPrompt))
+                        rsh.sendline(" export PS1='%s '" % (shellPrompt))
                         rsh.expect(shellPrompt, timeout=sshTimeout) #twice because one from echo
                         rsh.expect(shellPrompt, timeout=sshTimeout)
                         i=6
@@ -509,9 +509,9 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                 #are we really there?
                 
         if mode == 'ssh' and command == None:
-            rsh.sendline("echo %s;\\\nexport PS1='%s ';\\\necho %s" % (sshCommandStartEcho, shellPrompt, sshCommandEndEcho))
-            rsh.sendline("")
-            rsh.sendline("")
+            rsh.sendline(" echo %s;\\\nexport PS1='%s ';\\\necho %s" % (sshCommandStartEcho, shellPrompt, sshCommandEndEcho))
+            rsh.sendline(" ")
+            rsh.sendline(" ")
             r=sshCommandEndEcho+r'.+'+shellPrompt+r'.+'+shellPrompt+r'.+'+shellPrompt
             rsh.expect(r, timeout=sshTimeout)  #this pattern ensure proper handling when it thinks that in ssh hello message there is a prompt
             
@@ -633,7 +633,7 @@ def scpToResource(resource, pwd1, pwd2, opt="",logfile=None):
 
 
 def sshCommandNoReturn(sh, cmd):
-    cmdfin = cmd
+    cmdfin = " "+cmd
     try:
         #flush the buffer
         sh.read_nonblocking (1000000, 0)
@@ -648,7 +648,7 @@ def sshCommandNoReturn(sh, cmd):
 
 
 def sshCommand(sh, cmd):
-    cmdfin = "echo %s;\\\n%s;\\\necho %s" % (sshCommandStartEcho, cmd, sshCommandEndEcho)
+    cmdfin = " echo %s;\\\n%s;\\\necho %s" % (sshCommandStartEcho, cmd, sshCommandEndEcho)
     try:
         #flush the buffer
         sh.read_nonblocking (1000000, 0)

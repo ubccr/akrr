@@ -685,10 +685,12 @@ def daemon_handler(args):
     if args.action=="startdeb":
         akrr.debug=True
         
-        if args.debug_max_task_handlers is not None:
+        if args.max_task_handlers is not None:
             #akrr.debug_max_task_handlers=args.debug_max_task_handlers
-            akrrcfg.max_task_handlers = args.debug_max_task_handlers
-    
+            akrrcfg.max_task_handlers = args.max_task_handlers
+        if args.redirect_task_processing_to_log_file is not None:
+            akrrcfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
+            
     return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
     
 def akrr_cli():
@@ -815,9 +817,14 @@ def akrr_cli():
     startdeb_daemon_subparsers=daemon_subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
     startdeb_daemon_subparsers.add_argument(
         '-th', '--max-task-handlers',
-        dest='debug_max_task_handlers',
+        dest='max_task_handlers',
         default=None,type=int,
         help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
+    startdeb_daemon_subparsers.add_argument(
+        '-redir', '--redirect-task-processing-to-log-file',
+        dest='redirect_task_processing_to_log_file',
+        default=None,type=int,
+        help='Overwrite redirect_task_processing_to_log_file from configuration')
 
     daemon_parser.set_defaults(func=daemon_handler)
     

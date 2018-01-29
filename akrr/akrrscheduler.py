@@ -315,7 +315,27 @@ class akrrScheduler:
                 # Executing task by main thread
                 (task_id,resourceName,appName,timeStamp,FatalErrorsCount,FailsToSubmitToTheQueue)=row
                 print("\n%s: Working on:\n\t%s"%(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"),akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)))
+                
+                class fakeProcess:
+                    def __init__(self):
+                        self.exitcode = 0
+                    def join(self,t=0):
+                        return
+                    def is_alive(self):
+                        return False
+                
+                self.Workers.append({
+                    "task_id":task_id,
+                    "pid":os.getpid(),
+                    "timestarted":datetime.datetime.today(),
+                    "process":fakeProcess(),
+                 })
+                
+                
                 StartTheStep(resourceName,appName,timeStamp,self.ResultsQueue,0,FailsToSubmitToTheQueue)
+                self.dbCon.commit()
+                
+                
             
                 
             if len(self.Workers)>=self.maxTaskHandlers:
@@ -360,6 +380,7 @@ class akrrScheduler:
         timenow=datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         #Get all tasks which should be started
         
+        
         iP=0
         Ninit=len(self.Workers)
         N=len(self.Workers)
@@ -374,7 +395,7 @@ class akrrScheduler:
             self.dbCur.execute('''SELECT FatalErrorsCount,FailsToSubmitToTheQueue FROM ACTIVETASKS
                 WHERE task_id=%s;''',(task_id,))
             (FatalErrorsCount,FailsToSubmitToTheQueue)=self.dbCur.fetchall()[0]
-
+            
             while not self.ResultsQueue.empty():
                 r=self.ResultsQueue.get()
                 self.Results[r['pid']]=r
@@ -2122,7 +2143,7 @@ def update_app_ker_launchers():
         raise
     
 def akrrd_main2(action='', append=False, output_file=None):
-    print(akrrcfg.max_task_handlers)
+    
     if action=='startdeb':
         print("Starting Application Remote Runner")
         #check if AKRR already up
