@@ -24,8 +24,8 @@ from urllib.parse import quote
 
 from . import akrrscheduler
 
-import pymysql
-import pymysql.cursors
+import MySQLdb
+import MySQLdb.cursors
 
 import logging
 
@@ -690,7 +690,7 @@ def _get_resource_apps(resource, application):
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -790,7 +790,7 @@ def _get_resource_app_status(resource, application):
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -871,7 +871,7 @@ def get_resources():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -957,7 +957,7 @@ def get_kernels():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1071,7 +1071,7 @@ def _turn_resource_on(resource, application):
                 print(query, parameter)
                 result += cursor.execute(query, parameter)
         return result
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1242,7 +1242,7 @@ def _turn_resource_off(resource, application):
                 print(query, parameter)
                 result += cursor.execute(query, parameter)
         return result
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1309,7 +1309,7 @@ def get_walltime_all():
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1341,7 +1341,7 @@ def get_walltime(walltime_id):
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1410,7 +1410,7 @@ def upsert_walltime(resource,app):
 
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1468,7 +1468,7 @@ def get_walltime(resource,app):
 
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1524,7 +1524,7 @@ def update_walltime_by_id(walltime_id):
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
@@ -1555,7 +1555,7 @@ def delete_walltime(walltime_id):
                     WHERE id = %s''',(walltime_id,))
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
-    except pymysql.Error as e:
+    except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")

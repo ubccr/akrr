@@ -7,8 +7,8 @@ import re
 import traceback
 import types
 
-import pymysql
-import pymysql.cursors
+import MySQLdb
+import MySQLdb.cursors
 
 import copy
 
@@ -723,10 +723,10 @@ def formatRecursively(s, d, keepDoubleBrakets=False):
 
 def getDB(dictCursor=False):
     if dictCursor:
-        db = pymysql.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
-                             passwd=akrr_db_passwd, db=akrr_db_name, cursorclass=pymysql.cursors.DictCursor)
+        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
+                             passwd=akrr_db_passwd, db=akrr_db_name, cursorclass=MySQLdb.cursors.DictCursor)
     else:
-        db = pymysql.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
+        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
                              passwd=akrr_db_passwd, db=akrr_db_name)
     cur = db.cursor()
     return (db, cur)
@@ -734,10 +734,10 @@ def getDB(dictCursor=False):
 
 def getAKDB(dictCursor=False):
     if dictCursor:
-        db = pymysql.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
-                             passwd=ak_db_passwd, db=ak_db_name, cursorclass=pymysql.cursors.DictCursor)
+        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
+                             passwd=ak_db_passwd, db=ak_db_name, cursorclass=MySQLdb.cursors.DictCursor)
     else:
-        db = pymysql.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
+        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
                              passwd=ak_db_passwd, db=ak_db_name)
     cur = db.cursor()
     return db, cur
@@ -745,20 +745,20 @@ def getAKDB(dictCursor=False):
 
 def getXDDB(dictCursor=False):
     if dictCursor:
-        db = pymysql.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
-                             passwd=xd_db_passwd, db=xd_db_name, cursorclass=pymysql.cursors.DictCursor)
+        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
+                             passwd=xd_db_passwd, db=xd_db_name, cursorclass=MySQLdb.cursors.DictCursor)
     else:
-        db = pymysql.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
+        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
                              passwd=xd_db_passwd, db=xd_db_name)
     cur = db.cursor()
     return db, cur
 
 def getExportDB(dictCursor=False):
     if dictCursor:
-        db = pymysql.connect(host=export_db_host, port=export_db_port, user=export_db_user,
-                             passwd=export_db_passwd, db=export_db_name, cursorclass=pymysql.cursors.DictCursor)
+        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
+                             passwd=export_db_passwd, db=export_db_name, cursorclass=MySQLdb.cursors.DictCursor)
     else:
-        db = pymysql.connect(host=export_db_host, port=export_db_port, user=export_db_user,
+        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
                              passwd=export_db_passwd, db=export_db_name)
     cur = db.cursor()
     return (db, cur)
