@@ -694,6 +694,10 @@ def printException(Str=None):
 
 def CleanUnicode(s):
     if s == None: return None
+    
+    if type(s) is bytes:
+        s=s.decode("utf-8")
+    
     replacements = {
         '\u2018': "'",
         '\u2019': "'",
