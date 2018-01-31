@@ -9,12 +9,13 @@ the default resource templates.
 import sys
 import os
 import getpass
-import cStringIO
+import io
 import traceback
 import re
 
-import akrrcfg
-import util.logging as logging
+from . import akrrcfg
+import logging as log
+from .util import log_input
 
 import akrr.resource_deploy
 
@@ -73,11 +74,11 @@ def open_file(file_path, privs):
     :param privs: the privs with which to open the provided file path.
     :return: a file handle ( object ) if the open operation is successful else None.
     """
-    if file_path and isinstance(file_path, basestring) and privs and isinstance(privs, basestring):
+    if file_path and isinstance(file_path, str) and privs and isinstance(privs, str):
 
         # ADD: Some verbosity
         if verbose:
-            logging.info("Opening with privs [{0}]: {1}", privs, file_path)
+            log.info("Opening with privs [%s]: %s", privs, file_path)
 
         try:
 
@@ -86,16 +87,16 @@ def open_file(file_path, privs):
 
             # LET: the verbose users know we succeeded
             if verbose:
-                logging.info('Successfully preformed open [{0}] on {1}', privs, file_path)
+                log.info('Successfully preformed open [%s] on %s', privs, file_path)
 
             # RETURN: the file_handle
             return file_handle
-        except IOError, e:
-            logging.error('Unable to open file: {0} due to {1}: {2}', file_path, e.args[0], e.args[1])
+        except IOError as e:
+            log.error('Unable to open file: %s due to %s: %s', file_path, e.args[0], e.args[1])
             return None
 
     # IF: we've reached this point than one of the parameters was incorrect.
-    logging.warning('Error 62: Internal error. Please contact support.')
+    log.warning('Error 62: Internal error. Please contact support.')
     return None
 
 
@@ -113,25 +114,25 @@ def read_from_file(file_handle):
 
         # ADDING: verbose logging before the operation.
         if verbose:
-            logging.info('Attempting to read in contents of {0}', file_handle.name)
+            log.info('Attempting to read in contents of %s', file_handle.name)
 
         try:
 
             # ATTEMPT: to read the contents of the file.
             contents = file_handle.read()
 
-            # PROVIDE: the user some verbose success logging.
+            # PROVIDE: the user some verbose success log.
             if verbose:
-                logging.info('Successfully read the contents of {0}', file_handle.name)
+                log.info('Successfully read the contents of %s', file_handle.name)
 
             # RETURN: the contents of the file.
             return contents
-        except IOError, e:
-            logging.error('There was a problem reading from {0}. {1}: {2}', file_handle.name, e.args[0], e.args[1])
+        except IOError as e:
+            log.error('There was a problem reading from %s. %s: %s', file_handle.name, e.args[0], e.args[1])
             return None
 
     #IF: we've reached this point than the file_handle that was passed in isn't valid.
-    logging.warning('Error 93: Internal error. Please contact support.')
+    log.warning('Error 93: Internal error. Please contact support.')
     return None
 
 
@@ -147,20 +148,20 @@ def write_to_file(file_handle, lines):
     :return: void
     """
     if not file_handle or not isinstance(file_handle, file):
-        logging.error('Received an invalid file reference.')
+        log.error('Received an invalid file reference.')
         return
     if lines:
         try:
             if verbose:
-                logging.info("Writing {0} lines to {1}", len(lines), file_handle.name)
+                log.info("Writing %s lines to %s", len(lines), file_handle.name)
 
             file_handle.writelines(lines)
 
             if verbose:
-                logging.info("Successfully wrote {0} lines to {1}", len(lines), file_handle.name)
+                log.info("Successfully wrote %s lines to %s", len(lines), file_handle.name)
 
-        except IOError, e:
-            logging.error('There was an error while writing to {0}. {1}: {2}', file_handle.name, e.args[0], e.args[1])
+        except IOError as e:
+            log.error('There was an error while writing to %s. %s: %s', file_handle.name, e.args[0], e.args[1])
 
 
 def close_file(file_handle):
@@ -175,14 +176,14 @@ def close_file(file_handle):
     if file_handle and isinstance(file_handle, file):
         try:
             if verbose:
-                logging.info('Attempting to close the file {0}', file_handle.name)
+                log.info('Attempting to close the file %s', file_handle.name)
 
             file_handle.close()
 
             if verbose:
-                logging.info('Successfully closed the file {0}', file_handle.name)
-        except IOError, e:
-            logging.error('There was an error encountered while closing {0}. {1}: {2}', file_handle.name, e.args[0], e.args[1])
+                log.info('Successfully closed the file %s', file_handle.name)
+        except IOError as e:
+            log.error('There was an error encountered while closing %s. %s: %s', file_handle.name, e.args[0], e.args[1])
 
 
 ###############################################################################
@@ -202,13 +203,13 @@ def retrieve_resources():
             cursor = connection.cursor()
             cursor.execute("SELECT `name`,`id` FROM `modw`.`resourcefact`")
             rows = cursor.fetchall()
-    except MySQLdb.Error, e:
-        logging.error("MySQL Error: {0}: {1}", e.args[0]. e.args[1])
+    except MySQLdb.Error as e:
+        log.error("MySQL Error: %s: %s", e.args[0]. e.args[1])
         sys.exit(1)
 
     # PROVIDE: a little bit of verbosity to the masses.
     if verbose:
-        logging.info("Retrieved {0} Resource records...", len(rows) if rows else 0)
+        log.info("Retrieved %s Resource records...", len(rows) if rows else 0)
 
     return rows
 
@@ -224,7 +225,7 @@ def retrieve_queue_template(file_path, queue):
     :param queue: the queue type that will be used to look up the template.
     :return: the contents of the template or, if there is an exception, None.
     """
-    if file_path and isinstance(file_path, basestring) and queue and isinstance(queue, basestring):
+    if file_path and isinstance(file_path, str) and queue and isinstance(queue, str):
         privs = 'r'
         template_path = file_path.format(queue)
         return read_from_file(open_file(template_path, privs))
@@ -284,9 +285,9 @@ def create_resource_template(file_path, queue, contents):
         write_to_file(output_file, contents)
         close_file(output_file)
     else:
-        logging.info('Test Mode: Would have written to: {0}', output_path)
-        logging.info('It content would be:')
-        print contents
+        log.info('Test Mode: Would have written to: %s', output_path)
+        log.info('It content would be:')
+        print(contents)
 
 
 def generate_default_templates(resources):
@@ -298,7 +299,7 @@ def generate_default_templates(resources):
     """
 
     if not resources:
-        logging.warning("No resources found. No files to create.")
+        log.warning("No resources found. No files to create.")
     else:
 
         slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.curdir, 'templates','template.{0}.conf'), 'slurm')
@@ -308,19 +309,19 @@ def generate_default_templates(resources):
 
         for resource in resources:
             if verbose:
-                logging.info("Creating Resource Template: {0} ", resource[0] + "")
+                log.info("Creating Resource Template: %s ", resource[0] + "")
 
             if not test:
-                for queue, contents in queues.iteritems():
+                for queue, contents in queues.items():
 
                     file_path = os.path.join(resources_dir, resource[0] + 'resource.conf')
 
                     create_resource_template(file_path, queue, contents)
 
-        logging.info("Resource Template Generation Complete!")
+        log.info("Resource Template Generation Complete!")
 
 def generate_resource_config(resource_id, resource_name, queuing_system):
-    logging.info("Initiating %s at AKRR"%(resource_name,))
+    log.info("Initiating %s at AKRR"%(resource_name,))
     
     slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'slurm')
     pbs_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'pbs')
@@ -329,7 +330,7 @@ def generate_resource_config(resource_id, resource_name, queuing_system):
     
 
     if not test:
-        os.mkdir(os.path.join(resources_dir, resource_name),0700)
+        os.mkdir(os.path.join(resources_dir, resource_name),0o700)
     
     file_path = os.path.abspath(os.path.join(resources_dir, resource_name, 'resource.conf'))
     global resource_cfg_filename
@@ -362,11 +363,11 @@ def generate_resource_config(resource_id, resource_name, queuing_system):
                         (resource_id_in_AKDB,resource_id,resource_name,0))
             db.commit()
 
-            logging.info("Resource configuration is in "+file_path)
+            log.info("Resource configuration is in "+file_path)
 
 def validate_resource_id(resource_id,resources):
     try:
-        resource_id=long(resource_id)
+        resource_id=int(resource_id)
     except:
         return False
     for _,resource_id2 in resources:
@@ -378,12 +379,12 @@ def validate_resource_id(resource_id,resources):
 
 def validate_resource_name(resource_name):
     if resource_name.strip()=="":
-        logging.error("Bad name for resource, try a different name")
+        log.error("Bad name for resource, try a different name")
         return False
     #check config file presence
     file_path = os.path.abspath(os.path.join(resources_dir, resource_name))
     if os.path.exists(file_path):
-        logging.error("Resource configuration directory (%s) for resource with name %s already present on file system, try a different name"%(file_path,resource_name,))
+        log.error("Resource configuration directory (%s) for resource with name %s already present on file system, try a different name"%(file_path,resource_name,))
         return False
     
     
@@ -393,7 +394,7 @@ def validate_resource_name(resource_name):
     curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
     resource_in_AKDB = curAK.fetchall()
     if len(resource_in_AKDB)!=0:
-        logging.error("Resource with name %s already present in mod_appkernel DB, try a different name"%(resource_name,))
+        log.error("Resource with name %s already present in mod_appkernel DB, try a different name"%(resource_name,))
         return False
     
     #check the entry in mod_akrr
@@ -402,14 +403,14 @@ def validate_resource_name(resource_name):
     cur.execute('''SELECT * FROM resources WHERE name=%s''', (resource_name,))
     resource_in_DB = cur.fetchall()
     if len(resource_in_DB)!=0:
-        logging.error("Resource with name %s already present in mod_akrr DB, try a different name"%(resource_name,))
+        log.error("Resource with name %s already present in mod_akrr DB, try a different name"%(resource_name,))
         return False
     
     return True
 
 def get_resourcename_by_id(resource_id,resources):
     try:
-        resource_id=long(resource_id)
+        resource_id=int(resource_id)
     except:
         return False
     for resource_name,resource_id2 in resources:
@@ -434,7 +435,7 @@ def checkConnectionToResource():
     passphraseEntranceCount=0
     authorizeKeyCount=0
     while True:
-        str_io=cStringIO.StringIO()
+        str_io=io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
             akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
@@ -446,15 +447,15 @@ def checkConnectionToResource():
             
             successfullyConnected=True
             break
-        except Exception,e:
+        except Exception as e:
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
             if verbose:
-                logging.info("Had attempted to access resource without password and failed, below is resource response")
-                print "="*80
-                print str_io.getvalue()
-                print traceback.format_exc()
-                print "="*80
+                log.info("Had attempted to access resource without password and failed, below is resource response")
+                print("="*80)
+                print(str_io.getvalue())
+                print(traceback.format_exc())
+                print("="*80)
             #check if it asking for passphrase
             m=re.search(r"Enter passphrase for key '(.*)':",str_io.getvalue())
             if m:
@@ -463,23 +464,23 @@ def checkConnectionToResource():
                     sshPrivateKeyFile=None
                     break
                 if passphraseEntranceCount>0:
-                    logging.error("Incorrect passphrase try again")
+                    log.error("Incorrect passphrase try again")
                 sshPrivateKeyFile=m.group(1)
-                logging.input("Enter passphrase for key '%s':"%sshPrivateKeyFile)
+                log_input("Enter passphrase for key '%s':"%sshPrivateKeyFile)
                 sshPrivateKeyPassword=getpass.getpass("")
                 passphraseEntranceCount+=1
                 continue
             m2=re.search(r"[pP]assword:",str_io.getvalue())
             if m==None and sshPrivateKeyFile!=None and m2:
-                logging.warning("Can not login to head node. Probably the public key of private key was not authorized on head node")
-                print "Will try to add public key to list of authorized keys on head node"
+                log.warning("Can not login to head node. Probably the public key of private key was not authorized on head node")
+                print("Will try to add public key to list of authorized keys on head node")
                 while True:
                     try:
                         authorizeKeyCount+=1
-                        logging.input("Enter password for %s@%s (will be used only during this session):"%(sshUserName,remoteAccessNode))
+                        log_input("Enter password for %s@%s (will be used only during this session):"%(sshUserName,remoteAccessNode))
                         sshPassword4thisSession=getpass.getpass("")
-                        print
-                        str_io=cStringIO.StringIO()
+                        print()
+                        str_io=io.StringIO()
                         sys.stdout = sys.stderr = str_io
                         akrrcfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
                             PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
@@ -487,21 +488,21 @@ def checkConnectionToResource():
                     
                         sys.stdout=sys.__stdout__
                         sys.stderr=sys.__stderr__
-                        print str_io.getvalue()
+                        print(str_io.getvalue())
                         #successfullyConnected=True
-                        logging.info("Have added public key to list of authorized keys on head node, will attempt to connect again.")
-                        print
+                        log.info("Have added public key to list of authorized keys on head node, will attempt to connect again.")
+                        print()
                         break
-                    except Exception,e:
+                    except Exception as e:
                         sys.stdout=sys.__stdout__
                         sys.stderr=sys.__stderr__
                         if verbose:
-                            logging.info("Had attempted to add public key to list of authorized keys on head node and failed, below is resource response")
-                            print "="*80
-                            print str_io.getvalue()
-                            print traceback.format_exc()
-                            print "="*80
-                        logging.info("Incorrect password try again.")
+                            log.info("Had attempted to add public key to list of authorized keys on head node and failed, below is resource response")
+                            print("="*80)
+                            print(str_io.getvalue())
+                            print(traceback.format_exc())
+                            print("="*80)
+                        log.info("Incorrect password try again.")
                         if authorizeKeyCount>=3:
                             break
                 if authorizeKeyCount<3:
@@ -521,8 +522,8 @@ def getRemoteAccessMethod():
     global rsh
     #set remoteAccessNode
     while True:
-        logging.input("Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):")
-        remoteAccessNode=raw_input("[%s] "%resourceName)
+        log_input("Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):")
+        remoteAccessNode=input("[%s] "%resourceName)
         if remoteAccessNode.strip()=="":
             remoteAccessNode=resourceName
         
@@ -531,33 +532,33 @@ def getRemoteAccessMethod():
         if response==0:
             break
         else:
-            logging.error("Incorrect head node name (can not ping %s), try again"%remoteAccessNode)
+            log.error("Incorrect head node name (can not ping %s), try again"%remoteAccessNode)
     #set sshUserName
     curentuser=getpass.getuser()
     askForUserName=True
     successfullyConnected=False
     while True:
         if askForUserName:
-            logging.input("Enter username for resource access:")
-            sshUserName=raw_input("[%s] "%curentuser)
+            log_input("Enter username for resource access:")
+            sshUserName=input("[%s] "%curentuser)
             if sshUserName.strip()=="":
                 sshUserName=curentuser
             curentuser=sshUserName
         
         #check passwordless access
         if sshPassword==None:
-            logging.info("Checking for password-less access")
+            log.info("Checking for password-less access")
         else:
-            logging.info("Checking for resource access")
+            log.info("Checking for resource access")
         successfullyConnected=checkConnectionToResource()
         if successfullyConnected:
             if sshPassword==None:
-                logging.info("Can access resource without password")
+                log.info("Can access resource without password")
             else:
-                logging.info("Can access resource")
+                log.info("Can access resource")
         
         if successfullyConnected==False:
-            logging.info("Can not access resource without password")
+            log.info("Can not access resource without password")
             actionList=[]
             actionList.append(["TryAgain","The private and public keys was generated manually, right now. Try again."])
             #check private keys
@@ -570,54 +571,54 @@ def getRemoteAccessMethod():
             actionList.append(["GenNewKey","Generate new private and public key."])
             actionList.append(["UsePassword","Use password directly."])
             
-            print
-            print "Select authentication method:"
+            print()
+            print("Select authentication method:")
             for i in range(len(actionList)):
-                print "%3d  %s"%(i,actionList[i][1])
+                print("%3d  %s"%(i,actionList[i][1]))
             while True:
-                logging.input("Select option from list above:")
+                log_input("Select option from list above:")
                 try:
-                    action=raw_input("[2] ")
+                    action=input("[2] ")
                     if action.strip()=="":action=2
                     else: action=int(action)
                     
                     if action<0 or action>=len(actionList):
                         raise
                     break
-                except Exception,e:
-                    logging.error("Incorrect entry, try again.")
+                except Exception as e:
+                    log.error("Incorrect entry, try again.")
             
             #do the action
-            print
+            print()
             if actionList[action][0]=="TryAgain":
                 continue
             if actionList[action][0]=="UsePassword":
-                logging.input("Enter password for %s@%s:"%(sshUserName,remoteAccessNode))
+                log_input("Enter password for %s@%s:"%(sshUserName,remoteAccessNode))
                 sshPassword=getpass.getpass("")
                 askForUserName=not askForUserName
                 continue
             if actionList[action][0]=="UseExistingPrivateKey":
-                print "Available private keys:"
+                print("Available private keys:")
                 for i in range(len(privateKeys)):
-                    print "%3d  %s"%(i,privateKeys[i])
+                    print("%3d  %s"%(i,privateKeys[i]))
                 while True:
-                    logging.input("Select key number from list above:")
+                    log_input("Select key number from list above:")
                     try:
-                        iKey=raw_input("")
+                        iKey=input("")
                         iKey=int(iKey)
                         
                         if iKey<0 or iKey>=len(privateKeys):
                             raise
                         break
-                    except Exception,e:
-                        logging.error("Incorrect entry, try again.")
+                    except Exception as e:
+                        log.error("Incorrect entry, try again.")
                 sshPrivateKeyFile=privateKeys[iKey]
                 askForUserName=not askForUserName
                 continue
             if actionList[action][0]=="GenNewKey":
                 count=0
                 while True:
-                    logging.input("Enter password for %s@%s (will be used only during this session):"%(sshUserName,remoteAccessNode))
+                    log_input("Enter password for %s@%s (will be used only during this session):"%(sshUserName,remoteAccessNode))
                     sshPassword4thisSession=getpass.getpass("")
                     sshPassword=sshPassword4thisSession
                     
@@ -628,12 +629,12 @@ def getRemoteAccessMethod():
                         break
                 sshPassword=None
                 #generate keys
-                logging.input("Enter private key name:")
-                sshPrivateKeyFile=raw_input("[id_rsa_%s]"%resourceName)
+                log_input("Enter private key name:")
+                sshPrivateKeyFile=input("[id_rsa_%s]"%resourceName)
                 if sshPrivateKeyFile.strip()=="":
                     sshPrivateKeyFile="id_rsa_%s"%resourceName
                 sshPrivateKeyFile=os.path.join(userHomeDir,'.ssh',sshPrivateKeyFile)
-                logging.input("Enter passphrase for new key (leave empty for passwordless access):")
+                log_input("Enter passphrase for new key (leave empty for passwordless access):")
                 sshPrivateKeyPassword=getpass.getpass("")
                 os.system("ssh-keygen -t rsa -N \"%s\" -f %s"%(sshPrivateKeyPassword,sshPrivateKeyFile))
                 if sshPrivateKeyPassword.strip()=="":
@@ -648,12 +649,12 @@ def getRemoteAccessMethod():
         if successfullyConnected:
             break
         else:
-            logging.error("Incorrect resource access credential")
+            log.error("Incorrect resource access credential")
     if successfullyConnected:
-        print
-        logging.info("Connecting to "+resourceName)
+        print()
+        log.info("Connecting to "+resourceName)
         
-        str_io=cStringIO.StringIO()
+        str_io=io.StringIO()
         sys.stdout = sys.stderr = str_io
         rsh=akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
                     PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=sys.stdout,
@@ -661,18 +662,18 @@ def getRemoteAccessMethod():
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
         
-        logging.info("              Done")
-    print
+        log.info("              Done")
+    print()
     return successfullyConnected
 def getSytemCharacteristics():
     global ppn
     while True:   
         try:                 
-            logging.input("Enter processors (cores) per node count:")
-            ppn=int(raw_input(""))
+            log_input("Enter processors (cores) per node count:")
+            ppn=int(input(""))
             break
-        except Exception,e:
-            logging.error("Incorrect entry, try again.")
+        except Exception as e:
+            log.error("Incorrect entry, try again.")
     
 def getFileSytemAccessPoints():
     global resourceName
@@ -687,19 +688,19 @@ def getFileSytemAccessPoints():
     #localScratch
     localScratchDefault="/tmp"
     while True:                    
-        logging.input("Enter location of local scratch (visible only to single node):")
-        localScratch=raw_input("[%s]"%localScratchDefault)
+        log_input("Enter location of local scratch (visible only to single node):")
+        localScratch=input("[%s]"%localScratchDefault)
         if localScratch.strip()=="":
             localScratch=localScratchDefault
         status,msg=akrr.resource_deploy.CheckDirSimple(rsh, localScratch)
         if status:
-            logging.info(msg)
-            print
+            log.info(msg)
+            print()
             break
         else:
-            logging.warning(msg)
-            logging.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
-            print
+            log.warning(msg)
+            log.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
+            print()
             break
     localScratch=akrrcfg.sshCommand(rsh,"echo %s"%(localScratch,)).strip()
     #networkScratch
@@ -708,62 +709,62 @@ def getFileSytemAccessPoints():
         networkScratchDefault=scratchNetworkDir
     networkScratchVisible=False
     while True:                    
-        logging.input("Enter location of network scratch (visible only to all nodes), used for temporary storage of app kernel input/output:")
+        log_input("Enter location of network scratch (visible only to all nodes), used for temporary storage of app kernel input/output:")
         if networkScratchDefault!="":
-            networkScratch=raw_input("[%s]"%networkScratchDefault)
+            networkScratch=input("[%s]"%networkScratchDefault)
             if networkScratch.strip()=="":
                 networkScratch=networkScratchDefault
         else:
-            networkScratch=raw_input("")
+            networkScratch=input("")
             
         if networkScratch=="":
-            logging.error("Incorrect value for networkScratch, try again")
+            log.error("Incorrect value for networkScratch, try again")
             continue
         
         
         status,msg=akrr.resource_deploy.CheckDir(rsh, networkScratch,exitOnFail=False,tryToCreate=True)
         if status:
-            logging.info(msg)
+            log.info(msg)
             networkScratchVisible=True
-            print
+            print()
             break
         else:
-            logging.warning(msg)
-            #logging.warning('network scratch might be have a different location on head node, so if it is by design it is ok')
+            log.warning(msg)
+            #log.warning('network scratch might be have a different location on head node, so if it is by design it is ok')
             #print
             break
     networkScratch=akrrcfg.sshCommand(rsh,"echo %s"%(networkScratch,)).strip()
     #appKerDir
     appKerDirDefault=os.path.join(homeDir,"appker",resourceName)   
     while True:                    
-        logging.input("Enter future location of app kernels input and executable files:")
-        appKerDir=raw_input("[%s]"%appKerDirDefault)
+        log_input("Enter future location of app kernels input and executable files:")
+        appKerDir=input("[%s]"%appKerDirDefault)
         if appKerDir.strip()=="":
             appKerDir=appKerDirDefault
         status,msg=akrr.resource_deploy.CheckDir(rsh, appKerDir,exitOnFail=False,tryToCreate=True)
         if status:
-            logging.info(msg)
-            print
+            log.info(msg)
+            print()
             break
         else:
-            logging.error(msg)
+            log.error(msg)
     appKerDir=akrrcfg.sshCommand(rsh,"echo %s"%(appKerDir,)).strip()
     #akrrData
     akrrDataDefault=os.path.join(homeDir,"akrrdata",resourceName)
     if networkScratchVisible:
         akrrDataDefault=os.path.join(networkScratch,"akrrdata",resourceName)
     while True:                    
-        logging.input("Enter future locations for app kernels working directories (can or even should be on scratch space):")
-        akrrData=raw_input("[%s]"%akrrDataDefault)
+        log_input("Enter future locations for app kernels working directories (can or even should be on scratch space):")
+        akrrData=input("[%s]"%akrrDataDefault)
         if akrrData.strip()=="":
             akrrData=akrrDataDefault
         status,msg=akrr.resource_deploy.CheckDir(rsh, akrrData,exitOnFail=False,tryToCreate=True)
         if status:
-            logging.info(msg)
-            print
+            log.info(msg)
+            print()
             break
         else:
-            logging.error(msg) 
+            log.error(msg) 
     akrrData=akrrcfg.sshCommand(rsh,"echo %s"%(akrrData,)).strip()
     #remoteAccessMethod = 'ssh'
     #remoteCopyMethod='scp'
@@ -790,35 +791,35 @@ def resource_add(minimalistic=False,test=False,verbose=False):
     global batchScheduler
     global batchJobHeaderTemplate
     
-    logging.info("Beginning Initiation of New Resource...")
+    log.info("Beginning Initiation of New Resource...")
     globals()['verbose']=verbose
     globals()['test']=test
     globals()['minimalistic']=minimalistic
 
     # CHECK: To see if we were able to import MySQLdb
     if not mysql_available:
-        logging.error("Unable to find MySQLdb. Please install this python library before re-running .")
+        log.error("Unable to find MySQLdb. Please install this python library before re-running .")
         exit(1)
 
-    logging.info("Retrieving Resources from XDMoD Database...")
+    log.info("Retrieving Resources from XDMoD Database...")
     # RETRIEVE: the resources from XDMoD
     resources = retrieve_resources()
-    print
-    print "Found following resources from XDMoD Database:"
-    print
-    print "resource_id  name"
+    print()
+    print("Found following resources from XDMoD Database:")
+    print()
+    print("resource_id  name")
     for resource_name,resource_id in resources:
-        print "%11d  %-40s"%(resource_id,resource_name)
-    print
+        print("%11d  %-40s"%(resource_id,resource_name))
+    print()
     
     if len(resources)>0:
         while True:
-            logging.input('Enter resource_id for import (enter 0 for no match):')
-            resource_id=raw_input()
+            log_input('Enter resource_id for import (enter 0 for no match):')
+            resource_id=input()
             if validate_resource_id(resource_id,resources):
                 break
-            print "Incorrect resource_id try again"
-        print
+            print("Incorrect resource_id try again")
+        print()
         resource_id=int(resource_id)
     else:
         resource_id=0
@@ -829,29 +830,29 @@ def resource_add(minimalistic=False,test=False,verbose=False):
     resource_name=""
     while True:
         if resource_id==None:
-            logging.input('Enter AKRR resource name:')
-            resource_name=raw_input()
+            log_input('Enter AKRR resource name:')
+            resource_name=input()
         else:
             resource_name2=get_resourcename_by_id(resource_id,resources)
-            logging.input('Enter AKRR resource name, hit enter to use same name as in XDMoD Database [%s]:'%(resource_name2,))
-            resource_name=raw_input()
+            log_input('Enter AKRR resource name, hit enter to use same name as in XDMoD Database [%s]:'%(resource_name2,))
+            resource_name=input()
             if resource_name.strip()=="":
                 resource_name=resource_name2
         
         if validate_resource_name(resource_name)==True:
             break
     resourceName=resource_name
-    print       
+    print()       
     
-    logging.input('Enter queuing system on resource (slurm or pbs): ')
-    queuing_system=raw_input()
+    log_input('Enter queuing system on resource (slurm or pbs): ')
+    queuing_system=input()
     while not validate_queuing_system(queuing_system):
-        logging.error("Incorrect queuing_system try again")
-        logging.input('Enter queuing system on resource (slurm or pbs): ')
-        queuing_system=raw_input()
+        log.error("Incorrect queuing_system try again")
+        log_input('Enter queuing system on resource (slurm or pbs): ')
+        queuing_system=input()
     
     batchScheduler=queuing_system
-    print
+    print()
     
     if minimalistic==False:
         getRemoteAccessMethod()
@@ -859,28 +860,28 @@ def resource_add(minimalistic=False,test=False,verbose=False):
         getFileSytemAccessPoints()
     
     if verbose:
-        logging.info("summary of parameters")
-        print "remoteAccessNode",remoteAccessNode
-        print "remoteAccessMethod",remoteAccessMethod
-        print "remoteCopyMethod",remoteCopyMethod
-        print "sshUserName",sshUserName
-        print "sshPassword",sshPassword
-        print "sshPrivateKeyFile",sshPrivateKeyFile
-        print "sshPrivateKeyPassword",sshPrivateKeyPassword
-        print "networkScratch",networkScratch
-        print "localScratch",localScratch
-        print "akrrData",akrrData
-        print "appKerDir",appKerDir
-        print "batchScheduler",batchScheduler
-        print "batchJobHeaderTemplate",batchJobHeaderTemplate
-        print
+        log.info("summary of parameters")
+        print("remoteAccessNode",remoteAccessNode)
+        print("remoteAccessMethod",remoteAccessMethod)
+        print("remoteCopyMethod",remoteCopyMethod)
+        print("sshUserName",sshUserName)
+        print("sshPassword",sshPassword)
+        print("sshPrivateKeyFile",sshPrivateKeyFile)
+        print("sshPrivateKeyPassword",sshPrivateKeyPassword)
+        print("networkScratch",networkScratch)
+        print("localScratch",localScratch)
+        print("akrrData",akrrData)
+        print("appKerDir",appKerDir)
+        print("batchScheduler",batchScheduler)
+        print("batchJobHeaderTemplate",batchJobHeaderTemplate)
+        print()
         
     generate_resource_config(resource_id, resource_name, queuing_system)
-    logging.info('Initiation of new resource is completed.')
-    logging.info('    Edit batchJobHeaderTemplate variable in '+resource_cfg_filename)
-    logging.info('    and move to resource validation and deployment step.')
-    logging.info('    i.e. execute:')
-    logging.info('        akrr resource deploy '+resource_name)
+    log.info('Initiation of new resource is completed.')
+    log.info('    Edit batchJobHeaderTemplate variable in '+resource_cfg_filename)
+    log.info('    and move to resource validation and deployment step.')
+    log.info('    i.e. execute:')
+    log.info('        akrr resource deploy '+resource_name)
     # GENERATE: the
     #generate_default_templates(resources)
 

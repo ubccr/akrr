@@ -10,6 +10,8 @@ import copy
 
 from .akrrtaskbase import akrrTaskHandlerBase,submitCommands,jidExtractPatterns,waitExprs,active_task_default_attempt_repeat,killExprs
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+
+from .akrrerror import akrrError
  
 class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
     """Task Handler for AppKernel execution and processing"""
@@ -190,7 +192,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 cmd="if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi"%(d)
                 msg=akrrcfg.sshCommand(sh,cmd)
                 if msg.find("DOESNOTEXIST")>=0:
-                    raise akrrcfg.akrrError(akrrcfg.ERROR_REMOTE_FILES,"Can not create directory %s on %s."%(d,self.resource['name']))
+                    raise akrrError("Can not create directory %s on %s."%(d,self.resource['name']))
             #akrrdata
             CheckAndCreateDir(self,sh,self.resource['akrrdata'])
             #dir for app
@@ -224,9 +226,9 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                     try:
                         JobID=int(matchObj.group(1))
                     except:
-                        raise akrrcfg.akrrError(akrrcfg.ERROR_REMOTE_JOB,"Can't get job id:\n"+msg)
+                        raise akrrError("Can't get job id:\n"+msg)
                 else:
-                    raise akrrcfg.akrrError(akrrcfg.ERROR_REMOTE_JOB,"Can't get job id:\n"+msg)
+                    raise akrrError("Can't get job id:\n"+msg)
             
             akrrcfg.sshCommand(sh,"echo %d > job.id"%(JobID))
             

@@ -124,3 +124,19 @@ def getDatatimeTimeToStart(time_to_start):
         raise IOError("Incorrect data-time format for time_to_start")
     timeToStart=datetime.datetime.strptime(timeToStart,"%Y-%m-%d %H:%M:%S")
     return timeToStart
+
+
+def log_input(message, *args):
+    from . import colorize
+    
+    if message:
+        if len(args) > 0:
+            formatted_message = message.format(*args)
+        else:
+            formatted_message = message
+        formatted_message = '{0}\n'.format(formatted_message)
+    else:
+        formatted_message = ''
+        
+    print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)
+

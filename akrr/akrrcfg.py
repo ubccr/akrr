@@ -13,8 +13,11 @@ import MySQLdb.cursors
 import copy
 
 from akrr import get_akrr_dirs
-from .akrrlogging import *
 from .util import which
+
+import logging as log
+
+from .akrrerror import akrrError
 
 #log("initial loading",highlight="ok")
 # directory of this file
@@ -114,9 +117,9 @@ def loadResource(resource_name):
         resource_cfg_filename=os.path.join(cfg_dir,'resources',resource_name,"resource.conf")
         
         if not os.path.isfile(default_resource_cfg_filename):
-            akrrError(ERROR_GENERAL,"Default resource configuration file do not exists (%s)!"%default_resource_cfg_filename)
+            raise akrrError("Default resource configuration file do not exists (%s)!"%default_resource_cfg_filename)
         if not os.path.isfile(resource_cfg_filename):
-            akrrError(ERROR_GENERAL,"Resource configuration file do not exists (%s)!"%resource_cfg_filename)
+            raise akrrError("Resource configuration file do not exists (%s)!"%resource_cfg_filename)
         
         tmp={}
         exec(open(default_resource_cfg_filename).read(),tmp)
@@ -142,8 +145,10 @@ def loadResource(resource_name):
         verifyResourceParams(resource)
         
         return resource
-    except Exception as e:
-        raise akrrError(ERROR_GENERAL,"Can not load resource configuration for "+resource_name+":\n"+str(e))
+    except Exception:
+        log.exception("Exception occurred during resource configuration loading for %s."%resource_name)
+        raise akrrError("Can not load resource configuration for %s."%resource_name)
+    
 def loadAllResources():
     """
     load all resources from configuration directory
@@ -155,8 +160,9 @@ def loadAllResources():
             try:
                 resource=loadResource(resource_name)
                 resources[resource_name]=resource
-            except Exception as e:
-                logerr(str(e),traceback.format_exc())
+            except Exception:
+                log.exception("Exception occurred during resources loading.")
+
 
 def FindResourceByName(resource_name):
     """
@@ -235,9 +241,9 @@ def loadApp(app_name):
         app_cfg_filename=os.path.join(default_dir,app_name+".app.conf")
         
         if not os.path.isfile(default_app_cfg_filename):
-            akrrError(ERROR_GENERAL,"Default application kernel configuration file do not exists (%s)!"%default_app_cfg_filename)
+            raise akrrError("Default application kernel configuration file do not exists (%s)!"%default_app_cfg_filename)
         if not os.path.isfile(app_cfg_filename):
-            akrrError(ERROR_GENERAL,"application kernel configuration file do not exists (%s)!"%app_cfg_filename)
+            raise akrrError("application kernel configuration file do not exists (%s)!"%app_cfg_filename)
         
         tmp={}
         exec(open(default_app_cfg_filename).read(), tmp)
@@ -276,8 +282,9 @@ def loadApp(app_name):
         verifyAppParams(app)
         
         return app
-    except Exception as e:
-        raise akrrError(ERROR_GENERAL,"Can not load app configuration for "+app_name+":\n"+str(e)+traceback.format_exc())
+    except Exception:
+        log.exception("Exception occurred during app kernel configuration loading for %s."%app_name)
+        raise akrrError("Can not load app configuration for %s."%app_name)
 
 def loadAllApp():
     """
@@ -293,8 +300,8 @@ def loadAllApp():
             try:
                 app=loadApp(app_name)
                 apps[app_name]=app
-            except Exception as e:
-                logerr(str(e),traceback.format_exc())
+            except Exception:
+                log.exception("Exception occurred during app kernel configuration loading.")
 
 def FindAppByName(app_name):
     """
@@ -345,12 +352,12 @@ def PrintOutResourceAndAppSummary():
     print(">" * 112)
     print("# Resources:")
     print("#" * 112)
-    for k,r in resources.items():
+    for _,r in resources.items():
         print(r['name'])
     print("#" * 112)
     print("# Applications:")
     print("#" * 112)
-    for k,a in apps.items():
+    for _,a in apps.items():
         print(a['name'], "'walllimit':" + str(a['walllimit']))
     print("<" * 112)
 #PrintOutResourceAndAppSummary()
@@ -469,7 +476,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise akrrError(ERROR_CANT_CONNECT, "Password for %s is incorrect." % (remotemachine))
+                        raise akrrError("Password for %s is incorrect." % remotemachine)
                     time.sleep(sshTimeSleep)  #so that the remote host have some time to turn off echo
                     rsh.sendline(password)
                     #add prompt search since password already asked
@@ -480,8 +487,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise akrrError(ERROR_CANT_CONNECT,
-                                   " %s had requested a password and one was not provided." % (remotemachine))
+                    raise akrrError("%s had requested a password and one was not provided." % remotemachine)
             if i == 2:
                 if PrivateKeyPassword != None:
                     if PrivateKeyPasswordCount > 0:
@@ -489,8 +495,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise akrrError(ERROR_CANT_CONNECT,
-                                       "Private key password for %s is incorrect." % (remotemachine))
+                        raise akrrError("Private key password for %s is incorrect." % remotemachine)
                     time.sleep(sshTimeSleep)  #so that the remote host have some time to turn off echo
                     rsh.sendline(PrivateKeyPassword)
                     #add prompt search since password already asked
@@ -501,9 +506,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise akrrError(ERROR_CANT_CONNECT,
-                                   "%s had requested a private key password and one was not provided." % (
-                                       remotemachine))
+                    raise akrrError("%s had requested a private key password and one was not provided." % remotemachine)
             if i >= 3:
                 bOnHeadnode = True
                 #are we really there?
@@ -519,9 +522,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             #test that we really in prompt
             msg=sshCommand(rsh,"echo TeStTeStTeStThEproMPT")
             if msg.strip()!="TeStTeStTeStThEproMPT":
-                raise akrrError(ERROR_CANT_CONNECT,
-                                       "%s can not determine prompt." % (
-                                           remotemachine))
+                raise akrrError("%s can not determine prompt." % remotemachine)
         rsh.remotemachine=remotemachine
         if logfile != None: logfile.flush()
         #print expect[i]
@@ -530,8 +531,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
-        raise akrrError(ERROR_CANT_CONNECT,
-                       "Timeout period elapsed prior establishing the connection to %s." % (remotemachine) + msg, e)
+        raise akrrError("Timeout period elapsed prior establishing the connection to %s.\n" % remotemachine + msg, e=e)
     except pexpect.EOF as e:
         ExeCUTEd_SucCeSsFully = False
         if command != None:
@@ -550,7 +550,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             msg = copy.deepcopy(rsh.before)
             rsh.close(force=True)
             del rsh
-            raise akrrError(ERROR_CANT_CONNECT, "Probably %s refused the connection. " % (remotemachine) + msg, e)
+            raise akrrError("Probably %s refused the connection. " % remotemachine + msg, e=e)
         else:
             #user trying to execute command remotely
             msg = copy.deepcopy(rsh.before)
@@ -682,8 +682,6 @@ def replaceATvarAT(s, ds):
 
 
 def printException(Str=None):
-    import traceback
-
     print("###### Exception ######" + ">" * 97)
     if Str != None:
         print(Str)
@@ -768,3 +766,7 @@ def getExportDB(dictCursor=False):
     return (db, cur)
 
 from .util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+
+
+
+

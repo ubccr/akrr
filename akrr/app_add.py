@@ -1,42 +1,42 @@
 import os
 import shutil
 
-import akrrcfg
-import util.logging as logging
+from . import akrrcfg
+import logging as log
 
 verbose=False
 
 def app_add(resource,appkernel,verbose=False):
     globals()['verbose']=verbose
     
-    logging.info("Generating application kernel configuration for %s on %s"%(appkernel,resource))
+    log.info("Generating application kernel configuration for %s on %s",appkernel,resource)
     
     try:
         akrrcfg.FindResourceByName(resource)
     except Exception:
-        logging.error("Can not find resource: "+resource)
+        log.error("Can not find resource: %s",resource)
         exit(1)
     try:
         akrrcfg.FindAppByName(appkernel)
     except Exception:
-        logging.error("Can not find application kernel: "+appkernel)
+        log.error("Can not find application kernel: %s",appkernel)
         exit(1)
     
     cfgFilename=os.path.join(akrrcfg.cfg_dir,'resources',resource,appkernel+".app.conf")
     cfgTemplateFilename=os.path.join(akrrcfg.templates_dir,appkernel+".app.conf")
     
     if os.path.isfile(cfgFilename):
-        logging.error("Configuration file for %s on %s already exist. For regeneration delete it"%(appkernel,resource))
-        print "Application kernel configuration for %s on %s is in: \n\t%s"%(appkernel,resource,cfgFilename)
+        log.error("Configuration file for %s on %s already exist. For regeneration delete it",appkernel,resource)
+        log.info("Application kernel configuration for %s on %s is in: \n\t%s",appkernel,resource,cfgFilename)
         exit(1)
     
     if not os.path.isfile(cfgTemplateFilename):
-        logging.error("Can not find template file for application kernel: "+cfgTemplateFilename)
+        log.error("Can not find template file for application kernel: %s",cfgTemplateFilename)
         exit(1)
     
     shutil.copyfile(cfgTemplateFilename,cfgFilename)
     if os.path.isfile(cfgFilename):
-        logging.info("Application kernel configuration for %s on %s is in: \n\t%s"%(appkernel,resource,cfgFilename))
+        log.info("Application kernel configuration for %s on %s is in: \n\t%s",appkernel,resource,cfgFilename)
 
 
 

@@ -3,7 +3,7 @@ A script that will provide command line access to the Application Remote Runner
 functionality.
 
 """
-from .util import logging as log
+import logging as log
 
 import random
 import datetime
@@ -167,11 +167,11 @@ def retrieve_tasks(resource, application):
             '/scheduled_tasks',
             data=data)
         if result.status_code == 200:
-            log.info('Successfully Completed Task Retrieval.\n{0}', result.text)
+            log.info('Successfully Completed Task Retrieval.\n%s', result.text)
 
         else:
             log.error(
-                'something went wrong. {0}:{1}',
+                'something went wrong. %s:%s',
                 result.status_code,
                 result.text)
         return result
@@ -179,7 +179,7 @@ def retrieve_tasks(resource, application):
         log.error('''
                 An error occured while communicating
                 with the REST API.
-                {0}: {1}
+                %s: %s
                 ''',
                   e.args[0] if len(e.args) > 0 else '',
                   e.args[1] if len(e.args) > 1 else '')
@@ -296,10 +296,10 @@ def query_parsed(args):
     def handle_results(results, dry_run):
         if dry_run:
             log.info("Would have inserted the following:")
-            [log.info("Id: {0:<9}Name: {1}", r['id'], r['name']) for r in results]
+            [log.info("Id: {0:<9}Name: {1}".format(r['id'], r['name'])) for r in results]
         else:
             log.info("Inserting the following:")
-            [log.info("Id: {0:<9}Name: {1}", r['id'], r['name']) for r in results]
+            [log.info("Id: {0:<9}Name: {1}".format(r['id'], r['name'])) for r in results]
             insert_resources(results)
 
     if verbose:
@@ -337,7 +337,7 @@ def list_parsed(args):
         results = retrieve_tasks(resource, application)
         if results:
             log.info('Retrieved the following: ')
-            [log.info("[{:<8}] Resource: {:<15} App:{:<24}",r['task_id'],  r['resource'], r['app']) for r in results]
+            [log.info("[{:<8}] Resource: {:<15} App:{:<24}".format(r['task_id'],  r['resource'], r['app'])) for r in results]
         else:
             log.warning('No records returned.')
 
@@ -365,17 +365,17 @@ def on_parsed(args):
                 else 'Successfully enabled all applications on {0}.\n{1}'
             parameters = (args.application, args.resource, result.text) if args.application and args.resource \
                 else (args.resource, result.text)
-            log.info(message, *parameters)
+            log.info(message.format(*parameters))
         else:
             log.error(
-                'something went wrong. {0}:{1}',
+                'something went wrong.%s:%s',
                 result.status_code,
                 result.text)
     except Exception as e:
         log.error('''
             An error occured while communicating
             with the REST API.
-            {0}: {1}
+            %s: %s
             ''',
                   e.args[0] if len(e.args) > 0 else '',
                   e.args[1] if len(e.args) > 1 else '')
@@ -402,17 +402,17 @@ def off_parsed(args):
                 else 'Successfully disabled all applications on {0}.\n{1}'
             parameters = (args.application, args.resource, result.text) if args.application and args.resource \
                 else (args.resource, result.text)
-            log.info(message, *parameters)
+            log.info(message.format(*parameters))
         else:
             log.error(
-                'something went wrong. {0}:{1}',
+                'something went wrong. %s:%s',
                 result.status_code,
                 result.text)
     except Exception as e:
         log.error('''
             An error occured while communicating
             with the REST API.
-            {0}: {1}
+            %s: %s
             ''',
                   e.args[0] if len(e.args) > 0 else '',
                   e.args[1] if len(e.args) > 1 else '')
@@ -462,14 +462,14 @@ def new_task_parsed(args):
                 log.info('Successfully submitted new task')
             else:
                 log.error(
-                    'something went wrong. {0}:{1}',
+                    'something went wrong. %s:%s',
                     result.status_code,
                     result.text)
         except Exception as e:
             log.error('''
             An error occured while communicating
             with the REST API.
-            {0}: {1}
+            %s: %s
             ''',
                       e.args[0] if len(e.args) > 0 else '',
                       e.args[1] if len(e.args) > 1 else '')
@@ -528,10 +528,10 @@ def wall_time_parsed(args):
                     log.info('Successfully updated wall time (resource %s: application kernel: %s nodes: %d).'%(resource,app,nodes))
                 else:
                     log.info(
-                        'Successfully queried walltime records. \n{0}',
+                        'Successfully queried walltime records. \n%s',
                         result.text)
             else:
-                log.error('something went wrong. {0}:{1}',
+                log.error('something went wrong. %s:%s',
                           result.status_code,
                           result.text)
         except Exception as e:
@@ -539,7 +539,7 @@ def wall_time_parsed(args):
             log.error('''
             An error occured while communicating
             with the REST API.
-            {0}: {1}
+            %s: %s
             '''.strip(),
                       e.args[0] if len(e.args) > 0 else '',
                       e.args[1] if len(e.args) > 1 else '')
@@ -631,7 +631,7 @@ def check_daemon(args):
         if request.status_code == 200:
             return True
         else:
-            log.error('Unable to successfully contact the REST API: {0}: {1}', request.status_code, request.text)
+            log.error('Unable to successfully contact the REST API: %s: %s', request.status_code, request.text)
             return False
 
     log.info('Beginning check of the AKRR Rest API...')

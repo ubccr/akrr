@@ -1,7 +1,7 @@
 """Validate resource parameters and deploy app. kernel stack to remote resource"""
 import sys
 import traceback
-import cStringIO
+import io
 import datetime
 import time
 import copy
@@ -25,10 +25,10 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-import akrrcfg
-import akrrrestclient
+from . import akrrcfg
+from . import akrrrestclient
 
-from akrrlogging import *
+import logging as log
 
 
 def CheckDirSimple(sh,d):
@@ -62,7 +62,7 @@ def CheckDirSimple(sh,d):
 def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
     status,msg=CheckDirSimple(sh, d)
     if tryToCreate==True and status==None:
-        log("Directory %s:%s does not exists, will try to create it"%(sh.remotemachine,d))
+        log.info("Directory %s:%s does not exists, will try to create it"%(sh.remotemachine,d))
         cmd="mkdir -p \"%s\""%(d)
         akrrcfg.sshCommand(sh,cmd)
         status,msg=CheckDirSimple(sh, d)
@@ -70,12 +70,12 @@ def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
         return status,msg
     
     if status==None:
-        logerr("Directory %s:%s does not exists!"%(sh.remotemachine,d))
+        log.error("Directory %s:%s does not exists!"%(sh.remotemachine,d))
         exit()
     elif status==True:
         return (True,msg)
     else:
-        logerr("Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
+        log.error("Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
         exit()
         
 def makeResultsSummary(verbose,resource_name,app_name,completed_tasks,akrr_xdmod_instanceinfo,akrr_errmsg):
@@ -120,21 +120,21 @@ def resource_deploy(resource_name,verbose=False):
     ###############################################################################################
     #validating resource parameter file
     
-    log("#"*80)
-    log("Validating %s parameters from %s"%(resource_name,resource_param_filename))
+    log.info("#"*80)
+    log.info("Validating %s parameters from %s"%(resource_name,resource_param_filename))
     
     if not os.path.isfile(resource_param_filename):
-        logerr("resource parameters file (%s) do not exists!"%(resource_param_filename,))
+        log.error("resource parameters file (%s) do not exists!"%(resource_param_filename,))
         exit()
     
     #check syntax
     try:
         tmp={}
-        execfile(default_resource_param_filename,tmp)
-        execfile(resource_param_filename,tmp)
-    except Exception,e:
-        logerr("Can not load resource from """+resource_param_filename+"\n"+
-               "Probably invalid syntax, see full error report below",traceback.format_exc())
+        exec(compile(open(default_resource_param_filename).read(), default_resource_param_filename, 'exec'),tmp)
+        exec(compile(open(resource_param_filename).read(), resource_param_filename, 'exec'),tmp)
+    except Exception as e:
+        log.exception("Can not load resource from """+resource_param_filename+"\n"+
+               "Probably invalid syntax.")
         exit()
     
     #now we can load akrr
@@ -145,123 +145,123 @@ def resource_deploy(resource_name,verbose=False):
     #check that parameters for presents and type
     #format: key,type,can be None,must have parameter 
     parameters_types=[
-        ['info',                        types.StringType,       False,False],
-        ['localScratch',                types.StringType,       False,True],
-        ['batchJobTemplate',            types.StringType,       False,True],
-        ['remoteAccessNode',            types.StringType,       False,True],
-        ['name',                        types.StringType,       False,False],
-        ['akrrCommonCommandsTemplate',   types.StringType,       False,True],
-        ['networkScratch',              types.StringType,       False,True],
-        ['ppn',                         types.IntType,          False,True],
+        ['info',                        bytes,       False,False],
+        ['localScratch',                bytes,       False,True],
+        ['batchJobTemplate',            bytes,       False,True],
+        ['remoteAccessNode',            bytes,       False,True],
+        ['name',                        bytes,       False,False],
+        ['akrrCommonCommandsTemplate',   bytes,       False,True],
+        ['networkScratch',              bytes,       False,True],
+        ['ppn',                         int,          False,True],
         #['akrrStartAppKerTemplate',      types.StringType,       False,True],
-        ['remoteCopyMethod',            types.StringType,       False,True],
-        ['sshUserName',                 types.StringType,       False,True],
-        ['sshPassword',                 types.StringType,       True, False],
-        ['sshPrivateKeyFile',           types.StringType,       True, False],
-        ['sshPrivateKeyPassword',       types.StringType,       True, False],
-        ['batchScheduler',              types.StringType,       False,True],
-        ['remoteAccessMethod',          types.StringType,       False,True],
-        ['appKerDir',                   types.StringType,       False,True],
-        ['akrrCommonCleanupTemplate',    types.StringType,       False,True],
+        ['remoteCopyMethod',            bytes,       False,True],
+        ['sshUserName',                 bytes,       False,True],
+        ['sshPassword',                 bytes,       True, False],
+        ['sshPrivateKeyFile',           bytes,       True, False],
+        ['sshPrivateKeyPassword',       bytes,       True, False],
+        ['batchScheduler',              bytes,       False,True],
+        ['remoteAccessMethod',          bytes,       False,True],
+        ['appKerDir',                   bytes,       False,True],
+        ['akrrCommonCleanupTemplate',    bytes,       False,True],
         #['nodeListSetterTemplate',      types.StringType,       False,True],
-        ['akrrData',                     types.StringType,       False,True]
+        ['akrrData',                     bytes,       False,True]
     ]
     
     for variable,ttype,nulable,must in parameters_types:
         if (must==True) and (variable not in resource):
-            logerr("Syntax error in "+resource_param_filename+"\nVariable %s is not set"%(variable,))
+            log.error("Syntax error in "+resource_param_filename+"\nVariable %s is not set"%(variable,))
             exit()
         if variable not in resource:
             continue
-        if type(resource[variable])==types.NoneType and nulable==False:
-            logerr("Syntax error in "+resource_param_filename+"\nVariable %s can not be None"%(variable,))
+        if type(resource[variable])==type(None) and nulable==False:
+            log.error("Syntax error in "+resource_param_filename+"\nVariable %s can not be None"%(variable,))
             exit()
-        if type(resource[variable])!=ttype and not (type(resource[variable])==types.NoneType and nulable==True):
-            logerr("Syntax error in "+resource_param_filename+
+        if type(resource[variable])!=ttype and not (type(resource[variable])==type(None) and nulable==True):
+            log.error("Syntax error in "+resource_param_filename+
                    "\nVariable %s should be %s"%(variable,str(ttype))+
                    ". But it is "+str(type(resource[variable])))
             exit()
         #print variable,ttype,nulable,must
-    log("Syntax of %s is correct and all necessary parameters are present."%resource_param_filename,highlight="ok")
-    #log("="*80)
+    log.info("Syntax of %s is correct and all necessary parameters are present."%resource_param_filename,highlight="ok")
+    #log.info("="*80)
     
     ###############################################################################################
     #connect to resource
-    log("#"*80)
-    log("Validating resource accessibility. Connecting to %s."%(resource['name']))
+    log.info("#"*80)
+    log.info("Validating resource accessibility. Connecting to %s."%(resource['name']))
     if resource['sshPrivateKeyFile']!=None and os.path.isfile(resource['sshPrivateKeyFile'])==False:
-        logerr("Can not access ssh private key (%s)"""%(resource['sshPrivateKeyFile'],))
+        log.error("Can not access ssh private key (%s)"""%(resource['sshPrivateKeyFile'],))
         exit()
     
-    str_io=cStringIO.StringIO()
+    str_io=io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
         rsh=akrrcfg.sshResource(resource)
         
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
-    except Exception,e:
+    except Exception as e:
         msg2=str_io.getvalue()
         msg2+="\n"+traceback.format_exc()
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
-        logerr("Can not connect to """+resource['name']+"\n"+
+        log.error("Can not connect to """+resource['name']+"\n"+
                "Probably invalid credential, see full error report below",msg2)
         exit()
-    print "="*80
-    log("Successfully connected to %s\n\n"%(resource['name']),highlight="ok")
+    print("="*80)
+    log.info("Successfully connected to %s\n\n"%(resource['name']),highlight="ok")
     
     ###############################################################################################
-    log("Checking if shell is BASH\n")
+    log.info("Checking if shell is BASH\n")
     msg=akrrcfg.sshCommand(rsh,"echo $BASH")
     if msg.count("bash")>0:
-        log("Shell is BASH\n",highlight="ok")
+        log.info("Shell is BASH\n",highlight="ok")
     else:
-        logerr("Shell on headnode of %s is not BASH, change it to bash and try again.\n"%(resource_name,))
+        log.error("Shell on headnode of %s is not BASH, change it to bash and try again.\n"%(resource_name,))
         exit()
     
     ###############################################################################################
-    log("Checking directory locations\n")
+    log.info("Checking directory locations\n")
     
     d=resource['akrrData']
-    log("Checking: %s:%s"%(resource['remoteAccessNode'],d))
+    log.info("Checking: %s:%s"%(resource['remoteAccessNode'],d))
     status,msg=CheckDir(rsh, d,exitOnFail=True,tryToCreate=True)
-    log(msg+"\n",highlight="ok")
+    log.info(msg+"\n",highlight="ok")
     
     d=resource['appKerDir']
-    log("Checking: %s:%s"%(resource['remoteAccessNode'],d))
+    log.info("Checking: %s:%s"%(resource['remoteAccessNode'],d))
     status,msg=CheckDir(rsh, d,exitOnFail=True,tryToCreate=True)
-    log(msg+"\n",highlight="ok")
+    log.info(msg+"\n",highlight="ok")
     
     d=resource['networkScratch']
-    log("Checking: %s:%s"%(resource['remoteAccessNode'],d))
+    log.info("Checking: %s:%s"%(resource['remoteAccessNode'],d))
     status,msg=CheckDir(rsh, d,exitOnFail=False,tryToCreate=False)
     if status==True:
-        log(msg,highlight="ok")
+        log.info(msg,highlight="ok")
     else:
-        log(msg,highlight="warning")
-        log("WARNING %d: network scratch might be have a different location on head node, so if it is by design it is ok"%(warningCount+1),highlight="warning")
+        log.info(msg,highlight="warning")
+        log.info("WARNING %d: network scratch might be have a different location on head node, so if it is by design it is ok"%(warningCount+1),highlight="warning")
         warningCount+=1
-    log("")
+    log.info("")
     
     d=resource['localScratch']
-    log("Checking: %s:%s"%(resource['remoteAccessNode'],d))
+    log.info("Checking: %s:%s"%(resource['remoteAccessNode'],d))
     status,msg=CheckDir(rsh, d,exitOnFail=False,tryToCreate=False)
     if status==True:
-        log(msg,highlight="ok")
+        log.info(msg,highlight="ok")
     else:
-        log(msg,highlight="warning")
-        log("WARNING %d: local scratch might be have a different location on head node, so if it is by design it is ok"%(warningCount+1),highlight="warning")
+        log.info(msg,highlight="warning")
+        log.info("WARNING %d: local scratch might be have a different location on head node, so if it is by design it is ok"%(warningCount+1),highlight="warning")
         warningCount+=1
-    log("")
+    log.info("")
     
     ###############################################################################################
     #copy exec sources and inputs to remote resource
-    log("#"*80)
-    log("Preparing to copy application signature calculator,\n    app. kernel input files and \n    HPCC,IMB,IOR and Graph500 source code to remote resource\n\n")
+    log.info("#"*80)
+    log.info("Preparing to copy application signature calculator,\n    app. kernel input files and \n    HPCC,IMB,IOR and Graph500 source code to remote resource\n\n")
     
     
-    str_io=cStringIO.StringIO()
+    str_io=io.StringIO()
     try:
         #sys.stdout = sys.stderr = str_io
         akrrcfg.sshCommand(rsh,"cd %s"%resource['appKerDir'])
@@ -269,61 +269,61 @@ def resource_deploy(resource_name,verbose=False):
         files_in_appKerDir=out.strip().split()
         
         if not ("inputs" in files_in_appKerDir or "inputs/" in files_in_appKerDir):
-            log("Copying app. kernel input tarball to %s"%resource['appKerDir'])
+            log.info("Copying app. kernel input tarball to %s"%resource['appKerDir'])
             akrrcfg.scpToResource(resource,akrrcfg.appker_repo_dir+"/inputs.tar.gz",resource['appKerDir'],logfile=str_io)
-            log("Unpacking app. kernel input files to %s/inputs"%resource['appKerDir'])
+            log.info("Unpacking app. kernel input files to %s/inputs"%resource['appKerDir'])
             
-            print >>str_io, akrrcfg.sshCommand(rsh,"tar xvfz %s/inputs.tar.gz"%resource['appKerDir'])
+            print(akrrcfg.sshCommand(rsh,"tar xvfz %s/inputs.tar.gz"%resource['appKerDir']), file=str_io)
             
             out=akrrcfg.sshCommand(rsh,"df -h %s/inputs"%resource['appKerDir'])
             if out.count("No such file or directory")==0:
-                log("App. kernel input files are in %s/inputs\n"%resource['appKerDir'],highlight="ok")
+                log.info("App. kernel input files are in %s/inputs\n"%resource['appKerDir'],highlight="ok")
             else:
-                print >>str_io, out
+                print(out, file=str_io)
                 raise Exception("files are not copied!")
         else:
-            log("WARNING %d: App. kernel inputs directory %s/inputs is present, assume they are correct.\n"%(warningCount+1,resource['appKerDir']),highlight='warning')
+            log.info("WARNING %d: App. kernel inputs directory %s/inputs is present, assume they are correct.\n"%(warningCount+1,resource['appKerDir']),highlight='warning')
             warningCount+=1
         
-        str_io=cStringIO.StringIO()
+        str_io=io.StringIO()
         
         if not ("execs" in files_in_appKerDir or "execs/" in files_in_appKerDir):
-            log("Copying app. kernel execs tarball to %s"%resource['appKerDir'])
-            log("It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
+            log.info("Copying app. kernel execs tarball to %s"%resource['appKerDir'])
+            log.info("It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
             akrrcfg.scpToResource(resource,akrrcfg.appker_repo_dir+"/execs.tar.gz",resource['appKerDir'],logfile=str_io)
-            log("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs"%resource['appKerDir'])
+            log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs"%resource['appKerDir'])
             
-            print >>str_io, akrrcfg.sshCommand(rsh,"tar xvfz %s/execs.tar.gz"%resource['appKerDir'])
+            print(akrrcfg.sshCommand(rsh,"tar xvfz %s/execs.tar.gz"%resource['appKerDir']), file=str_io)
             
             out=akrrcfg.sshCommand(rsh,"df -h %s/execs"%resource['appKerDir'])
             if out.count("No such file or directory")==0:
-                log("HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in %s/execs\n"%resource['appKerDir'],highlight="ok")
+                log.info("HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in %s/execs\n"%resource['appKerDir'],highlight="ok")
             else:
-                print >>str_io, out
+                print(out, file=str_io)
                 raise Exception("files are not copied!")
         else:
-            log("WARNING %d: App. kernel executables directory %s/execs is present, assume they are correct."%(warningCount+1,resource['appKerDir']),highlight='warning')
-            log("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
+            log.info("WARNING %d: App. kernel executables directory %s/execs is present, assume they are correct."%(warningCount+1,resource['appKerDir']),highlight='warning')
+            log.info("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
             warningCount+=1
         
         out=akrrcfg.sshCommand(rsh,"rm execs.tar.gz  inputs.tar.gz")
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
-    except Exception,e:
+    except Exception as e:
         msg2=str_io.getvalue()
         msg2+="\n"+traceback.format_exc()
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
-        logerr("Can not copy files to """+resource['name']+"\n"+
+        log.error("Can not copy files to """+resource['name']+"\n"+
                "See full error report below",msg2)
         exit()
     #
-    log("Testing app.signature calculator on headnode\n")
+    log.info("Testing app.signature calculator on headnode\n")
     out=akrrcfg.sshCommand(rsh,"%s/execs/bin/appsigcheck.sh `which md5sum`"%(resource['appKerDir'],))
     if out.count("===ExeBinSignature===")>0 and out.count("MD5:")>0:
-        log("App.signature calculator is working on headnode\n",highlight="ok")
+        log.info("App.signature calculator is working on headnode\n",highlight="ok")
     else:
-        logerr("App.signature calculator is not working\n"+
+        log.error("App.signature calculator is not working\n"+
                "See full error report below",out)
         exit()
     #close connection we don't need it any more
@@ -332,21 +332,21 @@ def resource_deploy(resource_name,verbose=False):
     ###############################################################################################
     #send test job to queue
     
-    log("#"*80)
-    log("Will send test job to queue, wait till it executed and will analyze the output")
+    log.info("#"*80)
+    log.info("Will send test job to queue, wait till it executed and will analyze the output")
     
-    print "Will use AKRR REST API at",akrrrestclient.restapi_host
+    print("Will use AKRR REST API at",akrrrestclient.restapi_host)
     #get check connection 
     try:
         r = akrrrestclient.get('/scheduled_tasks')
         if r.status_code!=200:
-            logerr("Can not get token for AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+            log.error("Can not get token for AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                "See server response below",json.dumps(r.json(),indent=4))
             exit()
-    except Exception,e:
-        logerr("Can not connect to AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+    except Exception as e:
+        log.exception("Can not connect to AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                "Is it running?\n"+
-               "See full error report below",traceback.format_exc())
+               "See full error report below")
         exit()
     
     #check if the test job is already submitted
@@ -361,8 +361,8 @@ def resource_deploy(resource_name,verbose=False):
         if r.status_code!=200:
             task_id=None
         else:
-            log("\nWARNING %d: Seems this is rerun of this script, will monitor task with task_id = "%(warningCount+1)+str(task_id),highlight="warning")
-            log("To submit new task delete "+test_job_lock_filename+"\n",highlight="warning")
+            log.info("\nWARNING %d: Seems this is rerun of this script, will monitor task with task_id = "%(warningCount+1)+str(task_id),highlight="warning")
+            log.info("To submit new task delete "+test_job_lock_filename+"\n",highlight="warning")
             warningCount+=1
         #check how old is it
     #submit test job
@@ -375,20 +375,20 @@ def resource_deploy(resource_name,verbose=False):
                      }
             r = akrrrestclient.post('/scheduled_tasks', data=payload)
             if r.status_code!=200:
-                logerr("Can not submit task through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+                log.error("Can not submit task through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                    "See server response below",json.dumps(r.json(),indent=4))
                 exit()
             task_id=r.json()['data']['task_id']
-        except Exception,e:
-            logerr("Can not submit task through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+        except Exception as e:
+            log.exception("Can not submit task through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                    "Is it still running?\n"+
                    "See full error report below",traceback.format_exc())
             exit()
         #write file with tast_id
         fout=open(os.path.join(test_job_lock_filename),"w")
-        print >>fout,task_id
+        print(task_id, file=fout)
         fout.close()
-        log("\nSubmitted test job to AKRR, task_id is "+str(task_id)+"\n")
+        log.info("\nSubmitted test job to AKRR, task_id is "+str(task_id)+"\n")
     #now wait till job is done
     msg_body0=""
     msg_body=""
@@ -434,11 +434,11 @@ def resource_deploy(resource_name,verbose=False):
             tail_msg="time: "+t.strftime("%Y-%m-%d %H:%M:%S")
             
             if msg_body!=msg_body0:
-                print "\n\n"+msg_body
-                print tail_msg,
+                print("\n\n"+msg_body)
+                print(tail_msg, end=' ')
                 sys.stdout.flush()
             else:
-                print "\r"+tail_msg,
+                print("\r"+tail_msg, end=' ')
                 sys.stdout.flush()
                 
             msg_body0=copy.deepcopy(msg_body)
@@ -454,15 +454,15 @@ def resource_deploy(resource_name,verbose=False):
         time.sleep(5)
     ###############################################################################################
     #analysing the output
-    log("\n\n")
-    log("#"*80)
-    log("Test job is completed analyzing output\n",highlight="ok")
+    log.info("\n\n")
+    log.info("#"*80)
+    log.info("Test job is completed analyzing output\n",highlight="ok")
     r = akrrrestclient.get('/tasks/'+str(task_id))
     
     
     
     if r.status_code!=200:
-        logerr("Can not get information about task\n"+
+        log.error("Can not get information about task\n"+
                    "See full error report below",
                    "AKRR server response:\n"+r.text)
         exit()
@@ -474,11 +474,11 @@ def resource_deploy(resource_name,verbose=False):
     #execution was not successful
     if completed_tasks['status'].count("ERROR")>0:
         if completed_tasks['status'].count("ERROR Can not created batch job script and submit it to remote queue")>0:
-            logerr("Can not created batch job script and/or submit it to remote queue\n"+
+            log.error("Can not created batch job script and/or submit it to remote queue\n"+
                    "See full error report below",
                    results_summary)
         else:
-            logerr(completed_tasks['status']+"\n"+
+            log.error(completed_tasks['status']+"\n"+
                    "See full error report below",
                    results_summary)
         os.remove(test_job_lock_filename)
@@ -486,7 +486,7 @@ def resource_deploy(resource_name,verbose=False):
     
     #execution was not successful
     if akrr_xdmod_instanceinfo['status']==0:
-        logerr("Task execution was not successful\n"+
+        log.error("Task execution was not successful\n"+
                    "See full error report below",
                    results_summary)
         os.remove(test_job_lock_filename)
@@ -541,24 +541,24 @@ def resource_deploy(resource_name,verbose=False):
                 'local scratch directory accessible']
     
     if statistics['Shell is BASH']=='0':
-        logerr("Shell on compute nodes of %s is not BASH, change it to bash and try again.\n"%(resource_name,))
+        log.error("Shell on compute nodes of %s is not BASH, change it to bash and try again.\n"%(resource_name,))
         errorCount+=1
     for fileExists in filesExists:
         if statistics[fileExists]=='0':
-            logerr(fileExists.replace('exists','does not exist'))
+            log.error(fileExists.replace('exists','does not exist'))
             errorCount+=1
     for dirAccess in dirsAccess:
         if statistics[dirAccess]=='0':
-            logerr(dirAccess.replace('accessible','is not accessible'))
+            log.error(dirAccess.replace('accessible','is not accessible'))
             errorCount+=1
     
     if parameters['App:ExeBinSignature']=='':
-        logerr("Application signature calculator is not working, you might need to recompile it. see application output for more hints")
+        log.error("Application signature calculator is not working, you might need to recompile it. see application output for more hints")
         errorCount+=1
     
     #test the nodes, log to headnode and ping them
     if parameters['RunEnv:Nodes']=='':
-        logerr("Nodes are not detected, check batchJobTemplate and setup of AKRR_NODELIST variable")
+        log.error("Nodes are not detected, check batchJobTemplate and setup of AKRR_NODELIST variable")
         errorCount+=1
     
     
@@ -566,14 +566,14 @@ def resource_deploy(resource_name,verbose=False):
     
     requested_nodes=eval(completed_tasks['resource_param'])['nnodes']
     
-    str_io=cStringIO.StringIO()
+    str_io=io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
         rsh=akrrcfg.sshResource(resource)
         
         NumberOfUnknownHosts=0
         for node in set(nodes):
-            print node
+            print(node)
             out=akrrcfg.sshCommand(rsh,"ping -c 1 %s"%node)
             if out.count("unknown host")>0:
                 NumberOfUnknownHosts+=1
@@ -585,36 +585,36 @@ def resource_deploy(resource_name,verbose=False):
         sys.stderr=sys.__stderr__
         
         if NumberOfUnknownHosts>0:
-            logerr("ERROR %d: Can not ping compute nodes from head node\n"%(errorCount+1)+
+            log.error("ERROR %d: Can not ping compute nodes from head node\n"%(errorCount+1)+
                    "Nodes on which test job was executed detected as "+parameters['RunEnv:Nodes']+"\n"+
                    "If these names does not have sense check batchJobTemplate and setup of AKRR_NODELIST variable in resource configuration file")
             errorCount+=1
-    except Exception,e:
+    except Exception as e:
         msg2=str_io.getvalue()
         msg2+="\n"+traceback.format_exc()
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
-        logerr("Can not connect to """+resource['name']+"\n"+
+        log.error("Can not connect to """+resource['name']+"\n"+
                "Probably invalid credential, see full error report below",msg2)
         exit()
     
     #check ppn count
     if requested_nodes*resource['ppn']!=len(nodes):
-        logerr("ERROR %d: Number of requested processes (processes per node * nodes) do not match actual processes executed"%(errorCount+1)+
+        log.error("ERROR %d: Number of requested processes (processes per node * nodes) do not match actual processes executed"%(errorCount+1)+
             "Either\n"+
             "    AKRR_NODELIST variable is set incorrectly\n"+
             "Or\n"+
             "    processes per node (PPN) is wrong\n")
         errorCount+=1
-    log("\nTest kernel execution summary:",highlight="ok")
-    print results_summary
-    print 
-    log("\nThe output looks good.\n",highlight="ok")
+    log.info("\nTest kernel execution summary:",highlight="ok")
+    print(results_summary)
+    print() 
+    log.info("\nThe output looks good.\n",highlight="ok")
     
     if(errorCount==0):
         #append enviroment variables to .bashrc
-        log("\nAdding AKRR enviroment variables to resource's .bashrc!\n",highlight="ok")
-        str_io=cStringIO.StringIO()
+        log.info("\nAdding AKRR enviroment variables to resource's .bashrc!\n",highlight="ok")
+        str_io=io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
             rsh=akrrcfg.sshResource(resource)
@@ -645,12 +645,12 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
             
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
-        except Exception,e:
+        except Exception as e:
             msg2=str_io.getvalue()
             msg2+="\n"+traceback.format_exc()
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
-            logerr("Can not connect to """+resource['name']+"\n"+
+            log.error("Can not connect to """+resource['name']+"\n"+
                    "Probably invalid credential, see full error report below",msg2)
             exit()
         #enabling resource for execution
@@ -660,7 +660,7 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
             curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
             resource_in_AKDB = curAK.fetchall()
             if len(resource_in_AKDB)==0:
-                log("There is no record of %s in mod_appkernel.resource will add one."%(resource_name,),highlight="warning")
+                log.info("There is no record of %s in mod_appkernel.resource will add one."%(resource_name,),highlight="warning")
                 curAK.execute('''INSERT INTO resource (resource,nickname,description,enabled,visible)
                             VALUES(%s,%s,%s,0,0);''',
                             (resource_name,resource_name,resource['info']))
@@ -675,32 +675,32 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
                             WHERE resource_id=%s;''',
                             (resource_in_AKDB['resource_id'],))
             dbAK.commit()
-            log("Enabled %s in mod_appkernel.resource for tasks execution and made it visible to XDMoD UI."%(resource_name),highlight="ok")
-        except Exception,e:
-            logerr("Can not connect to AK DB\n"+
-                   "Probably invalid credential, see full error report below",traceback.format_exc())
+            log.info("Enabled %s in mod_appkernel.resource for tasks execution and made it visible to XDMoD UI."%(resource_name),highlight="ok")
+        except Exception as e:
+            log.exception("Can not connect to AK DB\n"+
+                   "Probably invalid credential, see full error report below")
         #enabling resource for execution
         try:
             r = akrrrestclient.put('/resources/'+resource_name+'/on')
             if r.status_code==200:
-                log('Successfully enabled '+resource_name)
+                log.info('Successfully enabled '+resource_name)
             else:
-                logerr("Can not enable resource through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+                log.error("Can not enable resource through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                    "See server response below",json.dumps(r.json(),indent=4))
-        except Exception,e:
-            logerr("Can not enable resource through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
+        except Exception as e:
+            log.exception("Can not enable resource through AKRR REST API ( """+akrrrestclient.restapi_host+" )\n"+
                    "Is it still running?\n"+
-                   "See full error report below",traceback.format_exc())
+                   "See full error report below")
         
-    log("#"*80)
-    log("Result:")
+    log.info("#"*80)
+    log.info("Result:")
     if(errorCount>0):
-        logerr("There are %d errors, fix them."%errorCount)
+        log.error("There are %d errors, fix them."%errorCount)
         
     if(warningCount>0):
-        log("\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n"%warningCount,highlight="warning")
+        log.info("\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n"%warningCount,highlight="warning")
     if(errorCount==0 and warningCount==0):
-        log("\nDONE, you can move to next step!\n",highlight="ok")
+        log.info("\nDONE, you can move to next step!\n",highlight="ok")
     os.remove(test_job_lock_filename)
 
 

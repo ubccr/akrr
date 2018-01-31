@@ -11,7 +11,8 @@ import time
 import re
 import traceback
 import datetime
-from .util import logging as log
+
+import logging as log
 
 import bottle
 from . import bottle_api_json_formatting
@@ -65,7 +66,8 @@ class SSLWSGIRefServer(bottle.ServerAdapter):
 
         if self.quiet:
             class QuietHandler(WSGIRequestHandler):
-                def log_request(*args, **kw): pass
+                def log_request(self,*args, **kw):
+                    pass
 
             self.options['handler_class'] = QuietHandler
         srv = make_server(self.host, self.port, handler, **self.options)
@@ -280,7 +282,7 @@ def get_scheduled_tasks():
 
 @app.get(apiroot + '/scheduled_tasks/<task_id:int>')
 @bottle.auth_basic(auth_by_token_for_read)
-def get_scheduled_tasks(task_id):
+def get_scheduled_task(task_id):
     """
     Retrieve scheduled tasks.
     """
@@ -691,11 +693,11 @@ def _get_resource_apps(resource, application):
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
+        log.error("An error was encountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. {0}: {1}",
+        log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -791,11 +793,11 @@ def _get_resource_app_status(resource, application):
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("An error was encountered while trying to retrieve the requested tasks. {0}: {1}",
+        log.error("An error was encountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. {0}: {1}",
+        log.error("There was an unexpected error enountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -818,7 +820,7 @@ def get_unique_tasks():
         application = request.query.app
         status = request.query.status
     except UnicodeError as e:
-        log.error("There was a problem while trying to extract the query parameters from the request. {0}: {1}",
+        log.error("There was a problem while trying to extract the query parameters from the request. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -843,7 +845,7 @@ def get_resources():
         resource_filter = request.query.resource
         exact_flag = request.query.exact
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
+        log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
 
     # DETERMINE: which query we need to run based on the parameters supplied.
     query = """
@@ -872,11 +874,11 @@ def get_resources():
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -902,7 +904,7 @@ def get_kernels():
         kernel_filter = request.query.kernel
         disabled = str_to_bool(request.query.disabled)
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:kernels. {0}: {1}", e.args[0], e.args[1])
+        log.error("Unable to retrieve query parameters for GET:kernels. %s: %s", e.args[0], e.args[1])
 
     query = """
     SELECT AK.id,
@@ -958,11 +960,11 @@ def get_kernels():
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -1072,11 +1074,11 @@ def _turn_resource_on(resource, application):
                 result += cursor.execute(query, parameter)
         return result
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -1243,11 +1245,11 @@ def _turn_resource_off(resource, application):
                 result += cursor.execute(query, parameter)
         return result
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -1267,7 +1269,7 @@ def turn_resource_on(resource):
     try:
         application_filter = request.forms.application
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
+        log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
 
     return {'updated': _turn_resource_on(resource, application_filter)}
 
@@ -1287,7 +1289,7 @@ def turn_resource_off(resource):
     try:
         application_filter = request.forms.application
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:resources. {0}: {1}", e.args[0], e.args[1])
+        log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
 
     return {'updated': _turn_resource_off(resource, application_filter)}
 
@@ -1310,11 +1312,11 @@ def get_walltime_all():
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -1342,11 +1344,11 @@ def get_walltime(walltime_id):
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
 
@@ -1411,18 +1413,18 @@ def upsert_walltime(resource,app):
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
 
 @app.get(apiroot + '/walltime/<resource>/<app>')
 @bottle.auth_basic(auth_by_token_for_read)
-def get_walltime(resource,app):
+def get_walltime_by_resource_app(resource,app):
     """
     get default walltime
     """
@@ -1469,11 +1471,11 @@ def get_walltime(resource,app):
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
@@ -1525,11 +1527,11 @@ def update_walltime_by_id(walltime_id):
             # RETRIEVE: the results and save them for returning.
             #results = cursor.fetchall()
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
@@ -1556,11 +1558,11 @@ def delete_walltime(walltime_id):
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
     except MySQLdb.Error as e:
-        log.error("There was a SQL Error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     except Exception as e:
-        log.error("There was an unexpected error while attempting to retrieve the specified resources. {0}: {1}",
+        log.error("There was an unexpected error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'deleted': False}

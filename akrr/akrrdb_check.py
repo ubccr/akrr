@@ -7,7 +7,7 @@ cur_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))
 if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
-from .util import logging as log
+import logging as log
 from . import akrrcfg
 
 # Attempt to import MySQL, if it's not there then we'll exit out and notify the
@@ -50,18 +50,18 @@ def check_rw_db(connection_func, pre_msg, post_msg):
                 else:
                     log.error(post_msg, success)
 
-        except MySQLdb.MySQLError as e:
-            log.error('Unable to create a table w/ the provided username. {0}: {1}', e.args[0], e.args[1])
+        except MySQLdb.Error as e:
+            log.error('Unable to create a table w/ the provided username. %s: %s', e.args[0], e.args[1])
 
         connection, cursor = connection_func()
         try:
             with connection:
                 cursor.execute("DROP TABLE CREATE_ME;")
-        except MySQLdb.MySQLError as e:
-            log.error('Unable to drop the table created to check permissions. {0}: {1}', e.args[0], e.args[1])
+        except MySQLdb.Error as e:
+            log.error('Unable to drop the table created to check permissions. %s: %s', e.args[0], e.args[1])
 
-    except MySQLdb.MySQLError as e:
-        log.error('Unable to connect to Database. {0}: {1}', e.args[0], e.args[1])
+    except MySQLdb.Error as e:
+        log.error('Unable to connect to Database. %s: %s', e.args[0], e.args[1])
 
     return success
 
@@ -97,11 +97,11 @@ def check_r_db(connection_func, pre_msg, post_msg):
                 else:
                     log.error(post_msg, success)
 
-        except MySQLdb.MySQLError as e:
-            log.error('Unable to select from `modw`.`resourcefact`. {0}: {1}', e.args[0], e.args[1])
+        except MySQLdb.Error as e:
+            log.error('Unable to select from `modw`.`resourcefact`. %s: %s', e.args[0], e.args[1])
 
-    except MySQLdb.MySQLError as e:
-        log.error('Unable to connect to Database. {0}: {1}', e.args[0], e.args[1])
+    except MySQLdb.Error as e:
+        log.error('Unable to connect to Database. %s: %s', e.args[0], e.args[1])
 
     return success
 
@@ -117,7 +117,7 @@ def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
     # CHECK: the akrr db
     akrr_ok = check_rw_db(akrrcfg.getDB,
                       "Checking 'mod_akrr' Database / User privileges...",
-                      "'mod_akrr' Database check complete - Status: {0}")
+                      "'mod_akrr' Database check complete - Status: %s")
 
     if mod_akrr:
         overall_success = overall_success and akrr_ok
@@ -125,7 +125,7 @@ def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
     # Check: the app_kernel db
     app_kernel_ok = check_rw_db(akrrcfg.getAKDB,
                              "Checking 'mod_appkernel' Database / User privileges...",
-                             "'mod_appkernel' Database check complete - Status: {0}")
+                             "'mod_appkernel' Database check complete - Status: %s")
 
     if mod_appkernel:
         overall_success = overall_success and app_kernel_ok
@@ -133,7 +133,7 @@ def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
     # CHECK: the XDMoD db
     xdmod_ok = check_r_db(akrrcfg.getXDDB,
                           "Checking 'modw' Database / User privileges...",
-                          "'modw' Database check complete - Status: {0}")
+                          "'modw' Database check complete - Status: %s")
     
     if modw:
         overall_success = overall_success and xdmod_ok
