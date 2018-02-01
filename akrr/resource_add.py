@@ -10,7 +10,6 @@ import sys
 import os
 import getpass
 import io
-import traceback
 import re
 
 from . import akrrcfg
@@ -38,8 +37,10 @@ resources_dir = os.path.join(config_dir, 'resources')
 
 resourceName=None
 verbose=False
-test=False
+dry_run=False
 minimalistic=False
+no_ping=False
+
 rsh=None
 #variables for template with default values
 info = None
@@ -61,129 +62,6 @@ batchScheduler = None
 batchJobHeaderTemplate=None
 
 resource_cfg_filename=None
-
-def open_file(file_path, privs):
-    """
-    Open and return the file handle to the file identified by the provided 'file_path' with the provided 'privs'.
-    If an error occurs during the opening of the file then it will be logged and 'None' will be returned.
-
-    :type file_path str
-    :type privs str
-
-    :param file_path: the path to be opened.
-    :param privs: the privs with which to open the provided file path.
-    :return: a file handle ( object ) if the open operation is successful else None.
-    """
-    if file_path and isinstance(file_path, str) and privs and isinstance(privs, str):
-
-        # ADD: Some verbosity
-        if verbose:
-            log.info("Opening with privs [%s]: %s", privs, file_path)
-
-        try:
-
-            # ATTEMPT: to open the file identified by the provided file_path
-            file_handle = open(file_path, privs)
-
-            # LET: the verbose users know we succeeded
-            if verbose:
-                log.info('Successfully preformed open [%s] on %s', privs, file_path)
-
-            # RETURN: the file_handle
-            return file_handle
-        except IOError as e:
-            log.error('Unable to open file: %s due to %s: %s', file_path, e.args[0], e.args[1])
-            return None
-
-    # IF: we've reached this point than one of the parameters was incorrect.
-    log.warning('Error 62: Internal error. Please contact support.')
-    return None
-
-
-def read_from_file(file_handle):
-    """
-    Read the contents from the provided file_handle and return them. If there is an error then a message detailing the
-    problem will be written to stdout and None will be returned.
-
-    :type file_handle file
-
-    :param file_handle: the file object to read from.
-    :return: the contents of the file or, if an error is encountered, None.
-    """
-    if file_handle and isinstance(file_handle, file):
-
-        # ADDING: verbose logging before the operation.
-        if verbose:
-            log.info('Attempting to read in contents of %s', file_handle.name)
-
-        try:
-
-            # ATTEMPT: to read the contents of the file.
-            contents = file_handle.read()
-
-            # PROVIDE: the user some verbose success log.
-            if verbose:
-                log.info('Successfully read the contents of %s', file_handle.name)
-
-            # RETURN: the contents of the file.
-            return contents
-        except IOError as e:
-            log.error('There was a problem reading from %s. %s: %s', file_handle.name, e.args[0], e.args[1])
-            return None
-
-    #IF: we've reached this point than the file_handle that was passed in isn't valid.
-    log.warning('Error 93: Internal error. Please contact support.')
-    return None
-
-
-def write_to_file(file_handle, lines):
-    """
-    Write the provided lines to the provided file_handle. If an error occurs an error message will be logged to stdout.
-
-    :type lines: list
-    :type file_handle: file
-
-    :param file_handle: the file that the provided lines should be written
-    :param lines: the lines that should be written to the provided file.
-    :return: void
-    """
-    if not file_handle or not isinstance(file_handle, file):
-        log.error('Received an invalid file reference.')
-        return
-    if lines:
-        try:
-            if verbose:
-                log.info("Writing %s lines to %s", len(lines), file_handle.name)
-
-            file_handle.writelines(lines)
-
-            if verbose:
-                log.info("Successfully wrote %s lines to %s", len(lines), file_handle.name)
-
-        except IOError as e:
-            log.error('There was an error while writing to %s. %s: %s', file_handle.name, e.args[0], e.args[1])
-
-
-def close_file(file_handle):
-    """
-    Close the provided file_handle. If an error is encountered than a message will be logged to stdout.
-
-    :type file_handle file
-
-    :param file_handle: the file to be closed.
-    :return: void
-    """
-    if file_handle and isinstance(file_handle, file):
-        try:
-            if verbose:
-                log.info('Attempting to close the file %s', file_handle.name)
-
-            file_handle.close()
-
-            if verbose:
-                log.info('Successfully closed the file %s', file_handle.name)
-        except IOError as e:
-            log.error('There was an error encountered while closing %s. %s: %s', file_handle.name, e.args[0], e.args[1])
 
 
 ###############################################################################
@@ -213,38 +91,14 @@ def retrieve_resources():
 
     return rows
 
-
-def retrieve_queue_template(file_path, queue):
+def create_resource_config(file_path, queuing_system):
     """
-    Retrieve the resource per queue type template and return it's contents.
-
-    :type file_path str
-    :type queue str
-
-    :param file_path: the path to the template whose contents will be returned.
-    :param queue: the queue type that will be used to look up the template.
-    :return: the contents of the template or, if there is an exception, None.
+    create resource file from template
     """
-    if file_path and isinstance(file_path, str) and queue and isinstance(queue, str):
-        privs = 'r'
-        template_path = file_path.format(queue)
-        return read_from_file(open_file(template_path, privs))
-
-
-def create_resource_template(file_path, queue, contents):
-    """
-
-    :type file_path str
-    :type queue str
-
-    :param file_path:
-    :param queue:
-    :param contents:
-    :return:
-    """
-
-    privs = 'w'
-    output_path = file_path.format(queue)
+    
+    with open(os.path.join(akrrcfg.templates_dir, 'template.%s.conf'%queuing_system)) as fin:
+        template=fin.read()
+    fin.close()
     
     def update_template(s,variable,inQuotes=True):
         rexp='^'+variable+'\s*=\s*.*$'
@@ -264,81 +118,38 @@ def create_resource_template(file_path, queue, contents):
         
         return "\n".join(out)
     
-    contents=update_template(contents,'ppn',inQuotes=False)
+    template=update_template(template,'ppn',inQuotes=False)
     for v in ['remoteAccessNode','remoteAccessMethod','remoteCopyMethod',
               'sshUserName','sshPassword','sshPrivateKeyFile','sshPrivateKeyPassword',
               'networkScratch','localScratch','akrrData','appKerDir','batchScheduler']:
-        contents=update_template(contents,v)
-    contents+="\n\n"
-    
-    #contents=re.sub(r'^ppn\s*=\s*.*$','ppn = %d'%ppn,contents,flags=re.M)
-    #contents=re.sub(r'^remoteAccessNode\s*=\s*.*$','remoteAccessNode = "%s"'%remoteAccessNode,contents,flags=re.M)
-    #contents=re.sub(r'^remoteAccessMethod\s*=\s*.*$','remoteAccessMethod = "%s"'%remoteAccessNode,contents,flags=re.M)
-#     if 
-    
-    
+        template=update_template(template,v)
+    template+="\n\n"
 
-
-
-    if not test:
-        output_file = open_file(output_path, privs)
-        write_to_file(output_file, contents)
-        close_file(output_file)
+    if not dry_run:
+        with open(file_path,'w') as fout:
+            fout.write(template)
+        fout.close()
     else:
-        log.info('Test Mode: Would have written to: %s', output_path)
+        log.info('Dry Run Mode: Would have written to: %s', file_path)
         log.info('It content would be:')
-        print(contents)
+        print(template)
 
-
-def generate_default_templates(resources):
-    """
-    Create the default templates per resource that was retrieved from the `modw`.`resourcefact` table.
-
-    :param resources: a tuple of (string,int) [name, id] retrieved from the `modw`.`resourcefact` table.
-    :return: void
-    """
-
-    if not resources:
-        log.warning("No resources found. No files to create.")
-    else:
-
-        slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.curdir, 'templates','template.{0}.conf'), 'slurm')
-        pbs_template_contents = retrieve_queue_template(os.path.join(akrrcfg.curdir, 'templates', 'template.{0}.conf'), 'pbs')
-
-        queues = {'slurm': slurm_template_contents, 'pbs': pbs_template_contents}
-
-        for resource in resources:
-            if verbose:
-                log.info("Creating Resource Template: %s ", resource[0] + "")
-
-            if not test:
-                for queue, contents in queues.items():
-
-                    file_path = os.path.join(resources_dir, resource[0] + 'resource.conf')
-
-                    create_resource_template(file_path, queue, contents)
-
-        log.info("Resource Template Generation Complete!")
 
 def generate_resource_config(resource_id, resource_name, queuing_system):
     log.info("Initiating %s at AKRR"%(resource_name,))
     
-    slurm_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'slurm')
-    pbs_template_contents = retrieve_queue_template(os.path.join(akrrcfg.templates_dir, 'template.{0}.conf'), 'pbs')
 
-    queues = {'slurm': slurm_template_contents, 'pbs': pbs_template_contents}
-    
-
-    if not test:
+    if not dry_run:
         os.mkdir(os.path.join(resources_dir, resource_name),0o700)
     
     file_path = os.path.abspath(os.path.join(resources_dir, resource_name, 'resource.conf'))
     global resource_cfg_filename
     resource_cfg_filename=file_path
     
-    create_resource_template(file_path, queues[queuing_system], queues[queuing_system])
+    
+    create_resource_config(file_path, queuing_system)
         
-    if not test:    
+    if not dry_run:    
         #add entry to mod_appkernel.resource
         dbAK,curAK=akrrcfg.getAKDB(True)
             
@@ -447,15 +258,15 @@ def checkConnectionToResource():
             
             successfullyConnected=True
             break
-        except Exception as e:
+        except Exception:
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
             if verbose:
-                log.info("Had attempted to access resource without password and failed, below is resource response")
-                print("="*80)
-                print(str_io.getvalue())
-                print(traceback.format_exc())
-                print("="*80)
+                log.exception(
+                    "Had attempted to access resource without password and failed, below is resource response"+
+                    "="*80+
+                    str_io.getvalue()+
+                    "="*80)
             #check if it asking for passphrase
             m=re.search(r"Enter passphrase for key '(.*)':",str_io.getvalue())
             if m:
@@ -493,16 +304,16 @@ def checkConnectionToResource():
                         log.info("Have added public key to list of authorized keys on head node, will attempt to connect again.")
                         print()
                         break
-                    except Exception as e:
+                    except Exception:
                         sys.stdout=sys.__stdout__
                         sys.stderr=sys.__stderr__
                         if verbose:
-                            log.info("Had attempted to add public key to list of authorized keys on head node and failed, below is resource response")
-                            print("="*80)
-                            print(str_io.getvalue())
-                            print(traceback.format_exc())
-                            print("="*80)
-                        log.info("Incorrect password try again.")
+                            log.exception(
+                                "Had attempted to add public key to list of authorized keys on head node and failed, below is resource response"+
+                                "="*80+
+                                str_io.getvalue()+
+                                "="*80)
+                        log.error("Incorrect password try again.")
                         if authorizeKeyCount>=3:
                             break
                 if authorizeKeyCount<3:
@@ -520,6 +331,7 @@ def getRemoteAccessMethod():
     global sshPrivateKeyFile
     global sshPrivateKeyPassword
     global rsh
+    global no_ping
     #set remoteAccessNode
     while True:
         log_input("Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):")
@@ -532,7 +344,10 @@ def getRemoteAccessMethod():
         if response==0:
             break
         else:
-            log.error("Incorrect head node name (can not ping %s), try again"%remoteAccessNode)
+            if no_ping:
+                log.warning("Can not ping %s, but asked to ignore it.",remoteAccessNode)
+                break
+            log.error("Incorrect head node name (can not ping %s), try again",remoteAccessNode)
     #set sshUserName
     curentuser=getpass.getuser()
     askForUserName=True
@@ -585,7 +400,7 @@ def getRemoteAccessMethod():
                     if action<0 or action>=len(actionList):
                         raise
                     break
-                except Exception as e:
+                except Exception:
                     log.error("Incorrect entry, try again.")
             
             #do the action
@@ -610,7 +425,7 @@ def getRemoteAccessMethod():
                         if iKey<0 or iKey>=len(privateKeys):
                             raise
                         break
-                    except Exception as e:
+                    except Exception:
                         log.error("Incorrect entry, try again.")
                 sshPrivateKeyFile=privateKeys[iKey]
                 askForUserName=not askForUserName
@@ -672,7 +487,7 @@ def getSytemCharacteristics():
             log_input("Enter processors (cores) per node count:")
             ppn=int(input(""))
             break
-        except Exception as e:
+        except Exception:
             log.error("Incorrect entry, try again.")
     
 def getFileSytemAccessPoints():
@@ -766,16 +581,18 @@ def getFileSytemAccessPoints():
         else:
             log.error(msg) 
     akrrData=akrrcfg.sshCommand(rsh,"echo %s"%(akrrData,)).strip()
-    #remoteAccessMethod = 'ssh'
-    #remoteCopyMethod='scp'
-    #sshPassword = None
-    #sshPrivateKeyFile = None
-    #sshPrivateKeyPassword=None
-###############################################################################
-# SCRIPT ENTRY POINT
-###############################################################################
-def resource_add(minimalistic=False,test=False,verbose=False):
-    #global batchScheduler
+
+def resource_add(config):
+    """add resource, config should have following members
+        dry_run - Dry Run No files will actually be created
+        minimalistic - Minimize questions number, configuration files will be edited manually
+        no-ping - do not run ping to test headnode name
+        verbose
+    """
+    global verbose
+    global dry_run
+    global no_ping
+    global minimalistic
     global resourceName
     global remoteAccessNode
     global remoteAccessMethod
@@ -792,9 +609,10 @@ def resource_add(minimalistic=False,test=False,verbose=False):
     global batchJobHeaderTemplate
     
     log.info("Beginning Initiation of New Resource...")
-    globals()['verbose']=verbose
-    globals()['test']=test
-    globals()['minimalistic']=minimalistic
+    verbose=config.verbose
+    dry_run=config.dry_run
+    no_ping=config.no_ping
+    minimalistic=config.minimalistic
 
     # CHECK: To see if we were able to import MySQLdb
     if not mysql_available:
@@ -882,9 +700,4 @@ def resource_add(minimalistic=False,test=False,verbose=False):
     log.info('    and move to resource validation and deployment step.')
     log.info('    i.e. execute:')
     log.info('        akrr resource deploy '+resource_name)
-    # GENERATE: the
-    #generate_default_templates(resources)
-
-if __name__ == '__main__':
-    resource_add()
 

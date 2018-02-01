@@ -11,33 +11,12 @@ This script will perform the following steps:
 
 import os
 import sys
-import inspect
+import argparse
+import MySQLdb
 
-# modify python_path so that we can get /src on the path
-curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-if (curdir + "/../../src") not in sys.path:
-    sys.path.append(curdir + "/../../src")
-    
-try:
-    import argparse
-except:
-    #add argparse directory to path and try again
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    argparsedir=os.path.abspath(os.path.join(curdir,"..","..","3rd_party","argparse-1.3.0"))
-    if argparsedir not in sys.path:sys.path.append(argparsedir)
-    import argparse
+import logging as log
 
-# finally import akrr since src is now on the path.
-import akrrcfg
-
-# Attempt to import MySQL, if it's not there then we'll exit out and notify the
-# user and blow up.
-try:
-    import MySQLdb
-
-    mysql_available = True
-except ImportError:
-    mysql_available = False
+from . import akrrcfg
 
 ###############################################################################
 # GLOBAL VARIABLES
@@ -50,13 +29,6 @@ args = None
 # UTILITY FUNCTIONS
 ###############################################################################
 
-
-def log(message):
-    """
-    Function that will log the provided message to stdout.
-    """
-    if args and args.verbose:
-        print message
 
 
 def create_connection(host, user, password, db):
@@ -79,9 +51,9 @@ def create_and_populate_tables(default_tables, population_statements, starting_c
     :type connection_function: function
     """
     if args.verbose:
-        print '*' * 50
-        print starting_comment
-        print '*' * 50
+        log.info('*' * 50)
+        log.info(starting_comment)
+        log.info('*' * 50)
 
     try:
         if not args.test:
@@ -93,38 +65,38 @@ def create_and_populate_tables(default_tables, population_statements, starting_c
 
             with connection:
                 for (table_name, table_script) in default_tables:
-                    print "CREATING: %s" % table_name
+                    log.info("CREATING: %s" % table_name)
                     try:
                         result = cursor.execute(table_script)
-                        log("Result of: %s -> %d" % (table_name, result))
-                        print "CREATED: %s SUCCESSFULLY!" % table_name
+                        log.debug("Result of: %s -> %d" % (table_name, result))
+                        log.info("CREATED: %s SUCCESSFULLY!" % table_name)
                     except MySQLdb.Warning:
                         pass
 
                 for (description, statement) in population_statements:
-                    print "EXECUTING: %s" % description
+                    log.info("EXECUTING: %s" % description)
 
                     result = cursor.execute(statement)
-                    log("Result of: %s -> %d" % (table_name, result))
-                    print "EXECUTED: %s SUCCESSFULLY!" % description
+                    log.debug("Result of: %s -> %d" % (table_name, result))
+                    log.info("EXECUTED: %s SUCCESSFULLY!" % description)
         else:
-            log("Testing...")
-            print '*' * 50
+            log.debug("Testing...")
+            log.info('*' * 50)
             for (table_name, table_script) in default_tables:
-                print "CREATING: %s" % table_name
-                print "CREATED: %s SUCCESSFULLY!" % table_name
+                log.info("CREATING: %s" % table_name)
+                log.info("CREATED: %s SUCCESSFULLY!" % table_name)
 
             for (description, statement) in population_statements:
-                print "EXECUTING: %s" % description
-                print "EXECUTED: %s SUCCESSFULLY!" % description
+                log.info("EXECUTING: %s" % description)
+                log.info("EXECUTED: %s SUCCESSFULLY!" % description)
 
-    except MySQLdb.Error, e:
-        print "Error %d: %s" % (e.args[0], e.args[1])
+    except MySQLdb.Error as e:
+        log.exception("Error %d: %s" % (e.args[0], e.args[1]))
         sys.exit(1)
     finally:
         if args.verbose:
-            print '*' * 50
-            print ending_comment
+            log.info('*' * 50)
+            log.info(ending_comment)
 
 
 def setup_mod_akrr():
@@ -817,29 +789,23 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
         akrrcfg.getAKDB
     )
 
-
-if __name__ == '__main__':
-
-    if not mysql_available:
-        print "MySQL is not currently available. Please check that it is properly installed."
-        exit(1)
-
-    parser = argparse.ArgumentParser()
-
-    # SETUP: the arguments that we're going to accept for this script.
-    parser.add_argument('-c', '--config',
-                        help='Specifies a file to be used as the configuration file for the installation procedure')
-    parser.add_argument('-o', '--host',
-                        help='Specifies the hostname / ip and port of the database on which to install the default tables.')
-    parser.add_argument('-u', '--user', help='Specifies the user name to use when connecting to the database.')
-    parser.add_argument('-p', '--password', help='Specifies the password to use when connecting to the database.')
-    parser.add_argument('-d', '--db', help='Specify the database name to use when connecting to the database')
-    parser.add_argument('-t', '--test', action='store_true',
-                        help='Execute the script in test mode. No actual changes will be made. ')
-    parser.add_argument('-v', '--verbose', action='store_true', help='Produce more verbose log output')
-
-    # PARSE: the arguments provided by the user.
-    args = parser.parse_args()
+def akrrgenerate_tables(verbose=False,test=False,host=None,user=None,password=None,db=None):
+    """
+    host Specifies the hostname / ip and port of the database on which to install the default tables.')
+    user - Specifies the user name to use when connecting to the database.')
+    password - Specifies the password to use when connecting to the database.')
+    db - Specify the database name to use when connecting to the database')
+    test - Execute the script in test mode. No actual changes will be made.
+    verbose - Produce more verbose log output
+    """
+    global args
+    args = type("Args", (object,), {})()
+    args.verbose=verbose
+    args.test=test
+    args.host=host
+    args.user=user
+    args.password=password
+    args.db=password
 
     # SETUP: the mod_akrr database tables
     setup_mod_akrr()

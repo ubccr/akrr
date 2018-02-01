@@ -132,10 +132,10 @@ class akrrScheduler:
                     "Start time: %s\n\t"%time_to_start+
                     "Repeating period: %s\n\t"%repeat_in+
                     "Resource: %s\n\t"%resource+
-                    "Resource parameters: %s\n\t",resource_param+
-                    "Application kernel: %s\n\t",app+
-                    "Application kernel parameters: %s\n\t",app_param+
-                    "Task parameters: %s\n\t", task_param+
+                    "Resource parameters: %s\n\t"%resource_param+
+                    "Application kernel: %s\n\t"%app+
+                    "Application kernel parameters: %s\n\t"%app_param+
+                    "Task parameters: %s\n\t"%task_param+
                     "Parent task id: %s"%parent_task_id)
                 
                 if akrrcfg.FindResourceByName(resource).get('active',True)==False:
@@ -1417,7 +1417,7 @@ class akrrScheduler:
 #                         WHERE task_id=%s""",
 #                         (m_task_id,m_task_id))
 #                 self.dbCon.commit()
-        log.info("task id:", task_id)
+        log.info("task id: %s", task_id)
         log.info("<"*120)
         return task_id
 
@@ -2052,8 +2052,6 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
         raise
     
 def akrrd_main2(action='', append=False, output_file=None):
-    log.basicConfig(level=log.INFO)
-    
     if action=='startdeb':
         log.basicConfig(level=log.DEBUG)
         print("Starting Application Remote Runner")

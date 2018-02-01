@@ -647,18 +647,9 @@ def check_daemon(args):
         log.error('Unable to retrieve authentication token.')
         exit(1)
     
-def setup_handler(args):
-    """call routine for initial AKRR setup"""
-    import  akrr.akrrsetup
-    return akrr.akrrsetup.akrr_setup()
 
-def resource_add_handler(args):
-    import akrr.resource_add
-    return akrr.resource_add.resource_add(minimalistic=args.minimalistic,verbose=args.verbose)
 
-def resource_deploy_handler(args):
-    import akrr.resource_deploy
-    return akrr.resource_deploy.resource_deploy(args.resource,verbose=args.verbose)
+
 
 def app_add_handler(args):
     import akrr.app_add
@@ -693,184 +684,224 @@ def daemon_handler(args):
             
     return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
     
-def akrr_cli():
-    parser = argparse.ArgumentParser(description='command line interface to AKRR')
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    
-    subparsers = parser.add_subparsers()
 
-    query_parser = subparsers.add_parser('query',
-                                         description='Query XDMoD for a list of available resource and update the AKRR database.')
-    query_parser.add_argument('-d', '--dryrun', action='store_true',
-                              help='Only display data. Do not update the database.')
-    query_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-    query_parser.add_argument('-r', '--resource', help='Only query / update for the provided resource.')
-    query_parser.add_argument('-e', '--exact', action='store_true',
-                              help='Only useful if a resource has been provided. Will only consider exact matches.')
-    query_parser.set_defaults(func=query_parsed)
+class akrr_cli:
+    def __init__(self):
+        log.basicConfig(level=log.INFO)
+        
+        self.root_parser = argparse.ArgumentParser(description='command line interface to AKRR')
+        self.root_parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+        
+        self.subparsers = self.root_parser.add_subparsers(title='commands')
+        
+        self.add_command_daemon()
+        self.add_command_resource()
+        self.add_command_setup()
+    
+    def add_command_daemon(self): 
+        """set up daemon command"""
+        parser = self.subparsers.add_parser('daemon',description="""Application Kernel Remote Runner (AKRR) daemon launcher.
+        Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
+        """)
+        parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
+        parser.add_argument('-a', '--append', action='store_true', help="append stdout and stderr to file rather then overwrite")
+        parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
+        
+        subparsers = parser.add_subparsers(title='commands',dest='action');
+        subparsers.add_parser('start', help='launch Application Remote Runner in daemon mode')
+        subparsers.add_parser('stop', help='terminate Application Remote Runner')
+        subparsers.add_parser('restart', help='restart AKRR daemon')
+        subparsers.add_parser('check', help='Check AKRR Daemon Status')
+        subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
+        subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
+        subparsers.add_parser('status', help='print current status of Application Remote Runner')
+        startdeb_parsers=subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
+        startdeb_parsers.add_argument(
+            '-th', '--max-task-handlers',
+            dest='max_task_handlers',
+            default=None,type=int,
+            help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
+        startdeb_parsers.add_argument(
+            '-redir', '--redirect-task-processing-to-log-file',
+            dest='redirect_task_processing_to_log_file',
+            default=None,type=int,
+            help='Overwrite redirect_task_processing_to_log_file from configuration')
+        
+    
+        parser.set_defaults(func=daemon_handler)
+    def add_command_resource(self): 
+        """resource handling"""
+        parser = self.subparsers.add_parser('resource',
+            description='resource manipulation')
+        subparsers = parser.add_subparsers(title="commands for resource")
+        
+        add_resource_parser = subparsers.add_parser('add',
+            description='add new resource to AKRR')
+        
+        add_resource_parser.add_argument('--dry-run', action='store_true', help="Dry Run No files will actually be created")
+        add_resource_parser.add_argument('--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
+        add_resource_parser.add_argument('--no-ping', action='store_true', help="do not run ping to test headnode name")
+        
+        def resource_add_handler(args):
+            from .resource_add import resource_add
+            return resource_add(args)
+        add_resource_parser.set_defaults(func=resource_add_handler)
+        
+        deploy_resource_parser = subparsers.add_parser('deploy',
+            description='deploy input files and scripts to resource')
+        deploy_resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
+        
 
-    list_parser = subparsers.add_parser('list',
-                                        description='By default lists all resources and their application kernels.')
-    list_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-    list_parser.add_argument('-r', '--resource', help='Only list information about the provided resource')
-    list_parser.add_argument('-a', '--application', help='Only list information about the provided application kernel.')
-    list_parser.add_argument('-s', '--status', action='store_true',
-                             help='Retrieve the status of the resources and application kernels.')
-    list_parser.set_defaults(func=list_parsed)
 
-    on_parser = subparsers.add_parser('on',
-                                      description='Enable a specific application kernel or all application kernels for a given resource.')
-    on_parser.add_argument('-a', '--application', help='Enable a particular application on the provided resource')
-    on_parser.add_argument('resource', help='The resource on which to perform the enabling of application kernels.')
-    on_parser.set_defaults(func=on_parsed)
+        def resource_deploy_handler(args):
+            import akrr.resource_deploy
+            return akrr.resource_deploy.resource_deploy(args.resource,verbose=args.verbose)
+        deploy_resource_parser.set_defaults(func=resource_deploy_handler)
+          
+    
+    def add_command_setup(self):
+        """Initial AKRR Setup"""
+        parser = self.subparsers.add_parser('setup',
+            description='Initial AKRR Setup')
+        #setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
+        def setup_handler(args):
+            """call routine for initial AKRR setup"""
+            from  .akrrsetup import akrr_setup
+            return akrr_setup()
+            
+        parser.set_defaults(func=setup_handler)
+        
+    def run(self):
+        """parse arguments and execute requested commands"""
+        # PARSE: the command line parameters the user provided.
+        cli_args = self.root_parser.parse_args()
+    
+        # EXECUTE: the function provided in the '.set_defaults(func=...)'
+        cli_args.func(cli_args)
+        
+        return
+        
+        parser = argparse.ArgumentParser(description='command line interface to AKRR')
+        parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+        
+        subparsers = parser.add_subparsers()
+    
+        query_parser = subparsers.add_parser('query',
+                                             description='Query XDMoD for a list of available resource and update the AKRR database.')
+        query_parser.add_argument('-d', '--dryrun', action='store_true',
+                                  help='Only display data. Do not update the database.')
+        query_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
+        query_parser.add_argument('-r', '--resource', help='Only query / update for the provided resource.')
+        query_parser.add_argument('-e', '--exact', action='store_true',
+                                  help='Only useful if a resource has been provided. Will only consider exact matches.')
+        query_parser.set_defaults(func=query_parsed)
+    
+        list_parser = subparsers.add_parser('list',
+                                            description='By default lists all resources and their application kernels.')
+        list_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
+        list_parser.add_argument('-r', '--resource', help='Only list information about the provided resource')
+        list_parser.add_argument('-a', '--application', help='Only list information about the provided application kernel.')
+        list_parser.add_argument('-s', '--status', action='store_true',
+                                 help='Retrieve the status of the resources and application kernels.')
+        list_parser.set_defaults(func=list_parsed)
+    
+        on_parser = subparsers.add_parser('on',
+                                          description='Enable a specific application kernel or all application kernels for a given resource.')
+        on_parser.add_argument('-a', '--application', help='Enable a particular application on the provided resource')
+        on_parser.add_argument('resource', help='The resource on which to perform the enabling of application kernels.')
+        on_parser.set_defaults(func=on_parsed)
+    
+        off_parser = subparsers.add_parser('off',
+                                           description='Disable a specific application kernel or all application kernels for a given resource.')
+        off_parser.add_argument('-a', '--application', help='Disable a particular application on the provided resource')
+        off_parser.add_argument('resource', help='The resource on which to perform the disabling of application kernels.')
+        off_parser.set_defaults(func=off_parsed)
+    
+        new_parser = subparsers.add_parser('new_task',
+                                           description='Create a new task given the specified parameters')
+        new_parser.add_argument('-r', '--resource', help='Specify the resource that the new task should be created for.')
+        new_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the new task.')
+        new_parser.add_argument('-n', '--nodes', help='Specify how many nodes the new task should be setup with.')
+        new_parser.add_argument('-s', '--start_time', help='Specify what time the newly created task should start.')
+        new_parser.add_argument('-t0', '--time_start', help='Specify the time at which the random distribution begins')
+        new_parser.add_argument('-t1', '--time_end', help='Specify the time at which the random distribution ends')
+        new_parser.add_argument('-p', '--periodicity', help='Specify the amount of time that should elapse between executions.')
+        new_parser.set_defaults(func=new_task_parsed)
+    
+        wall_time_parser = subparsers.add_parser('walltime',
+                                                 description='''Update or insert a new wall time limit for the tasks
+                                                 matching the specified parameters.
+                                                 ''')
+        wall_time_parser.add_argument('-r',
+                                      '--resource',
+                                      help='''Specify the resource filter that the new wall time should
+                                      be applied to
+                                      ''')
+        wall_time_parser.add_argument('-a',
+                                      '--appkernel',
+                                      help='''Specify the application filter that the wall time should
+                                      be applied to.
+                                      ''')
+        wall_time_parser.add_argument('-n',
+                                      '--nodes',
+                                      help='''Specify the number of nodes filter that the wall time should
+                                      be applied to.
+                                      ''')
+        wall_time_parser.add_argument('-w',
+                                      '--walltime',
+                                      help='''Specify the wall time value that should be used during
+                                      update or insert operation.
+                                      ''')
+        wall_time_parser.add_argument('-c',
+                                      '--comments',
+                                      help='''Comments''')
+        wall_time_parser.add_argument('-l',
+                                      '--list',
+                                      action='store_true',
+                                      help='''List the wall time records that have been entered already. Providing
+                                      this switch allows the resource (-r), appkernel (-a), nodes (-n) and walltime
+                                      (-w) arguments to become optional. When provided they with 'list' they will
+                                      filter the records to be returned.
+                                      ''')
+        
+        wall_time_parser.set_defaults(func=wall_time_parsed)
+    
+        batch_job_parser = subparsers.add_parser('batch_job',
+                                      description='batch job script generation for debug purposes')
+        batch_job_parser.add_argument('-r', '--resource', help='Specify the resource that the batch job script should be created for.')
+        batch_job_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the batch job script.')
+        batch_job_parser.add_argument('-n', '--nodes', help='Specify how many nodes the batch job script should be setup with.')
+        batch_job_parser.add_argument('-p', '--print-only',action='store_true',
+                                       help='Print generated batch job script')
+        batch_job_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
+        batch_job_parser.set_defaults(func=batch_job_parsed)
+        
+        reprocess = subparsers.add_parser('reprocess',
+            description='Reparce the output from previously executed tasks')
+        reprocess.add_argument('-r', '--resource', help='resource for update')
+        reprocess.add_argument('-a', '--appkernel', help='application kernel for update')
+        reprocess.add_argument('-t0', '--time_start', help='Start time for update')
+        reprocess.add_argument('-t1', '--time_end', help='End time for update')
+        reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
+        reprocess.set_defaults(func=reprocess_parsed)
+        
+        #new appkernel
+        app_parser = subparsers.add_parser('app',
+            description='appkernel on resource manipulation')
+        app_subparsers = app_parser.add_subparsers()
+        app_add_parser = app_subparsers.add_parser('add',
+            description='add new appkernel to resource')
+        app_add_parser.add_argument('resource', help="name of resource to where appkernel is added'")
+        app_add_parser.add_argument('appkernel', help="name of appkernel to add'")
+        app_add_parser.set_defaults(func=app_add_handler)
+        
+        app_validate_parser = app_subparsers.add_parser('validate',
+            description='Validation of app kernel installation on resource')
+        app_validate_parser.add_argument('-n', '--nnodes', default=2,type=int, help="number of nodes (default: 2)")
+        app_validate_parser.add_argument('resource', help="name of resource for validation and deployment'")
+        app_validate_parser.add_argument('appkernel', help="name of resource for validation and deployment'")
+        app_validate_parser.set_defaults(func=app_validate_handler)
 
-    off_parser = subparsers.add_parser('off',
-                                       description='Disable a specific application kernel or all application kernels for a given resource.')
-    off_parser.add_argument('-a', '--application', help='Disable a particular application on the provided resource')
-    off_parser.add_argument('resource', help='The resource on which to perform the disabling of application kernels.')
-    off_parser.set_defaults(func=off_parsed)
-
-    new_parser = subparsers.add_parser('new_task',
-                                       description='Create a new task given the specified parameters')
-    new_parser.add_argument('-r', '--resource', help='Specify the resource that the new task should be created for.')
-    new_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the new task.')
-    new_parser.add_argument('-n', '--nodes', help='Specify how many nodes the new task should be setup with.')
-    new_parser.add_argument('-s', '--start_time', help='Specify what time the newly created task should start.')
-    new_parser.add_argument('-t0', '--time_start', help='Specify the time at which the random distribution begins')
-    new_parser.add_argument('-t1', '--time_end', help='Specify the time at which the random distribution ends')
-    new_parser.add_argument('-p', '--periodicity', help='Specify the amount of time that should elapse between executions.')
-    new_parser.set_defaults(func=new_task_parsed)
-
-    wall_time_parser = subparsers.add_parser('walltime',
-                                             description='''Update or insert a new wall time limit for the tasks
-                                             matching the specified parameters.
-                                             ''')
-    wall_time_parser.add_argument('-r',
-                                  '--resource',
-                                  help='''Specify the resource filter that the new wall time should
-                                  be applied to
-                                  ''')
-    wall_time_parser.add_argument('-a',
-                                  '--appkernel',
-                                  help='''Specify the application filter that the wall time should
-                                  be applied to.
-                                  ''')
-    wall_time_parser.add_argument('-n',
-                                  '--nodes',
-                                  help='''Specify the number of nodes filter that the wall time should
-                                  be applied to.
-                                  ''')
-    wall_time_parser.add_argument('-w',
-                                  '--walltime',
-                                  help='''Specify the wall time value that should be used during
-                                  update or insert operation.
-                                  ''')
-    wall_time_parser.add_argument('-c',
-                                  '--comments',
-                                  help='''Comments''')
-    wall_time_parser.add_argument('-l',
-                                  '--list',
-                                  action='store_true',
-                                  help='''List the wall time records that have been entered already. Providing
-                                  this switch allows the resource (-r), appkernel (-a), nodes (-n) and walltime
-                                  (-w) arguments to become optional. When provided they with 'list' they will
-                                  filter the records to be returned.
-                                  ''')
-    
-    wall_time_parser.set_defaults(func=wall_time_parsed)
-
-    batch_job_parser = subparsers.add_parser('batch_job',
-                                  description='batch job script generation for debug purposes')
-    batch_job_parser.add_argument('-r', '--resource', help='Specify the resource that the batch job script should be created for.')
-    batch_job_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the batch job script.')
-    batch_job_parser.add_argument('-n', '--nodes', help='Specify how many nodes the batch job script should be setup with.')
-    batch_job_parser.add_argument('-p', '--print-only',action='store_true',
-                                   help='Print generated batch job script')
-    batch_job_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-    batch_job_parser.set_defaults(func=batch_job_parsed)
-    
-    reprocess = subparsers.add_parser('reprocess',
-        description='Reparce the output from previously executed tasks')
-    reprocess.add_argument('-r', '--resource', help='resource for update')
-    reprocess.add_argument('-a', '--appkernel', help='application kernel for update')
-    reprocess.add_argument('-t0', '--time_start', help='Start time for update')
-    reprocess.add_argument('-t1', '--time_end', help='End time for update')
-    reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-    reprocess.set_defaults(func=reprocess_parsed)
-    
-    #Daemon control
-    daemon_parser = subparsers.add_parser('daemon',description="""Application Kernel Remote Runner (AKRR) daemon launcher.
-    Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
-    """)
-    daemon_parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
-    daemon_parser.add_argument('-a', '--append', action='store_true', help="append stdout and stderr to file rather then overwrite")
-    daemon_parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
-    
-    daemon_subparsers = daemon_parser.add_subparsers(title='commands',dest='action');
-    daemon_subparsers.add_parser('start', help='launch Application Remote Runner in daemon mode')
-    daemon_subparsers.add_parser('stop', help='terminate Application Remote Runner')
-    daemon_subparsers.add_parser('restart', help='restart AKRR daemon')
-    daemon_subparsers.add_parser('check', help='Check AKRR Daemon Status')
-    daemon_subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
-    daemon_subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
-    daemon_subparsers.add_parser('status', help='print current status of Application Remote Runner')
-    startdeb_daemon_subparsers=daemon_subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
-    startdeb_daemon_subparsers.add_argument(
-        '-th', '--max-task-handlers',
-        dest='max_task_handlers',
-        default=None,type=int,
-        help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
-    startdeb_daemon_subparsers.add_argument(
-        '-redir', '--redirect-task-processing-to-log-file',
-        dest='redirect_task_processing_to_log_file',
-        default=None,type=int,
-        help='Overwrite redirect_task_processing_to_log_file from configuration')
-
-    daemon_parser.set_defaults(func=daemon_handler)
-    
-    #setup parser
-    setup_parser = subparsers.add_parser('setup',
-        description='Initial AKRR Setup')
-    #setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
-    setup_parser.set_defaults(func=setup_handler)
-    
-    #new_resource
-    resource_parser = subparsers.add_parser('resource',
-        description='resource manipulation')
-    resource_subparsers = resource_parser.add_subparsers()
-    add_resource_parser = resource_subparsers.add_parser('add',
-        description='add new resource to AKRR')
-    add_resource_parser.add_argument('-t', '--test', action='store_true', help="No files will actually be created, only their names will be outputed to the console.")
-    add_resource_parser.add_argument('-m', '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
-    add_resource_parser.set_defaults(func=resource_add_handler)
-    
-    deploy_resource_parser = resource_subparsers.add_parser('deploy',
-        description='deploy input files and scripts to resource')
-    deploy_resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
-    deploy_resource_parser.set_defaults(func=resource_deploy_handler)
-    
-    #new appkernel
-    app_parser = subparsers.add_parser('app',
-        description='appkernel on resource manipulation')
-    app_subparsers = app_parser.add_subparsers()
-    app_add_parser = app_subparsers.add_parser('add',
-        description='add new appkernel to resource')
-    app_add_parser.add_argument('resource', help="name of resource to where appkernel is added'")
-    app_add_parser.add_argument('appkernel', help="name of appkernel to add'")
-    app_add_parser.set_defaults(func=app_add_handler)
-    
-    app_validate_parser = app_subparsers.add_parser('validate',
-        description='Validation of app kernel installation on resource')
-    app_validate_parser.add_argument('-n', '--nnodes', default=2,type=int, help="number of nodes (default: 2)")
-    app_validate_parser.add_argument('resource', help="name of resource for validation and deployment'")
-    app_validate_parser.add_argument('appkernel', help="name of resource for validation and deployment'")
-    app_validate_parser.set_defaults(func=app_validate_handler)
-    
-    # PARSE: the command line parameters the user provided.
-    cli_args = parser.parse_args()
-
-    # EXECUTE: the function provided in the '.set_defaults(func=...)'
-    cli_args.func(cli_args)
     
 if __name__ == '__main__':
-    akrr_cli()
+    akrr_cli().run()

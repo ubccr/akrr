@@ -4,7 +4,6 @@ import time
 import inspect
 import os
 import re
-import traceback
 import types
 import shutil
 import getpass
@@ -15,7 +14,7 @@ import string
 
 try:
     import argparse
-except Exception,e:
+except Exception as e:
     print("Python version is too old!")
     raise e
 
@@ -37,12 +36,12 @@ if "check_output" not in dir( subprocess ): # duck punch it in!
     subprocess.check_output = f
 
 
-from util import logging as log
-from util import which
+import logging as log
+from .util import which,log_input
 try:
     import MySQLdb
     import MySQLdb.cursors
-except Exception,e:
+except Exception as e:
     log.error("""python module MySQLdb is not available. Install it!
     For example by running on
         RedHat or CentOS:
@@ -125,14 +124,14 @@ class InstallAKRR:
     def read_akrr_creds(self):
         log.info("Before Installation continues we need to setup the database.")
 
-        log.input("Please specify a database user for AKRR (This user will be created if it does not already exist):")
-        self.akrr_user_name=raw_input('[{0}] '.format(self.default_akrr_user)) 
+        log_input("Please specify a database user for AKRR (This user will be created if it does not already exist):")
+        self.akrr_user_name=input('[{0}] '.format(self.default_akrr_user)) 
         if self.akrr_user_name=='':self.akrr_user_name=self.default_akrr_user
         
         while True:
-            log.input("Please specify a password for the AKRR database user:")
+            log_input("Please specify a password for the AKRR database user:")
             password=getpass.getpass()
-            log.input("Please reenter password:")
+            log_input("Please reenter password:")
             password2=getpass.getpass()
             if password==password2:
                 self.akrr_user_password=password
@@ -140,17 +139,17 @@ class InstallAKRR:
             log.error("Entered passwords do not match. Please try again.")
         
     def read_modw_creds(self):
-        log.input("Please specify the user that will be connecting to the XDMoD database (modw):")
-        self.xd_user_name=raw_input('[{0}] '.format(self.default_akrr_user))
+        log_input("Please specify the user that will be connecting to the XDMoD database (modw):")
+        self.xd_user_name=input('[{0}] '.format(self.default_akrr_user))
         if self.xd_user_name=='':self.xd_user_name=self.default_akrr_user
         if self.xd_user_name==self.akrr_user_name:
             log.info("Same user as for AKRR database user, will set same password")
             self.xd_user_password=self.akrr_user_password
         else:
             while True:
-                log.input("Please specify the password:")
+                log_input("Please specify the password:")
                 password=getpass.getpass()
-                log.input("Please reenter password:")
+                log_input("Please reenter password:")
                 password2=getpass.getpass()
                 if password==password2:
                     self.xd_user_password=password
@@ -158,8 +157,8 @@ class InstallAKRR:
                 log.error("Entered passwords do not match. Please try again.")
     def get_db(self, dictCursor=True,user=None,password=None,host='localhost',port=3306,db_name='mysql'):
         try:
-            import akrrcfg
-        except Exception,e:
+            from . import akrrcfg
+        except Exception as e:
             if user==None or password==None:
                 log.error("Can not get DB credentials AKRR config is not set up yet")
         
@@ -192,16 +191,16 @@ class InstallAKRR:
         return password
     def read_sql_root_creds(self):
         while True:
-            log.input("""Please provide an administrative database user under which the installation sql script should
+            log_input("""Please provide an administrative database user under which the installation sql script should
 run (This user must have privileges to create users and databases):""")
-            self.sql_root_name=raw_input()
-            log.input("Please provide the password for the the user which you previously entered:")
+            self.sql_root_name=input()
+            log_input("Please provide the password for the the user which you previously entered:")
             self.sql_root_password=getpass.getpass()
             
             try:
                 self.get_db(user=self.sql_root_name,password=self.sql_root_password)
                 break
-            except Exception,e:
+            except Exception as e:
                 log.error("Entered credential is not valid. Please try again.")
     def init_dir(self):
         try:
@@ -221,7 +220,7 @@ run (This user must have privileges to create users and databases):""")
                 os.makedirs(os.path.join(akrr_home,'log','comptasks'))
             if not os.path.isdir(os.path.join(akrr_home,'log','akrrd')):
                 os.makedirs(os.path.join(akrr_home,'log','akrrd'))
-        except Exception,e:
+        except Exception as e:
             log.error("Can not create directories: "+str(e))
             exit(1)
     def init_mysql_dbs(self):
@@ -276,14 +275,14 @@ run (This user must have privileges to create users and databases):""")
             cur_root.execute("FLUSH PRIVILEGES")
             while cur_root.nextset() is not None: pass
             db_root.commit()
-        except Exception,e:
+        except Exception as e:
             log.error("Can not execute the sql install script: "+str(e))
             exit(1)
     def generate_self_signed_certificate(self):
         log.info("Generating self-signed certificate for REST-API")
         try:
             output=subprocess.check_output("which openssl", shell=True)
-        except Exception,e:
+        except Exception as e:
             log.error("""openssl program is not available. Install it!
     For example by running on Ubuntu:
          sudo apt-get install openssl""")
@@ -306,7 +305,7 @@ run (This user must have privileges to create users and databases):""")
             cp {akrr_cfg_dir}/server.key {akrr_cfg_dir}/server.pem
             cat {akrr_cfg_dir}/server.cert >> {akrr_cfg_dir}/server.pem
             """.format(akrr_cfg_dir=os.path.join(akrr_home,'etc')), shell=True)
-        print output
+        print(output)
         log.info("New self-signed certificate have been generated")
 
     def generate_settings_file(self):
@@ -334,23 +333,13 @@ run (This user must have privileges to create users and databases):""")
             chmod -R o-rwx {akrr_home}
             """.format(akrr_home=akrr_home), shell=True)
     def db_check(self):
-        import akrrdb_check
+        from . import akrrdb_check
         if not akrrdb_check.akrrdb_check(mod_appkernel=not self.stand_alone,modw=not self.stand_alone):
             exit(1)
     def generate_tables(self):
-        import akrrgenerate_tables
-        akrrgenerate_tables.args = type("Args", (object,), {})()
-        akrrgenerate_tables.args.verbose=True
-        akrrgenerate_tables.args.test=False
-        akrrgenerate_tables.args.host=None
-        akrrgenerate_tables.args.user=None
-        akrrgenerate_tables.args.password=None
-        akrrgenerate_tables.args.db=None
-        # SETUP: the mod_akrr database tables
-        akrrgenerate_tables.setup_mod_akrr()
-    
-        # SETUP: the mod_app_kernel tables
-        akrrgenerate_tables.setup_mod_appkernel()
+        from .akrrgenerate_tables import akrrgenerate_tables
+        akrrgenerate_tables(verbose=True,test=False)
+        
     def start_daemon(self):
         """Start the daemon"""
         akrr_cli=os.path.join(akrr_bin_dir,'akrr')
@@ -377,11 +366,11 @@ run (This user must have privileges to create users and databases):""")
                     self.cronemail=m.group(1)
                     self.cronemail=self.cronemail.replace('"','')
         if self.cronemail==None:
-            log.input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
-            self.cronemail=raw_input()
+            log_input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
+            self.cronemail=input()
         else:
-            log.input("Please enter the e-mail where cron will send messages:")
-            cronemail=raw_input('[{0}] '.format(self.cronemail)) 
+            log_input("Please enter the e-mail where cron will send messages:")
+            cronemail=input('[{0}] '.format(self.cronemail)) 
             if cronemail!="":self.cronemail=cronemail
         if self.cronemail=="":self.cronemail=None
     def install_cron_scripts(self):
