@@ -8,25 +8,16 @@ from bottle import template
 from bottle import tob
 from bottle import ERROR_PAGE_TEMPLATE
 
-# Co-opted the Bottle json import strategy
-try:
-    #pylint: disable=F0401 
-    from json import dumps as json_dumps
-except ImportError: # pragma: no cover
-    try: 
-        #pylint: disable=F0401 
-        from simplejson import dumps as json_dumps
-    except ImportError:
-        try: 
-            #pylint: disable=F0401
-            from django.utils.simplejson import dumps as json_dumps
-        except ImportError:
-            #pylint: disable=W0613
-            def json_dumps(data):
-                ''' Place holder for lack of appropriate json lib '''
-                raise ImportError(
-                    'JSON support requires Python 2.6 or simplejson.')
+import json
+from json import dumps as json_dumps
 
+from datetime import datetime
+class DateTimeEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, datetime):
+            return o.isoformat()
+
+        return json.JSONEncoder.default(self, o)
 
 class JsonFormatting(object):
     ''' Bottle plugin which encapsulates results and error in a json object. 
@@ -72,7 +63,11 @@ class JsonFormatting(object):
             if self.in_supported_types(request.headers.get('Accept', '')):
                 response_object = self.get_response_object(0)
                 response_object['data'] = output
-                json_response = json_dumps(response_object)
+                try:
+                    json_response = json_dumps(response_object, cls=DateTimeEncoder)
+                except Exception as e:
+                    print(response_object)
+                    raise e
                 response.content_type = 'application/json'
                 return json_response
             else:
