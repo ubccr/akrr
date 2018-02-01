@@ -888,6 +888,8 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         else:
             taskexeclogFileContent="Does Not Present"
         
+        
+        
         cur.execute("""SELECT task_id
             FROM akrr_errmsg WHERE task_id=%s""",(task_id,))
         raw=cur.fetchall()
@@ -910,7 +912,12 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             if len(taskexeclogFileContent)>0.2*max_allowed_packet:
                 taskexeclogFileContent=taskexeclogFileContent[:int(0.2*max_allowed_packet)]
                 taskexeclogFileContent+="\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
-            
+        
+        
+        appstdoutFileContent=akrrcfg.CleanUnicode(appstdoutFileContent)
+        stderrFileContent=akrrcfg.CleanUnicode(stderrFileContent)
+        stdoutFileContent=akrrcfg.CleanUnicode(stdoutFileContent)
+        taskexeclogFileContent=akrrcfg.CleanUnicode(taskexeclogFileContent)
         
         if len(raw)>0: #.i.e. updating existing entry
             print("Updating",raw)

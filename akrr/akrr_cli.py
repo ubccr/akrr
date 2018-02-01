@@ -735,27 +735,31 @@ class akrr_cli:
             description='resource manipulation')
         subparsers = parser.add_subparsers(title="commands for resource")
         
+        #add
         add_resource_parser = subparsers.add_parser('add',
             description='add new resource to AKRR')
         
-        add_resource_parser.add_argument('--dry-run', action='store_true', help="Dry Run No files will actually be created")
-        add_resource_parser.add_argument('--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
-        add_resource_parser.add_argument('--no-ping', action='store_true', help="do not run ping to test headnode name")
+        add_resource_parser.add_argument(
+            '--dry-run', action='store_true', help="Dry Run No files will actually be created")
+        add_resource_parser.add_argument(
+            '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
+        add_resource_parser.add_argument(
+            '--no-ping', action='store_true', help="do not run ping to test headnode name")
         
         def resource_add_handler(args):
             from .resource_add import resource_add
             return resource_add(args)
         add_resource_parser.set_defaults(func=resource_add_handler)
         
+        #deploy
         deploy_resource_parser = subparsers.add_parser('deploy',
             description='deploy input files and scripts to resource')
-        deploy_resource_parser.add_argument('resource', help="name of resource for validation and deployment'")
-        
-
+        deploy_resource_parser.add_argument(
+            '-r', '--resource', required=True, help="name of resource for validation and deployment'")
 
         def resource_deploy_handler(args):
-            import akrr.resource_deploy
-            return akrr.resource_deploy.resource_deploy(args.resource,verbose=args.verbose)
+            from .resource_deploy import resource_deploy
+            return resource_deploy(args.resource,verbose=args.verbose)
         deploy_resource_parser.set_defaults(func=resource_deploy_handler)
           
     
