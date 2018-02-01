@@ -610,7 +610,7 @@ def get_tasks(task_id):
     """
     # check in scheduled_tasks queue
     try:
-        r = get_scheduled_tasks(task_id)
+        r = get_scheduled_task(task_id)
         return {'queue': 'scheduled_tasks', 'data': r}
     except bottle.HTTPError as e:
         if e.status_code == 404 and e.body == 'No tasks found with that id.':
