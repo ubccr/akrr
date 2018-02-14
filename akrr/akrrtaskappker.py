@@ -221,6 +221,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 sendToQueue=Template(submitCommands[self.resource['batchScheduler']]).substitute(scriptPath=self.JobScriptName)
                 msg=akrrcfg.sshCommand(sh,sendToQueue)
                 matchObj=re.search(jidExtractPatterns[self.resource['batchScheduler']],msg,re.M|re.S)
+                JobIDstr=matchObj.group(1)
                 
                 if matchObj:
                     try:
@@ -229,6 +230,12 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                         raise akrrError("Can't get job id:\n"+msg)
                 else:
                     raise akrrError("Can't get job id:\n"+msg)
+                
+                #report
+                if self.resource["gateway_reporting"]:
+                    akrrcfg.sshCommand(sh,"module load gateway-usage-reporting")
+                    akrrcfg.sshCommand(sh,r'gateway_submit_attributes -gateway_user '+self.resource["gateway_user"]+r''' -submit_time "`date '+%F %T %:z'`" -jobid '''+JobIDstr)
+                    
             
             akrrcfg.sshCommand(sh,"echo %d > job.id"%(JobID))
             
