@@ -1,6 +1,10 @@
 import unittest
 import copy
-from test_util import *
+
+import subprocess
+
+from .test_util import *
+
 
 
 #add check_output fuction to subprocess module if python is old
@@ -57,9 +61,9 @@ class TestInstallation(TestCase):
             {python_bin} akrrpackager.py
             """.format(akrr_home=akrr_arch_home,python_bin=python_bin), shell=True)
         if verbosity>=3:
-            print "\n"+"~"*80
-            print output
-            print "~"*80
+            print("\n"+"~"*80)
+            print(output)
+            print("~"*80)
         output=ClearOutputText(output)
         #test the outcome
         self.assertNotEqual(re.search(r'\[INFO\]: Packaging complete!',output),None, "AKRR distribution archive was NOT created")
@@ -74,7 +78,7 @@ class TestInstallation(TestCase):
         if os.path.exists(cfg.akrr_home):
             shutil.rmtree(cfg.akrr_home)
             
-        if verbosity>=3: print "\n"+"~"*80
+        if verbosity>=3: print("\n"+"~"*80)
         
         #start bash shell
         bash = self.getBash()
@@ -84,7 +88,7 @@ class TestInstallation(TestCase):
         output=bash.runcmd('cd $AKRR_HOME',printOutput=True)
         output=bash.runcmd('pwd',printOutput=True)
         
-        if verbosity>=3: print "~"*80
+        if verbosity>=3: print("~"*80)
         #test some files presence
         filesToCheck=['src/akrr.py',
         'src/akrrscheduler.py']
@@ -293,7 +297,7 @@ class TestInstallation(TestCase):
         return copy.deepcopy(bash.output)
     def test_setup(self):    
         """Testing Setup Script"""
-        if verbosity>=3: print "\n"+"~"*80
+        if verbosity>=3: print("\n"+"~"*80)
         
         output=ClearOutputText(self.run_setup(
             akrr_db_user=cfg.akrr_db_user,
@@ -320,14 +324,14 @@ class TestInstallation(TestCase):
         
         #test that DB has all tables and access is ok
         
-        if verbosity>=3: print "\n"+"~"*80
+        if verbosity>=3: print("\n"+"~"*80)
     def test_new_resource(self):
         """Testing new resource installation"""
-        if verbosity>=3: print "\n"+"~"*80
+        if verbosity>=3: print("\n"+"~"*80)
         for resource in cfg.new_resources:
             args=copy.deepcopy(resource)
             self.run_init_new_resource(**args)
-        if verbosity>=3: print "\n"+"~"*80
+        if verbosity>=3: print("\n"+"~"*80)
 def suite():
     tests = [
              #'test_packager',
@@ -336,7 +340,7 @@ def suite():
              'test_new_resource',
              ]
 
-    return unittest.TestSuite(map(TestInstallation, tests))
+    return unittest.TestSuite(list(map(TestInstallation, tests)))
 
 if __name__ == '__main__':
     # TIME: to get to parsing
@@ -371,7 +375,7 @@ if __name__ == '__main__':
     dontTest=False
     
     if args.clear_db:
-        print "Clean DB only, don't test installation. "
+        print("Clean DB only, don't test installation. ")
         clearInstallation(
             stopAKRR=False,
             clearBashRC=False,
@@ -388,7 +392,7 @@ if __name__ == '__main__':
         dontTest=True
     
     if args.clear:
-        print "Clear installation."
+        print("Clear installation.")
         clearInstallation(
             stopAKRR=True,
             clearBashRC=True,
@@ -406,7 +410,7 @@ if __name__ == '__main__':
     if args.set_modw:
         set_modw()
     if args.install:
-        print "Pack archive and install."
+        print("Pack archive and install.")
         tests=TestInstallation(methodName='test_packager')
         tests.test_packager()
         tests.test_unpack()

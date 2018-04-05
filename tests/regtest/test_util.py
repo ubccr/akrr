@@ -47,7 +47,7 @@ if "check_output" not in dir( subprocess ): # duck punch it in!
         return output
     subprocess.check_output = f
 
-import pexpect
+import akrr.pexpect as pexpect
 
 verbosity=1
 python_bin=sys.executable
@@ -62,12 +62,12 @@ class InstallationCfg:
     """test installation configuration"""
     def __init__(self, filename):    
         wrongfieldsdict = {}
-        exec 'wrongfieldsdict="wrongfieldsdict"' in wrongfieldsdict
-        wrongfields = wrongfieldsdict.keys()
+        exec('wrongfieldsdict="wrongfieldsdict"', wrongfieldsdict)
+        wrongfields = list(wrongfieldsdict.keys())
         
         tmp={}
-        execfile(filename,tmp)
-        for key,val in tmp.iteritems():
+        exec(compile(open(filename).read(), filename, 'exec'),tmp)
+        for key,val in tmp.items():
             if inspect.ismodule(val):continue
             if wrongfields.count(key)>0:continue
             setattr(self, key, val)
@@ -77,6 +77,13 @@ def loadInstallationCfg(cfgFilename):
     cfg=InstallationCfg(cfgFilename)
 
 class ShellSpawn(pexpect.spawn):
+    def __init__(self, command, args=[], timeout=30, maxread=2000, 
+        searchwindowsize=None, logfile=None, cwd=None, env=None, 
+        ignore_sighup=False, echo=True, preexec_fn=None, 
+        encoding='utf-8', codec_errors='strict', dimensions=None):
+        
+        pexpect.spawn.__init__(self, command, args=args, timeout=timeout, maxread=maxread, searchwindowsize=searchwindowsize, logfile=logfile, cwd=cwd, env=env, ignore_sighup=ignore_sighup, echo=echo, preexec_fn=preexec_fn, encoding=encoding, codec_errors=codec_errors, dimensions=dimensions)
+    
     def runcmd(self,cmd,clearSpecialSymbols=False,printOutput=False, addAfter=True):
         self.sendline(cmd)
         self.expect(self.prompt)
@@ -91,7 +98,7 @@ class ShellSpawn(pexpect.spawn):
     
     def getPromptBefore(self,clearSpecialSymbols=False, addAfter=False):
         s=self.prompt+" "+self.before
-        if addAfter and isinstance(self.after, (str, unicode)):
+        if addAfter and isinstance(self.after, str):
             s+=self.after
         s=s.replace("\r",'')
         if clearSpecialSymbols:
@@ -100,7 +107,7 @@ class ShellSpawn(pexpect.spawn):
             return s
     def getCmdOutput(self,clearSpecialSymbols=True, addAfter=False,replaceCMD=True):
         s=self.before
-        if addAfter and isinstance(self.after, (str, unicode)):
+        if addAfter and isinstance(self.after, str):
             s+=self.after
         s=s.replace("\r",'')
         if replaceCMD:
@@ -206,16 +213,16 @@ class ShellSpawn(pexpect.spawn):
     
 def printNote(msg):
     if verbosity>=3:
-        print "\033[100m\033[36m"+msg+"\033[0m"
+        print("\033[100m\033[36m"+msg+"\033[0m")
 
 regcolorremove = re.compile("\033\[[0-9;]+m") 
 def ClearOutputText(s):
     if s == None: return None
     replacements = {
-        u'\u2018': "'",
-        u'\u2019': "'"
+        '\u2018': "'",
+        '\u2019': "'"
     }
-    for src, dest in replacements.iteritems():
+    for src, dest in replacements.items():
         s = s.replace(src, dest)
     s=regcolorremove.sub('',s)
     return s
@@ -223,7 +230,7 @@ def ClearOutputText(s):
 class TestCase(unittest.TestCase):    
     def run(self, result=None):
         if result.failures or result.errors:
-            print "aborted"
+            print("aborted")
         else:
             super(TestCase, self).run(result)
     def patternsToHave(self,s,patterns, reflags=0):
@@ -268,7 +275,7 @@ def clearInstallation(
                       rmTestAKRRHome=False
                       ):
     if verbosity>=3:
-        print "Cleaning installation"
+        print("Cleaning installation")
     db_root,cur_root=getAKDB(user=cfg.akrr_db_admin_user,password=cfg.akrr_db_admin_passwd,db_name="mysql")
     
     if clearBashRC and os.path.exists(os.path.expanduser('~/.bashrc')):
@@ -280,7 +287,7 @@ def clearInstallation(
                     if l.count(akrrHeader+' [Start]')>0: AKRRpresent=True
             if AKRRpresent:
                 if verbosity>=3:
-                    print "AKRR Section present in ~/.bashrc. Cleaning ~/.bashrc."
+                    print("AKRR Section present in ~/.bashrc. Cleaning ~/.bashrc.")
                 with open(os.path.expanduser('~/.bashrc'),'w') as f:
                     inAKRR=False
                     for l in bashcontent:
@@ -303,10 +310,10 @@ def clearInstallation(
                 else: newCronTab=True
         if newCronTab:
             if verbosity>=3:
-                print "AKRR Section present in crontab. Cleaning crontab."
+                print("AKRR Section present in crontab. Cleaning crontab.")
             output=subprocess.check_output("crontab .crontmp", shell=True)
             if verbosity>=3:
-                print output
+                print(output)
             os.remove(".crontmp")
             
         
@@ -316,24 +323,24 @@ def clearInstallation(
     #stop AKRR if needed
     if stopAKRR and os.path.exists(os.path.join(cfg.akrr_home,'src','akrrscheduler.py')):
         if verbosity>=3:
-            print "Stopping AKRR if needed"
+            print("Stopping AKRR if needed")
         try:
             output=subprocess.check_output("""
                 {python_bin} {akrr_home}/src/akrrscheduler.py stop
                 """.format(akrr_home=cfg.akrr_home,python_bin=python_bin), shell=True)
-        except subprocess.CalledProcessError,e:
+        except subprocess.CalledProcessError as e:
             output=e.output
             #if output.count("Can not stop AKRR server because none is running.")==0:
             #    raise e
         if verbosity>=3:
-            print output
+            print(output)
     
     def dropDB(dbName):
         cur_root.execute("SHOW DATABASES")
         dbsNames=[v['Database'] for v in cur_root.fetchall() if v['Database']==dbName]
         if len(dbsNames)>0:
             if verbosity>=3:
-                print "DROP DATABASE "+dbName
+                print("DROP DATABASE "+dbName)
             cur_root.execute("SHOW PROCESSLIST")
             proclist=[v['Id'] for v in cur_root.fetchall() if v['User']!=cfg.akrr_db_admin_user and v['db']==dbName]
             if len(proclist)>0:raise Exception("Other users access mod_akrr, can not drop table now!")
@@ -351,12 +358,12 @@ def clearInstallation(
                 if len(user)==0:break
                 user=user[0]
                 if verbosity>=3:
-                    print "DROP user '%s'@'%s'"%(user['User'],user['Host'])
+                    print("DROP user '%s'@'%s'"%(user['User'],user['Host']))
                 cur_root.execute("DROP user %s@%s",(user['User'],user['Host']))
                 db_root.commit()
     def emptyTable(tableName):
             if verbosity>=3:
-                print "TRUNCATE TABLE "+tableName
+                print("TRUNCATE TABLE "+tableName)
             cur_root.execute("TRUNCATE TABLE "+tableName)
             db_root.commit()
     
@@ -378,21 +385,21 @@ def clearInstallation(
     if rmBuildDir:
         build_dir=os.path.abspath(os.path.join(akrr_arch_home, "build"))
         if os.path.exists(build_dir):
-            if verbosity>=3: print "rm -rf "+build_dir
+            if verbosity>=3: print("rm -rf "+build_dir)
             shutil.rmtree(build_dir)
     if rmTestAKRRHome:
         if os.path.exists(cfg.akrr_home):
-            if verbosity>=3: print "rm -rf "+cfg.akrr_home
+            if verbosity>=3: print("rm -rf "+cfg.akrr_home)
             shutil.rmtree(cfg.akrr_home)
         
 def set_modw():
     if verbosity>=3:
-        print "set modw for XDMoD faking"
+        print("set modw for XDMoD faking")
     db_root,cur_root=getAKDB(user=cfg.akrr_db_admin_user,password=cfg.akrr_db_admin_passwd,db_name='mysql')
     cur_root.execute("SHOW DATABASES")
     dbsNames=[v['Database'] for v in cur_root.fetchall() if v['Database']=='modw']
     if len(dbsNames)>0:
-        if verbosity>=3: print "modw already exists"
+        if verbosity>=3: print("modw already exists")
         return
     
     cur_root.execute("""
