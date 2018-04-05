@@ -774,14 +774,23 @@ class akrr_cli:
             return akrr_setup()
             
         parser.set_defaults(func=setup_handler)
-        
+    
+    def process_common_args(self,cli_args):
+        if "verbose" in cli_args and cli_args.verbose:
+            log.basicConfig(level=log.DEBUG)
+            log.getLogger().setLevel(log.DEBUG)
     def run(self):
         """parse arguments and execute requested commands"""
         # PARSE: the command line parameters the user provided.
         cli_args = self.root_parser.parse_args()
+        
+        self.process_common_args(cli_args)
     
         # EXECUTE: the function provided in the '.set_defaults(func=...)'
-        cli_args.func(cli_args)
+        if hasattr(cli_args, "func"):
+            cli_args.func(cli_args)
+        else:
+            log.error("There is no command specified!")
         
         return
         
