@@ -11,8 +11,10 @@ if __name__ == '__main__':
     akrrtests_mod_dir = os.path.abspath(os.path.dirname(curdir))
     
     if os.path.isdir(akrrtests_mod_dir):
+        sys.path.insert(0,os.path.abspath(os.path.dirname(akrr_mod_dir)))
         sys.path.insert(0,os.path.abspath(akrrtests_mod_dir))
-    
+        
+    print(akrr_mod_dir)
     from akrrregtest import cli
     
     cli.cli().run()
