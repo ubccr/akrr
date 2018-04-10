@@ -80,10 +80,16 @@ def remove_dir(path):
     
 def remove_conf_dir():
     "remove mod_appkernel"
+    if cfg.akrr_conf_dir is None:
+        log.warn("akrr_conf_dir is None")
+        return
     remove_dir(cfg.akrr_conf_dir)
 
 def remove_log_dir():
     "remove mod_appkernel"
+    if cfg.akrr_log_dir is None:
+        log.warn("akrr_log_dir is None")
+        return
     remove_dir(cfg.akrr_log_dir)
 
 def remove_from_bashrc():
