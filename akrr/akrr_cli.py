@@ -687,7 +687,10 @@ def daemon_handler(args):
 
 class akrr_cli:
     def __init__(self):
-        log.basicConfig(level=log.INFO)
+        log.basicConfig(
+            level=log.INFO,
+            format="[%(asctime)s - %(levelname)s] %(message)s"
+        )
         
         self.root_parser = argparse.ArgumentParser(description='command line interface to AKRR')
         self.root_parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")

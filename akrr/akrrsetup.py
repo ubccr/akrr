@@ -12,43 +12,33 @@ import os
 import random
 import string
 
-try:
-    import argparse
-except Exception as e:
-    print("Python version is too old!")
-    raise e
-
-
-#add check_output fuction to subprocess module if python is old
-if "check_output" not in dir( subprocess ): # duck punch it in!
-    def f(*popenargs, **kwargs):
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd)
-        return output
-    subprocess.check_output = f
-
-
 import logging as log
 from .util import which,log_input
+
+#Since AKRR setup is the first script to execute
+#Lets check python version and proper library presence.
+
+#python version
+if sys.version_info.major<3 or sys.version_info.minor<4:
+    log.critical("Python should be of version 3.4+. This one is "+sys.version)
+    exit(1)
+
+#check presence of MySQLdb
 try:
     import MySQLdb
     import MySQLdb.cursors
 except Exception as e:
-    log.error("""python module MySQLdb is not available. Install it!
+    log.critical("""python module MySQLdb is not available. Install it!
     For example by running on
-        RedHat or CentOS:
-            sudo yum install MySQL-python
-        Ubuntu:
-            sudo apt-get install python2.7-mysqldb""")
+        RedHat or CentOS from EPEL:
+            #instale EPEL repo information
+            sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            #install mysqlclient-python
+            sudo yum install python34-mysql
+            """)
     raise e
+
+#
 
 
 #AKRR configuration can be in three places
