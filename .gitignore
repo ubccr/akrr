@@ -20,6 +20,7 @@
 .#*
 /bin/akrr.py
 /tests/bin/akrrregtest.py
+/tests/bin/akrrunittest.py
 /prev_root
 
 

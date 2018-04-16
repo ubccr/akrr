@@ -1,6 +1,10 @@
 import os
+import sys
+import re
 import subprocess
-import logging as log
+from . import log
+
+import akrr.pexpect as pexpect
 
 def run_cmd_getoutput(cmd):
     return subprocess.check_output(cmd,stderr=subprocess.STDOUT,shell=True).decode('utf-8')
@@ -23,26 +27,48 @@ def print_importent_env():
     
     log.info(msg)
 
-import sys
-import akrr.pexpect as pexpect
+
+
+regcolorremove = re.compile("\033\[[0-9;]+m") 
+def ClearOutputText(s):
+    "remove special symbols"
+    if s == None: return None
+    replacements = {
+        '\u2018': "'",
+        '\u2019': "'"
+    }
+    for src, dest in replacements.items():
+        s = s.replace(src, dest)
+    s=regcolorremove.sub('',s)
+    return s
     
 class ShellSpawn(pexpect.spawn):
-    def __init__(self, command, args=[], timeout=30, maxread=2000, 
-        searchwindowsize=None, logfile=None, cwd=None, env=None, 
-        ignore_sighup=False, echo=True, preexec_fn=None, 
-        encoding='utf-8', codec_errors='strict', dimensions=None):
-        
-        pexpect.spawn.__init__(self, command, args=args, timeout=timeout, maxread=maxread, searchwindowsize=searchwindowsize, logfile=logfile, cwd=cwd, env=env, ignore_sighup=ignore_sighup, echo=echo, preexec_fn=preexec_fn, encoding=encoding, codec_errors=codec_errors, dimensions=dimensions)
+    def __init__(self, command, args=[], timeout=5, maxread=2000,
+                 searchwindowsize=None, logfile=None, cwd=None, env=None,
+                 ignore_sighup=False, echo=True, preexec_fn=None,
+                 encoding='utf-8', codec_errors='strict', dimensions=None,
+                 use_poll=False):
+        "difference is that encoding='utf-8' and timeout=5"
+        super(ShellSpawn, self).__init__(command, args=args, timeout=timeout, maxread=maxread, searchwindowsize=searchwindowsize, logfile=logfile, cwd=cwd, env=env, ignore_sighup=ignore_sighup, echo=echo, preexec_fn=preexec_fn, encoding=encoding, codec_errors=codec_errors, dimensions=dimensions)
     
-    def runcmd(self,cmd,clearSpecialSymbols=False,printOutput=False, addAfter=True):
+    def runcmd(self,cmd,clearSpecialSymbols=True,printOutput=False, addAfter=False):
+        
         self.sendline(cmd)
         self.expect(self.prompt)
         self.lastcmd=cmd+"\n"
         output=self.getCmdOutput(clearSpecialSymbols=clearSpecialSymbols,addAfter=addAfter,replaceCMD=False)
-        output=self.getCmdOutput(clearSpecialSymbols=False,addAfter=addAfter,replaceCMD=False)
         if hasattr(self, 'output'):self.output+=output
-        if verbosity>=3:
-            sys.stdout.write(output)
+        if printOutput:
+            if self.echo:
+                log.info(output)
+            else:
+                log.info("command: `{}` output: \n{}".format(cmd,output))
+            sys.stdout.flush()
+        else:
+            if self.echo:
+                log.debug2(output)
+            else:
+                log.debug2("command: `{}` output: \n{}".format(cmd,output))
             sys.stdout.flush()
         return output
     
@@ -81,9 +107,7 @@ class ShellSpawn(pexpect.spawn):
         imatch=self.expect(p,**kwargs)
         output=self.getCmdOutput(clearSpecialSymbols=False,addAfter=addAfter,replaceCMD=False)
         if hasattr(self, 'output'):self.output+=output
-        if verbosity>=3:
-            sys.stdout.write(output)
-            sys.stdout.flush()
+        log.debug(output)
         if imatch==0 or imatch==1:
             msg=timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage=="EOF or TIMEOUT":
@@ -112,9 +136,7 @@ class ShellSpawn(pexpect.spawn):
         imatch=self.expect(p,**kwargs)
         output=self.getCmdOutput(clearSpecialSymbols=False,addAfter=addAfter,replaceCMD=False)
         if hasattr(self, 'output'):self.output+=output
-        if verbosity>=3:
-            sys.stdout.write(output)
-            sys.stdout.flush()
+        log.debug(output)
         if imatch==0 or imatch==1:
             msg=timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage=="EOF or TIMEOUT":
@@ -141,9 +163,7 @@ class ShellSpawn(pexpect.spawn):
         imatch=self.expect(p,**kwargs)
         output=self.getCmdOutput(clearSpecialSymbols=False,addAfter=addAfter,replaceCMD=False)
         if hasattr(self, 'output'):self.output+=output
-        if verbosity>=3:
-            sys.stdout.write(output)
-            sys.stdout.flush()
+        log.debug(output)
         if imatch==0 or imatch==1:
             msg=timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage=="EOF or TIMEOUT":
@@ -160,3 +180,35 @@ class ShellSpawn(pexpect.spawn):
     def startcmd(self,cmd):
         self.lastcmd=cmd+"\n"
         self.sendline(cmd)
+
+def get_bash(prompt="FancyPrompt123",set_env_from_parant=True):
+    "start bash interactive session"
+    bash = ShellSpawn('bash')
+    bash.prompt=prompt
+    
+    bash.sendline(' export PS1="{}"'.format(prompt))
+    #bash.sendline('echo abra_cadabra_and_vualla')
+    #prompt from input
+    bash.expect(prompt)
+    #prompt from input echo
+    bash.expect(prompt)
+    #prompt from new prompt
+    try:
+        #in some terminals there is no echo
+        bash.expect(prompt,timeout=0.5)
+    except:
+        pass
+    #set PATH if asked
+    if set_env_from_parant:
+        bash.runcmd(
+            'export PATH="{}"'.format(
+                os.getenv('PATH','/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin')),
+            printOutput=False)
+        bash.runcmd('export LD_LIBRARY_PATH="{}"'.format(os.getenv('LD_LIBRARY_PATH','')),printOutput=False)
+    
+    return bash
+
+
+
+
+

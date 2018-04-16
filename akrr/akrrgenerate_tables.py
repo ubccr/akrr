@@ -9,40 +9,23 @@ This script will perform the following steps:
 # IMPORTS
 ###############################################################################
 
-import os
 import sys
-import argparse
 import MySQLdb
 
-import logging as log
-
-from . import akrrcfg
-
-###############################################################################
-# GLOBAL VARIABLES
-###############################################################################
-
-# global variable to hold the script arguments
-args = None
+from . import log
 
 ###############################################################################
 # UTILITY FUNCTIONS
 ###############################################################################
-
-
-
-def create_connection(host, user, password, db):
+def create_and_populate_tables(
+        default_tables, 
+        population_statements, 
+        starting_comment, ending_comment,
+        connection_function,
+        host=None, user=None, password=None, db=None,
+        dry_run=False
+        ):
     """
-    Create a MySQL database connection with the provided parameters.
-    """
-    return MySQLdb.connect(host, user, password, db)
-
-
-def create_and_populate_tables(default_tables, population_statements, starting_comment, ending_comment,
-                               connection_function):
-    """
-
-
     :param default_tables:
     :param population_statements:
     :param starting_comment:
@@ -50,15 +33,12 @@ def create_and_populate_tables(default_tables, population_statements, starting_c
     :param connection_function:
     :type connection_function: function
     """
-    if args.verbose:
-        log.info('*' * 50)
-        log.info(starting_comment)
-        log.info('*' * 50)
+    log.info(starting_comment)
 
     try:
-        if not args.test:
-            if args.host and args.user and args.password and args.db:
-                connection = create_connection(args.host, args.user, args.password, args.db)
+        if not dry_run:
+            if host and user and password and db:
+                connection = MySQLdb.connect(host, user, password, db)
                 cursor = connection.cursor()
             else:
                 connection, cursor = connection_function(True)
@@ -80,26 +60,19 @@ def create_and_populate_tables(default_tables, population_statements, starting_c
                     log.debug("Result of: %s -> %d" % (table_name, result))
                     log.info("EXECUTED: %s SUCCESSFULLY!" % description)
         else:
-            log.debug("Testing...")
-            log.info('*' * 50)
             for (table_name, table_script) in default_tables:
-                log.info("CREATING: %s" % table_name)
-                log.info("CREATED: %s SUCCESSFULLY!" % table_name)
+                log.dry_run("CREATING: %s" % table_name)
+                #log.info("CREATED: %s SUCCESSFULLY!" % table_name)
 
             for (description, statement) in population_statements:
-                log.info("EXECUTING: %s" % description)
-                log.info("EXECUTED: %s SUCCESSFULLY!" % description)
-
+                log.dry_run("EXECUTING: %s" % description)
+                #log.info("EXECUTED: %s SUCCESSFULLY!" % description)
+        log.info(ending_comment)
     except MySQLdb.Error as e:
-        log.exception("Error %d: %s" % (e.args[0], e.args[1]))
+        log.critical("Error %d: %s" % (e.args[0], e.args[1]))
         sys.exit(1)
-    finally:
-        if args.verbose:
-            log.info('*' * 50)
-            log.info(ending_comment)
 
-
-def setup_mod_akrr():
+def create_and_populate_mod_akrr_tables(dry_run=False):
     """
     Create / Populate the tables required in the mod_akrr database.
     """
@@ -355,16 +328,22 @@ INSERT INTO `akrr_err_regexp` VALUES
         """)
     )
 
+    connection_function=None
+    if not dry_run:
+        from . import akrrcfg
+        connection_function=akrrcfg.getDB
+        
     create_and_populate_tables(
         default_tables,
         population_statements,
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",
-        akrrcfg.getDB
+        connection_function,
+        dry_run=dry_run
     )
 
 
-def setup_mod_appkernel():
+def create_and_populate_mod_appkernel_tables(dry_run=False):
     """
     Create / Populate the required tables / views in the mod_appkernel database.
     """
@@ -781,34 +760,17 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     )
 
     # EXECUTE: the statements defined previously
+    connection_function=None
+    if not dry_run:
+        from . import akrrcfg
+        connection_function=akrrcfg.getAKDB
+    
     create_and_populate_tables(
         default_tables,
         population_statements,
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",
-        akrrcfg.getAKDB
+        connection_function,
+        dry_run=dry_run
     )
 
-def akrrgenerate_tables(verbose=False,test=False,host=None,user=None,password=None,db=None):
-    """
-    host Specifies the hostname / ip and port of the database on which to install the default tables.')
-    user - Specifies the user name to use when connecting to the database.')
-    password - Specifies the password to use when connecting to the database.')
-    db - Specify the database name to use when connecting to the database')
-    test - Execute the script in test mode. No actual changes will be made.
-    verbose - Produce more verbose log output
-    """
-    global args
-    args = type("Args", (object,), {})()
-    args.verbose=verbose
-    args.test=test
-    args.host=host
-    args.user=user
-    args.password=password
-    args.db=password
-
-    # SETUP: the mod_akrr database tables
-    setup_mod_akrr()
-
-    # SETUP: the mod_app_kernel tables
-    setup_mod_appkernel()

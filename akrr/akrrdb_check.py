@@ -8,16 +8,7 @@ if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
 import logging as log
-from . import akrrcfg
-
-# Attempt to import MySQL, if it's not there then we'll exit out and notify the
-# user and blow up.
-try:
-    import MySQLdb
-    mysql_available = True
-except ImportError as e:
-    mysql_available = False
-
+import MySQLdb
 
 def check_rw_db(connection_func, pre_msg, post_msg):
     """
@@ -106,11 +97,7 @@ def check_r_db(connection_func, pre_msg, post_msg):
     return success
 
 def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
-
-    # CHECK: to make sure that we have MySQL drivers before continuing.
-    if not mysql_available:
-        log.error("Unable to find MySQLdb. Please install MySQLdb for python before running this script again.")
-        return False
+    from . import akrrcfg
     
     overall_success = True
 
@@ -146,7 +133,3 @@ def akrrdb_check(mod_akrr=True,mod_appkernel=True,modw=True):
     else:
         log.error("One or more of the required databases and their required users ran into a problem. Please take note of the previous messages, correct the issue and re-run this script.")
         return False
-
-if __name__ == '__main__':
-    akrrdb_check()
-    

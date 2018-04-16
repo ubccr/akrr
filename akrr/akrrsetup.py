@@ -1,8 +1,10 @@
+import os
 import sys
+
 import datetime
 import time
 import inspect
-import os
+
 import re
 import types
 import shutil
@@ -12,7 +14,7 @@ import os
 import random
 import string
 
-import logging as log
+from . import log
 from .util import which,log_input
 
 #Since AKRR setup is the first script to execute
@@ -38,6 +40,16 @@ except Exception as e:
             """)
     raise e
 
+try:
+    subprocess.check_output("which openssl", shell=True)
+except Exception as e:
+    log.error("""openssl program is not available. Install it!
+    For example by running
+    on CentOS
+        sudo yum install openssl openssh-clients
+    on Ubuntu:
+        sudo apt-get install openssl""")
+    raise e
 #
 
 
@@ -74,20 +86,127 @@ if akrr_cfg==None:
 else:
     akrr_home=os.path.dirname(os.path.dirname(akrr_cfg))
     log.info("AKRR_CONF is set. AKRR configuration will be in "+akrr_cfg)
+
+
+dry_run=False                
+
+def _cursor_execute(cur, query, args=None):
+    if not dry_run:
+        cur.execute(query, args)
+    else:
+        if args is not None:
+            if isinstance(args, dict):
+                args = dict((key, cur._get_db().literal(item)) for key, item in args.items())
+            else:
+                args = tuple(map(cur._get_db().literal, args))
+            query = query % args
+            
+        log.dry_run("SQL: "+query)
+
+from .util.sql import get_con_to_db
+from .util.sql import get_user_passwd_host_port
+from .util.sql import db_exist
+from .util.sql import cv
+from .util.sql import db_check_priv
+from .util.sql import get_db_client_host
+ 
+def _os_makedirs(path):
+    if not dry_run:
+        log.debug("Creating directory: {}".format(path))
+        os.makedirs(path)
+    else:
+        log.dry_run("os.makedirs({})".format(path))
+
+def _read_username_password(
+        prompt="Enter username:",
+        username=None,
+        password=None,
+        default_username="user",
+        password_on_default_user=None):
+    log_input(prompt)
     
+    if username is None:
+        username=input('[{0}] '.format(default_username)) 
+        if username=='':username=default_username
+    else:
+        log.info("User, "+username+", already entered.")
+    
+    if username==default_username and password is None and password_on_default_user is not None:
+            password=password_on_default_user
+    
+    if password is None:
+        while True:
+            log_input("Please specify a password:")
+            password=getpass.getpass()
+            log_input("Please reenter the password:")
+            password2=getpass.getpass()
+            if password==password2:
+                break
+            log.error("Entered passwords do not match. Please try again.")
+    else:
+        log.info("Password already entered.")
+    return username,password
 
-
-class InstallAKRR:
+def _read_sql_su_creds(host,port):
+    while True:
+        log_input(
+            "Please provide an administrative database user (for {}:{}) "\
+            "under which the installation sql script should "\
+            "run (This user must have privileges to create "\
+            "users and databases).".format(host,port))
+        su_username=input("Username: ")
+        log_input("Please provide the password for the the user which you previously entered:")
+        su_password=getpass.getpass()
+        
+        try:
+            get_con_to_db(su_username,su_password,host,port)
+            return su_username,su_password
+        except Exception as e:
+            log.error("MySQL error: "+str(e))
+            log.error("Entered credential is not valid. Please try again.")
+            
+            
+class akrr_setup:
     default_akrr_user='akrruser'
-    def __init__(self):
-        self.akrr_user_name=None
-        self.akrr_user_password=None
-        self.xd_user_name=None
-        self.xd_user_password=None
-        self.sql_root_name=None
-        self.sql_root_password=None
-        self.cronemail=None
-        self.stand_alone=False
+    def __init__(
+            self,
+            akrr_db="localhost:3306",
+            ak_db="localhost:3306",
+            xd_db="localhost:3306",
+            install_cron_scripts=True,stand_alone=False):
+        
+        self.akrr_db_user_name,\
+        self.akrr_db_user_password,\
+        self.akrr_db_host,\
+        self.akrr_db_port=get_user_passwd_host_port(akrr_db)
+        self.akrr_db_name="mod_akrr"
+        
+        #su will remain None if akrr user and db already exists and user has proper rights
+        self.akrr_db_su_user_name=None
+        self.akrr_db_su_user_password=None
+        
+        self.ak_db_user_name,\
+        self.ak_db_user_password,\
+        self.ak_db_host,\
+        self.ak_db_port=get_user_passwd_host_port(ak_db)
+        self.ak_db_name="mod_appkernel"
+        
+        self.ak_db_su_user_name=None
+        self.ak_db_su_user_password=None
+        
+        self.xd_db_user_name,\
+        self.xd_db_user_password,\
+        self.xd_db_host,\
+        self.xd_db_port=get_user_passwd_host_port(xd_db)
+        self.xd_db_name="modw"
+        
+        self.xd_db_su_user_name=None
+        self.xd_db_su_user_password=None
+        
+        self.cron_email=None
+        self.stand_alone=stand_alone
+        self.install_cron_scripts_flag=install_cron_scripts
+        
     def check_previous_installation(self):
         if(os.path.exists(akrr_cfg)):
             msg="This is a fresh installation script. "+akrr_home+\
@@ -111,63 +230,164 @@ class InstallAKRR:
         if errmsg!="":
             log.error(errmsg)
             exit(1)
-    def read_akrr_creds(self):
+    def read_db_creds(self):
+        ###
+        #mod_akrr
         log.info("Before Installation continues we need to setup the database.")
-
-        log_input("Please specify a database user for AKRR (This user will be created if it does not already exist):")
-        self.akrr_user_name=input('[{0}] '.format(self.default_akrr_user)) 
-        if self.akrr_user_name=='':self.akrr_user_name=self.default_akrr_user
         
-        while True:
-            log_input("Please specify a password for the AKRR database user:")
-            password=getpass.getpass()
-            log_input("Please reenter password:")
-            password2=getpass.getpass()
-            if password==password2:
-                self.akrr_user_password=password
-                break
-            log.error("Entered passwords do not match. Please try again.")
+        self.akrr_db_user_name,\
+        self.akrr_db_user_password=_read_username_password(
+            "Please specify a database user to access mod_akrr database (Used by AKRR)"\
+            "(This user will be created if it does not already exist):",
+            self.akrr_db_user_name,
+            self.akrr_db_user_password,
+            self.default_akrr_user)
+        log.emptyline()
         
-    def read_modw_creds(self):
-        log_input("Please specify the user that will be connecting to the XDMoD database (modw):")
-        self.xd_user_name=input('[{0}] '.format(self.default_akrr_user))
-        if self.xd_user_name=='':self.xd_user_name=self.default_akrr_user
-        if self.xd_user_name==self.akrr_user_name:
-            log.info("Same user as for AKRR database user, will set same password")
-            self.xd_user_password=self.akrr_user_password
-        else:
-            while True:
-                log_input("Please specify the password:")
-                password=getpass.getpass()
-                log_input("Please reenter password:")
-                password2=getpass.getpass()
-                if password==password2:
-                    self.xd_user_password=password
-                    break
-                log.error("Entered passwords do not match. Please try again.")
-    def get_db(self, dictCursor=True,user=None,password=None,host='localhost',port=3306,db_name='mysql'):
+        #check if user, db already there
+        user_exists=False
+        db_exists=False
+        user_priv_is_correct=False
         try:
-            from . import akrrcfg
+            #connect with provided user, Exception will raise if user can not connect
+            _,cur=get_con_to_db(self.akrr_db_user_name,self.akrr_db_user_password,self.akrr_db_host,self.akrr_db_port)
+            client_host=get_db_client_host(cur)
+            user_exists=True
+            
+            db_exists=db_exist(cur,self.akrr_db_name)
+            if not db_exists:
+                log.debug("Database {} doesn't exists on {}".format(self.akrr_db_name,self.akrr_db_host))
+            user_priv_is_correct=db_check_priv(cur, self.akrr_db_name, "ALL", self.akrr_db_user_name, client_host)      
+            if not user_priv_is_correct:
+                log.debug(
+                    "User {} doesn't have right privelege on {}, should be ALL".format(
+                        self.akrr_db_user_name,self.akrr_db_name))      
         except Exception as e:
-            if user==None or password==None:
-                log.error("Can not get DB credentials AKRR config is not set up yet")
+            user_exists=False
+            log.debug("User ({}) does not exists on {}".format(self.akrr_db_user_name,self.akrr_db_host))
         
-        if dictCursor:
-            db = MySQLdb.connect(host=host, port=port, user=akrrcfg.akrr_db_user if user==None else user,
-                                 passwd=akrrcfg.akrr_db_passwd if password==None else password, db=db_name,
-                                 cursorclass=MySQLdb.cursors.DictCursor)
-        else:
-            db = MySQLdb.connect(host=host, port=port, user=akrrcfg.akrr_db_user if user==None else user,
-                                 passwd=akrrcfg.akrr_db_passwd if password==None else password, db=db_name)
-        cur = db.cursor()
-        return db, cur
-    
-    def db_exist(self,cur,name):
-        cur.execute("""SHOW databases LIKE %s""",(name,))
-        r=cur.fetchall()
-        return len(r)>0
-
-   
+        #ask for su user on this machine if needed
+        if not user_exists or not db_exists or not user_priv_is_correct:
+            self.akrr_db_su_user_name,\
+            self.akrr_db_su_user_password=_read_sql_su_creds(self.akrr_db_host,self.akrr_db_port)
+        log.emptyline()
+        ###
+        #mod_appkernel
+        same_host_as_ak=self.ak_db_host==self.akrr_db_host and self.ak_db_port==self.akrr_db_port
+        
+        self.ak_db_user_name,\
+        self.ak_db_user_password=_read_username_password(
+            "Please specify a database user to access mod_appkernel database "\
+            "(Used by XDMoD appkernel module, AKRR creates and syncronize resource and appkernel description)"\
+            "(This user will be created if it does not already exist):",
+            self.ak_db_user_name,
+            self.ak_db_user_password,
+            self.akrr_db_user_name,
+            self.akrr_db_user_password if same_host_as_ak else None
+            )
+        log.emptyline()
+        
+        #ask for su user on this machine
+        user_exists=False
+        db_exists=False
+        user_priv_is_correct=False
+        try:
+            _,cur=get_con_to_db(self.ak_db_user_name,self.ak_db_user_password,self.ak_db_host,self.ak_db_port)
+            client_host=get_db_client_host(cur)
+            user_exists=True
+            
+            db_exists=db_exist(cur,self.ak_db_name)
+            if not db_exists:
+                log.debug("Database {} doesn't exists on {}".format(self.ak_db_name,self.ak_db_host))
+            user_priv_is_correct=db_check_priv(cur, self.ak_db_name, "ALL", self.ak_db_user_name, client_host)
+            if not user_priv_is_correct:
+                log.debug(
+                    "User {} doesn't have right privelege on {}, should be ALL".format(
+                        self.ak_db_user_name,self.ak_db_name)) 
+        except Exception as e:
+            user_exists=False
+            log.debug("User ({}) does not exists on {}".format(self.akrr_db_user_name,self.akrr_db_host))
+        
+        if not user_exists or not db_exists or not user_priv_is_correct:
+            self.ak_db_su_user_name=self.akrr_db_su_user_name
+            self.ak_db_su_user_password=self.akrr_db_su_user_password
+            try:
+                get_con_to_db(self.ak_db_su_user_name,self.ak_db_su_user_password,self.ak_db_host,self.ak_db_port)
+            except:
+                self.ak_db_su_user_name,\
+                self.ak_db_su_user_password=_read_sql_su_creds(self.ak_db_host,self.ak_db_port)
+        log.emptyline()
+        
+        ##
+        #modw
+        same_host_as_xd=self.xd_db_host==self.ak_db_host and self.xd_db_port==self.ak_db_port
+        
+        self.xd_db_user_name,\
+        self.xd_db_user_password=_read_username_password(
+            "Please specify the user that will be connecting to the XDMoD database (modw):",
+            self.xd_db_user_name,
+            self.xd_db_user_password,
+            self.ak_db_user_name,
+            self.ak_db_user_password if same_host_as_xd else None
+            )
+        log.emptyline()
+        
+        #ask for su user on this machine
+        user_exists=False
+        db_exists=False
+        user_priv_is_correct=False
+        try:
+            
+            _,cur=get_con_to_db(self.xd_db_user_name,self.xd_db_user_password,self.xd_db_host,self.xd_db_port)
+            client_host=get_db_client_host(cur)
+            user_exists=True
+            
+            db_exists=db_exist(cur,"modw")
+            if not db_exists:
+                log.debug("Database {} doesn't exists on {}".format(self.xd_db_name,self.xd_db_host))
+            user_priv_is_correct=db_check_priv(cur, self.xd_db_name, "SELECT", self.xd_db_user_name, client_host)     
+            if not user_priv_is_correct:
+                log.debug(
+                    "User {} doesn't have right privelege on {}, should be at least SELECT".format(
+                        self.xd_db_user_name,self.xd_db_name))
+        except Exception as e:
+            user_exists=False
+            log.debug("User ({}) does not exists on {}".format(self.xd_db_user_name,self.xd_db_host))
+        
+        if not user_exists or not db_exists or not user_priv_is_correct:
+            self.xd_db_su_user_name=self.ak_db_su_user_name
+            self.xd_db_su_user_password=self.ak_db_su_user_password
+            try:
+                get_con_to_db(self.xd_db_su_user_name,self.xd_db_su_user_password,self.xd_db_host,self.xd_db_port)
+            except:
+                self.ak_db_su_user_name,\
+                self.ak_db_su_user_password=_read_sql_su_creds(self.xd_db_host,self.xd_db_port)
+        log.emptyline()
+        
+        
+    def get_akrr_db(self,su=False,dbname=""):
+        
+        
+        return get_con_to_db(
+            self.akrr_db_user_name if not su else self.akrr_db_su_user_name,
+            self.akrr_db_user_password if not su else self.akrr_db_su_user_password,
+            self.akrr_db_host,self.akrr_db_port,
+            self.akrr_db_name if dbname =="" else dbname)
+        
+    def get_ak_db(self,su=False,dbname=""):
+        return get_con_to_db(
+            self.ak_db_user_name if not su else self.ak_db_su_user_name,
+            self.ak_db_user_password if not su else self.ak_db_su_user_password,
+            self.ak_db_host,self.ak_db_port,
+            self.ak_db_name if dbname =="" else dbname)
+        
+    def get_xd_db(self,su=False,dbname=""):
+        return get_con_to_db(
+            self.xd_db_user_name if not su else self.xd_db_su_user_name,
+            self.xd_db_user_password if not su else self.xd_db_su_user_password,
+            self.xd_db_host,self.xd_db_port,
+            self.xd_db_name if dbname =="" else dbname)
+        
     def get_random_password(self):
         length = 16
         chars = string.ascii_letters + string.digits
@@ -179,110 +399,66 @@ class InstallAKRR:
                 continue
             password+=chars[ord(i)%len(chars)]
         return password
-    def read_sql_root_creds(self):
-        while True:
-            log_input("""Please provide an administrative database user under which the installation sql script should
-run (This user must have privileges to create users and databases):""")
-            self.sql_root_name=input()
-            log_input("Please provide the password for the the user which you previously entered:")
-            self.sql_root_password=getpass.getpass()
-            
-            try:
-                self.get_db(user=self.sql_root_name,password=self.sql_root_password)
-                break
-            except Exception as e:
-                log.error("Entered credential is not valid. Please try again.")
+
     def init_dir(self):
         try:
+            log.info("Creating directories structure.")
             if not os.path.isdir(akrr_home):
-                os.makedirs(akrr_home)
+                _os_makedirs(akrr_home)
             if not os.path.isdir(os.path.join(akrr_home,'etc')):
-                os.makedirs(os.path.join(akrr_home,'etc'))
+                _os_makedirs(os.path.join(akrr_home,'etc'))
             if not os.path.isdir(os.path.join(akrr_home,'etc','resources')):
-                os.makedirs(os.path.join(akrr_home,'etc','resources'))
+                _os_makedirs(os.path.join(akrr_home,'etc','resources'))
             if not os.path.isdir(os.path.join(akrr_home,'etc','resources')):
-                os.makedirs(os.path.join(akrr_home,'etc','resources'))
+                _os_makedirs(os.path.join(akrr_home,'etc','resources'))
             if not os.path.isdir(os.path.join(akrr_home,'log')):
-                os.makedirs(os.path.join(akrr_home,'log'))
+                _os_makedirs(os.path.join(akrr_home,'log'))
             if not os.path.isdir(os.path.join(akrr_home,'log','data')):
-                os.makedirs(os.path.join(akrr_home,'log','data'))
+                _os_makedirs(os.path.join(akrr_home,'log','data'))
             if not os.path.isdir(os.path.join(akrr_home,'log','comptasks')):
-                os.makedirs(os.path.join(akrr_home,'log','comptasks'))
+                _os_makedirs(os.path.join(akrr_home,'log','comptasks'))
             if not os.path.isdir(os.path.join(akrr_home,'log','akrrd')):
-                os.makedirs(os.path.join(akrr_home,'log','akrrd'))
+                _os_makedirs(os.path.join(akrr_home,'log','akrrd'))
         except Exception as e:
             log.error("Can not create directories: "+str(e))
             exit(1)
     def init_mysql_dbs(self):
         try:
-            log.info("Creating AKRR databases and granting permissions for AKRR user.")
             
-            db_root,cur_root=self.get_db(user=self.sql_root_name,password=self.sql_root_password)
-            cur_root.execute("SHOW DATABASES")
-            dbsNames=[v['Database'] for v in cur_root.fetchall()]
-            
-            cur_root.execute("SELECT @@hostname")
-            results=cur_root.fetchall()
-            hostname=results[0]['@@hostname']
-            
-            #create user if needed
-            #cur_root.execute("SELECT * FROM mysql.user WHERE User=%s",(self.akrr_user_name,))
-            #results=cur_root.fetchall()
-            
-            # ENSURE: That the `mod_akrr` database is created.
-            if 'mod_akrr' not in dbsNames:
-                cur_root.execute("CREATE DATABASE IF NOT EXISTS mod_akrr")
-                while cur_root.nextset() is not None: pass
-            # ENSURE: That the `mod_appkernel` database is created.
-            if 'mod_appkernel' not in dbsNames and not self.stand_alone:
-                cur_root.execute("CREATE DATABASE IF NOT EXISTS mod_appkernel")
-                while cur_root.nextset() is not None: pass
-            # ENSURE: That the user that will be used by AKRR is created with the correct privileges.
-            cur_root.execute("GRANT ALL ON mod_akrr.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, '%', self.akrr_user_password))
-            cur_root.execute("GRANT ALL ON mod_akrr.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, 'localhost', self.akrr_user_password))
-            cur_root.execute("GRANT ALL ON mod_akrr.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, hostname, self.akrr_user_password))
-            
-            while cur_root.nextset() is not None: pass
-            # ENSURE: That the AKRR user has the correct privileges to the `mod_appkernel` database.
-            cur_root.execute("GRANT ALL ON mod_appkernel.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, '%', self.akrr_user_password))
-            cur_root.execute("GRANT ALL ON mod_appkernel.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, 'localhost', self.akrr_user_password))
-            cur_root.execute("GRANT ALL ON mod_appkernel.* TO %s@%s IDENTIFIED BY %s",(self.akrr_user_name, hostname, self.akrr_user_password))
-            
-            while cur_root.nextset() is not None: pass
-            # ENSURE: That the AKRR modw user is created w/ the correct privileges
-            modw_exists=self.db_exist(cur_root,'modw')
-            if modw_exists:
-                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, '%', self.xd_user_password))
-                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, 'localhost', self.xd_user_password))
-                cur_root.execute("GRANT SELECT ON modw.resourcefact TO %s@%s IDENTIFIED BY %s",(self.xd_user_name, hostname, self.xd_user_password))
+            def _create_db_user_gran_priv_if_needed(con_fun,user,password,db,priv):
+                log.info("Creating %s and user to access it if needed"%(db,))
+                su_con,su_cur=con_fun(True,None)
+                client_host=get_db_client_host(su_cur)
                 
-                while cur_root.nextset() is not None: pass
+                _cursor_execute(su_cur,"CREATE DATABASE IF NOT EXISTS %s"%(cv(db),))
+                _cursor_execute(su_cur,"CREATE USER IF NOT EXISTS %s@%s IDENTIFIED BY %s",(user,client_host,password))
+                _cursor_execute(su_cur,"GRANT "+cv(priv)+" ON "+cv(db)+".* TO %s@%s",(user, client_host))
+                
+                su_con.commit()
             
-            if not modw_exists and not self.stand_alone:
-                raise Exception("Can not access modw db (XDMoD) and this is not stand alone installation")
+            #During self.read_db_creds db and user was checked and
+            #if they do not  exist or not good enough super user credentials 
+            #was asked so if they not None that means that 
+            #either user or db or user priv needed to be set
+            if self.akrr_db_su_user_name is not None:
+                _create_db_user_gran_priv_if_needed(
+                    self.get_akrr_db, self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_name,"ALL")
+            if self.ak_db_su_user_name is not None:
+                _create_db_user_gran_priv_if_needed(
+                    self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name,"ALL")
+            if self.xd_db_su_user_name is not None:
+                _create_db_user_gran_priv_if_needed(
+                    self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name,"SELECT")
             
-            # ENSURE: That the newly granted privileges are flushed into active service.
-            cur_root.execute("FLUSH PRIVILEGES")
-            while cur_root.nextset() is not None: pass
-            db_root.commit()
         except Exception as e:
-            log.error("Can not execute the sql install script: "+str(e))
+            import traceback
+            traceback.print_exc()
+            log.error("Can not execute the sql setup script: "+str(e))
             exit(1)
     def generate_self_signed_certificate(self):
         log.info("Generating self-signed certificate for REST-API")
-        try:
-            output=subprocess.check_output("which openssl", shell=True)
-        except Exception as e:
-            log.error("""openssl program is not available. Install it!
-    For example by running on Ubuntu:
-         sudo apt-get install openssl""")
-            exit(1)
-        #openssl genrsa -des3 -passout pass:x -out ${__AKRR_CFG_DIR}/server.pass.key 2048
-        #openssl rsa -passin pass:x -in ${__AKRR_CFG_DIR}/server.pass.key -out ${__AKRR_CFG_DIR}/server.key
-        #rm ${__AKRR_CFG_DIR}/server.pass.key
-        #openssl req -new -key ${__AKRR_CFG_DIR}/server.key -out ${__AKRR_CFG_DIR}/server.csr
-        #openssl x509 -req -days 36500 -in ${__AKRR_CFG_DIR}/server.csr -signkey ${__AKRR_CFG_DIR}/server.key -out ${__AKRR_CFG_DIR}/server.crt
-        output=subprocess.check_output("""
+            
+        cmd="""
             openssl req \
                 -new \
                 -newkey rsa:4096 \
@@ -294,9 +470,13 @@ run (This user must have privileges to create users and databases):""")
                 -out {akrr_cfg_dir}/server.cert
             cp {akrr_cfg_dir}/server.key {akrr_cfg_dir}/server.pem
             cat {akrr_cfg_dir}/server.cert >> {akrr_cfg_dir}/server.pem
-            """.format(akrr_cfg_dir=os.path.join(akrr_home,'etc')), shell=True)
-        print(output)
-        log.info("New self-signed certificate have been generated")
+            """.format(akrr_cfg_dir=os.path.join(akrr_home,'etc'))
+        if not dry_run:
+            output=subprocess.check_output(cmd, shell=True)
+            log.info(output.decode("utf-8"))
+            log.info("New self-signed certificate have been generated")
+        else:
+            log.dry_run("run command: "+cmd)
 
     def generate_settings_file(self):
         log.info("Generating Settings File...")
@@ -305,38 +485,57 @@ run (This user must have privileges to create users and databases):""")
         restapi_rw_password=self.get_random_password()
         restapi_ro_password=self.get_random_password()
         var={
-            'akrr_user_name':self.akrr_user_name,
-            'akrr_user_password':self.akrr_user_password,
-            'xd_user_name':self.xd_user_name,
-            'xd_user_password':self.xd_user_password,
+            'akrr_db_user_name':self.akrr_db_user_name,
+            'akrr_db_user_password':self.akrr_db_user_password,
+            'xd_db_user_name':self.xd_db_user_name,
+            'xd_db_user_password':self.xd_db_user_password,
             'restapi_rw_password':restapi_rw_password,
             'restapi_ro_password':restapi_ro_password
         }
         akrr_inp=akrr_inp_template.format(**var)
-        with open(akrr_cfg,'w') as f:
-            akrr_inp_template=f.write(akrr_inp)
-        log.info("Settings written to: {0}".format(akrr_cfg))
+        if not dry_run:
+            with open(akrr_cfg,'w') as f:
+                akrr_inp_template=f.write(akrr_inp)
+            log.info("Settings written to: {0}".format(akrr_cfg))
+        else:
+            log.dry_run("New config should be written to: {}".format(akrr_cfg))
+            log.debug2(akrr_inp)
+        
     def set_permission_on_files(self):
         log.info("Removing access for group members and everybody for all files as it might contain sensitive information.")
-        output=subprocess.check_output("""
-            chmod -R g-rwx {akrr_home}
-            chmod -R o-rwx {akrr_home}
-            """.format(akrr_home=akrr_home), shell=True)
+        if not dry_run:
+            subprocess.check_output("""
+                chmod -R g-rwx {akrr_home}
+                chmod -R o-rwx {akrr_home}
+                """.format(akrr_home=akrr_home), shell=True)
     def db_check(self):
+        log.info("Checking acces to DBs.")
+        if dry_run:return
+        
         from . import akrrdb_check
         if not akrrdb_check.akrrdb_check(mod_appkernel=not self.stand_alone,modw=not self.stand_alone):
             exit(1)
     def generate_tables(self):
-        from .akrrgenerate_tables import akrrgenerate_tables
-        akrrgenerate_tables(verbose=True,test=False)
+        log.info("Creating tables and populating them with initial values.")
+        
+        from .akrrgenerate_tables import create_and_populate_mod_akrr_tables,create_and_populate_mod_appkernel_tables
+        
+        create_and_populate_mod_akrr_tables(dry_run)
+        create_and_populate_mod_appkernel_tables(dry_run)
         
     def start_daemon(self):
         """Start the daemon"""
+        log.info("Starting AKRR daemon")
+        if dry_run:return
+        
         akrr_cli=os.path.join(akrr_bin_dir,'akrr')
         status=subprocess.call(akrr_cli+" daemon start", shell=True)
         if status!=0:exit(status)
     def check_daemon(self):
         """Check that the daemon is running"""
+        log.info("Checking that AKRR daemon is running")
+        if dry_run:return
+        
         akrr_cli=os.path.join(akrr_bin_dir,'akrr')
         status=subprocess.call(akrr_cli+" daemon check", shell=True)
         if status!=0:exit(status)
@@ -345,7 +544,7 @@ run (This user must have privileges to create users and databases):""")
         """ask_cron_email."""
         try:
             crontanContent=subprocess.check_output("crontab -l", shell=True)
-            crontanContent=crontanContent.splitlines(True)
+            crontanContent=crontanContent.decode("utf-8").splitlines(True)
         except:
             #probably no crontab was setup yet
             crontanContent=[]
@@ -353,26 +552,29 @@ run (This user must have privileges to create users and databases):""")
             if len(l.strip())>1 and l.strip()[0]!="#":
                 m=re.match(r'^MAILTO\s*=\s*(.*)',l.strip())
                 if m:
-                    self.cronemail=m.group(1)
-                    self.cronemail=self.cronemail.replace('"','')
-        if self.cronemail==None:
+                    self.cron_email=m.group(1)
+                    self.cron_email=self.cron_email.replace('"','')
+        if self.cron_email==None:
             log_input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
-            self.cronemail=input()
+            self.cron_email=input()
         else:
             log_input("Please enter the e-mail where cron will send messages:")
-            cronemail=input('[{0}] '.format(self.cronemail)) 
-            if cronemail!="":self.cronemail=cronemail
-        if self.cronemail=="":self.cronemail=None
+            cron_email=input('[{0}] '.format(self.cron_email)) 
+            if cron_email!="":self.cron_email=cron_email
+        if self.cron_email=="":self.cron_email=None
     def install_cron_scripts(self):
         """Install cron scripts."""
-        if self.cronemail:mail="MAILTO = "+self.cronemail
+        log.info("Installing cron entries")
+        if dry_run:return
+        
+        if self.cron_email:mail="MAILTO = "+self.cron_email
         else: mail=None
         restart="50 23 * * * "+akrr_bin_dir+"/akrr daemon -cron restart"
         checknrestart="33 * * * * "+akrr_bin_dir+"/akrr daemon -cron checknrestart"
         
         try:
             crontanContent=subprocess.check_output("crontab -l", shell=True)
-            crontanContent=crontanContent.splitlines(True)
+            crontanContent=crontanContent.decode("utf-8").splitlines(True)
         except:
             log.info("Crontab does not have user's crontab yet")
             crontanContent=[]
@@ -387,10 +589,10 @@ run (This user must have privileges to create users and databases):""")
             if len(l.strip())>1 and l.strip()[0]!="#":
                 m=re.match(r'^MAILTO\s*=\s*(.*)',l.strip())
                 if m:
-                    cronemail=m.group(1)
-                    cronemail=self.cronemail.replace('"','')
+                    cron_email=m.group(1)
+                    cron_email=self.cron_email.replace('"','')
                     mailThere=True
-                    if self.cronemail!=cronemail:
+                    if self.cron_email!=cron_email:
                         if mail:
                             crontanContent[i]=mail
                         else:
@@ -402,10 +604,10 @@ run (This user must have privileges to create users and databases):""")
                     checknrestartThere=True
         if mailUpdated:
             log.info("Cron's MAILTO was updated")
-        if ((self.cronemail!=None and mailThere) or (self.cronemail==None and mailThere==False)) and restartThere and checknrestartThere and mailUpdated==False:
+        if ((self.cron_email!=None and mailThere) or (self.cron_email==None and mailThere==False)) and restartThere and checknrestartThere and mailUpdated==False:
             log.warning("All AKRR crond entries found. No modifications necessary.")
             return
-        if self.cronemail!=None and mailThere==False:
+        if self.cron_email!=None and mailThere==False:
             crontanContent.insert(0, mail+"\n")
         if restartThere==False:
             crontanContent.append(restart+"\n")
@@ -421,11 +623,13 @@ run (This user must have privileges to create users and databases):""")
     def update_bashrc(self):
         """Add AKRR enviroment variables to .bashrc"""
         log.info("Updating .bashrc")
+        
         bashcontentNew=[]
         akrrHeader='#AKRR Server Environment Variables'
         if os.path.exists(os.path.expanduser("~/.bashrc")):
             log.info("Updating AKRR record in $HOME/.bashrc, backing to $HOME/.bashrc_akrrbak")
-            subprocess.call("cp ~/.bashrc ~/.bashrcakrr", shell=True)
+            if not dry_run:
+                subprocess.call("cp ~/.bashrc ~/.bashrcakrr", shell=True)
             with open(os.path.expanduser('~/.bashrc'),'r') as f:
                 bashcontent=f.readlines()
                 inAKRR=False
@@ -436,40 +640,46 @@ run (This user must have privileges to create users and databases):""")
         bashcontentNew.append("\n"+akrrHeader+" [Start]\n")
         bashcontentNew.append("export PATH=\"{0}/bin:$PATH\"\n".format(akrr_home))
         bashcontentNew.append(akrrHeader+" [End]\n\n")
-        with open(os.path.expanduser('~/.bashrc'),'w') as f:
-            for l in bashcontentNew:
-                f.write(l)
-        log.info("Appended AKRR records to $HOME/.bashrc")
+        if not dry_run:
+            with open(os.path.expanduser('~/.bashrc'),'w') as f:
+                for l in bashcontentNew:
+                    f.write(l)
+            log.info("Appended AKRR records to $HOME/.bashrc")
+        else:
+            log.debug("New .bashrc should be like"+"\n".join(bashcontentNew))
 
-def akrr_setup(install_cron_scripts=True,stand_alone=False):
-    install=InstallAKRR()
-    install.stand_alone=stand_alone
-    
-    #check 
-    install.check_utils()
-    install.check_previous_installation()
-    #was in prep
-    install.read_akrr_creds()
-    install.read_modw_creds()
-    install.read_sql_root_creds()
-    if install_cron_scripts:
-        install.ask_cron_email()
-    
-    install.init_mysql_dbs()
-    install.init_dir()
-    install.generate_self_signed_certificate()
-    install.generate_settings_file()
-    install.set_permission_on_files()
-    #was in setup
-    install.db_check()
-    install.generate_tables()
-    install.start_daemon()
-    install.check_daemon()
-    if install_cron_scripts:
-        install.install_cron_scripts()
-    
-    if in_src_install:
-        install.update_bashrc()
+    def run(self):
+        #check 
+        self.check_utils()
+        self.check_previous_installation()
+        
+        #ask info
+        self.read_db_creds()
+        
+        if self.install_cron_scripts_flag:
+            self.ask_cron_email()
+        
+        #if it is dry_run
+        #all question are asked, this is dry run, so nothing else to do")
+        
+        self.init_mysql_dbs()
+        self.init_dir()
+        self.generate_self_signed_certificate()
+        self.generate_settings_file()
+        self.set_permission_on_files()
+        self.db_check()
+        
+        self.generate_tables()
+        
+        self.start_daemon()
+        self.check_daemon()
+        if self.install_cron_scripts_flag:
+            self.install_cron_scripts()
+        
+        if in_src_install:
+            self.update_bashrc()
+            
+        log.info("AKRR is set up and is running.")
     
 if __name__ == '__main__':
-    akrr_setup() 
+    akrr_setup().run()

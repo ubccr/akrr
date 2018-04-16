@@ -770,11 +770,30 @@ class akrr_cli:
         """Initial AKRR Setup"""
         parser = self.subparsers.add_parser('setup',
             description='Initial AKRR Setup')
-        #setup_parser.add_argument('-stand-alone','--stand-alone', action='store_true', help="stand alone mode (xdmod is executed on separate machine)")
+        parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
+        
+        parser.add_argument(
+            "--akrr-db", 
+            default="localhost:3306", 
+            help="mod_akrr database location in [user[:password]@]host[:port] format, missing values willbe asked. Default: localhost:3306")
+        parser.add_argument(
+            "--ak-db", 
+            default="localhost:3306", 
+            help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: localhost:3306")
+        parser.add_argument(
+            "--xd-db", 
+            default="localhost:3306", 
+            help="XDMoD modw database location. It is XDMoD's databases host. Default: localhost:3306")
+        
         def setup_handler(args):
             """call routine for initial AKRR setup"""
-            from  .akrrsetup import akrr_setup
-            return akrr_setup()
+            from  . import akrrsetup
+            akrrsetup.dry_run=args.dry_run
+            return akrrsetup.akrr_setup(
+                akrr_db=args.akrr_db,
+                ak_db=args.akrr_db,
+                xd_db=args.akrr_db
+                ).run()
             
         parser.set_defaults(func=setup_handler)
     

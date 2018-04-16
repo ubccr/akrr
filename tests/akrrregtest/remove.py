@@ -1,18 +1,79 @@
 import os
+import sys
 import subprocess
 import shutil
 
-import logging as log
+from . import log
 
 from . import cfg
 
 from .cfg import dry_run
 
 from .db import get_akrr_db,get_ak_db,get_xd_db
-from _operator import length_hint
 
 
-def remove_user():
+def _get_akrr_pids():
+    akrr_daemon_pids=[]
+    
+    try:
+        output=subprocess.check_output(
+            """ ps --no-headers -U $USER -o "uname,pid,ppid,cmd"|grep -P 'akrr daemon start'|grep -v "grep" """,
+            shell=True)
+        
+        for l in output.splitlines():
+            akrr_daemon_pids.append(l.decode("utf-8").split()[1])
+    except subprocess.CalledProcessError:
+        pass
+    if len(akrr_daemon_pids)>0:
+        return akrr_daemon_pids
+    else:
+        return None
+    
+def _stop_akrr():
+    akrr_daemon_pids=_get_akrr_pids()
+    if akrr_daemon_pids is None:
+        log.info("AKRR daemon is not running.")
+        return
+    
+    log.info("AKRR daemon is running, trying to stop it.")
+    
+    try:
+        if os.path.exists(os.path.join(cfg.which_akrr)):
+            cmd="{} {} daemon stop".format(sys.executable,cfg.which_akrr)
+            if not dry_run:
+                subprocess.check_output(
+                    cmd, shell=True,timeout=60)
+            else:
+                log.dry_run("should execute: "+cmd)
+    except subprocess.CalledProcessError:
+        pass
+    
+    akrr_daemon_pids=_get_akrr_pids()
+    if akrr_daemon_pids is None:
+        return
+    
+    try:
+        for pid in akrr_daemon_pids:
+            cmd="kill -9 {}".format(pid)
+            if not dry_run:
+                subprocess.check_output(
+                    cmd, shell=True,timeout=60)
+            else:
+                log.dry_run("should execute: "+cmd)
+    except subprocess.CalledProcessError:
+        pass
+    
+    akrr_daemon_pids=_get_akrr_pids()
+    if akrr_daemon_pids is None:
+        return
+    
+    if dry_run:
+        log.dry_run("at this point AKRR daemon should be stopped"+cmd)
+        return
+    
+    raise Exception("was not able to stop AKRR daemon")
+
+def _remove_user():
     "remove user from dbs"
     dbs=get_akrr_db(su=True),get_ak_db(su=True),get_xd_db(su=True)
     users = cfg.akrr_db_user,cfg.ak_db_user,cfg.xd_db_user
@@ -30,7 +91,7 @@ def remove_user():
             msg=msg+"DROP USER IF EXISTS %s@%s"%(rec["User"],rec["Host"])
             
             if dry_run:log.info(msg)
-            else:log.debug(msg)
+            else:log.dry_run(msg)
                         
             if dry_run: continue
             
@@ -41,7 +102,7 @@ def remove_user():
             log.info("There is no user with name %s on %s ",user,str(db))
 
         
-def remove_db(db,cur,dbname):
+def _remove_db(db,cur,dbname):
     "remove dbname database from db,cur connection"
     cur.execute("SHOW databases")
     databases=cur.fetchall()
@@ -51,7 +112,7 @@ def remove_db(db,cur,dbname):
         msg=msg+"DROP DATABASE IF EXISTS %s"%(dbname,)
         
         if dry_run:log.info("DRY RUN:\n"+msg)
-        else:log.debug(msg)
+        else:log.dry_run(msg)
                     
         if dry_run: return
         
@@ -62,15 +123,15 @@ def remove_db(db,cur,dbname):
         log.info("Database %s is not present on %s ",dbname,str(db))
 
 
-def remove_akrr_db():
+def _remove_akrr_db():
     "remove mod_akrr"
-    remove_db(*get_akrr_db(su=True),dbname=cfg.akrr_db_name)
+    _remove_db(*get_akrr_db(su=True),dbname=cfg.akrr_db_name)
 
-def remove_ak_db():
+def _remove_ak_db():
     "remove mod_appkernel"
-    remove_db(*get_ak_db(su=True),dbname=cfg.ak_db_name)
+    _remove_db(*get_ak_db(su=True),dbname=cfg.ak_db_name)
     
-def remove_dir(path):
+def _remove_dir(path):
     if os.path.exists(path):
         log.info("Deleting "+path)
         if not dry_run:
@@ -78,21 +139,21 @@ def remove_dir(path):
     else:
         log.info("Directory "+path+" doesn't exists.")
     
-def remove_conf_dir():
+def _remove_conf_dir():
     "remove mod_appkernel"
     if cfg.akrr_conf_dir is None:
         log.warn("akrr_conf_dir is None")
         return
-    remove_dir(cfg.akrr_conf_dir)
+    _remove_dir(cfg.akrr_conf_dir)
 
-def remove_log_dir():
+def _remove_log_dir():
     "remove mod_appkernel"
     if cfg.akrr_log_dir is None:
         log.warn("akrr_log_dir is None")
         return
-    remove_dir(cfg.akrr_log_dir)
+    _remove_dir(cfg.akrr_log_dir)
 
-def remove_from_bashrc():
+def _remove_from_bashrc():
     "remove from bashrc"
     bashrc=os.path.expanduser('~/.bashrc')
     if not os.path.exists(bashrc):
@@ -120,7 +181,7 @@ def remove_from_bashrc():
     if not any_akrr_section:
         log.info("AKRR Section doesn't present in ~/.bashrc.")
     
-def remove_from_crontab(remove_mailto=False):
+def _remove_from_crontab(remove_mailto=False):
     "remove from cron"
     
     try:
@@ -131,14 +192,14 @@ def remove_from_crontab(remove_mailto=False):
         return
     
     newCronTab=False
-    crontanContent=crontanContent.splitlines(True)
+    crontanContent=crontanContent.decode("utf-8").splitlines(True)
     
     with open(os.path.expanduser('.crontmp'),'w') as f:
         for l in crontanContent:
             notAKRR=True
             if l.count('akrr')>0 and (l.count('checknrestart.sh')>0 or l.count('restart.sh')>0):
                 notAKRR=False
-            if remove_from_crontab and l.count('MAILTO')>0:
+            if remove_mailto and l.count('MAILTO')>0:
                 notAKRR=False
             if notAKRR:f.write(l)
             else: newCronTab=True
@@ -146,7 +207,7 @@ def remove_from_crontab(remove_mailto=False):
         log.info("AKRR Section present in crontab. Cleaning crontab.")
         try:
             if not dry_run:
-                output=subprocess.check_output("crontab .crontmp", shell=True)
+                output=subprocess.check_output("crontab .crontmp", shell=True).decode("utf-8")
                 log.debug(output)
             else:
                 log.info("DRY RUN: should run `crontab .crontmp`. .crontmp:"+open(".crontmp","rt").read())
@@ -167,23 +228,20 @@ def remove(
         "    db_akrr: {}\n"\
         "    db_appkernel: {}\n"\
         "    db_user: {}\n"\
+        "    conf_dir: {}\n"\
+        "    log_dir: {}\n"\
+        "    bashrc: {}\n"\
+        "    crontab: {} , crontab_remove_mailto: {}\n"\
         "".format(
-            db_akrr,db_appkernel,db_user)
+            db_akrr,db_appkernel,db_user,conf_dir,log_dir,bashrc,crontab,crontab_remove_mailto)
     )
+    _stop_akrr()
     
-    if db_user:remove_user()
-    if db_akrr:remove_akrr_db()
-    if db_akrr:remove_ak_db()
-    if conf_dir:remove_conf_dir()
-    if log_dir:remove_log_dir()
-    if bashrc:remove_from_bashrc()
-    if crontab:remove_from_crontab(crontab_remove_mailto)
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    if db_user:_remove_user()
+    if db_akrr:_remove_akrr_db()
+    if db_akrr:_remove_ak_db()
+    if conf_dir:_remove_conf_dir()
+    if log_dir:_remove_log_dir()
+    if bashrc:_remove_from_bashrc()
+    if crontab:_remove_from_crontab(crontab_remove_mailto)
+

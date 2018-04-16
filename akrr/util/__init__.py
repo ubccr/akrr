@@ -134,7 +134,6 @@ def log_input(message, *args):
             formatted_message = message.format(*args)
         else:
             formatted_message = message
-        formatted_message = '{0}\n'.format(formatted_message)
     else:
         formatted_message = ''
         

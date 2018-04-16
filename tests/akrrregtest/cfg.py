@@ -1,6 +1,6 @@
 dry_run=False
 
-
+yml=None
 
 #
 #By default performs setup in akrr config in default location i.e. $HOME/akrr.
@@ -17,7 +17,7 @@ akrr_conf=None
 akrr_conf_dir=None
 akrr_log_dir=None
 
-which_akrr=None
+which_akrr="akrr"
 
 #top level configuration largely same as AKRR
 from akrr.akrrcfgdefault import *
@@ -55,24 +55,31 @@ class InstallationCfg:
 
 def loadCfg(cfgFilename):
     "load configuration for reg test from file"
-    exec(open(cfgFilename).read(),globals())
+    import yaml
+    
+    global yml
+    yml=yaml.load(open(cfgFilename).read())
+    
+    exec(yml['global'],globals())
+    
 
 def set_default_value_for_unset_vars():
     "post process settings"
     import os
     from .util import run_cmd_getoutput
-    import logging as log
+    from . import log
     
     global which_akrr
     global akrr_conf
     global akrr_conf_dir
     global akrr_log_dir
     
-    if which_akrr is None:
+    if which_akrr is None or which_akrr=="akrr":
         try:
             which_akrr=run_cmd_getoutput("which akrr").strip()
         except:
             which_akrr=None
+    
     if which_akrr is not None:
         if akrr_conf is None:
             if os.path.dirname(which_akrr)=="/usr/bin":

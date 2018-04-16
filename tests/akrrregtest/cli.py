@@ -1,20 +1,21 @@
-import logging as log
+import os
+from . import log
 import argparse
 
-import akrrregtest
-from _ast import arg
 
 class cli:
     def __init__(self):
         log.basicConfig(
             level=log.INFO,
-            format="[%(asctime)s - %(levelname)s] %(message)s"
+            format="[%(asctime)s -ART- %(levelname)s] %(message)s"
         )
         
         self.root_parser = argparse.ArgumentParser(description="command line interface to AKRR regression tests")
         self.root_parser.add_argument("-v", "--verbose", action="store_true", help="turn on verbose logging")
+        self.root_parser.add_argument("-vv", "--very-verbose", action="store_true", help="turn on very verbose logging")
         self.root_parser.add_argument("-cfg", "--cfg", default="akrrregtest.conf", help="configuration for the test, default: akrrregtest.conf")
         self.root_parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
+        self.root_parser.add_argument("--which-akrr", help="Path to akrr to use, default is akrr, i.e. find from PATH")
         #self.root_parser.add_argument("--in-src", action="store_true", help="install akrr in source")
         #self.root_parser.add_argument("--akrr-conf", help="location of feture AKRR_CONF")
 
@@ -35,8 +36,16 @@ class cli:
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)
         
+        if "very_verbose" in cli_args and cli_args.very_verbose:
+            log.basicConfig(level=1)
+            log.getLogger().setLevel(1)
+        
         if "dry_run" in cli_args and cli_args.dry_run:
             cfg.dry_run=cli_args.dry_run
+        if "which_akrr" in cli_args and cli_args.which_akrr is not None:
+            cfg.which_akrr=cli_args.which_akrr
+            if cfg.which_akrr!="akrr" and not os.path.exists(cfg.which_akrr):
+                log.critical("Path to akrr is incorrect. Can not find "+cfg.which_akrr)
         
         cfg.set_default_value_for_unset_vars()
     
@@ -83,7 +92,6 @@ class cli:
             
             from .util import print_importent_env
             print_importent_env()
-            print(kwarg)
             
             from .remove import remove
             remove(**kwarg)
@@ -115,17 +123,13 @@ class cli:
         """
         parser = self.subparsers.add_parser("setup", description=self.add_command_setup.__doc__)
         
-        def runit(args):
-            if args.akrr_conf!=None and args.in_src==True:
-                msg="Can not specify --in-src and --akrr-conf at the same time"
-                log.critical(msg)
-                exit(1)
-                #raise Exception(msg)
-            log.warning("add_command_setup is not implemented")
-            
-            print(args)
+        def runit(args):      
             from .util import print_importent_env
             print_importent_env()
+            
+            from .setup import setup
+            setup()
+            
         parser.set_defaults(func=runit)
     
     def run(self):
