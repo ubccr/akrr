@@ -14,5 +14,5 @@ if __name__ == '__main__':
         sys.path.insert(0,os.path.abspath(os.path.dirname(akrr_mod_dir)))
     
     
-    import akrr.akrr_cli
-    akrr.akrr_cli.akrr_cli().run()
+    import akrr.cli
+    akrr.cli.cli().run()

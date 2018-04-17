@@ -681,5 +681,34 @@ class akrr_setup:
             
         log.info("AKRR is set up and is running.")
     
-if __name__ == '__main__':
-    akrr_setup().run()
+
+def cli_add_command(parent_parser):
+    """Initial AKRR Setup"""
+    parser = parent_parser.add_parser('setup',
+        description='Initial AKRR Setup')
+    parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
+    
+    parser.add_argument(
+        "--akrr-db", 
+        default="localhost:3306", 
+        help="mod_akrr database location in [user[:password]@]host[:port] format, missing values willbe asked. Default: localhost:3306")
+    parser.add_argument(
+        "--ak-db", 
+        default="localhost:3306", 
+        help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: localhost:3306")
+    parser.add_argument(
+        "--xd-db", 
+        default="localhost:3306", 
+        help="XDMoD modw database location. It is XDMoD's databases host. Default: localhost:3306")
+    
+    def setup_handler(args):
+        """call routine for initial AKRR setup"""
+        global dry_run
+        dry_run=args.dry_run
+        return akrr_setup(
+            akrr_db=args.akrr_db,
+            ak_db=args.akrr_db,
+            xd_db=args.akrr_db
+            ).run()
+        
+    parser.set_defaults(func=setup_handler)
