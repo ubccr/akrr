@@ -12,7 +12,7 @@ import sys
 import io
 import argparse
 
-from .util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+from akrr.util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
 #NOTE: do not globally import akrrcfg or other modules which invoke akrrcfg
 
 def tuples_to_dict(*tuples):
@@ -38,7 +38,7 @@ def insert_resources(resources):
                       mod_appkernel.resource database.
     :return: void
     """
-    from . import akrrcfg
+    from akrr import akrrcfg
     
     if resources is not None and len(resources) > 0:
 
@@ -68,21 +68,21 @@ def insert_resource(resource):
     :param resource:
     :return: void
     """
-    from . import akrrcfg
+    from akrr import akrrcfg
     if resource is not None:
-        name, id = resource
+        name, m_id = resource
         connection, cursor = akrrcfg.getAKDB()
         with connection:
             cursor.execute('''
             INSERT INTO `mod_appkernel`.`resource`
             (resource, xdmod_resource_id, visible)
             VALUES(%s, %s, %s)
-            ''', (name, id, False))
+            ''', (name, m_id, False))
             cursor.execute('''
             INSERT INTO `mod_akrr`.`resources`
             (name, xdmod_resource_id)
             VALUES(%s, %s)
-            ''', (name, id))
+            ''', (name, m_id))
 
 
 def retrieve_resources():
@@ -92,7 +92,7 @@ def retrieve_resources():
 
     :return: a dict representation of the resourcefact table ( name, id )
     """
-    from . import akrrcfg
+    from akrr import akrrcfg
     connection, cursor = akrrcfg.getXDDB(True)
     with connection:
         cursor.execute("""
@@ -112,7 +112,7 @@ def retrieve_resource(resource, exact):
     :param resource: the name of the resource to retrieve
     :return: a json encoded version of the record in `modw`.`resourcefact` identified by
     """
-    from . import akrrcfg
+    from akrr import akrrcfg
     if resource is None or len(resource) < 1:
         raise AssertionError('provided resource must not be empty.')
 
@@ -153,7 +153,7 @@ def retrieve_tasks(resource, application):
         'application': application,
         'resource': resource
     }
-    from . import akrrrestclient
+    from akrr import akrrrestclient
 
     try:
         akrrrestclient.get_token()
@@ -355,7 +355,7 @@ def on_parsed(args):
     }
     
     try:
-        from . import akrrrestclient
+        from akrr import akrrrestclient
         
         result = akrrrestclient.put(
             '/resources/{0}/on'.format(args.resource),
@@ -391,7 +391,7 @@ def off_parsed(args):
     }
 
     try:
-        from . import akrrrestclient
+        from akrr import akrrrestclient
         
         result = akrrrestclient.put(
             '/resources/{0}/off'.format(args.resource),
@@ -453,7 +453,7 @@ def new_task_parsed(args):
             'resource_param': "{'nnodes':%s}" % (node,)
         }
         try:
-            from . import akrrrestclient
+            from akrr import akrrrestclient
             
             result = akrrrestclient.post(
                 '/scheduled_tasks',
@@ -485,7 +485,7 @@ def reprocess_parsed(args):
     time_end=args.time_end
     verbose=args.verbose
     
-    from . import akrrscheduler
+    from akrr import akrrscheduler
     sch=akrrscheduler.akrrScheduler(AddingNewTasks=True)
     sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
     
@@ -515,7 +515,7 @@ def wall_time_parsed(args):
             'comments':comments
         }
         try:
-            from . import akrrrestclient
+            from akrr import akrrrestclient
             
             result = akrrrestclient.post(
                 '/walltime/%s/%s'%(resource,app),
@@ -552,7 +552,7 @@ def batch_job_parsed(args):
         log.error(
             'Please provide a resource, application kernel and node count.')
         exit(1)
-    from . import akrrcfg
+    from akrr import akrrcfg
     resource = akrrcfg.FindResourceByName(args.resource)
     app = akrrcfg.FindAppByName(args.appkernel)
     nodes = args.nodes
@@ -562,7 +562,7 @@ def batch_job_parsed(args):
     str_io=io.StringIO()
     if not verbose:
         sys.stdout = sys.stderr = str_io
-    from .akrrtaskappker import akrrTaskHandlerAppKer
+    from akrr.akrrtaskappker import akrrTaskHandlerAppKer
     taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (nodes,),"{}","{}")
     if print_only:
         taskHandler.GenerateBatchJobScript()
@@ -598,15 +598,11 @@ def batch_job_parsed(args):
         taskHandler.DeleteLocalFolder()
 
 def check_daemon(args):
-    from . import akrrcfg
+    from akrr import akrrcfg
     from requests.auth import HTTPBasicAuth
     import requests
     
     from requests.packages.urllib3.exceptions import SecurityWarning
-    #requests.packages.urllib3.disable_warnings(SecurityWarning)
-    
-    
-    ssl_verify = False
     
     restapi_host = akrrcfg.restapi_host
     if akrrcfg.restapi_host!="":
@@ -664,7 +660,7 @@ def daemon_handler(args):
     if args.action=='check':
         return check_daemon(args)
     
-    from . import akrrcfg
+    from akrr import akrrcfg
         
     if args.cron and args.action in ['checknrestart','restart']:
         args.append=True
@@ -909,4 +905,4 @@ class cli:
 
     
 if __name__ == '__main__':
-    akrr_cli().run()
+    cli().run()

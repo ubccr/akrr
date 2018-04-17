@@ -12,7 +12,7 @@ This script will perform the following steps:
 import sys
 import MySQLdb
 
-from . import log
+from akrr import log
 
 ###############################################################################
 # UTILITY FUNCTIONS
@@ -330,7 +330,7 @@ INSERT INTO `akrr_err_regexp` VALUES
 
     connection_function=None
     if not dry_run:
-        from . import akrrcfg
+        from akrr import akrrcfg
         connection_function=akrrcfg.getDB
         
     create_and_populate_tables(
@@ -762,7 +762,7 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     # EXECUTE: the statements defined previously
     connection_function=None
     if not dry_run:
-        from . import akrrcfg
+        from akrr import akrrcfg
         connection_function=akrrcfg.getAKDB
     
     create_and_populate_tables(

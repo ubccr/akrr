@@ -14,8 +14,8 @@ import os
 import random
 import string
 
-from . import log
-from .util import which,log_input
+from akrr import log
+from akrr.util import which,log_input
 
 #Since AKRR setup is the first script to execute
 #Lets check python version and proper library presence.
@@ -60,7 +60,7 @@ except Exception as e:
 
 in_src_install=False
 
-akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+akrr_mod_dir = os.path.dirname(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
 akrr_bin_dir = None
 if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir),'bin','akrr')):
     akrr_bin_dir=os.path.join(os.path.dirname(akrr_mod_dir),'bin')
@@ -88,6 +88,14 @@ else:
     log.info("AKRR_CONF is set. AKRR configuration will be in "+akrr_cfg)
 
 
+from akrr.util.sql import get_con_to_db
+from akrr.util.sql import get_user_passwd_host_port
+from akrr.util.sql import db_exist
+from akrr.util.sql import cv
+from akrr.util.sql import db_check_priv
+from akrr.util.sql import get_db_client_host
+
+
 dry_run=False                
 
 def _cursor_execute(cur, query, args=None):
@@ -102,13 +110,6 @@ def _cursor_execute(cur, query, args=None):
             query = query % args
             
         log.dry_run("SQL: "+query)
-
-from .util.sql import get_con_to_db
-from .util.sql import get_user_passwd_host_port
-from .util.sql import db_exist
-from .util.sql import cv
-from .util.sql import db_check_priv
-from .util.sql import get_db_client_host
  
 def _os_makedirs(path):
     if not dry_run:
@@ -512,13 +513,13 @@ class akrr_setup:
         log.info("Checking acces to DBs.")
         if dry_run:return
         
-        from . import akrrdb_check
-        if not akrrdb_check.akrrdb_check(mod_appkernel=not self.stand_alone,modw=not self.stand_alone):
+        from . import db_check
+        if not db_check.db_check(mod_appkernel=not self.stand_alone,modw=not self.stand_alone):
             exit(1)
     def generate_tables(self):
         log.info("Creating tables and populating them with initial values.")
         
-        from .akrrgenerate_tables import create_and_populate_mod_akrr_tables,create_and_populate_mod_appkernel_tables
+        from .generate_tables import create_and_populate_mod_akrr_tables,create_and_populate_mod_appkernel_tables
         
         create_and_populate_mod_akrr_tables(dry_run)
         create_and_populate_mod_appkernel_tables(dry_run)
