@@ -23,8 +23,8 @@ pp = pprint.PrettyPrinter(indent=4)
 
 
 
-from . import akrrcfg
-from . import akrrrestclient
+from akrr import akrrcfg
+from akrr import akrrrestclient
 
 import logging as log
 
@@ -696,16 +696,17 @@ echo "#'''+akrrHeader+''' [End]" >> $HOME/.bashrc
     os.remove(test_job_lock_filename)
 
 
-if __name__ == '__main__':
-    # TIME: to get to parsing
-    parser = argparse.ArgumentParser('Resource configuration validation and deployment')
+def cli_resource_deploy(parent_parser):
+    "deploy input files and scripts to resource"
+    parser = parent_parser.add_parser('deploy',
+        description=cli_resource_deploy.__doc__)
+    parser.add_argument(
+        '-r', '--resource', required=True, help="name of resource for validation and deployment'")
 
-    # SETUP: the arguments that we're going to support
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    parser.add_argument('resource', help="name of resource for validation and deployment'")
-    # PARSE: them arguments
+    def resource_deploy_handler(args):
+        return resource_deploy(args.resource,verbose=args.verbose)
+    parser.set_defaults(func=resource_deploy_handler)
     
-    args = parser.parse_args()
     
-    resource_deploy(args.resource,args.verbose)
+
     

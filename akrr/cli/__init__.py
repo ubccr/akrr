@@ -694,10 +694,12 @@ class cli:
         self.subparsers = self.root_parser.add_subparsers(title='commands')
         
         self.add_command_daemon()
-        self.add_command_resource()
         
         from .setup import cli_add_command as add_command_setup
         add_command_setup(self.subparsers)
+        
+        from .resource import cli_add_command as add_command_resource
+        add_command_resource(self.subparsers)
     
     def add_command_daemon(self): 
         """set up daemon command"""
@@ -730,38 +732,6 @@ class cli:
         
     
         parser.set_defaults(func=daemon_handler)
-    def add_command_resource(self): 
-        """resource handling"""
-        parser = self.subparsers.add_parser('resource',
-            description='resource manipulation')
-        subparsers = parser.add_subparsers(title="commands for resource")
-        
-        #add
-        add_resource_parser = subparsers.add_parser('add',
-            description='add new resource to AKRR')
-        
-        add_resource_parser.add_argument(
-            '--dry-run', action='store_true', help="Dry Run No files will actually be created")
-        add_resource_parser.add_argument(
-            '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
-        add_resource_parser.add_argument(
-            '--no-ping', action='store_true', help="do not run ping to test headnode name")
-        
-        def resource_add_handler(args):
-            from .resource_add import resource_add
-            return resource_add(args)
-        add_resource_parser.set_defaults(func=resource_add_handler)
-        
-        #deploy
-        deploy_resource_parser = subparsers.add_parser('deploy',
-            description='deploy input files and scripts to resource')
-        deploy_resource_parser.add_argument(
-            '-r', '--resource', required=True, help="name of resource for validation and deployment'")
-
-        def resource_deploy_handler(args):
-            from .resource_deploy import resource_deploy
-            return resource_deploy(args.resource,verbose=args.verbose)
-        deploy_resource_parser.set_defaults(func=resource_deploy_handler)
     
     def process_common_args(self,cli_args):
         if "verbose" in cli_args and cli_args.verbose:
