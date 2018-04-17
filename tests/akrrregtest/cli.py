@@ -23,8 +23,15 @@ class cli:
         
         self.add_command_build()
         self.add_command_install()
-        self.add_command_setup()
-        self.add_command_remove()
+        
+        from .setup import cli_add_command as add_command_setup
+        add_command_setup(self.subparsers)
+        
+        from .remove import cli_add_command as add_command_remove
+        add_command_remove(self.subparsers)
+        
+        from .resource import cli_add_command as add_command_resource
+        add_command_resource(self.subparsers)
     
     def process_common_args(self,cli_args):
         from . import cfg
@@ -47,57 +54,7 @@ class cli:
             if cfg.which_akrr!="akrr" and not os.path.exists(cfg.which_akrr):
                 log.critical("Path to akrr is incorrect. Can not find "+cfg.which_akrr)
         
-        cfg.set_default_value_for_unset_vars()
-    
-    def add_command_remove(self):
-        """remove AKRR installation"""
-        parser = self.subparsers.add_parser("remove", description=self.add_command_setup.__doc__)
-        
-        parser.add_argument("-a","--all", action="store_true", help="remove everything except sources")
-        parser.add_argument("--db-all", action="store_true", help="remove from DB all AKRR related entities.")
-        parser.add_argument("--db-akrr", action="store_true", help="remove from DB mod_akrr")
-        parser.add_argument("--db-appkernel", action="store_true", help="remove from DB mod_appkernel")
-        parser.add_argument("--db-user", action="store_true", help="remove user from DBs.")
-        parser.add_argument("--conf-dir", action="store_true", help="remove conf directory")
-        parser.add_argument("--log-dir", action="store_true", help="remove log directory")
-        parser.add_argument("--bashrc", action="store_true", help="remove akrr from bashrc")
-        parser.add_argument("--crontab", action="store_true", help="remove akrr from crontab")
-        parser.add_argument("--crontab-remove-mailto", action="store_true", help="remove mail to from crontab records")
-        
-        def runit(args):
-            if args.db_all:
-                args.db_akrr=True
-                args.db_appkernel=True
-                args.db_user=True
-            if args.all:
-                args.db_akrr=True
-                args.db_appkernel=True
-                args.db_user=True
-                args.conf_dir=True
-                args.log_dir=True
-                args.bashrc=True
-                args.crontab=True
-                args.crontab_remove_mailto=True
-            
-            kwarg=vars(args)
-            #remove not needed keys
-            kwarg.pop("func")
-            kwarg.pop("cfg")
-            kwarg.pop("dry_run")
-            kwarg.pop("verbose")
-            
-            kwarg.pop("db_all")
-            kwarg.pop("all")
-            
-            
-            from .util import print_importent_env
-            print_importent_env()
-            
-            from .remove import remove
-            remove(**kwarg)
-            
-        parser.set_defaults(func=runit)
-        
+        cfg.set_default_value_for_unset_vars()        
         
     def add_command_build(self):
         """commands for create redistributive, like rpm or else"""
@@ -115,21 +72,6 @@ class cli:
         
         def runit(args):
             log.warning("add_command_install is not implemented")
-        parser.set_defaults(func=runit)
-        
-    def add_command_setup(self):
-        """
-        Setup (initial configuration) of AKRR.
-        """
-        parser = self.subparsers.add_parser("setup", description=self.add_command_setup.__doc__)
-        
-        def runit(args):      
-            from .util import print_importent_env
-            print_importent_env()
-            
-            from .setup import setup
-            setup()
-            
         parser.set_defaults(func=runit)
     
     def run(self):

@@ -35,23 +35,8 @@ ak_db_passwd = xd_db_passwd
 
 #administrative database user under which the installation sql script should
 sql_root_name="root"
-sql_root_password="ccrub"
+sql_root_password=""
 
-
-class InstallationCfg:
-    """test installation configuration"""
-    def __init__(self, filename):
-        import inspect
-        wrongfieldsdict = {}
-        exec('wrongfieldsdict="wrongfieldsdict"', wrongfieldsdict)
-        wrongfields = list(wrongfieldsdict.keys())
-        
-        tmp={}
-        exec(compile(open(filename).read(), filename, 'exec'),tmp)
-        for key,val in tmp.items():
-            if inspect.ismodule(val):continue
-            if wrongfields.count(key)>0:continue
-            setattr(self, key, val)
 
 def loadCfg(cfgFilename):
     "load configuration for reg test from file"

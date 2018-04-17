@@ -9,7 +9,10 @@ from . import cfg
 
 from .cfg import dry_run
 
-from .db import get_akrr_db,get_ak_db,get_xd_db
+from .db import get_akrr_db,get_ak_db,get_xd_db,drop_db
+
+
+
 
 
 def _get_akrr_pids():
@@ -17,7 +20,7 @@ def _get_akrr_pids():
     
     try:
         output=subprocess.check_output(
-            """ ps --no-headers -U $USER -o "uname,pid,ppid,cmd"|grep -P 'akrr daemon start'|grep -v "grep" """,
+            """ ps --no-headers -U $USER -o "uname,pid,ppid,cmd"|grep -P 'akrr daemon'|grep -v "grep" """,
             shell=True)
         
         for l in output.splitlines():
@@ -100,36 +103,25 @@ def _remove_user():
             db.commit()
         if len(records)==0:
             log.info("There is no user with name %s on %s ",user,str(db))
+    for db,cur in dbs:
+        cur.close()
+        db.close()
 
         
-def _remove_db(db,cur,dbname):
-    "remove dbname database from db,cur connection"
-    cur.execute("SHOW databases")
-    databases=cur.fetchall()
-    if dbname in {v["Database"] for v in databases}:
-        log.info("Removing %s database from %s ",dbname,str(db))
-        msg="SQL(%s): "%(str(db),)
-        msg=msg+"DROP DATABASE IF EXISTS %s"%(dbname,)
-        
-        if dry_run:log.info("DRY RUN:\n"+msg)
-        else:log.dry_run(msg)
-                    
-        if dry_run: return
-        
-        #remove user
-        cur.execute("DROP DATABASE IF EXISTS %s"%(dbname,))
-        db.commit()
-    else:
-        log.info("Database %s is not present on %s ",dbname,str(db))
+
 
 
 def _remove_akrr_db():
     "remove mod_akrr"
-    _remove_db(*get_akrr_db(su=True),dbname=cfg.akrr_db_name)
+    drop_db(*get_akrr_db(su=True),dbname=cfg.akrr_db_name,dry_run=dry_run)
 
 def _remove_ak_db():
     "remove mod_appkernel"
-    _remove_db(*get_ak_db(su=True),dbname=cfg.ak_db_name)
+    drop_db(*get_ak_db(su=True),dbname=cfg.ak_db_name,dry_run=dry_run)
+    
+def _remove_modw_db():
+    "remove mod_appkernel"
+    drop_db(*get_xd_db(su=True),dbname=cfg.xd_db_name,dry_run=dry_run)
     
 def _remove_dir(path):
     if os.path.exists(path):
@@ -218,7 +210,7 @@ def _remove_from_crontab(remove_mailto=False):
         log.info("There was no AKRR records detected in crontab list")
 
 def remove(
-        db_akrr=False, db_appkernel=False, db_user=False, 
+        db_akrr=False, db_appkernel=False, db_modw=False, db_user=False, 
         conf_dir=False,log_dir=False,
         bashrc=False,
         crontab=False,crontab_remove_mailto=False,
@@ -227,21 +219,71 @@ def remove(
         "Removal options for removal:\n"\
         "    db_akrr: {}\n"\
         "    db_appkernel: {}\n"\
+        "    db_modw: {}\n"\
         "    db_user: {}\n"\
         "    conf_dir: {}\n"\
         "    log_dir: {}\n"\
         "    bashrc: {}\n"\
         "    crontab: {} , crontab_remove_mailto: {}\n"\
         "".format(
-            db_akrr,db_appkernel,db_user,conf_dir,log_dir,bashrc,crontab,crontab_remove_mailto)
+            db_akrr,db_appkernel,db_modw,db_user,conf_dir,log_dir,bashrc,crontab,crontab_remove_mailto)
     )
     _stop_akrr()
     
     if db_user:_remove_user()
     if db_akrr:_remove_akrr_db()
-    if db_akrr:_remove_ak_db()
+    if db_appkernel:_remove_ak_db()
+    if db_modw:_remove_modw_db()
     if conf_dir:_remove_conf_dir()
     if log_dir:_remove_log_dir()
     if bashrc:_remove_from_bashrc()
     if crontab:_remove_from_crontab(crontab_remove_mailto)
 
+def cli_add_command(parent_parser):
+    """remove AKRR installation"""
+    parser = parent_parser.add_parser("remove", description=cli_add_command.__doc__)
+    
+    parser.add_argument("-a","--all", action="store_true", help="remove everything except sources and modw")
+    parser.add_argument("--db-all", action="store_true", help="remove from DB all AKRR related entities (except modw).")
+    parser.add_argument("--db-akrr", action="store_true", help="remove from DB mod_akrr")
+    parser.add_argument("--db-appkernel", action="store_true", help="remove from DB mod_appkernel")
+    parser.add_argument("--db-user", action="store_true", help="remove user from DBs.")
+    parser.add_argument("--db-modw", action="store_true", help="remove from DB modw")
+    parser.add_argument("--conf-dir", action="store_true", help="remove conf directory")
+    parser.add_argument("--log-dir", action="store_true", help="remove log directory")
+    parser.add_argument("--bashrc", action="store_true", help="remove akrr from bashrc")
+    parser.add_argument("--crontab", action="store_true", help="remove akrr from crontab")
+    parser.add_argument("--crontab-remove-mailto", action="store_true", help="remove mail to from crontab records")
+    
+    def runit(args):
+        if args.db_all:
+            args.db_akrr=True
+            args.db_appkernel=True
+            args.db_user=True
+        if args.all:
+            args.db_akrr=True
+            args.db_appkernel=True
+            args.db_user=True
+            args.conf_dir=True
+            args.log_dir=True
+            args.bashrc=True
+            args.crontab=True
+            args.crontab_remove_mailto=True
+        
+        kwarg=vars(args)
+        #remove not needed keys
+        kwarg.pop("func")
+        kwarg.pop("cfg")
+        kwarg.pop("dry_run")
+        kwarg.pop("verbose")
+        
+        kwarg.pop("db_all")
+        kwarg.pop("all")
+        
+        
+        from .util import print_importent_env
+        print_importent_env()
+        
+        remove(**kwarg)
+        
+    parser.set_defaults(func=runit)
