@@ -13,7 +13,7 @@ import io
 import re
 import MySQLdb
 
-from akrr import akrrcfg
+from akrr import cfg
 from akrr import log
 from akrr.util import log_input
 
@@ -26,7 +26,7 @@ from . import resource_deploy
 ###############################################################################
 
 # global variable to hold the script arguments
-config_dir = akrrcfg.cfg_dir
+config_dir = cfg.cfg_dir
 resources_dir = os.path.join(config_dir, 'resources')
 
 resourceName=None
@@ -67,7 +67,7 @@ def retrieve_resources():
     Retrieve the applicable contents of the `modw`.`resourcefact` table.
     :return: a tuple of strings containing the name of the resources.
     """
-    con, cur = akrrcfg.getXDDB()
+    con, cur = cfg.getXDDB()
         
     if con==None:
         #i.e. AKRR running without modw
@@ -85,7 +85,7 @@ def create_resource_config(file_path, queuing_system):
     create resource file from template
     """
     
-    with open(os.path.join(akrrcfg.templates_dir, 'template.%s.conf'%queuing_system)) as fin:
+    with open(os.path.join(cfg.templates_dir, 'template.%s.conf' % queuing_system)) as fin:
         template=fin.read()
     fin.close()
     
@@ -140,7 +140,7 @@ def generate_resource_config(resource_id, resource_name, queuing_system):
         
     if not dry_run:    
         #add entry to mod_appkernel.resource
-        dbAK,curAK=akrrcfg.getAKDB(True)
+        dbAK,curAK=cfg.getAKDB(True)
             
         curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
         resource_in_AKDB = curAK.fetchall()
@@ -153,7 +153,7 @@ def generate_resource_config(resource_id, resource_name, queuing_system):
         resource_in_AKDB = curAK.fetchall()
         resource_id_in_AKDB=resource_in_AKDB[0]['resource_id']
         #add entry to mod_akrr.resource
-        db,cur=akrrcfg.getDB(True)
+        db,cur=cfg.getDB(True)
             
         cur.execute('''SELECT * FROM resources WHERE name=%s''', (resource_name,))
         resource_in_DB = cur.fetchall()
@@ -189,7 +189,7 @@ def validate_resource_name(resource_name):
     
     
     #check the entry in mod_appkernel
-    dbAK,curAK=akrrcfg.getAKDB(True)
+    dbAK,curAK=cfg.getAKDB(True)
         
     curAK.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
     resource_in_AKDB = curAK.fetchall()
@@ -198,7 +198,7 @@ def validate_resource_name(resource_name):
         return False
     
     #check the entry in mod_akrr
-    db,cur=akrrcfg.getDB(True)
+    db,cur=cfg.getDB(True)
         
     cur.execute('''SELECT * FROM resources WHERE name=%s''', (resource_name,))
     resource_in_DB = cur.fetchall()
@@ -238,9 +238,9 @@ def checkConnectionToResource():
         str_io=io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
-                    command='ls')
+            cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+                          PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
+                          command='ls')
             
             sys.stdout=sys.__stdout__
             sys.stderr=sys.__stderr__
@@ -282,9 +282,9 @@ def checkConnectionToResource():
                         print()
                         str_io=io.StringIO()
                         sys.stdout = sys.stderr = str_io
-                        akrrcfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
-                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
-                            command='')
+                        cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
+                                      PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
+                                      command='')
                     
                         sys.stdout=sys.__stdout__
                         sys.stderr=sys.__stderr__
@@ -444,9 +444,9 @@ def getRemoteAccessMethod():
                 if sshPrivateKeyPassword.strip()=="":
                     sshPrivateKeyPassword=None
                 #copy keys
-                akrrcfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
-                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
-                            command='')
+                cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName, password=sshPassword4thisSession,
+                              PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
+                              command='')
                 askForUserName=not askForUserName
                 continue
         
@@ -460,9 +460,9 @@ def getRemoteAccessMethod():
         
         str_io=io.StringIO()
         sys.stdout = sys.stderr = str_io
-        rsh=akrrcfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=sys.stdout,
-                    command=None)
+        rsh=cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+                          PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=sys.stdout,
+                          command=None)
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
         
@@ -486,8 +486,8 @@ def getFileSytemAccessPoints():
     global akrrData
     global appKerDir
     
-    homeDir=akrrcfg.sshCommand(rsh,"echo $HOME").strip()
-    scratchNetworkDir=akrrcfg.sshCommand(rsh,"echo $SCRATCH").strip()
+    homeDir=cfg.sshCommand(rsh, "echo $HOME").strip()
+    scratchNetworkDir=cfg.sshCommand(rsh, "echo $SCRATCH").strip()
     
     #localScratch
     localScratchDefault="/tmp"
@@ -506,7 +506,7 @@ def getFileSytemAccessPoints():
             log.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
             print()
             break
-    localScratch=akrrcfg.sshCommand(rsh,"echo %s"%(localScratch,)).strip()
+    localScratch=cfg.sshCommand(rsh, "echo %s" % (localScratch,)).strip()
     #networkScratch
     networkScratchDefault=""
     if scratchNetworkDir!="":
@@ -537,7 +537,7 @@ def getFileSytemAccessPoints():
             #log.warning('network scratch might be have a different location on head node, so if it is by design it is ok')
             #print
             break
-    networkScratch=akrrcfg.sshCommand(rsh,"echo %s"%(networkScratch,)).strip()
+    networkScratch=cfg.sshCommand(rsh, "echo %s" % (networkScratch,)).strip()
     #appKerDir
     appKerDirDefault=os.path.join(homeDir,"appker",resourceName)   
     while True:                    
@@ -552,7 +552,7 @@ def getFileSytemAccessPoints():
             break
         else:
             log.error(msg)
-    appKerDir=akrrcfg.sshCommand(rsh,"echo %s"%(appKerDir,)).strip()
+    appKerDir=cfg.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
     #akrrData
     akrrDataDefault=os.path.join(homeDir,"akrrdata",resourceName)
     if networkScratchVisible:
@@ -569,7 +569,7 @@ def getFileSytemAccessPoints():
             break
         else:
             log.error(msg) 
-    akrrData=akrrcfg.sshCommand(rsh,"echo %s"%(akrrData,)).strip()
+    akrrData=cfg.sshCommand(rsh, "echo %s" % (akrrData,)).strip()
 
 def resource_config(config):
     """add resource, config should have following members
@@ -606,7 +606,7 @@ def resource_config(config):
     log.info("Retrieving Resources from XDMoD Database...")
     # RETRIEVE: the resources from XDMoD
     resources = retrieve_resources()
-    log.info(
+    #log.info(
     print("Found following resources from XDMoD Database:")
     print()
     print("resource_id  name")
@@ -683,23 +683,3 @@ def resource_config(config):
     log.info('    and move to resource validation and deployment step.')
     log.info('    i.e. execute:')
     log.info('        akrr resource deploy -r '+resource_name)
-
-
-def cli_resource_config(parent_parser):
-    "configurate new resource to AKRR"
-    parser = parent_parser.add_parser('config',
-        description=cli_resource_config.__doc__)
-    
-    parser.add_argument(
-        '--dry-run', action='store_true', help="Dsdfdry Run No files will actually be created")
-    parser.add_argument(
-        '--minimalistic', action='store_true', help="Minimize questions number, configuration files will be edited manually")
-    parser.add_argument(
-        '--no-ping', action='store_true', help="do not run ping to test headnode name")
-    
-    def handler(args):
-        
-        return resource_config(args)
-    
-    parser.set_defaults(func=handler)
-    

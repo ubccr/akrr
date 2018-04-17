@@ -97,12 +97,12 @@ def check_r_db(connection_func, pre_msg, post_msg):
     return success
 
 def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
-    from akrr import akrrcfg
+    from akrr import cfg
     
     overall_success = True
 
     # CHECK: the akrr db
-    akrr_ok = check_rw_db(akrrcfg.getDB,
+    akrr_ok = check_rw_db(cfg.getDB,
                       "Checking 'mod_akrr' Database / User privileges...",
                       "'mod_akrr' Database check complete - Status: %s")
 
@@ -110,7 +110,7 @@ def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
         overall_success = overall_success and akrr_ok
 
     # Check: the app_kernel db
-    app_kernel_ok = check_rw_db(akrrcfg.getAKDB,
+    app_kernel_ok = check_rw_db(cfg.getAKDB,
                              "Checking 'mod_appkernel' Database / User privileges...",
                              "'mod_appkernel' Database check complete - Status: %s")
 
@@ -118,7 +118,7 @@ def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
         overall_success = overall_success and app_kernel_ok
         
     # CHECK: the XDMoD db
-    xdmod_ok = check_r_db(akrrcfg.getXDDB,
+    xdmod_ok = check_r_db(cfg.getXDDB,
                           "Checking 'modw' Database / User privileges...",
                           "'modw' Database check complete - Status: %s")
     

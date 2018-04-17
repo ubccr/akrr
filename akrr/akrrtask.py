@@ -1,4 +1,4 @@
-from . import akrrcfg
+from . import cfg
 import os
 import sys
 #namdSizes
@@ -13,12 +13,12 @@ from .akrrtaskbundle import akrrTaskHandlerBundle
 
 def GetLocalTaskDir(resourceName,appName,timeStamp,TaskIsActive=True):
     if TaskIsActive:
-        taskDir=os.path.join(akrrcfg.data_dir,resourceName,appName,timeStamp)
+        taskDir=os.path.join(cfg.data_dir, resourceName, appName, timeStamp)
         if not os.path.isdir(taskDir):
                 raise IOError("Directory %s does not exist or is not directory."%(taskDir))
         return taskDir
     else:
-        taskDir=os.path.join(akrrcfg.completed_tasks_dir,resourceName,appName,timeStamp)
+        taskDir=os.path.join(cfg.completed_tasks_dir, resourceName, appName, timeStamp)
         if not os.path.isdir(taskDir):
                 raise IOError("Directory %s does not exist or is not directory."%(taskDir))
         return taskDir
@@ -77,7 +77,7 @@ def akrrGetNewTaskHandler(task_id,resourceName,appName,resourceParam,appParam,ta
         return akrrTaskHandlerAppKer(task_id,resourceName,appName,resourceParam,appParam,task_param,timeToSubmit,repetition,timeStamp)
 def akrrGetTaskHandler(resourceName,appName,timeStamp):
     """return instance of akrrTaskHandler"""
-    procTaskDir=os.path.join(akrrcfg.data_dir,resourceName,appName,timeStamp,'proc')
+    procTaskDir=os.path.join(cfg.data_dir, resourceName, appName, timeStamp, 'proc')
     LastPickledState=-1
     for f in os.listdir(procTaskDir):
         m=re.match("(\d+).st",f,0)
@@ -123,8 +123,8 @@ def akrrGetTaskHandlerFromPkl(picklefilename):
     th.oldstatus=copy.deepcopy(th.status)
     th.oldToDoNextString=copy.deepcopy(th.ToDoNextString)
     
-    th.resource = akrrcfg.FindResourceByName(th.resourceName)
-    th.app = akrrcfg.FindAppByName(th.appName)
+    th.resource = cfg.FindResourceByName(th.resourceName)
+    th.app = cfg.FindAppByName(th.appName)
     
     return th
 def akrrDumpTaskHandler(th):
@@ -137,7 +137,7 @@ def akrrDumpTaskHandler(th):
     th.app = None
     
     fout=open(picklefilename,"wb")
-    pickle.dump(th,fout,akrrcfg.task_pickling_protocol)
+    pickle.dump(th, fout, cfg.task_pickling_protocol)
     fout.close()
     
     print("\nSaved pickeled task handler to:\n\t%s"%(picklefilename))
@@ -176,7 +176,7 @@ if __name__ == "__main__":
         print("wrong number of arguments")
         exit()
     
-    akrrcfg.PrintOutResourceAndAppSummary()
+    cfg.PrintOutResourceAndAppSummary()
     
     if sys.argv[1]=="start":
         if len(sys.argv)<5:

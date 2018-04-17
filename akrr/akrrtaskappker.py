@@ -1,4 +1,4 @@
-from . import akrrcfg
+from . import cfg
 import os
 import sys
 #namdSizes
@@ -28,7 +28,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         #get walltime from DB
         dbdefaults={}
         try:
-            db,cur=akrrcfg.getDB()
+            db,cur=cfg.getDB()
             
             cur.execute('''SELECT resource,app,resource_param,app_param FROM ACTIVETASKS
             WHERE task_id=%s ;''',(self.task_id,))
@@ -74,7 +74,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                         autoWalltimeLimitOverhead=batchvars['autoWalltimeLimitOverhead']+1.0
                     #query last 20 executions of this appkernel on that resource with that node count
                 
-                    db,cur=akrrcfg.getDB(True)
+                    db,cur=cfg.getDB(True)
                     
                     cur.execute('''SELECT resource,reporter,reporternickname,collected,status,walltime FROM akrr_xdmod_instanceinfo
                         WHERE  `resource`=%s AND `reporternickname` =  %s
@@ -146,10 +146,10 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 
             
             #process templates
-            batchvars['akrrCommonCommands']=akrrcfg.formatRecursively(batchvars['akrrCommonCommandsTemplate'],batchvars,keepDoubleBrakets=True)
+            batchvars['akrrCommonCommands']=cfg.formatRecursively(batchvars['akrrCommonCommandsTemplate'], batchvars, keepDoubleBrakets=True)
             #batchvars['akrrCommonTests']=akrrcfg.formatRecursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
             #batchvars['akrrStartAppKer']=batchvars['akrrStartAppKerTemplate'].format(**batchvars)
-            batchvars['akrrCommonCleanup']=akrrcfg.formatRecursively(batchvars['akrrCommonCleanupTemplate'],batchvars,keepDoubleBrakets=True)
+            batchvars['akrrCommonCleanup']=cfg.formatRecursively(batchvars['akrrCommonCleanupTemplate'], batchvars, keepDoubleBrakets=True)
             
             #specially for IOR request two nodes for single node benchmark, one for read and one for write
             if batchvars['requestTwoNodesForOneNodeAppKer']==True and batchvars['akrrNNodes']==1 and 'batchJobHeaderTemplate' in batchvars:
@@ -158,7 +158,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 batchvars2['akrrNNodes']=2*batchvars['akrrNNodes']
                 batchvars2['akrrNCoresToBorder']=2*batchvars['akrrNCoresToBorder']
                 batchvars2['akrrPPN4NodesOrCores4OneNode']=batchvars['akrrPPN']
-                batchvars['batchJobHeaderTemplate']=akrrcfg.formatRecursively(batchvars2['batchJobHeaderTemplate'],batchvars2)
+                batchvars['batchJobHeaderTemplate']=cfg.formatRecursively(batchvars2['batchJobHeaderTemplate'], batchvars2)
                 pass
             
             #do parameters adjustment
@@ -166,7 +166,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 batchvars['process_params'](batchvars)
             
             #generate job script
-            jobScript=akrrcfg.formatRecursively(self.resource["batchJobTemplate"],batchvars)
+            jobScript=cfg.formatRecursively(self.resource["batchJobTemplate"], batchvars)
             jobScriptFullPath=os.path.join(self.taskDir,"jobfiles",self.JobScriptName)
             fout=open(jobScriptFullPath,"w")
             fout.write(jobScript)
@@ -174,7 +174,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         except Exception as e:
             self.status="ERROR: Can not created batch job script"
             self.statusinfo=traceback.format_exc()
-            akrrcfg.printException(self.status)
+            cfg.printException(self.status)
             raise e
     def CreateBatchJobScriptAndSubmitIt(self,doNotSubmitToQueue=False):
         self.JobScriptName=self.GetJobScriptName(self.appName)
@@ -184,13 +184,13 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         
         sh=None
         try:
-            sh=akrrcfg.sshResource(self.resource)
+            sh=cfg.sshResource(self.resource)
             #Create remote directories if needed
             def CheckAndCreateDir(self,sh,d):
                 cmd="if [ ! -d  \"%s\" ]\n then mkdir \"%s\"\n fi"%(d,d)
-                akrrcfg.sshCommand(sh,cmd)
+                cfg.sshCommand(sh, cmd)
                 cmd="if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi"%(d)
-                msg=akrrcfg.sshCommand(sh,cmd)
+                msg=cfg.sshCommand(sh, cmd)
                 if msg.find("DOESNOTEXIST")>=0:
                     raise akrrError("Can not create directory %s on %s."%(d,self.resource['name']))
             #akrrdata
@@ -202,16 +202,16 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             #CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))
             
             #cd to remoteTaskDir
-            akrrcfg.sshCommand(sh,"cd %s"%(self.remoteTaskDir))
+            cfg.sshCommand(sh, "cd %s" % (self.remoteTaskDir))
             
             #GenerateBatchJobScript
             self.GenerateBatchJobScript()
             
-            msg=akrrcfg.scpToResource(self.resource,os.path.join(self.taskDir,"jobfiles",self.JobScriptName),os.path.join(self.remoteTaskDir))
+            msg=cfg.scpToResource(self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName), os.path.join(self.remoteTaskDir))
             if doNotSubmitToQueue:
                 return
             ##akrrcfg.sshCommandNoReturn(sh,"cat > %s << EOF1234567\n%s\nEOF1234567\n"%(self.JobScriptName,jobScript))
-            akrrcfg.sshCommand(sh,"cat %s "%(self.JobScriptName))
+            cfg.sshCommand(sh, "cat %s " % (self.JobScriptName))
             
             #send to queue
             from string import Template
@@ -219,7 +219,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             if not 'masterTaskID' in self.taskParam:
                 #i.e. submit to queue only if task is independent
                 sendToQueue=Template(submitCommands[self.resource['batchScheduler']]).substitute(scriptPath=self.JobScriptName)
-                msg=akrrcfg.sshCommand(sh,sendToQueue)
+                msg=cfg.sshCommand(sh, sendToQueue)
                 matchObj=re.search(jidExtractPatterns[self.resource['batchScheduler']],msg,re.M|re.S)
                 JobIDstr=matchObj.group(1)
                 
@@ -233,11 +233,11 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 
                 #report
                 if self.resource["gateway_reporting"]:
-                    akrrcfg.sshCommand(sh,"module load gateway-usage-reporting")
-                    akrrcfg.sshCommand(sh,r'gateway_submit_attributes -gateway_user '+self.resource["gateway_user"]+r''' -submit_time "`date '+%F %T %:z'`" -jobid '''+JobIDstr)
+                    cfg.sshCommand(sh, "module load gateway-usage-reporting")
+                    cfg.sshCommand(sh, r'gateway_submit_attributes -gateway_user ' + self.resource["gateway_user"] + r''' -submit_time "`date '+%F %T %:z'`" -jobid ''' + JobIDstr)
                     
             
-            akrrcfg.sshCommand(sh,"echo %d > job.id"%(JobID))
+            cfg.sshCommand(sh, "echo %d > job.id" % (JobID))
             
             self.RemoteJobID=JobID
             self.TimeJobSubmetedToRemoteQueue=datetime.datetime.today()
@@ -249,10 +249,10 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             sh=None
             print("\nRemoteJobID=",self.RemoteJobID)
             print("copying files from remote machine")
-            msg=akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
+            msg=cfg.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"), os.path.join(self.taskDir, "jobfiles"), "-r")
             
             #update DB time_submitted_to_queue
-            db,cur=akrrcfg.getDB()
+            db,cur=cfg.getDB()
             
             cur.execute('''UPDATE ACTIVETASKS
             SET time_submitted_to_queue=%s
@@ -286,10 +286,10 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 del sh
             self.status="ERROR Can not created batch job script and submit it to remote queue"
             self.statusinfo=traceback.format_exc()
-            if akrrcfg.max_fails_to_submit_to_the_queue>=0:
+            if cfg.max_fails_to_submit_to_the_queue>=0:
                 if hasattr(self, "FailsToSubmitToTheQueue"):
                     self.FailsToSubmitToTheQueue+=1
-                    if (self.FailsToSubmitToTheQueue>akrrcfg.max_fails_to_submit_to_the_queue or
+                    if (self.FailsToSubmitToTheQueue>cfg.max_fails_to_submit_to_the_queue or
                             (self.taskParam['test_run']==True and self.FailsToSubmitToTheQueue>=2)):
                         #Stop execution of the task and submit results to db
                         self.ToDoNextString="PushToDB"
@@ -301,21 +301,21 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             else:
                 self.FatalErrorsCount+=1
             
-            akrrcfg.printException(self.status)
-            return akrrcfg.repeat_after_fails_to_submit_to_the_queue
+            cfg.printException(self.status)
+            return cfg.repeat_after_fails_to_submit_to_the_queue
     def CheckTheJobOnRemoteMachine(self):
         sh=None
         try:
             print("### Checking the job status on remote machine")
             from string import Template
             
-            sh=akrrcfg.sshResource(self.resource)
+            sh=cfg.sshResource(self.resource)
             
             #if it is subtask get master task id from job.id file (it should be replaced by master task)
             if self.RemoteJobID==0:
                 try:
                     print(self.remoteTaskDir)
-                    self.RemoteJobID=int(akrrcfg.sshCommand(sh,"cat %s"%(os.path.join(self.remoteTaskDir,"job.id"))))
+                    self.RemoteJobID=int(cfg.sshCommand(sh, "cat %s" % (os.path.join(self.remoteTaskDir, "job.id"))))
                 except:
                     self.RemoteJobID=0
             
@@ -324,7 +324,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             rege=Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
             
             
-            msg=akrrcfg.sshCommand(sh,cmd)
+            msg=cfg.sshCommand(sh, cmd)
             sh.sendline("exit")
             sh.close(force=True)
             del sh
@@ -335,17 +335,17 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             matchObj= wE[1](rege,msg,wE[3])
             if matchObj:
                 print("Still in queue. Either waiting or running")
-                if datetime.datetime.today()-self.TimeJobSubmetedToRemoteQueue>self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue):
+                if datetime.datetime.today()-self.TimeJobSubmetedToRemoteQueue>self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue):
                     print("ERROR:")
-                    print("Job exceeds the maximal time in queue (%s). And will be terminated."%(str(self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue))))
+                    print("Job exceeds the maximal time in queue (%s). And will be terminated." % (str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue))))
                     print("Removing job from remote queue.")
                     self.Terminate()
                     print("copying files from remote machine")
-                    akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
+                    cfg.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"), os.path.join(self.taskDir, "jobfiles"), "-r")
                     #print msg
                     print("Deleting all files from remote machine")
                     self.DeleteRemoteFolder()
-                    self.status="ERROR: Job exceeds the maximal time in queue (%s) and was terminated."%(str(self.taskParam.get('MaxTimeInQueue',akrrcfg.max_time_in_queue)))
+                    self.status="ERROR: Job exceeds the maximal time in queue (%s) and was terminated."%(str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue)))
                     self.statusinfo="\nLast Status report:\n"+msg
                     self.ReportFormat="Error"
                     self.ToDoNextString="ProccessResults"
@@ -358,7 +358,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             else:
                 print("Not in queue. Either exited with error or executed successfully.")
                 print("copying files from remote machine")
-                msg=akrrcfg.scpFromResource(self.resource,os.path.join(self.remoteTaskDir,"*"),os.path.join(self.taskDir,"jobfiles"),"-r")
+                msg=cfg.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"), os.path.join(self.taskDir, "jobfiles"), "-r")
                 #print msg
                 print("Deleting all files from remote machine")
                 self.DeleteRemoteFolder()
@@ -377,7 +377,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status="ERROR Can not check the status of the job on remote resource"
             self.statusinfo=traceback.format_exc()
             self.FatalErrorsCount+=1
-            akrrcfg.printException(self.status)
+            cfg.printException(self.status)
             return active_task_default_attempt_repeat
         self.status="CheckTheJobOnRemoteMachine"
         self.statusinfo="CheckTheJobOnRemoteMachine"
@@ -451,7 +451,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             (batchJobDir,stdoutFile,stderrFile,appstdoutFile,taskexeclogFile)=self.GetResultFiles(raiseError=True)
             
             #get the performance data
-            parserfilename=os.path.join(akrrcfg.akrr_mod_dir,"appkernelsparsers",self.app['parser'])
+            parserfilename=os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
             import imp
             with open(parserfilename, 'rb') as fp:
                 thisAppKerParser = imp.load_module(
@@ -492,7 +492,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status="ERROR: Error happens during processing of output."
             self.statusinfo=traceback.format_exc()
             self.FatalErrorsCount+=1
-            akrrcfg.printException(self.status)
+            cfg.printException(self.status)
             self.ToDoNextString="PushToDB"
             self.WriteErrorXML(resultFile)
             return  datetime.timedelta(seconds=3)
@@ -572,13 +572,13 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status="ERROR: Error happens during processing of output."
             self.statusinfo=traceback.format_exc()
             self.FatalErrorsCount+=1
-            akrrcfg.printException(self.status)
+            cfg.printException(self.status)
             self.ToDoNextString="PushToDB"
             self.WriteErrorXML(resultFile)
             return  datetime.timedelta(seconds=3)
     def PushToDB(self,Verbose=True):
         
-        db,cur=akrrcfg.getExportDB()
+        db,cur=cfg.getExportDB()
         try:
             
             time_finished=None
@@ -604,13 +604,13 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 self.PushToDBAttemps=1
                 
             
-            if self.PushToDBAttemps <= akrrcfg.export_db_max_repeat_attempts:
-                akrrcfg.printException("AKRR server was not able to push to external DB.")
+            if self.PushToDBAttemps <= cfg.export_db_max_repeat_attempts:
+                cfg.printException("AKRR server was not able to push to external DB.")
                 self.status="ERROR: Can not push to external DB, will try again"
                 self.statusinfo=traceback.format_exc()
-                return akrrcfg.export_db_repeat_attempt_in
+                return cfg.export_db_repeat_attempt_in
             else:
-                akrrcfg.printException("AKRR server was not able to push to external DB will only update local.")
+                cfg.printException("AKRR server was not able to push to external DB will only update local.")
                 self.status="ERROR: Can not push to external DB, will try again"
                 self.statusinfo=traceback.format_exc()
                 self.ToDoNextString="IamDone"
@@ -685,7 +685,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             executionhost=self.resource.get('__regexp__',self.resourceName)
             reporter=self.appName
             #reporternickname="%s.%d"%(self.appName,self.resourceParam['ncpus'])
-            reporternickname=akrrcfg.replaceATvarAT(self.app['nickname'],[self.resource,self.app,self.resourceParam, self.appParam])
+            reporternickname=cfg.replaceATvarAT(self.app['nickname'], [self.resource, self.app, self.resourceParam, self.appParam])
             
             if hasattr(self,"RemoteJobID"):job_id=self.RemoteJobID
         
@@ -818,9 +818,9 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """
-        message=akrrcfg.CleanUnicode(message)
-        stderr=akrrcfg.CleanUnicode(stderr)
-        body=akrrcfg.CleanUnicode(body)
+        message=cfg.CleanUnicode(message)
+        stderr=cfg.CleanUnicode(stderr)
+        body=cfg.CleanUnicode(body)
         
         #Get Nodes
         nodes=None
@@ -921,10 +921,10 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                 taskexeclogFileContent+="\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
         
         
-        appstdoutFileContent=akrrcfg.CleanUnicode(appstdoutFileContent)
-        stderrFileContent=akrrcfg.CleanUnicode(stderrFileContent)
-        stdoutFileContent=akrrcfg.CleanUnicode(stdoutFileContent)
-        taskexeclogFileContent=akrrcfg.CleanUnicode(taskexeclogFileContent)
+        appstdoutFileContent=cfg.CleanUnicode(appstdoutFileContent)
+        stderrFileContent=cfg.CleanUnicode(stderrFileContent)
+        stdoutFileContent=cfg.CleanUnicode(stdoutFileContent)
+        taskexeclogFileContent=cfg.CleanUnicode(taskexeclogFileContent)
         
         if len(raw)>0: #.i.e. updating existing entry
             print("Updating",raw)
@@ -966,7 +966,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             from string import Template
             kE=killExprs[self.resource['batchScheduler']]
             cmd =Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
-            msg=akrrcfg.sshResource(self.resource,cmd)
+            msg=cfg.sshResource(self.resource, cmd)
             print(msg)
             self.status="Task is probably removed from remote queue."
             self.statusinfo=copy.deepcopy(msg)

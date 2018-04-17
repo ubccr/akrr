@@ -1,4 +1,4 @@
-from . import akrrcfg
+from . import cfg
 from . import akrrtask
 
 import time
@@ -31,7 +31,7 @@ class akrrScheduler:
         #rest api process
         self.restapi_proc=None
         #load Scheduled Tasks DB
-        self.dbCon,self.dbCur=akrrcfg.getDB()
+        self.dbCon,self.dbCur=cfg.getDB()
             
         #Sanitizing
         if not AddingNewTasks:
@@ -40,14 +40,14 @@ class akrrScheduler:
                     WHERE task_lock>0 ;''')
             self.dbCon.commit()
         #
-        self.maxTaskHandlers=akrrcfg.max_task_handlers
-        self.max_wall_time_for_task_handlers=akrrcfg.max_wall_time_for_task_handlers
+        self.maxTaskHandlers=cfg.max_task_handlers
+        self.max_wall_time_for_task_handlers=cfg.max_wall_time_for_task_handlers
         self.Workers=[]
         self.Results={}
         self.ResultsQueue=multiprocessing.Queue()
-        self.repeat_after_forcible_termination=akrrcfg.repeat_after_forcible_termination
+        self.repeat_after_forcible_termination=cfg.repeat_after_forcible_termination
     #    self.FatalErrorsForTask={}
-        self.max_fatal_errors_for_task=akrrcfg.max_fatal_errors_for_task
+        self.max_fatal_errors_for_task=cfg.max_fatal_errors_for_task
         
     def __del__(self):
         if self.dbCon!=None:
@@ -138,7 +138,7 @@ class akrrScheduler:
                     "Task parameters: %s\n\t"%task_param+
                     "Parent task id: %s"%parent_task_id)
                 
-                if akrrcfg.FindResourceByName(resource).get('active',True)==False:
+                if cfg.FindResourceByName(resource).get('active', True)==False:
                     raise akrrError("%s is marked as inactive in AKRR"%(self.resourceName))
                 
                 #Check If resource is on maintenance
@@ -255,7 +255,7 @@ class akrrScheduler:
             try:
                 #Redirect logging
                 taskDir=akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)
-                if akrrcfg.redirect_task_processing_to_log_file:
+                if cfg.redirect_task_processing_to_log_file:
                     akrrtask.RedirectStdoutToLog(os.path.join(taskDir,'proc','log'))
                 
                 #Do the task
@@ -284,7 +284,7 @@ class akrrScheduler:
                 })
                 
                 #Redirect logging back
-                if akrrcfg.redirect_task_processing_to_log_file:
+                if cfg.redirect_task_processing_to_log_file:
                     akrrtask.RedirectStdoutBack()
                 
 
@@ -507,8 +507,8 @@ class akrrScheduler:
                 self.dbCon.commit()
                 
                 #now the last thing moving the directory
-                taskdir=os.path.join(akrrcfg.data_dir,resource,app,datetimestamp)
-                comptasksdir=os.path.join(akrrcfg.completed_tasks_dir,resource,app)
+                taskdir=os.path.join(cfg.data_dir, resource, app, datetimestamp)
+                comptasksdir=os.path.join(cfg.completed_tasks_dir, resource, app)
                 log.info(
                     "Task is completed. Moving its' working directory\n"+
                     "\tfrom %s"%(taskdir)+"\n"
@@ -540,14 +540,14 @@ class akrrScheduler:
         self.bRunActiveTasks_CheckTheStep=True
         self.LastOpSignal="Run"
         
-        if os.path.isfile(os.path.join(akrrcfg.data_dir,"akrr.pid")):
+        if os.path.isfile(os.path.join(cfg.data_dir, "akrr.pid")):
             raise IOError("""File %s exists meaning that another AKRR Scheduler
             process is already working with this directory.
-            or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid")))
+            or the previous one had exited incorrectly.""" % (os.path.join(cfg.data_dir, "akrr.pid")))
         
         log.info("AKRR Scheduler PID is %s."%os.getpid())
         
-        with open(os.path.join(akrrcfg.data_dir,"akrr.pid"),"wt") as fout:
+        with open(os.path.join(cfg.data_dir, "akrr.pid"), "wt") as fout:
             fout.write("%s\n"%os.getpid())
         fout.close()
         
@@ -591,8 +591,8 @@ class akrrScheduler:
         signal.signal(signal.SIGTERM, signal.SIG_DFL)
         signal.signal(signal.SIGINT, signal.SIG_DFL)
         
-        if os.path.isfile(os.path.join(akrrcfg.data_dir,"akrr.pid")):
-            os.remove(os.path.join(akrrcfg.data_dir,"akrr.pid"))
+        if os.path.isfile(os.path.join(cfg.data_dir, "akrr.pid")):
+            os.remove(os.path.join(cfg.data_dir, "akrr.pid"))
     def runUpdateExternalDB(self):
         # @todo is it happence in task now?
         return None
@@ -600,7 +600,7 @@ class akrrScheduler:
             self.dbCur.execute('''SELECT task_id,statusupdatetime,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,resource_param,app_param,task_param,group_id 
                         FROM ACTIVETASKS;''')
             
-            db,cur=akrrcfg.getExportDB()
+            db,cur=cfg.getExportDB()
             change=False
             
             for row in self.dbCur.fetchall():
@@ -641,7 +641,7 @@ class akrrScheduler:
                 time.sleep(10)
             
             log.info("Trying to reconnect to DB.")
-            self.dbCon,self.dbCur=akrrcfg.getDB()
+            self.dbCon,self.dbCur=cfg.getDB()
             attemptsToReconnect+=1
             
     def runLoop(self):
@@ -683,7 +683,7 @@ class akrrScheduler:
                         return
                     time.sleep(0.05)
                 else:
-                    time.sleep(akrrcfg.scheduled_tasks_loop_sleep_time)
+                    time.sleep(cfg.scheduled_tasks_loop_sleep_time)
             except Exception:
                 log.exception("Exception occurred in main loop!")
                 numBigFails+=1;
@@ -858,7 +858,7 @@ class akrrScheduler:
         
         tasks=self.dbCur.fetchall()
         
-        db,cur=akrrcfg.getExportDB()
+        db,cur=cfg.getExportDB()
         if Verbose: print("#"*120)
         for row in tasks:
             (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
@@ -887,7 +887,7 @@ class akrrScheduler:
                 picklefilename=os.path.join(procTaskDir,thFN)
                 th=akrrtask.akrrGetTaskHandlerFromPkl(picklefilename)
                 th.statefilename=thFN
-                th.SetDirNames(akrrcfg.completed_tasks_dir)
+                th.SetDirNames(cfg.completed_tasks_dir)
                 
                 
                 ths.append(th)
@@ -973,7 +973,7 @@ class akrrScheduler:
                 picklefilename=os.path.join(procTaskDir,thFN)
                 th=akrrtask.akrrGetTaskHandlerFromPkl(picklefilename)
                 th.statefilename=thFN
-                th.SetDirNames(akrrcfg.completed_tasks_dir)
+                th.SetDirNames(cfg.completed_tasks_dir)
                 
                 resultFile=os.path.join(th.taskDir,"result.xml")
                 jobfilesDir=os.path.join(th.taskDir,"jobfiles")
@@ -1178,7 +1178,7 @@ class akrrScheduler:
                 picklefilename=os.path.join(procTaskDir,thFN)
                 th=akrrtask.akrrGetTaskHandlerFromPkl(picklefilename)
                 th.statefilename=thFN
-                th.SetDirNames(akrrcfg.completed_tasks_dir)
+                th.SetDirNames(cfg.completed_tasks_dir)
                 
                 resultFile=os.path.join(th.taskDir,"result.xml")
                 jobfilesDir=os.path.join(th.taskDir,"jobfiles")
@@ -1368,7 +1368,7 @@ class akrrScheduler:
         #determine repeatIn
         repeatInFin=None
         if repeat_in!=None:
-            repeatInFin=akrrcfg.getFormatedRepeatIn(repeat_in)
+            repeatInFin=cfg.getFormatedRepeatIn(repeat_in)
             if repeatInFin==None:
                 raise IOError("Incorrect data-time format for repeating period")
             #check the repeat values
@@ -1381,9 +1381,9 @@ class akrrScheduler:
                     raise IOError("If repeating period is calendar months or years then increment in day/hours/mins/secs should be zero.")
                     
         #check if resource exists
-        akrrcfg.FindResourceByName(resource)
+        cfg.FindResourceByName(resource)
         #check if app exists
-        akrrcfg.FindAppByName(app)
+        cfg.FindAppByName(app)
         #determine repeatIn
         log.info(
             "New task:\n\t"+
@@ -1430,7 +1430,7 @@ def akrrValidateTaskVariableValue(k,v):
             #i.e. no repetition
             return None
         v=v.strip().strip('"').strip("'")
-        v=akrrcfg.getFormatedRepeatIn(v)
+        v=cfg.getFormatedRepeatIn(v)
         if v!=None:
             match = re.match( r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', v, 0)
             if not match:
@@ -1444,7 +1444,7 @@ def akrrValidateTaskVariableValue(k,v):
             raise IOError('Unknown format for repeat_in')
     if k=="time_to_start":
         v=v.strip().strip('"').strip("'")
-        v=akrrcfg.getFormatedTimeToStart(v)
+        v=cfg.getFormatedTimeToStart(v)
         if v==None:
             raise IOError('Unknown format for time_to_start')
     
@@ -1465,19 +1465,19 @@ def akrrValidateTaskVariableValue(k,v):
             raise IOError("incorrect format for resource_param['nnodes'] must be integer")
     if k=="resource":
         try:
-            akrrcfg.FindResourceByName(v)
+            cfg.FindResourceByName(v)
         except Exception:
             log.exception("Exception occurred during resource record searching.")
             raise IOError('Unknown resource: '+v)
     if k=="app":
         try:
-            akrrcfg.FindAppByName(v)
+            cfg.FindAppByName(v)
         except Exception:
             log.exception("Exception occurred during app kernel; record searching.")
             raise IOError('Unknown application kernel: '+v)
     if k=="next_check_time":
         v=v.strip().strip('"').strip("'")
-        v=akrrcfg.getFormatedTimeToStart(v)
+        v=cfg.getFormatedTimeToStart(v)
         if v==None:
             raise IOError('Unknown format for next_check_time')
     return v
@@ -1499,7 +1499,7 @@ def akrrDeleteTask(task_id,removeFromScheduledQueue=True,removeFromActiveQueue=T
     removeFromScheduledQueue=True and removeFromActiveQueue=True and removeDerivedTask=True
     remove this and all derivative tasks from scheduled or active queue
     """
-    db,cur=akrrcfg.getDB(True)
+    db,cur=cfg.getDB(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''',(task_id,))
     possible_task=cur.fetchall()
@@ -1612,7 +1612,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     """
     print("Akrr Update Task Parameters: %r" % (task_id, ))
 
-    db,cur=akrrcfg.getDB(True)
+    db,cur=cfg.getDB(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''',(task_id,))
     possible_task=cur.fetchall()
@@ -1716,10 +1716,10 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
 def akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=False):
     """Return the PID of AKRR server"""
     pid=None
-    if os.path.isfile(os.path.join(akrrcfg.data_dir,"akrr.pid")):
+    if os.path.isfile(os.path.join(cfg.data_dir, "akrr.pid")):
         #print "Read process pid from",os.path.join(akrr.data_dir,"akrr.pid")
         
-        fin = open(os.path.join(akrrcfg.data_dir,"akrr.pid"),"r")
+        fin = open(os.path.join(cfg.data_dir, "akrr.pid"), "r")
         l=fin.readlines()
         pid=int(l[0])
         fin.close()
@@ -1742,13 +1742,13 @@ def akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=False):
         if bDeletePIDFileIfPIDdoesNotExist:
             log.warning("""WARNING:File %s exists meaning that another AKRR Scheduler
             process is already working with this directory.
-            or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid")))
-            os.remove(os.path.join(akrrcfg.data_dir,"akrr.pid"))
+            or the previous one had exited incorrectly.""" % (os.path.join(cfg.data_dir, "akrr.pid")))
+            os.remove(os.path.join(cfg.data_dir, "akrr.pid"))
             return None
         else:
             raise IOError("""File %s exists meaning that another AKRR Scheduler
             process is already working with this directory.
-            or the previous one had exited incorrectly."""%(os.path.join(akrrcfg.data_dir,"akrr.pid")))
+            or the previous one had exited incorrectly.""" % (os.path.join(cfg.data_dir, "akrr.pid")))
         
     return pid
 
@@ -1765,12 +1765,12 @@ def akrrServerStart():
         raise IOError("Can not start AKRR server because another instance is already running.")
     #check if something already listening on REST API port
     restapi_host='localhost'
-    if akrrcfg.restapi_host!="":
-        restapi_host=akrrcfg.restapi_host
+    if cfg.restapi_host!= "":
+        restapi_host=cfg.restapi_host
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    result = sock.connect_ex((restapi_host,akrrcfg.restapi_port))
+    result = sock.connect_ex((restapi_host, cfg.restapi_port))
     if result == 0:
-        raise IOError("Can not start AKRR server because another servise listening on %s:%d!"%(restapi_host,akrrcfg.restapi_port))
+        raise IOError("Can not start AKRR server because another servise listening on %s:%d!" % (restapi_host, cfg.restapi_port))
        
     
     
@@ -1784,14 +1784,14 @@ def akrrServerStart():
             os.kill(int(pid_str), sig)
     
     #make dir for logs and check the biggest number
-    if not os.path.isdir(akrrcfg.data_dir):
-        raise IOError("Directory %s does not exist or is not directory."%(akrrcfg.data_dir))
-    if not os.path.isdir(os.path.join(akrrcfg.data_dir,"srv")):
-        log.info("Directory %s does not exist, creating it."%(os.path.join(akrrcfg.data_dir,"srv")))
-        os.mkdir(os.path.join(akrrcfg.data_dir,"srv"))
-    logname=os.path.join(akrrcfg.data_dir,"srv",datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f")+".log")
+    if not os.path.isdir(cfg.data_dir):
+        raise IOError("Directory %s does not exist or is not directory." % (cfg.data_dir))
+    if not os.path.isdir(os.path.join(cfg.data_dir, "srv")):
+        log.info("Directory %s does not exist, creating it." % (os.path.join(cfg.data_dir, "srv")))
+        os.mkdir(os.path.join(cfg.data_dir, "srv"))
+    logname=os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
     while os.path.exists(logname)==True:
-        logname=os.path.join(akrrcfg.data_dir,"srv",datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f")+".log")
+        logname=os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
     log.info("Writing logs to:\n\t%s"%(logname))
     #createDaemon
     #this was adopted with a minor changes from Chad J. Schroeder  daemonization script
@@ -1825,7 +1825,7 @@ def akrrServerStart():
             raise Exception("%s [%d]" % (e.strerror, e.errno))
         if (pid == 0):  #i.e. grand child
             os.setsid() #set to be session leader
-            os.chdir(akrrcfg.data_dir)
+            os.chdir(cfg.data_dir)
             #os.umask(755)
             #print "pid of 2 child",os.getpid()
             #print "AKRR Server PID is",os.getpid()

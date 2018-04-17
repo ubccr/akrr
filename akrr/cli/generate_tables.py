@@ -330,8 +330,8 @@ INSERT INTO `akrr_err_regexp` VALUES
 
     connection_function=None
     if not dry_run:
-        from akrr import akrrcfg
-        connection_function=akrrcfg.getDB
+        from akrr import cfg
+        connection_function=cfg.getDB
         
     create_and_populate_tables(
         default_tables,
@@ -762,8 +762,8 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     # EXECUTE: the statements defined previously
     connection_function=None
     if not dry_run:
-        from akrr import akrrcfg
-        connection_function=akrrcfg.getAKDB
+        from akrr import cfg
+        connection_function=cfg.getAKDB
     
     create_and_populate_tables(
         default_tables,

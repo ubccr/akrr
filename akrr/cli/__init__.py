@@ -38,14 +38,14 @@ def insert_resources(resources):
                       mod_appkernel.resource database.
     :return: void
     """
-    from akrr import akrrcfg
+    from akrr import cfg
     
     if resources is not None and len(resources) > 0:
 
         parameters = tuple([(resource['name'], int(resource['id']), False) for (resource) in resources])
         resources_parameters = tuple([(resource['name'], int(resource['id'])) for (resource) in resources])
 
-        connection, cursor = akrrcfg.getAKDB()
+        connection, cursor = cfg.getAKDB()
         with connection:
             cursor.executemany('''
             INSERT INTO `mod_appkernel`.`resource`
@@ -68,10 +68,10 @@ def insert_resource(resource):
     :param resource:
     :return: void
     """
-    from akrr import akrrcfg
+    from akrr import cfg
     if resource is not None:
         name, m_id = resource
-        connection, cursor = akrrcfg.getAKDB()
+        connection, cursor = cfg.getAKDB()
         with connection:
             cursor.execute('''
             INSERT INTO `mod_appkernel`.`resource`
@@ -92,8 +92,8 @@ def retrieve_resources():
 
     :return: a dict representation of the resourcefact table ( name, id )
     """
-    from akrr import akrrcfg
-    connection, cursor = akrrcfg.getXDDB(True)
+    from akrr import cfg
+    connection, cursor = cfg.getXDDB(True)
     with connection:
         cursor.execute("""
         SELECT name, id from `modw`.`resourcefact`;
@@ -112,11 +112,11 @@ def retrieve_resource(resource, exact):
     :param resource: the name of the resource to retrieve
     :return: a json encoded version of the record in `modw`.`resourcefact` identified by
     """
-    from akrr import akrrcfg
+    from akrr import cfg
     if resource is None or len(resource) < 1:
         raise AssertionError('provided resource must not be empty.')
 
-    connection, cursor = akrrcfg.getXDDB(True)
+    connection, cursor = cfg.getXDDB(True)
 
     with connection:
         query = """
@@ -552,9 +552,9 @@ def batch_job_parsed(args):
         log.error(
             'Please provide a resource, application kernel and node count.')
         exit(1)
-    from akrr import akrrcfg
-    resource = akrrcfg.FindResourceByName(args.resource)
-    app = akrrcfg.FindAppByName(args.appkernel)
+    from akrr import cfg
+    resource = cfg.FindResourceByName(args.resource)
+    app = cfg.FindAppByName(args.appkernel)
     nodes = args.nodes
     print_only=args.print_only
     verbose=args.verbose
@@ -598,22 +598,22 @@ def batch_job_parsed(args):
         taskHandler.DeleteLocalFolder()
 
 def check_daemon(args):
-    from akrr import akrrcfg
+    from akrr import cfg
     from requests.auth import HTTPBasicAuth
     import requests
     
     from requests.packages.urllib3.exceptions import SecurityWarning
     
-    restapi_host = akrrcfg.restapi_host
-    if akrrcfg.restapi_host!="":
-        restapi_host=akrrcfg.restapi_host
+    restapi_host = cfg.restapi_host
+    if cfg.restapi_host!= "":
+        restapi_host=cfg.restapi_host
     #set full address
-    api_url = 'https://'+restapi_host+':'+str(akrrcfg.restapi_port)+akrrcfg.restapi_apiroot
-    ssl_cert=akrrcfg.restapi_certfile
+    api_url = 'https://' + restapi_host +':' + str(cfg.restapi_port) + cfg.restapi_apiroot
+    ssl_cert=cfg.restapi_certfile
     ssl_verify=ssl_cert
     
     def populate_token():
-        request = requests.get(api_url + "/token", auth=HTTPBasicAuth(akrrcfg.restapi_rw_username, akrrcfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
+        request = requests.get(api_url + "/token", auth=HTTPBasicAuth(cfg.restapi_rw_username, cfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
         if request.status_code == 200:
             token = request.json()['data']['token']
             return token
@@ -660,11 +660,11 @@ def daemon_handler(args):
     if args.action=='check':
         return check_daemon(args)
     
-    from akrr import akrrcfg
+    from akrr import cfg
         
     if args.cron and args.action in ['checknrestart','restart']:
         args.append=True
-        args.output_file=os.path.join(akrrcfg.data_dir,'checknrestart')
+        args.output_file=os.path.join(cfg.data_dir, 'checknrestart')
     
     import akrr
     import akrr.akrrscheduler
@@ -674,9 +674,9 @@ def daemon_handler(args):
         
         if args.max_task_handlers is not None:
             #akrr.debug_max_task_handlers=args.debug_max_task_handlers
-            akrrcfg.max_task_handlers = args.max_task_handlers
+            cfg.max_task_handlers = args.max_task_handlers
         if args.redirect_task_processing_to_log_file is not None:
-            akrrcfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
+            cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
             
     return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
     
@@ -695,10 +695,10 @@ class cli:
         
         self.add_command_daemon()
         
-        from .setup import cli_add_command as add_command_setup
+        from .commands import add_command_setup
         add_command_setup(self.subparsers)
         
-        from .resource import cli_add_command as add_command_resource
+        from .commands import add_command_resource
         add_command_resource(self.subparsers)
     
     def add_command_daemon(self): 

@@ -31,35 +31,35 @@ def CheckDirSimple(sh,d):
     return True,message if can write there
     return False,message if can not write there
     """
-    from . import akrrcfg
+    from . import cfg
     dir(sh)
     cmd="if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi"%(d)
-    msg=akrrcfg.sshCommand(sh,cmd)
+    msg=cfg.sshCommand(sh, cmd)
     if msg.find("DOESNOTEXIST")>=0:
         return (None,"Directory %s:%s does not exists!"%(sh.remotemachine,d))
     
     cmd="echo test > "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrrcfg.sshCommand(sh,cmd)
+    msg=cfg.sshCommand(sh, cmd)
     #print msg
     cmd="cat "+os.path.join(d,'akrrtestwrite')
     #print cmd
-    msg=akrrcfg.sshCommand(sh,cmd)
+    msg=cfg.sshCommand(sh, cmd)
     #print msg
     if msg.strip()=="test":
         cmd="rm "+os.path.join(d,'akrrtestwrite')
-        akrrcfg.sshCommand(sh,cmd)
+        cfg.sshCommand(sh, cmd)
         return (True,"Directory exist and accessible for read/write")
     else:
         return (False,"Directory %s:%s is NOT accessible for read/write!"%(sh.remotemachine,d))
     
 def CheckDir(sh, d,exitOnFail=True,tryToCreate=True):
-    from . import akrrcfg
+    from . import cfg
     status,msg=CheckDirSimple(sh, d)
     if tryToCreate==True and status==None:
         log.info("Directory %s:%s does not exists, will try to create it"%(sh.remotemachine,d))
         cmd="mkdir \"%s\""%(d)
-        akrrcfg.sshCommand(sh,cmd)
+        cfg.sshCommand(sh, cmd)
         status,msg=CheckDirSimple(sh, d)
     if exitOnFail==False:
         return status,msg
@@ -123,14 +123,14 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
         exit(1)
     
     #now we can load akrr
-    from . import akrrcfg
+    from . import cfg
     from . import akrrrestclient
     from .resource_deploy import makeResultsSummary
 
-    resource=akrrcfg.FindResourceByName(resource_name)
+    resource=cfg.FindResourceByName(resource_name)
     log.info("Syntax of %s is correct and all necessary parameters are present."%resource_param_filename,highlight="ok")
     
-    app=akrrcfg.FindAppByName(app_name)
+    app=cfg.FindAppByName(app_name)
     #check the presence of runScript[resource]
     #if resource_name not in app['runScript'] and 'default' not in app['runScript']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
@@ -141,7 +141,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
     #check if AK is in DB
     if True:
         #add entry to mod_appkernel.resource
-        dbAK,curAK=akrrcfg.getAKDB(True)
+        dbAK,curAK=cfg.getAKDB(True)
             
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()
@@ -153,7 +153,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()[0]
         #add entry to mod_akrr.resource
-        db,cur=akrrcfg.getDB(True)
+        db,cur=cfg.getDB(True)
             
         cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
         ak_in_DB = cur.fetchall()
@@ -174,7 +174,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
     str_io=io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh=akrrcfg.sshResource(resource)
+        rsh=cfg.sshResource(resource)
         
         sys.stdout=sys.__stdout__
         sys.stderr=sys.__stderr__
@@ -250,7 +250,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
     
     #check if the test job is already submitted
     task_id=None
-    test_job_lock_filename=os.path.join(akrrcfg.data_dir,resource_name+"_"+app_name+"_test_task.dat")
+    test_job_lock_filename=os.path.join(cfg.data_dir, resource_name + "_" + app_name + "_test_task.dat")
     if os.path.isfile(test_job_lock_filename):
         fin=open(test_job_lock_filename,"r")
         task_id=int(fin.readline())
@@ -413,7 +413,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
                 exit(1)
             if True:
                 #add entry to mod_appkernel.resource
-                dbAK,curAK=akrrcfg.getAKDB(True)
+                dbAK,curAK=cfg.getAKDB(True)
                     
                 curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
                 ak_in_AKDB = curAK.fetchall()
@@ -425,7 +425,7 @@ def app_validate(resource,appkernel,nnodes,verbose=False):
                 curAK.execute('''UPDATE app_kernel_def SET enabled=1,visible=1  WHERE ak_base_name=%s''', (app_name,))
                 dbAK.commit()
                 #add entry to mod_akrr.resource
-                db,cur=akrrcfg.getDB(True)
+                db,cur=cfg.getDB(True)
                     
                 cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
                 ak_in_DB = cur.fetchall()

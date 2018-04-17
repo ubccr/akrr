@@ -1,9 +1,9 @@
 """
 Responsible for serving the RESTful AKRR API.
 """
-from . import akrrcfg
+from . import cfg
 
-apiroot = akrrcfg.restapi_apiroot
+apiroot = cfg.restapi_apiroot
 import os
 import random
 import string
@@ -33,7 +33,7 @@ import logging
 logger = logging.getLogger('rest-api')
 logger.setLevel(logging.INFO)
 
-fh = logging.FileHandler(os.path.join(akrrcfg.data_dir,'srv','rest.log'))
+fh = logging.FileHandler(os.path.join(cfg.data_dir, 'srv', 'rest.log'))
 fh.setLevel(logging.INFO)
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -138,9 +138,9 @@ def check_expired_tokens():
 
 
 def auth_by_passwd(user, passwd):
-    if user == akrrcfg.restapi_rw_username and passwd == akrrcfg.restapi_rw_password:
+    if user == cfg.restapi_rw_username and passwd == cfg.restapi_rw_password:
         return True
-    if user == akrrcfg.restapi_ro_username and passwd == akrrcfg.restapi_ro_password:
+    if user == cfg.restapi_ro_username and passwd == cfg.restapi_ro_password:
         return True
 
     raise bottle.HTTPError(401, "Incorrect username or password")
@@ -191,13 +191,13 @@ def enable_cors():
 def get_token():
     user, passwd = bottle.request.auth
     token = generate_token()
-    expiration = int(time.time()) + akrrcfg.restapi_token_expiration_time
+    expiration = int(time.time()) + cfg.restapi_token_expiration_time
     readrights = False
     writerights = False
-    if user == akrrcfg.restapi_rw_username:
+    if user == cfg.restapi_rw_username:
         readrights = True
         writerights = True
-    if user == akrrcfg.restapi_ro_username:
+    if user == cfg.restapi_ro_username:
         readrights = True
         writerights = False
     issued_tokens[token] = {'token': token, 'expiration': expiration, 'read': readrights, 'write': writerights}
@@ -268,7 +268,7 @@ def get_scheduled_tasks():
     raises a 403 if the user is not authorized to perform this action.
     raises a 500 if an internal server error occurs ( ie. a database falls down etc. )
     """
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             ORDER BY time_to_start ASC''')
@@ -286,7 +286,7 @@ def get_scheduled_task(task_id):
     """
     Retrieve scheduled tasks.
     """
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
@@ -312,7 +312,7 @@ def update_scheduled_tasks(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -369,7 +369,7 @@ def delete_scheduled_task_by_id(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -415,7 +415,7 @@ def get_all_active_tasks():
     """
     Retrieve tasks from active_tasks queue.
     """
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS''')
     task = cur.fetchall()
@@ -431,7 +431,7 @@ def get_active_tasks(task_id):
     """
     Retrieve task from active_tasks queue.
     """
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
@@ -478,7 +478,7 @@ def update_active_tasks(task_id):
         update_values['next_check_time']=validateTaskVariableValue('next_check_time',datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     # get task
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
@@ -494,7 +494,7 @@ def update_active_tasks(task_id):
         if task[0]['task_lock'] == 0:
             break
 
-        time.sleep(akrrcfg.scheduled_tasks_loop_sleep_time * 0.45)
+        time.sleep(cfg.scheduled_tasks_loop_sleep_time * 0.45)
 
         cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
@@ -517,7 +517,7 @@ def delete_active_tasks(task_id):
     delete task from active_tasks queue.
     """
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -567,7 +567,7 @@ def get_completed_tasks(task_id):
     """
     Retrieve task from completed_tasks.
     """
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
 
     cur.execute('''SELECT * FROM COMPLETEDTASKS
             WHERE task_id=%s''', (task_id,))
@@ -688,7 +688,7 @@ def _get_resource_apps(resource, application):
     print(query, parameters)
     rows = None
     try:
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -788,7 +788,7 @@ def _get_resource_app_status(resource, application):
         else ()
     rows = None
     try:
-        connection, cursor = akrrcfg.getAKDB(True)
+        connection, cursor = cfg.getAKDB(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -859,7 +859,7 @@ def get_resources():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -947,7 +947,7 @@ def get_kernels():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1066,7 +1066,7 @@ def _turn_resource_on(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = akrrcfg.getDB()
+        connection, cursor = cfg.getDB()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1093,7 +1093,7 @@ def _does_resource_app_kernel_exist(resource, app_kernel):
     :return: true if there is a record relating them, false if not
     """
 
-    db, cur = akrrcfg.getDB(True)
+    db, cur = cfg.getDB(True)
     with db:
         cur.execute("""
         SELECT 1
@@ -1117,7 +1117,7 @@ def _resource_exists(resource):
     :param resource:   the resource to check.
     :return: true if it exists, false if it doesn't
     """
-    connection, cursor = akrrcfg.getDB(True)
+    connection, cursor = cfg.getDB(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.resources R WHERE R.name = %s
@@ -1133,7 +1133,7 @@ def _app_kernel_exists(app_kernel):
     :param app_kernel:
     :return: True if it exists, false if it doesn't
     """
-    connection, cursor = akrrcfg.getDB(True)
+    connection, cursor = cfg.getDB(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.app_kernels AK WHERE AK.name = %s
@@ -1237,7 +1237,7 @@ def _turn_resource_off(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = akrrcfg.getDB()
+        connection, cursor = cfg.getDB()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1302,7 +1302,7 @@ def get_walltime_all():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1331,7 +1331,7 @@ def get_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1389,7 +1389,7 @@ def upsert_walltime(resource,app):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1456,7 +1456,7 @@ def get_walltime_by_resource_app(resource,app):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1507,7 +1507,7 @@ def update_walltime_by_id(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1545,7 +1545,7 @@ def delete_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = akrrcfg.getDB(True)
+        connection, cursor = cfg.getDB(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1570,14 +1570,14 @@ def delete_walltime(walltime_id):
 def start_rest_api(m_proc_queue_to_master=None, m_proc_queue_from_master=None):
     print("Starting REST-API Service")
     # make sure that reloading is off and debugging is turned on.
-    issued_tokens['test'] = {'token': 'test', 'expiration': int(time.time()) + akrrcfg.restapi_token_expiration_time,
+    issued_tokens['test'] = {'token': 'test', 'expiration': int(time.time()) + cfg.restapi_token_expiration_time,
                              'read': True, 'write': True}
     global proc_queue_to_master
     global proc_queue_from_master
     proc_queue_to_master = m_proc_queue_to_master
     proc_queue_from_master = m_proc_queue_from_master
 
-    srv = SSLWSGIRefServer(host=akrrcfg.restapi_host, port=akrrcfg.restapi_port, certfile=akrrcfg.restapi_certfile)
+    srv = SSLWSGIRefServer(host=cfg.restapi_host, port=cfg.restapi_port, certfile=cfg.restapi_certfile)
     # bottle.run(app,server=srv, debug=True, reloader=False)
     bottle.run(app, server=srv, debug=True, reloader=False)
 

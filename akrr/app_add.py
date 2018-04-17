@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from . import akrrcfg
+from . import cfg
 import logging as log
 
 verbose=False
@@ -12,18 +12,18 @@ def app_add(resource,appkernel,verbose=False):
     log.info("Generating application kernel configuration for %s on %s",appkernel,resource)
     
     try:
-        akrrcfg.FindResourceByName(resource)
+        cfg.FindResourceByName(resource)
     except Exception:
         log.error("Can not find resource: %s",resource)
         exit(1)
     try:
-        akrrcfg.FindAppByName(appkernel)
+        cfg.FindAppByName(appkernel)
     except Exception:
         log.error("Can not find application kernel: %s",appkernel)
         exit(1)
     
-    cfgFilename=os.path.join(akrrcfg.cfg_dir,'resources',resource,appkernel+".app.conf")
-    cfgTemplateFilename=os.path.join(akrrcfg.templates_dir,appkernel+".app.conf")
+    cfgFilename=os.path.join(cfg.cfg_dir, 'resources', resource, appkernel + ".app.conf")
+    cfgTemplateFilename=os.path.join(cfg.templates_dir, appkernel + ".app.conf")
     
     if os.path.isfile(cfgFilename):
         log.error("Configuration file for %s on %s already exist. For regeneration delete it",appkernel,resource)

@@ -7,7 +7,7 @@ which might change
 
 
 """
-from . import akrrcfg
+from . import cfg
 import os
 import random
 import string
@@ -29,13 +29,13 @@ import sys
 restapi_host="127.0.0.1"
 #restapi_host='appkernel'
 restapi_host='localhost'
-if akrrcfg.restapi_host!="":
-    restapi_host=akrrcfg.restapi_host
+if cfg.restapi_host!= "":
+    restapi_host=cfg.restapi_host
 #set full address
-restapi_host='https://'+restapi_host+':'+str(akrrcfg.restapi_port)+akrrcfg.restapi_apiroot
+restapi_host='https://' + restapi_host +':' + str(cfg.restapi_port) + cfg.restapi_apiroot
 
 ssl_verify=False
-ssl_cert=akrrcfg.restapi_certfile
+ssl_cert=cfg.restapi_certfile
 
 waitingTimeOnBusyServer=0.1
 numberOfRepeatConnnectionOnBusyServer=20
@@ -47,7 +47,7 @@ def get_token():
     #the cycle is walk around for 104 error (busy server)
     while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
         try:
-            r = requests.get(restapi_host+'/token', auth=(akrrcfg.restapi_rw_username, akrrcfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
+            r = requests.get(restapi_host +'/token', auth=(cfg.restapi_rw_username, cfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
             if r.status_code!=200:
                 raise Exception("Can not get token for AKRR REST API ( "+restapi_host+" )\n"+
                    "See server response below\n"+json.dumps(r.json(),indent=4))

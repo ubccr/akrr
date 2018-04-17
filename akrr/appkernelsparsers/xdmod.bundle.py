@@ -15,7 +15,7 @@ if __name__ == "__main__":
 
 
 import akrr
-import akrr.akrrcfg
+import akrr.cfg
 import akrr.appkernelsparsers.akrrappkeroutputparser
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,total_seconds
 
@@ -52,7 +52,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     totalSubtasks=0
     successfulSubtasks=0
     try:
-        db,cur=akrr.akrrcfg.getExportDB()
+        db,cur=akrr.cfg.getExportDB()
         
         for subTaskId in appKerNResVars['subTasksId']:
             cur.execute('''SELECT instance_id,status FROM akrr_xdmod_instanceinfo
