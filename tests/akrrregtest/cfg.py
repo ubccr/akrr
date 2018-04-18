@@ -1,27 +1,26 @@
-dry_run=False
+dry_run = False
 
-yml=None
+yml = None
 
 #
-#By default performs setup in akrr config in default location i.e. $HOME/akrr.
+# By default performs setup in akrr config in default location i.e. $HOME/akrr.
 #
-#Options --in-src and --akrr-conf change that behaviour.
+# Options --in-src and --akrr-conf change that behaviour.
 #
-#In all cases akrr command line interface will be taken from $PATH
+# In all cases akrr command line interface will be taken from $PATH
 
-#install next to source code
-in_source_install=True
-#location of config
-akrr_conf=None
+# install next to source code
+in_source_install = True
+# location of config
+akrr_conf = None
 
-akrr_conf_dir=None
-akrr_log_dir=None
+akrr_conf_dir = None
+akrr_log_dir = None
 
-which_akrr="akrr"
+which_akrr = "akrr"
 
-#top level configuration largely same as AKRR
+# top level configuration largely same as AKRR
 from akrr.akrrcfgdefault import *
-
 
 xd_db_user = "akrruser"
 xd_db_passwd = ""
@@ -32,58 +31,55 @@ akrr_db_passwd = xd_db_passwd
 ak_db_user = xd_db_user
 ak_db_passwd = xd_db_passwd
 
+# administrative database user under which the installation sql script should
+sql_root_name = "root"
+sql_root_password = ""
 
-#administrative database user under which the installation sql script should
-sql_root_name="root"
-sql_root_password=""
 
-
-def loadCfg(cfgFilename):
-    "load configuration for reg test from file"
+def load_cfg(config_filename):
+    """load configuration for reg test from file"""
     import yaml
-    
+
     global yml
-    yml=yaml.load(open(cfgFilename).read())
-    
-    exec(yml['global'],globals())
-    
+    yml = yaml.load(open(config_filename).read())
+
+    exec(yml['global'], globals())
+
 
 def set_default_value_for_unset_vars():
-    "post process settings"
+    """post process settings"""
     import os
     from .util import run_cmd_getoutput
-    from . import log
-    
+    from akrr import log
+
     global which_akrr
     global akrr_conf
     global akrr_conf_dir
     global akrr_log_dir
-    
-    if which_akrr is None or which_akrr=="akrr":
+
+    if which_akrr is None or which_akrr == "akrr":
         try:
-            which_akrr=run_cmd_getoutput("which akrr").strip()
+            which_akrr = run_cmd_getoutput("which akrr").strip()
         except:
-            which_akrr=None
-    
+            which_akrr = None
+
     if which_akrr is not None:
         if akrr_conf is None:
-            if os.path.dirname(which_akrr)=="/usr/bin":
-                akrr_conf=os.path.expanduser("~/akrr/etc/akrr.conf")
-                akrr_conf_dir=os.path.expanduser("~/akrr/etc")
-                akrr_log_dir=os.path.expanduser("~/akrr/etc")
+            if os.path.dirname(which_akrr) == "/usr/bin":
+                akrr_conf = os.path.expanduser("~/akrr/etc/akrr.conf")
+                akrr_conf_dir = os.path.expanduser("~/akrr/etc")
+                akrr_log_dir = os.path.expanduser("~/akrr/etc")
             else:
-                akrr_conf_dir=os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)),"etc"))
-                akrr_conf=os.path.join(akrr_conf_dir,'akrr.conf')
-                akrr_log_dir=os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)),"log"))
+                akrr_conf_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)), "etc"))
+                akrr_conf = os.path.join(akrr_conf_dir, 'akrr.conf')
+                akrr_log_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)), "log"))
         else:
-            akrr_conf_dir=os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)),"etc"))
-            akrr_log_dir=os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)),"log"))
+            akrr_conf_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)), "etc"))
+            akrr_log_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)), "log"))
 
     log.debug(
-        "AKRR conf dir and log dir locations:\n"\
-        "    akrr_conf: {}\n"\
-        "    akrr_conf_dir: {}\n"\
-        "    akrr_log_dir: {}\n"\
-        "".format(akrr_conf,akrr_conf_dir,akrr_log_dir))
-    
-
+        "AKRR conf dir and log dir locations:\n"
+        "    akrr_conf: {}\n"
+        "    akrr_conf_dir: {}\n"
+        "    akrr_log_dir: {}\n"
+        "".format(akrr_conf, akrr_conf_dir, akrr_log_dir))

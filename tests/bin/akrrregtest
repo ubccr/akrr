@@ -14,6 +14,6 @@ if __name__ == '__main__':
         sys.path.insert(0,os.path.abspath(os.path.dirname(akrr_mod_dir)))
         sys.path.insert(0,os.path.abspath(akrrtests_mod_dir))
     
-    from akrrregtest import cli
+    from akrrregtest.cli import CLI
     
-    cli.cli().run()
+    CLI().run()

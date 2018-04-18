@@ -2,45 +2,45 @@ import unittest
 
 class Test_akrr_util_sql_Functions(unittest.TestCase):
     def test_get_user_passwd_host_port(self):
-        from akrr.util.sql import get_user_passwd_host_port
+        from akrr.util.sql import get_user_password_host_port
         #get_user_passwd_host_port(user_password_host_port,default_port=3306)
         self.assertEqual(
-            get_user_passwd_host_port("localhost"),
+            get_user_password_host_port("localhost"),
             (None,None,"localhost",3306))
         
         self.assertEqual(
-            get_user_passwd_host_port("localhost",default_port=3300),
+            get_user_password_host_port("localhost", default_port=3300),
             (None,None,"localhost",3300))
         
         self.assertEqual(
-            get_user_passwd_host_port("localhost:1238"),
+            get_user_password_host_port("localhost:1238"),
             (None,None,"localhost",1238))
         
         self.assertEqual(
-            get_user_passwd_host_port("bob:secret@mysql.somewhere.org:1238"),
+            get_user_password_host_port("bob:secret@mysql.somewhere.org:1238"),
             ("bob","secret","mysql.somewhere.org",1238))
         
         self.assertEqual(
-            get_user_passwd_host_port("bob:sec@r:et2#@mysql.somewhere.org:1238"),
+            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org:1238"),
             ("bob","sec@r:et2#","mysql.somewhere.org",1238))
         
         self.assertEqual(
-            get_user_passwd_host_port("bob:@mysql.somewhere.org:1238"),
+            get_user_password_host_port("bob:@mysql.somewhere.org:1238"),
             ("bob","","mysql.somewhere.org",1238))
         
         self.assertEqual(
-            get_user_passwd_host_port("bob@mysql.somewhere.org:1238"),
+            get_user_password_host_port("bob@mysql.somewhere.org:1238"),
             ("bob",None,"mysql.somewhere.org",1238))
         
         self.assertEqual(
-            get_user_passwd_host_port("bob:sec@r:et2#@mysql.somewhere.org"),
+            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org"),
             ("bob","sec@r:et2#","mysql.somewhere.org",3306))
         
         self.assertEqual(
-            get_user_passwd_host_port("@mysql.somewhere.org:1238"),
+            get_user_password_host_port("@mysql.somewhere.org:1238"),
             (None,None,"mysql.somewhere.org",1238))
         self.assertEqual(
-            get_user_passwd_host_port("bob:sec@r:et2#@mysql.somewhere.org",return_dict=True),
+            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org", return_dict=True),
             {"user":"bob","password":"sec@r:et2#","host":"mysql.somewhere.org","port":3306})
         
         
@@ -80,7 +80,7 @@ class Test_akrr_util_sql_FunctionsSQL(unittest.TestCase):
         self.db2="sillydb2"
         
     def test_db_check_priv(self):
-        from akrr.util.sql import get_user_passwd_host_port
+        from akrr.util.sql import get_user_password_host_port
         from akrr.util.sql import get_db_client_host
         from akrr.util.sql import get_con_to_db
         from akrr.util.sql import db_check_priv
@@ -89,7 +89,7 @@ class Test_akrr_util_sql_FunctionsSQL(unittest.TestCase):
         su_user,\
         su_password,\
         db_host,\
-        db_port=get_user_passwd_host_port(self.su_sql)
+        db_port=get_user_password_host_port(self.su_sql)
         
         su_con,su_cur=get_con_to_db(su_user,su_password,db_host,db_port)
         
@@ -130,14 +130,14 @@ class Test_akrr_util_sql_FunctionsSQL(unittest.TestCase):
 
     def _clean_db(self): 
         from akrr.util.sql import get_db_client_host
-        from akrr.util.sql import get_user_passwd_host_port
+        from akrr.util.sql import get_user_password_host_port
         from akrr.util.sql import get_con_to_db
         from akrr.util.sql import cv
         
         su_user,\
         su_password,\
         db_host,\
-        db_port=get_user_passwd_host_port(self.su_sql)
+        db_port=get_user_password_host_port(self.su_sql)
         
         _,su_cur=get_con_to_db(su_user,su_password,db_host,db_port)
         client_host=get_db_client_host(su_cur)

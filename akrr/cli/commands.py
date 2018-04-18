@@ -25,8 +25,8 @@ def add_command_setup(parent_parser):
         """call routine for initial AKRR setup"""
         global dry_run
         dry_run = args.dry_run
-        from .setup import akrr_setup
-        return akrr_setup(
+        from .setup import AKRRSetup
+        return AKRRSetup(
             akrr_db=args.akrr_db,
             ak_db=args.akrr_db,
             xd_db=args.akrr_db
