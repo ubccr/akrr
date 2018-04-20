@@ -69,17 +69,8 @@ fast_timeout = 3
 
 
 def _cursor_execute(cur, query, args=None):
-    if not cfg.dry_run:
-        cur.execute(query, args)
-    else:
-        if args is not None:
-            if isinstance(args, dict):
-                args = dict((key, cur.connection.literal(item)) for key, item in args.items())
-            else:
-                args = tuple(map(cur.connection.literal, args))
-            query = query % args
-
-        log.dry_run("SQL: " + query)
+    from akrr.util.sql import cursor_execute
+    cursor_execute(cur, query, args=args, dry_run=cfg.dry_run)
 
 
 def _send_user_password(bash, expect, user, password,

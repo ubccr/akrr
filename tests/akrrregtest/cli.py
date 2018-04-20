@@ -29,8 +29,8 @@ class CLI:
         from .remove import cli_add_command as add_command_remove
         add_command_remove(self.subparsers)
 
-        from .resource import cli_add_command as add_command_resource
-        add_command_resource(self.subparsers)
+        from .resource import cli_resource
+        cli_resource(self.subparsers)
 
     @staticmethod
     def process_common_args(cli_args):

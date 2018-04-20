@@ -8,7 +8,6 @@ import subprocess
 import string
 
 from akrr import log
-from akrr.util import which, log_input
 
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.
@@ -91,18 +90,8 @@ dry_run = False
 
 
 def _cursor_execute(cur, query, args=None):
-    """Execute database affecting command if not in dry run mode"""
-    if not dry_run:
-        cur.execute(query, args)
-    else:
-        if args is not None:
-            if isinstance(args, dict):
-                args = dict((key, cur.connection.literal(item)) for key, item in args.items())
-            else:
-                args = tuple(map(cur.connection.literal, args))
-            query = query % args
-
-        log.dry_run("SQL: " + query)
+    from akrr.util.sql import cursor_execute
+    cursor_execute(cur, query, args=args, dry_run=dry_run)
 
 
 def _make_dirs(path):
@@ -120,7 +109,7 @@ def _read_username_password(
         password=None,
         default_username="user",
         password_on_default_user=None):
-    log_input(prompt)
+    log.log_input(prompt)
 
     if username is None:
         username = input('[{0}] '.format(default_username))
@@ -134,9 +123,9 @@ def _read_username_password(
 
     if password is None:
         while True:
-            log_input("Please specify a password:")
+            log.log_input("Please specify a password:")
             password = getpass.getpass()
-            log_input("Please reenter the password:")
+            log.log_input("Please reenter the password:")
             password2 = getpass.getpass()
             if password == password2:
                 break
@@ -148,13 +137,13 @@ def _read_username_password(
 
 def _read_sql_su_credentials(host, port):
     while True:
-        log_input(
+        log.log_input(
             "Please provide an administrative database user (for {}:{}) "
             "under which the installation sql script should "
             "run (This user must have privileges to create "
             "users and databases).".format(host, port))
         su_username = input("Username: ")
-        log_input("Please provide the password for the the user which you previously entered:")
+        log.log_input("Please provide the password for the the user which you previously entered:")
         su_password = getpass.getpass()
 
         try:
@@ -564,10 +553,10 @@ class AKRRSetup:
                     self.cron_email = m.group(1)
                     self.cron_email = self.cron_email.replace('"', '')
         if self.cron_email == None:
-            log_input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
+            log.log_input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
             self.cron_email = input()
         else:
-            log_input("Please enter the e-mail where cron will send messages:")
+            log.log_input("Please enter the e-mail where cron will send messages:")
             cron_email = input('[{0}] '.format(self.cron_email))
             if cron_email != "": self.cron_email = cron_email
         if self.cron_email == "": self.cron_email = None

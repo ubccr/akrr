@@ -16,3 +16,17 @@ def dry_run(msg, *_, **__):
 
 def empty_line():
     print()
+
+
+def log_input(message, *args):
+    from .util import colorize
+
+    if message:
+        if len(args) > 0:
+            formatted_message = message.format(*args)
+        else:
+            formatted_message = message
+    else:
+        formatted_message = ''
+
+    print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)

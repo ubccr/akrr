@@ -41,19 +41,19 @@ def add_command_resource(parent_parser):
     subparsers = parser.add_subparsers(title="commands for resource")
 
     # config
-    cli_resource_config(subparsers)
+    cli_resource_add(subparsers)
 
     # deploy
     cli_resource_deploy(subparsers)
 
 
-def cli_resource_config(parent_parser):
+def cli_resource_add(parent_parser):
     "configurate new resource to AKRR"
-    parser = parent_parser.add_parser('config',
+    parser = parent_parser.add_parser('add',
                                       description=cli_resource_config.__doc__)
 
     parser.add_argument(
-        '--dry-run', action='store_true', help="Dsdfdry Run No files will actually be created")
+        '--dry-run', action='store_true', help="Dry Run, just show the changes without doing them")
     parser.add_argument(
         '--minimalistic', action='store_true',
         help="Minimize questions number, configuration files will be edited manually")
@@ -61,7 +61,7 @@ def cli_resource_config(parent_parser):
         '--no-ping', action='store_true', help="do not run ping to test headnode name")
 
     def handler(args):
-        from .resource_config import resource_config
+        from .resource_add import resource_add
         return resource_config(args)
 
     parser.set_defaults(func=handler)
