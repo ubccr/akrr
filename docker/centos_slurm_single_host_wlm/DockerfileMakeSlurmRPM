@@ -1,0 +1,30 @@
+FROM centos:7
+
+LABEL description="image to make slurm rpm"
+
+# install dependencies
+RUN \
+    yum update && \
+    yum -y install --setopt=tsflags=nodocs epel-release && \
+    yum -y install --setopt=tsflags=nodocs \
+        vim wget bzip2 \
+        autoconf make gcc rpm-build \
+        openssl openssh-clients openssl-devel \
+        mariadb-server mariadb-devel \
+        munge munge-devel \
+        readline readline-devel \
+        pam-devel \
+        perl perl-ExtUtils-MakeMaker
+
+# source of slurm
+ENV SLURM_TAR_BZ2_SOURCE=https://download.schedmd.com/slurm/slurm-17.11.5.tar.bz2
+
+# volume for final rpms dump
+VOLUME /RPMS
+
+# setup entry point
+WORKDIR /root
+COPY cmd_start cmd_stop make_slurm_rpms /sbin/
+ENTRYPOINT ["/sbin/cmd_start"]
+CMD ["make_slurm_rpms"]
+

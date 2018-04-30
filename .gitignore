@@ -23,5 +23,5 @@
 /tests/bin/akrrunittest.py
 /prev_root
 /.idea
-
+/docker/centos_slurm_single_host_wlm/RPMS
 

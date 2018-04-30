@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+cd
+
+wget ${SLURM_TAR_BZ2_SOURCE:=https://download.schedmd.com/slurm/slurm-17.11.5.tar.bz2}
+
+rpmbuild -ta slurm*.tar.bz2
+
+cp -rf rpmbuild/RPMS/x86_64 /RPMS

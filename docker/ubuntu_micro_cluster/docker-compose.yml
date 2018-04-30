@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+    slurmctld:
+        image: ubuntu_slurm_cluster:1
+        command: ["mysqld","slurmdbd","slurmctld"]
+        hostname: slurmctld
+        ports:
+          - "2200:22"
+        networks:
+        - net
+    compute_node_1:
+        image: ubuntu_slurm_cluster:1
+        command: ["slurmd"]
+        hostname: compute_node_1
+        networks:
+        - net
+    compute_node_2:
+        image: ubuntu_slurm_cluster:1
+        command: ["slurmd"]
+        hostname: compute_node_2
+        networks:
+        - net
+networks:
+  net:
