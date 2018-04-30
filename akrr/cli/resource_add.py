@@ -113,12 +113,13 @@ def create_resource_config(file_path, queuing_system):
             fout.write(template)
         fout.close()
     else:
-        log.info('Dry Run Mode: Would have written to: %s', file_path)
-        log.info('It content would be:')
-        print(template)
+        log.info(
+            'Dry Run Mode: Would have written to: {}'
+            'It content would be: {}'.format(file_path, template))
 
 
 def generate_resource_config(resource_id, m_resource_name, queuing_system):
+    from akrr.util.sql import cursor_execute
     log.info("Initiating %s at AKRR" % (m_resource_name,))
 
     if not dry_run:
@@ -130,33 +131,37 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
 
     create_resource_config(file_path, queuing_system)
 
-    if not dry_run:
-        # add entry to mod_appkernel.resource
-        con_ak, cur_ak = cfg.getAKDB(True)
+    # add entry to mod_appkernel.resource
+    con_ak, cur_ak = cfg.getAKDB(True)
 
-        cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
-        resource_in_ak_db = cur_ak.fetchall()
-        if len(resource_in_ak_db) == 0:
-            cur_ak.execute(
-                "INSERT INTO resource (resource,nickname,description,enabled,visible,xdmod_resource_id)"
-                "VALUES(%s,%s,%s,0,0,%s);",
-                (m_resource_name, m_resource_name, m_resource_name, resource_id))
-            con_ak.commit()
-        cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
+    cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
+    resource_in_ak_db = cur_ak.fetchall()
+    if len(resource_in_ak_db) == 0:
+        cursor_execute(
+            cur_ak,
+            "INSERT INTO resource (resource,nickname,description,enabled,visible,xdmod_resource_id)"
+            "VALUES(%s,%s,%s,0,0,%s);",
+            (m_resource_name, m_resource_name, m_resource_name, resource_id), dry_run)
+        con_ak.commit()
+    cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
+    if not dry_run:
         resource_in_ak_db = cur_ak.fetchall()
         resource_id_in_ak_db = resource_in_ak_db[0]['resource_id']
-        # add entry to mod_akrr.resource
-        db, cur = cfg.getDB(True)
+    else:
+        resource_id_in_ak_db = 123
+    # add entry to mod_akrr.resource
+    db, cur = cfg.getDB(True)
 
-        cur.execute('''SELECT * FROM resources WHERE name=%s''', (m_resource_name,))
-        resource_in_db = cur.fetchall()
-        if len(resource_in_db) == 0:
-            cur.execute('''INSERT INTO resources (id,xdmod_resource_id,name,enabled)
-                        VALUES(%s,%s,%s,%s);''',
-                        (resource_id_in_ak_db, resource_id, m_resource_name, 0))
-            db.commit()
+    cur.execute('''SELECT * FROM resources WHERE name=%s''', (m_resource_name,))
+    resource_in_db = cur.fetchall()
+    if len(resource_in_db) == 0:
+        cursor_execute(
+            cur, '''INSERT INTO resources (id,xdmod_resource_id,name,enabled)
+            VALUES(%s,%s,%s,%s);''',
+            (resource_id_in_ak_db, resource_id, m_resource_name, 0), dry_run)
+        db.commit()
 
-            log.info("Resource configuration is in " + file_path)
+        log.info("Resource configuration is in " + file_path)
 
 
 def validate_resource_id(resource_id, resources):
@@ -222,8 +227,8 @@ def validate_queuing_system(queuing_system):
         return False
 
 
-def checkConnectionToResource():
-    successfullyConnected = False
+def check_connection_to_resource():
+    """check the connection to remote resource."""
     global remoteAccessNode
     global remoteAccessMethod
     global remoteCopyMethod
@@ -232,9 +237,12 @@ def checkConnectionToResource():
     global sshPassword4thisSession
     global sshPrivateKeyFile
     global sshPrivateKeyPassword
-    passphraseEntranceCount = 0
-    authorizeKeyCount = 0
+
+    successfully_connected = False
+    passphrase_entrance_count = 0
+    authorize_key_count = 0
     while True:
+        # Try to connect
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
@@ -245,43 +253,46 @@ def checkConnectionToResource():
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
 
-            successfullyConnected = True
+            successfully_connected = True
             break
         except Exception:
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
-            if verbose:
-                log.debug(
-                    "Had attempted to access resource without password and failed, below is resource response" +
-                    "=" * 80 +
-                    str_io.getvalue() +
-                    "=" * 80)
+            response = str_io.getvalue()
+
+            log.debug(
+                "Had attempted to access resource without password and failed, below is resource response" +
+                "=" * 80 +
+                str_io.getvalue() +
+                "=" * 80)
+
             # check if it asking for passphrase
-            m = re.search(r"Enter passphrase for key '(.*)':", str_io.getvalue())
+            m = re.search(r"Enter passphrase for key '(.*)':", response)
             if m:
-                if passphraseEntranceCount >= 3:
+                if passphrase_entrance_count >= 3:
                     sshPrivateKeyPassword = None
                     sshPrivateKeyFile = None
                     break
-                if passphraseEntranceCount > 0:
+                if passphrase_entrance_count > 0:
                     log.error("Incorrect passphrase try again")
                 sshPrivateKeyFile = m.group(1)
                 log.log_input("Enter passphrase for key '%s':" % sshPrivateKeyFile)
                 sshPrivateKeyPassword = getpass.getpass("")
-                passphraseEntranceCount += 1
+                passphrase_entrance_count += 1
                 continue
-            m2 = re.search(r"[pP]assword:", str_io.getvalue())
-            if m == None and sshPrivateKeyFile != None and m2:
+            m2 = re.search(r"[pP]assword:", response)
+            if m is None and sshPrivateKeyFile is not None and m2:
                 log.warning(
-                    "Can not login to head node. Probably the public key of private key was not authorized on head node")
-                print("Will try to add public key to list of authorized keys on head node")
+                    "Can not login to head node. "
+                    "Probably the public key of private key was not authorized on head node")
+                log.info("Will try to add public key to list of authorized keys on head node")
                 while True:
                     try:
-                        authorizeKeyCount += 1
+                        authorize_key_count += 1
                         log.log_input("Enter password for %s@%s (will be used only during this session):" % (
                             sshUserName, remoteAccessNode))
                         sshPassword4thisSession = getpass.getpass("")
-                        print()
+                        log.empty_line()
                         str_io = io.StringIO()
                         sys.stdout = sys.stderr = str_io
                         cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
@@ -291,28 +302,30 @@ def checkConnectionToResource():
 
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
-                        print(str_io.getvalue())
-                        # successfullyConnected=True
+                        log.info(response)
+
                         log.info(
-                            "Have added public key to list of authorized keys on head node, will attempt to connect again.")
-                        print()
+                            "Have added public key to list of authorized keys on head node, "
+                            "will attempt to connect again.")
+                        log.empty_line()
                         break
                     except Exception:
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
                         if verbose:
                             log.debug(
-                                "Had attempted to add public key to list of authorized keys on head node and failed, below is resource response" +
+                                "Had attempted to add public key to list of authorized keys on head node and failed, " +
+                                "below is resource response" +
                                 "=" * 80 +
                                 str_io.getvalue() +
                                 "=" * 80)
                         log.error("Incorrect password try again.")
-                        if authorizeKeyCount >= 3:
+                        if authorize_key_count >= 3:
                             break
-                if authorizeKeyCount < 3:
+                if authorize_key_count < 3:
                     continue
             break
-    return successfullyConnected
+    return successfully_connected
 
 
 def get_remote_access_method():
@@ -362,34 +375,34 @@ def get_remote_access_method():
             log.info("Checking for password-less access")
         else:
             log.info("Checking for resource access")
-        successfully_connected = checkConnectionToResource()
+        successfully_connected = check_connection_to_resource()
 
         if successfully_connected:
-            if sshPassword == None:
+            if sshPassword is None:
                 log.info("Can access resource without password")
             else:
                 log.info("Can access resource")
 
-        if successfully_connected == False:
+        if successfully_connected is False:
             log.info("Can not access resource without password")
-            actionList = []
-            actionList.append(["TryAgain", "The private and public keys was generated manually, right now. Try again."])
+            action_list = [("TryAgain", "The private and public keys was generated manually, right now. Try again.")]
             # check private keys
-            userHomeDir = os.path.expanduser("~")
-            privateKeys = [os.path.join(userHomeDir, '.ssh', f[:-4]) for f in
-                           os.listdir(os.path.join(userHomeDir, '.ssh')) if
-                           os.path.isfile(os.path.join(userHomeDir, '.ssh', f)) \
-                           and f[-4:] == '.pub' and os.path.isfile(os.path.join(userHomeDir, '.ssh', f[:-4]))]
-            if len(privateKeys) > 0:
-                actionList.append(["UseExistingPrivateKey", "Use existing private and public key."])
+            user_home_dir = os.path.expanduser("~")
+            private_keys = [
+                os.path.join(user_home_dir, '.ssh', f[:-4]) for f in os.listdir(os.path.join(user_home_dir, '.ssh'))
+                if os.path.isfile(os.path.join(user_home_dir, '.ssh', f))
+                and f[-4:] == '.pub' and os.path.isfile(os.path.join(user_home_dir, '.ssh', f[:-4]))]
 
-            actionList.append(["GenNewKey", "Generate new private and public key."])
-            actionList.append(["UsePassword", "Use password directly."])
+            if len(private_keys) > 0:
+                action_list.append(("UseExistingPrivateKey", "Use existing private and public key."))
 
-            print()
-            print("Select authentication method:")
-            for i in range(len(actionList)):
-                print("%3d  %s" % (i, actionList[i][1]))
+            action_list.append(("GenNewKey", "Generate new private and public key."))
+            action_list.append(("UsePassword", "Use password directly."))
+            log.empty_line()
+
+            log.info(
+                "Select authentication method:" +
+                "\n".join(["%3d  %s" % (i, desc) for i, (_, desc) in enumerate(action_list)]))
             while True:
                 log.log_input("Select option from list above:")
                 try:
@@ -399,40 +412,38 @@ def get_remote_access_method():
                     else:
                         action = int(action)
 
-                    if action < 0 or action >= len(actionList):
-                        raise Exception()
+                    if action < 0 or action >= len(action_list):
+                        raise ValueError()
                     break
-                except Exception:
+                except (ValueError, TypeError):
                     log.error("Incorrect entry, try again.")
 
             # do the action
-            print()
-            if actionList[action][0] == "TryAgain":
+            log.empty_line()
+            if action_list[action][0] == "TryAgain":
                 continue
-            if actionList[action][0] == "UsePassword":
+            if action_list[action][0] == "UsePassword":
                 log.log_input("Enter password for %s@%s:" % (sshUserName, remoteAccessNode))
                 sshPassword = getpass.getpass("")
                 ask_for_user_name = not ask_for_user_name
                 continue
-            if actionList[action][0] == "UseExistingPrivateKey":
-                print("Available private keys:")
-                for i in range(len(privateKeys)):
-                    print("%3d  %s" % (i, privateKeys[i]))
+            if action_list[action][0] == "UseExistingPrivateKey":
+                log.info("Available private keys:"+"\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
                 while True:
                     log.log_input("Select key number from list above:")
                     try:
-                        iKey = input("")
-                        iKey = int(iKey)
+                        i_key = input("")
+                        i_key = int(i_key)
 
-                        if iKey < 0 or iKey >= len(privateKeys):
-                            raise Exception()
+                        if i_key < 0 or i_key >= len(private_keys):
+                            raise ValueError()
                         break
-                    except Exception:
+                    except (ValueError, TypeError):
                         log.error("Incorrect entry, try again.")
-                sshPrivateKeyFile = privateKeys[iKey]
+                sshPrivateKeyFile = private_keys[i_key]
                 ask_for_user_name = not ask_for_user_name
                 continue
-            if actionList[action][0] == "GenNewKey":
+            if action_list[action][0] == "GenNewKey":
                 count = 0
                 while True:
                     log.log_input("Enter password for %s@%s (will be used only during this session):" % (
@@ -440,7 +451,7 @@ def get_remote_access_method():
                     sshPassword4thisSession = getpass.getpass("")
                     sshPassword = sshPassword4thisSession
 
-                    if checkConnectionToResource():
+                    if check_connection_to_resource():
                         break
                     count += 1
                     if count >= 3:
@@ -451,7 +462,7 @@ def get_remote_access_method():
                 sshPrivateKeyFile = input("[id_rsa_%s]" % resource_name)
                 if sshPrivateKeyFile.strip() == "":
                     sshPrivateKeyFile = "id_rsa_%s" % resource_name
-                sshPrivateKeyFile = os.path.join(userHomeDir, '.ssh', sshPrivateKeyFile)
+                sshPrivateKeyFile = os.path.join(user_home_dir, '.ssh', sshPrivateKeyFile)
                 log.log_input("Enter passphrase for new key (leave empty for passwordless access):")
                 sshPrivateKeyPassword = getpass.getpass("")
                 os.system("ssh-keygen -t rsa -N \"%s\" -f %s" % (sshPrivateKeyPassword, sshPrivateKeyFile))
@@ -469,75 +480,84 @@ def get_remote_access_method():
             break
         else:
             log.error("Incorrect resource access credential")
+
     if successfully_connected:
-        print()
+        log.empty_line()
         log.info("Connecting to " + resource_name)
 
         str_io = io.StringIO()
-        sys.stdout = sys.stderr = str_io
-        rsh = cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
-                            logfile=sys.stdout,
-                            command=None)
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
+        try:
+            sys.stdout = sys.stderr = str_io
+            rsh = cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+                                PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
+                                logfile=sys.stdout,
+                                command=None)
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+        except Exception as e:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            log.debug(str_io.getvalue())
+            raise e
 
         log.info("              Done")
-    print()
+    log.empty_line()
     return successfully_connected
 
 
-def getSytemCharacteristics():
+def get_system_characteristics():
+    """detect system characteristics or ask user about them"""
     global ppn
     while True:
         try:
             log.log_input("Enter processors (cores) per node count:")
             ppn = int(input(""))
             break
-        except Exception:
+        except (ValueError, TypeError):
             log.error("Incorrect entry, try again.")
 
 
-def getFileSytemAccessPoints():
+def get_file_system_access_points():
     global resource_name
     global networkScratch
     global localScratch
     global akrrData
     global appKerDir
 
-    homeDir = cfg.sshCommand(rsh, "echo $HOME").strip()
-    scratchNetworkDir = cfg.sshCommand(rsh, "echo $SCRATCH").strip()
+    home_dir = cfg.sshCommand(rsh, "echo $HOME").strip()
+    scratch_network_dir = cfg.sshCommand(rsh, "echo $SCRATCH").strip()
 
     # localScratch
-    localScratchDefault = "/tmp"
+    local_scratch_default = "/tmp"
     while True:
         log.log_input("Enter location of local scratch (visible only to single node):")
-        localScratch = input("[%s]" % localScratchDefault)
+        localScratch = input("[%s]" % local_scratch_default)
         if localScratch.strip() == "":
-            localScratch = localScratchDefault
-        status, msg = resource_deploy.CheckDirSimple(rsh, localScratch)
+            localScratch = local_scratch_default
+        status, msg = resource_deploy.check_dir_simple(rsh, localScratch)
         if status:
             log.info(msg)
-            print()
+            log.empty_line()
             break
         else:
             log.warning(msg)
             log.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
-            print()
+            log.empty_line()
             break
     localScratch = cfg.sshCommand(rsh, "echo %s" % (localScratch,)).strip()
     # networkScratch
-    networkScratchDefault = ""
-    if scratchNetworkDir != "":
-        networkScratchDefault = scratchNetworkDir
-    networkScratchVisible = False
+    network_scratch_default = ""
+    if scratch_network_dir != "":
+        network_scratch_default = scratch_network_dir
+    network_scratch_visible = False
     while True:
         log.log_input(
-            "Enter location of network scratch (visible only to all nodes), used for temporary storage of app kernel input/output:")
-        if networkScratchDefault != "":
-            networkScratch = input("[%s]" % networkScratchDefault)
+            "Enter location of network scratch (visible only to all nodes),"
+            "used for temporary storage of app kernel input/output:")
+        if network_scratch_default != "":
+            networkScratch = input("[%s]" % network_scratch_default)
             if networkScratch.strip() == "":
-                networkScratch = networkScratchDefault
+                networkScratch = network_scratch_default
         else:
             networkScratch = input("")
 
@@ -545,47 +565,45 @@ def getFileSytemAccessPoints():
             log.error("Incorrect value for networkScratch, try again")
             continue
 
-        status, msg = resource_deploy.CheckDir(rsh, networkScratch, exitOnFail=False, tryToCreate=True)
+        status, msg = resource_deploy.check_dir(rsh, networkScratch, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
-            networkScratchVisible = True
-            print()
+            network_scratch_visible = True
+            log.empty_line()
             break
         else:
             log.warning(msg)
-            # log.warning('network scratch might be have a different location on head node, so if it is by design it is ok')
-            # print
             break
     networkScratch = cfg.sshCommand(rsh, "echo %s" % (networkScratch,)).strip()
     # appKerDir
-    appKerDirDefault = os.path.join(homeDir, "appker", resource_name)
+    appker_dir_default = os.path.join(home_dir, "appker", resource_name)
     while True:
         log.log_input("Enter future location of app kernels input and executable files:")
-        appKerDir = input("[%s]" % appKerDirDefault)
+        appKerDir = input("[%s]" % appker_dir_default)
         if appKerDir.strip() == "":
-            appKerDir = appKerDirDefault
-        status, msg = resource_deploy.CheckDir(rsh, appKerDir, exitOnFail=False, tryToCreate=True)
+            appKerDir = appker_dir_default
+        status, msg = resource_deploy.check_dir(rsh, appKerDir, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
-            print()
+            log.empty_line()
             break
         else:
             log.error(msg)
     appKerDir = cfg.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
     # akrrData
-    akrrDataDefault = os.path.join(homeDir, "akrrdata", resource_name)
-    if networkScratchVisible:
-        akrrDataDefault = os.path.join(networkScratch, "akrrdata", resource_name)
+    akrr_data_default = os.path.join(home_dir, "akrr_data", resource_name)
+    if network_scratch_visible:
+        akrr_data_default = os.path.join(networkScratch, "akrr_data", resource_name)
     while True:
         log.log_input(
             "Enter future locations for app kernels working directories (can or even should be on scratch space):")
-        akrrData = input("[%s]" % akrrDataDefault)
+        akrrData = input("[%s]" % akrr_data_default)
         if akrrData.strip() == "":
-            akrrData = akrrDataDefault
-        status, msg = resource_deploy.CheckDir(rsh, akrrData, exitOnFail=False, tryToCreate=True)
+            akrrData = akrr_data_default
+        status, msg = resource_deploy.check_dir(rsh, akrrData, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
-            print()
+            log.empty_line()
             break
         else:
             log.error(msg)
@@ -618,9 +636,13 @@ def resource_add(config):
     global batchScheduler
     global batchJobHeaderTemplate
 
+    if config.verbose:
+        verbose = True
+
     log.info("Beginning Initiation of New Resource...")
     verbose = config.verbose
     dry_run = config.dry_run
+    resource_deploy.dry_run = config.dry_run
     no_ping = config.no_ping
     minimalistic = config.minimalistic
 
@@ -639,8 +661,8 @@ def resource_add(config):
             resource_id = input()
             if validate_resource_id(resource_id, resources):
                 break
-            print("Incorrect resource_id try again")
-        print()
+            log.warning("Incorrect resource_id try again")
+        log.empty_line()
         resource_id = int(resource_id)
     else:
         resource_id = 0
@@ -678,8 +700,8 @@ def resource_add(config):
 
     if minimalistic is False:
         get_remote_access_method()
-        getSytemCharacteristics()
-        getFileSytemAccessPoints()
+        get_system_characteristics()
+        get_file_system_access_points()
 
     log.debug("Summary of parameters" +
               "resource_name: {}".format(resource_name) +
@@ -696,10 +718,11 @@ def resource_add(config):
               "appKerDir: {}".format(appKerDir) +
               "batchScheduler: {}".format(batchScheduler) +
               "batchJobHeaderTemplate: {}".format(batchJobHeaderTemplate) + "\n")
-
+    
     generate_resource_config(resource_id, resource_name, queuing_system)
-    log.info('Initiation of new resource is completed.')
-    log.info('    Edit batchJobHeaderTemplate variable in ' + resource_cfg_filename)
-    log.info('    and move to resource validation and deployment step.')
-    log.info('    i.e. execute:')
-    log.info('        akrr resource deploy -r ' + resource_name)
+    log.info(
+        "Initiation of new resource is completed.\n"
+        "    Edit batchJobHeaderTemplate variable in {}\n"
+        "    and move to resource validation and deployment step.\n"
+        "    i.e. execute:\n"
+        "        akrr resource deploy -r {}".format(resource_cfg_filename, resource_name))

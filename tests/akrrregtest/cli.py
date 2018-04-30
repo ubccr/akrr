@@ -42,6 +42,7 @@ class CLI:
         if "verbose" in cli_args and cli_args.verbose:
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)
+            cfg.verbose = True
 
         if "very_verbose" in cli_args and cli_args.very_verbose:
             log.basicConfig(level=1)
@@ -71,10 +72,10 @@ class CLI:
         parser = self.subparsers.add_parser("build",
                                             description="install code")
 
-        def runit(args):
+        def run_it(_):
             log.warning("add_command_install is not implemented")
 
-        parser.set_defaults(func=runit)
+        parser.set_defaults(func=run_it)
 
     def run(self):
         """execute what asked in command line"""

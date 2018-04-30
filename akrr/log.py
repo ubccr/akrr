@@ -1,6 +1,10 @@
 from logging import INFO,DEBUG
 from logging import basicConfig,critical,error,warn,warning,info,debug,getLogger
 
+verbose = False
+error_count = 0
+warning_count = 0
+
 
 def debug2(msg, *args, **kwargs):
     """

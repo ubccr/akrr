@@ -729,14 +729,15 @@ class cli:
             dest='redirect_task_processing_to_log_file',
             default=None,type=int,
             help='Overwrite redirect_task_processing_to_log_file from configuration')
-        
-    
+
         parser.set_defaults(func=daemon_handler)
-    
-    def process_common_args(self,cli_args):
+
+    def process_common_args(self, cli_args):
         if "verbose" in cli_args and cli_args.verbose:
+            log.verbose = True
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)
+
     def run(self):
         """parse arguments and execute requested commands"""
         # PARSE: the command line parameters the user provided.
