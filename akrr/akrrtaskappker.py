@@ -221,8 +221,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 sendToQueue=Template(submitCommands[self.resource['batchScheduler']]).substitute(scriptPath=self.JobScriptName)
                 msg=cfg.sshCommand(sh, sendToQueue)
                 matchObj=re.search(jidExtractPatterns[self.resource['batchScheduler']],msg,re.M|re.S)
-                JobIDstr=matchObj.group(1)
-                
+
                 if matchObj:
                     try:
                         JobID=int(matchObj.group(1))
