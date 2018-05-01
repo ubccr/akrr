@@ -36,8 +36,12 @@ set -e
 echo "Testing AKRR setup"
 ${which_akrrregtest} -v setup
 
+${which_akrr} daemon status
+
 echo "Testing AKRR resource adding "
 ${which_akrrregtest} -v resource add -r localhost
+
+${which_akrr} daemon status
 
 #edit some files
 AKRR_CONF_DIR=$(dirname $(dirname ${which_akrr}))/etc
@@ -45,3 +49,5 @@ RES_CONF=$AKRR_CONF_DIR/resources/localhost/resource.conf
 
 echo "Testing AKRR resource deployment "
 ${which_akrrregtest} -v resource deploy -r localhost
+
+${which_akrr} daemon status

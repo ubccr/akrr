@@ -46,6 +46,10 @@ def clear_output_text(s):
     return s
 
 
+class ExpectTimeout(Exception):
+    pass
+
+
 class ShellSpawn(pexpect.spawn):
     """@todo merge with one from akrr"""
     def __init__(self, command, args=[], timeout=5, maxread=2000,
@@ -122,7 +126,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         if type(pattern) is list:
             return imatch - 2
@@ -151,7 +155,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         if type(pattern) is list:
             return imatch - 2
@@ -178,7 +182,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         self.lastcmd = cmd + "\n"
         self.sendline(cmd)

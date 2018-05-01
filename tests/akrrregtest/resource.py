@@ -1,7 +1,7 @@
 """Execution of akrr resource config"""
 from akrr import log
 
-from .util import get_bash
+from .util import get_bash, ExpectTimeout
 
 from . import cfg
 
@@ -168,12 +168,20 @@ def resource_deploy(resource_name, test_appkernel=None, test_nodes=None, deploy_
         "" if test_nodes is None else " -n {}".format(test_nodes))
     bash.startcmd(cmd+" > out")
 
-    bash.justExpect(bash.prompt, timeout=deploy_timeout)
-
-    out = open("out", "rt").read()
-    if out.count("you can move to next step") == 0:
-        log.error("Unsuccessful deployment\n"+out)
+    try:
+        bash.justExpect(bash.prompt, timeout=deploy_timeout)
+    except ExpectTimeout:
+        log.error("Deployment has timed out\n")
+        with open("out", "rt") as fin:
+            out=fin.read()
+            log.error("Unsuccessful deployment\n"+out)
         exit(1)
+
+    with open("out", "rt") as fin:
+        out=fin.read()
+        if out.count("you can move to next step") == 0:
+            log.error("Unsuccessful deployment\n"+out)
+            exit(1)
 
 
 def deploy_all_resources(resource=None, **_):
