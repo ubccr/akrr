@@ -10,6 +10,9 @@ build:
         - cmd_start self_contained_slurm_wlm
         - squeue
         - sinfo
+        - ps -Af
+        - cat /var/log/slurm/slurmctrl.log
+        - cat /var/log/slurm/slurmd.log
         # Run tests
         - export PATH=/root/src/github.com/$REPO_FULL_NAME/bin:/root/src/github.com/$REPO_FULL_NAME/tests/bin:$PATH
         - /root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh
