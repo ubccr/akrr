@@ -48,6 +48,7 @@ AKRR_CONF_DIR=$(dirname $(dirname ${which_akrr}))/etc
 RES_CONF=$AKRR_CONF_DIR/resources/localhost/resource.conf
 
 echo "Testing AKRR resource deployment "
-${which_akrrregtest} -v resource deploy -r localhost
+#${which_akrrregtest} -v resource deploy -r localhost -n 1
+${which_akrr} -v resource deploy -r localhost -n 1
 
 ${which_akrr} daemon status
