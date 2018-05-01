@@ -10,5 +10,4 @@ build:
         - cmd_start self_contained_slurm_wlm
         # Run tests
         - export PATH=/root/src/github.com/nsimakov/akrr/bin:/root/src/github.com/nsimakov/akrr/test/bin:$PATH
-        - cd /root/src/github.com/nsimakov/akrr/tests/regtest1/
-        - ./run_test.sh setup
+        - /root/src/github.com/nsimakov/akrr/tests/regtest1/run_test.sh setup

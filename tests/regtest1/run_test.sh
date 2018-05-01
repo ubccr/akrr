@@ -38,11 +38,11 @@ do
     case "$var" in
     setup)
         echo "Launching AKRR setup"
-        ${which_akrrregtest} setup
+        ${which_akrrregtest} -v setup
         ;;
     resource)
         echo "Launching AKRR resource adding "
-        ${which_akrrregtest} resource
+        ${which_akrrregtest} -v resource
         ;;
     *)
         echo "Unknown option $var"
