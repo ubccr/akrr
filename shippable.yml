@@ -7,6 +7,8 @@ build:
         options: "--user root -e HOME=/root -t"
     ci:
         # Start all daemons
+        - ls /var/log
+        - ls /var/run
         - cmd_start self_contained_slurm_wlm
         - squeue
         - sinfo
