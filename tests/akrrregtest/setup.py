@@ -146,7 +146,7 @@ def _add_fake_modw():
 
     import MySQLdb
     from .db import get_xd_db
-    _, cur = get_xd_db(su=True)
+    con, cur = get_xd_db(su=True)
 
     from akrr.util.sql import db_exist
 
@@ -159,11 +159,11 @@ def _add_fake_modw():
             create_table = False
             log.info("modw.resourcefact exists")
 
-            cur.execute("SELECT * FROM modw.resourcefact WHERE code=='HUEY' OR code=='RUSH'")
+            cur.execute("SELECT * FROM modw.resourcefact WHERE code=='Alpha' OR code=='Bravo'")
             rs = cur.fetchall()
             if len(rs) == 2:
                 populate_table = False
-                log.info("modw.resourcefact contains HUEY and RUSH")
+                log.info("modw.resourcefact contains Alpha and Bravo")
         except MySQLdb.Error:
             log.debug2("Either modw.resourcefact  does not exist or unexpected values")
 
@@ -190,20 +190,25 @@ def _add_fake_modw():
             );
             CREATE INDEX `aggregation_index` ON `resourcefact` (`resourcetype_id`, `id`);
         """)
+
     if populate_table:
         _cursor_execute(
             cur,
             "INSERT INTO modw.resourcefact (" +
             "id, resourcetype_id, organization_id, name, code, description, " +
             "    start_date, start_date_ts, end_date, end_date_ts) " +
-            "VALUES (10, 1, 35, 'alpha.ccr.buffalo.edu', 'HUEY', null, " +
-            "    '2010-01-01 00:00:00.0', 1262322000, null, null);" +
+            "VALUES (10, 1, 35, 'alpha', 'Alpha', null, " +
+            "    '2010-01-01 00:00:00.0', 1262322000, null, null);")
+        _cursor_execute(
+            cur,
             "INSERT INTO modw.resourcefact (" +
             "id, resourcetype_id, organization_id, name, code, description," +
             "    start_date, start_date_ts, end_date, end_date_ts) " +
-            "VALUES (11, 1, 35, 'rush.ccr.buffalo.edu', 'RUSH', null, " +
+            "VALUES (11, 1, 35, 'bravo', 'Bravo', null, " +
             "    '2010-01-01 00:00:00.0', 1262322000, null, null); ")
-
+    con.commit()
+    cur.close()
+    con.close()
 
 def setup():
     if add_fake_modw:

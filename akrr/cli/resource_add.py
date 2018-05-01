@@ -396,19 +396,20 @@ def get_remote_access_method():
             if len(private_keys) > 0:
                 action_list.append(("UseExistingPrivateKey", "Use existing private and public key."))
 
+            default_action = len(action_list)
             action_list.append(("GenNewKey", "Generate new private and public key."))
             action_list.append(("UsePassword", "Use password directly."))
             log.empty_line()
 
             log.info(
-                "Select authentication method:" +
+                "Select authentication method:\n" +
                 "\n".join(["%3d  %s" % (i, desc) for i, (_, desc) in enumerate(action_list)]))
             while True:
                 log.log_input("Select option from list above:")
                 try:
-                    action = input("[2] ")
+                    action = input("[%s] " % default_action)
                     if action.strip() == "":
-                        action = 2
+                        action = default_action
                     else:
                         action = int(action)
 
@@ -456,25 +457,32 @@ def get_remote_access_method():
                     count += 1
                     if count >= 3:
                         break
-                sshPassword = None
+
                 # generate keys
                 log.log_input("Enter private key name:")
                 sshPrivateKeyFile = input("[id_rsa_%s]" % resource_name)
                 if sshPrivateKeyFile.strip() == "":
                     sshPrivateKeyFile = "id_rsa_%s" % resource_name
                 sshPrivateKeyFile = os.path.join(user_home_dir, '.ssh', sshPrivateKeyFile)
+
                 log.log_input("Enter passphrase for new key (leave empty for passwordless access):")
                 sshPrivateKeyPassword = getpass.getpass("")
-                os.system("ssh-keygen -t rsa -N \"%s\" -f %s" % (sshPrivateKeyPassword, sshPrivateKeyFile))
-                if sshPrivateKeyPassword.strip() == "":
-                    sshPrivateKeyPassword = None
-                # copy keys
-                cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
-                              password=sshPassword4thisSession,
-                              PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
-                              command='')
-                ask_for_user_name = not ask_for_user_name
-                continue
+
+                if dry_run:
+                    successfully_connected = True
+                else:
+                    sshPassword = None
+
+                    os.system("ssh-keygen -t rsa -N \"%s\" -f %s" % (sshPrivateKeyPassword, sshPrivateKeyFile))
+                    if sshPrivateKeyPassword.strip() == "":
+                        sshPrivateKeyPassword = None
+                    # copy keys
+                    cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
+                                  password=sshPassword4thisSession,
+                                  PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
+                                  command='')
+                    ask_for_user_name = not ask_for_user_name
+                    continue
 
         if successfully_connected:
             break

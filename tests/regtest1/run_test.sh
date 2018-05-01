@@ -33,23 +33,15 @@ echo "akrrregtest to use: ${which_akrrregtest}"
 #exit if any command fails
 set -e
 
-for var in "$@"
-do
-    case "$var" in
-    setup)
-        echo "Launching AKRR setup"
-        ${which_akrrregtest} -v setup
-        ;;
-    resource)
-        echo "Launching AKRR resource adding "
-        ${which_akrrregtest} -v resource
-        ;;
-    *)
-        echo "Unknown option $var"
-        exit 1
-        ;;
-    esac
-done
+echo "Testing AKRR setup"
+${which_akrrregtest} -v setup
 
+echo "Testing AKRR resource adding "
+${which_akrrregtest} -v resource add -r localhost
 
+#edit some files
+AKRR_CONF_DIR=$(dirname $(dirname ${which_akrr}))/etc
+RES_CONF=$AKRR_CONF_DIR/resources/localhost/resource.conf
 
+echo "Testing AKRR resource deployment "
+${which_akrrregtest} -v resource deploy -r localhost
