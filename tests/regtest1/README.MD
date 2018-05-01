@@ -40,11 +40,12 @@ docker run -v `pwd`:/root/src/github.com/ubccr/akrr -it --rm \
 
 ### Start tests
 ```bash
+export REPO_FULL_NAME=ubccr/akrr
 # Here is tests, which is in ci portion of shippable.yml
 # Start all daemons
 cmd_start self_contained_slurm_wlm
 # Run tests
-export PATH=/root/src/github.com/ubccr/akrr/bin:/root/src/github.com/ubccr/akrr/test/bin:$PATH
-/root/src/github.com/ubccr/akrr/tests/regtest1/run_test.sh setup
+export PATH=/root/src/github.com/$REPO_FULL_NAME/bin:/root/src/github.com/$REPO_FULL_NAME/test/bin:$PATH
+/root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh setup
 
 ```
