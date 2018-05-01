@@ -1,4 +1,4 @@
-FROM nsimakov/akrr_ready_centos_slurm_single_host_wlm
+FROM nsimakov/akrr_ready_centos_slurm_single_host_wlm:1
 
 LABEL description="centos for akrr tests"
 
