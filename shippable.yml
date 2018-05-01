@@ -1,0 +1,14 @@
+language: none
+build:
+    pre_ci:
+        - docker build -t pseudo_repo/akrr_centos_slurm_single_host_wlm:latest .
+    pre_ci_boot:
+        image_name: pseudo_repo/akrr_centos_slurm_single_host_wlm
+        image_tag: latest
+        pull: false
+        options: "--user root -e HOME=/root -t"
+    ci:
+        # Start all daemons
+        - cmd_start self_contained_slurm_wlm
+        # Run tests
+        - PATH=/root/akrr/bin:/root/akrr/test/bin:/usr/local/bin:/usr/bin /root/akrr/test/regtest1/run_test.sh setup

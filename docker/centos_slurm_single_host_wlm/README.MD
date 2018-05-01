@@ -40,9 +40,21 @@ docker build -t nsimakov/centos_slurm_single_host_wlm:1 .
 #run
 docker run --name centos_slurm_single_host_wlm -h centos_slurm_single_host_wlm \
        --rm
-       -it centos_slurm_single_host_wlm:1 
+       -it nsimakov/centos_slurm_single_host_wlm:1 
 
 #push to docker cloud
-#docker push nsimakov/centos_slurm_single_host_wlm:1
+docker push nsimakov/centos_slurm_single_host_wlm:1
+```
+
+## Making Single Host Slurm WLM Image with Dependencies Installed for AKRR
+
+```bash
+#make image
+docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:1 -f DockerfileAKRRReady .
+
+#run
+
+#push to docker cloud
+docker push nsimakov/akrr_ready_centos_slurm_single_host_wlm:1
 ```
 

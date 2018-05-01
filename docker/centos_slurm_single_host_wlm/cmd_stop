@@ -41,6 +41,9 @@ do
     slurmd)
         stop_process slurmd /run/slurmd.pid
         ;;
+    self_contained_slurm_wlm)
+        cmd_stop slurmd slurmctld slurmdbd mysqld sshd munged
+        ;;
     *)
         echo "unknown command ${var}"
         ;;

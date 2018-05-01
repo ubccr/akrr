@@ -91,4 +91,4 @@ EXPOSE 29002 29003
 
 # setup entry point
 ENTRYPOINT ["/sbin/cmd_start"]
-CMD ["munged", "sshd", "mysqld", "slurmdbd", "slurmctld", "slurmd", "bash"]
+CMD ["self_contained_slurm_wlm", "bash"]

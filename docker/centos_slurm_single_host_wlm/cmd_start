@@ -92,6 +92,9 @@ do
         start_process_w_confirm slurmd /usr/sbin/slurmd /run/slurmd.pid \
             /var/log/slurm/slurmd.log started
         ;;
+    self_contained_slurm_wlm)
+        cmd_start munged sshd mysqld slurmdbd slurmctld slurmd
+        ;;
     bash)
         echo "Launching bash"
         run_bash=1
@@ -109,6 +112,7 @@ done
 if [ $run_bash -eq 1 ]; then
     /bin/bash
 elif [ $loop -eq 1 ]; then
+    echo "All requested daemon launched"
     while true; do
         sleep 60
     done
