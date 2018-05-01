@@ -11,4 +11,4 @@ build:
         # Start all daemons
         - cmd_start self_contained_slurm_wlm
         # Run tests
-        - PATH=/root/akrr/bin:/root/akrr/test/bin:/usr/local/bin:/usr/bin /root/akrr/test/regtest1/run_test.sh setup
+        - PATH=/root/akrr/bin:/root/akrr/test/bin:/usr/local/bin:/usr/bin /root/akrr/tests/regtest1/run_test.sh setup

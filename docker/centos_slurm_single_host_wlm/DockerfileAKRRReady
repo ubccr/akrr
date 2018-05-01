@@ -6,6 +6,7 @@ LABEL description="centos for akrr tests"
 RUN \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs \
+        git sudo \
         python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients && \
     yum clean all
 

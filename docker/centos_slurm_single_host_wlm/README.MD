@@ -14,7 +14,7 @@ DockerfileMakeSlurmRPM describes simple image for centos 7 rpm making.
 Here is listing on the whole process
   
 ```bash
-#make image
+#make image, in docker/centos_slurm_single_host_wlm/
 docker build -t slurm_rpm_maker:1 -f DockerfileMakeSlurmRPM .
 
 #create directory for RPMS storage
@@ -34,7 +34,7 @@ docker image rm slurm_rpm_maker:1
 ## Making Single Host Slurm WLM Image
 
 ```bash
-#make image
+#make image, in docker/centos_slurm_single_host_wlm/
 docker build -t nsimakov/centos_slurm_single_host_wlm:1 .
 
 #run
@@ -49,7 +49,7 @@ docker push nsimakov/centos_slurm_single_host_wlm:1
 ## Making Single Host Slurm WLM Image with Dependencies Installed for AKRR
 
 ```bash
-#make image
+#make image, in docker/centos_slurm_single_host_wlm/
 docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:1 -f DockerfileAKRRReady .
 
 #run
@@ -58,3 +58,13 @@ docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:1 -f Dockerfile
 docker push nsimakov/akrr_ready_centos_slurm_single_host_wlm:1
 ```
 
+## Testing AKRR Image
+
+```bash
+#make image in akrr root
+docker build -t pseudo_repo/akrr_centos_slurm_single_host_wlm:latest .
+
+#run
+docker run -it --rm pseudo_repo/akrr_centos_slurm_single_host_wlm:latest bash
+
+```
