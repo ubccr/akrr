@@ -3,11 +3,20 @@ FROM nsimakov/centos_slurm_single_host_wlm:1
 LABEL description="centos for akrr tests"
 
 # install dependencies
+# Needed for shippable:
+#    git sudo
+# Needed to run:
+#    python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients
+# Needed for tests:
+#     python34-PyYAML
 RUN \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs \
-        python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients && \
+        git sudo \
+        python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients \
+        python34-PyYAML && \
     yum clean all
+
 
 # reset entry point
 ENTRYPOINT []

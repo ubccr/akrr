@@ -93,6 +93,8 @@ def _cursor_execute(cur, query, args=None):
     from akrr.util.sql import cursor_execute
     cursor_execute(cur, query, args=args, dry_run=dry_run)
 
+def _create_user_if_not_exists(cur, query, args=None):
+    """"""
 
 def _make_dirs(path):
     """Recursively create directories if not in dry run mode"""
@@ -423,8 +425,13 @@ class AKRRSetup:
                 client_host = get_db_client_host(su_cur)
 
                 _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
-                _cursor_execute(su_cur, "CREATE USER IF NOT EXISTS %s@%s IDENTIFIED BY %s",
-                                (user, client_host, password))
+
+                su_cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
+                if len(su_cur.fetchall()) == 0:
+                    # Older version of MySQL do not support CREATE USER IF NOT EXISTS
+                    # so need to do checking
+                    _cursor_execute(su_cur, "CREATE USER %s@%s IDENTIFIED BY %s",
+                                    (user, client_host, password))
                 _cursor_execute(su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
 
                 su_con.commit()
