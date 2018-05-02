@@ -10,7 +10,6 @@ build:
         - cmd_start self_contained_slurm_wlm
         - squeue
         - sinfo
-        - chmod a+r /etc/slurm/slurm.conf
         - ps -Af
         - cat /var/log/slurm/slurmctld.log
         - cat /var/log/slurm/slurmd.log

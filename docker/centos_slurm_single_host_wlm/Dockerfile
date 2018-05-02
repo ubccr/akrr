@@ -77,6 +77,7 @@ EXPOSE 3306
 COPY slurm.conf slurmdbd.conf /etc/slurm/
 RUN \
     mkdir /var/log/slurm && \
+    chmod a+r /etc/slurm/slurm.conf  /etc/slurm/slurmdbd.conf && \
     cmd_start munged && \
     cmd_start mysqld && \
     cmd_start slurmdbd && \
