@@ -159,7 +159,7 @@ def _add_fake_modw():
             create_table = False
             log.info("modw.resourcefact exists")
 
-            cur.execute("SELECT * FROM modw.resourcefact WHERE code=='Alpha' OR code=='Bravo'")
+            cur.execute("SELECT * FROM modw.resourcefact WHERE code='Alpha' OR code='Bravo'")
             rs = cur.fetchall()
             if len(rs) == 2:
                 populate_table = False
