@@ -1,25 +1,32 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ setup script for Application Kernels Remote Runner (AKRR) """
-from setuptools import setup,find_packages
-import sys
-import os
+from setuptools import setup
 
-
-setup(name='akrr',
+setup(
+    name='akrr',
     version='2.0.0',
     description='Application Kernels Remote Runner',
-    long_description='Periodical execution of application kernels (applications with input parameters) on HPC resources for performance monitoring',
+    long_description='Periodical execution of application kernels'
+                     '(applications with input parameters) on HPC resources for performance monitoring',
     classifiers=[
         'Environment :: Console',
         'Operating System :: POSIX',
         'Programming Language :: Python'
     ],
     license='LGPLv3',
-    author='Nikolay A Simakov',
+    author='Nikolay A Simakov @ CCR UB SUNY',
     author_email='nikolays@buffalo.edu',
-    url='https://github.com/ubccr/akrrcfg',
+    url='https://github.com/ubccr/akrr',
     scripts=['bin/akrr'],
-    packages = ['akrr','akrr/util','akrr/models','akrr/appkernelsparsers','akrr/akrrpexpect'],
-    requires=['MySQLdb','requests','bottle'],
-    package_data={'akrr':['templates/*.conf','default_conf/*.conf','appker_repo/inputs.tar.gz','appker_repo/execs.tar.gz']}
+    packages=[
+        'akrr',
+        'akrr/appkernelsparsers',
+        'akrr/cli',
+        'akrr/pexpect',
+        'akrr/pexpect/ptyprocess',
+        'akrr/util'
+    ],
+    requires=['MySQLdb', 'requests', 'bottle'],
+    package_data={
+        'akrr': ['templates/*.conf', 'default_conf/*.conf', 'appker_repo/inputs.tar.gz', 'appker_repo/execs.tar.gz']}
 )
