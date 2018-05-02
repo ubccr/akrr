@@ -67,7 +67,7 @@ if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir), 'bin', 'akrr')):
     akrr_fullpath = os.path.join(akrr_bin_dir, 'akrr')
     in_src_install = True
 else:
-    akrr_fullpath = which('akrr')
+    akrr_fullpath = inspect.stack()[-1][1]
     akrr_bin_dir = os.path.dirname(akrr_fullpath)
 
 # determine akrr_home
