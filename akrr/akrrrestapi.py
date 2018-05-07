@@ -2,6 +2,7 @@
 Responsible for serving the RESTful AKRR API.
 """
 from . import cfg
+from . import akrrscheduler
 
 apiroot = cfg.restapi_apiroot
 import os
@@ -18,12 +19,7 @@ import bottle
 from . import bottle_api_json_formatting
 from bottle import Bottle, run, redirect, response, request, get, post, put, delete, error, HTTPError
 
-from json import dumps
-from .models.task import Task
-from .util.generators import generateNumber, generateChars
-from urllib.parse import quote
 
-from . import akrrscheduler
 
 import MySQLdb
 import MySQLdb.cursors
@@ -80,24 +76,6 @@ class SSLWSGIRefServer(bottle.ServerAdapter):
 
 DEFAULT_PAGE = 0
 DEFAULT_PAGE_SIZE = 10
-
-
-def generateFakeTask():
-    """
-    Generate a Task object with randomly generated data.
-    """
-    return Task(
-        generateNumber(1, 1000),
-        generateChars(16),
-        generateChars(16),
-        generateChars(8),
-        generateChars(8),
-        '{}',
-        '{}',
-        '{}',
-        generateNumber(1, 1000),
-        generateNumber(1, 1000)
-    )
 
 
 def validateTaskVariableValue(k, v):
