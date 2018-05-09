@@ -6,13 +6,4 @@ build:
         pull: true
         options: "--user root -e HOME=/root -t"
     ci:
-        # Start all daemons
-        - cmd_start self_contained_slurm_wlm
-        - squeue
-        - sinfo
-        - ps -Af
-        - cat /var/log/slurm/slurmctld.log
-        - cat /var/log/slurm/slurmd.log
-        # Run tests
-        - export PATH=/root/src/github.com/$REPO_FULL_NAME/bin:/root/src/github.com/$REPO_FULL_NAME/tests/bin:$PATH
-        - /root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh
+        - root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh

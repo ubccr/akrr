@@ -5,6 +5,8 @@ LABEL description="centos for akrr tests"
 # install dependencies
 # Needed for shippable:
 #    git sudo
+# Needed to build RPM:
+#    rpm-build
 # Needed to run:
 #    python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients
 # Needed for tests:
@@ -14,7 +16,8 @@ RUN \
     yum -y install --setopt=tsflags=nodocs \
         git sudo \
         python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients \
-        python34-PyYAML python34-pip && \
+        python34-PyYAML python34-pip \
+        rpm-build && \
     yum clean all
 
 

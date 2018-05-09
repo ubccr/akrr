@@ -92,7 +92,13 @@ def make_results_summary(resource_name, app_name, completed_tasks, akrr_xdmod_in
     msg += 'processing message:\n'
     msg += str(akrr_xdmod_instanceinfo['message']) + "\n"
     msg += 'error message:\n'
-    msg += str(akrr_errmsg) + "\n"
+    if isinstance(akrr_errmsg, dict):
+        for v in ("task_id", "appstdout", "stdout", "stderr", "taskexeclog", "err_regexp_id"):
+            if v in akrr_errmsg:
+                msg += v+": "+str(akrr_errmsg[v]) + "\n"
+
+    else:
+        msg += str(akrr_errmsg) + "\n"
     msg += add_file_ref("Local working directory for this task", task_dir)
     msg += 'Location of some important generated files:\n'
     msg += "\t" + add_file_ref("Batch job script", os.path.join(task_dir, 'jobfiles', app_name + ".job"))
