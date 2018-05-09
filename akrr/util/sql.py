@@ -161,3 +161,25 @@ def cursor_execute(cur, query, args=None, dry_run=False):
             query = query % args
 
         log.dry_run("SQL: " + query)
+
+
+def create_user_if_not_exists(cur, user, password, client_host, dry_run=False):
+    """Older mysql servers don't support create user if not exists directly"""
+    cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
+    if len(cur.fetchall()) == 0:
+        # Older version of MySQL do not support CREATE USER IF NOT EXISTS
+        # so need to do checking
+        if password == "":
+            cursor_execute(
+                cur, "CREATE USER %s@%s", (user, client_host), dry_run=dry_run)
+        else:
+            cursor_execute(
+                cur, "CREATE USER %s@%s IDENTIFIED BY %s", (user, client_host, password), dry_run=dry_run)
+
+
+def drop_user_if_exists(cur, user, client_host, dry_run=False):
+    """Older mysql servers don't support drop user if exists directly"""
+    cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
+    if len(cur.fetchall()) > 0:
+        cursor_execute(
+            cur, "DROP USER %s@%s", (user, client_host), dry_run=dry_run)

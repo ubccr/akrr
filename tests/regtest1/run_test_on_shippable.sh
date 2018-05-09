@@ -12,6 +12,12 @@ cd /root/src/github.com/$REPO_FULL_NAME
 ./setup.py bdist_rpm
 # Install RPM
 rpm -Uvh dist/akrr-*.noarch.rpm
-# Run tests
+
+# Run unit tests
+mkdir -p ~/shippable/testresults
+mkdir -p ~/shippable/codecoverage
+pytest --junitxml=~/shippable/testresults/testresults.xml
+pytest --cov=akrr --cov-report=xml:~shippable/codecoverage/coverage.xml
+# Run regtest
 export PATH=/root/src/github.com/$REPO_FULL_NAME/tests/bin:$PATH
 /root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh

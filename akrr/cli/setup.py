@@ -33,7 +33,7 @@ from akrr.util.sql import db_exist
 from akrr.util.sql import cv
 from akrr.util.sql import db_check_priv
 from akrr.util.sql import get_db_client_host
-
+from akrr.util.sql import create_user_if_not_exists
 
 # Python version
 if sys.version_info.major < 3 or sys.version_info.minor < 4:
@@ -426,12 +426,7 @@ class AKRRSetup:
 
                 _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
 
-                su_cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
-                if len(su_cur.fetchall()) == 0:
-                    # Older version of MySQL do not support CREATE USER IF NOT EXISTS
-                    # so need to do checking
-                    _cursor_execute(su_cur, "CREATE USER %s@%s IDENTIFIED BY %s",
-                                    (user, client_host, password))
+                create_user_if_not_exists(su_cur, user, password, client_host, dry_run=dry_run)
                 _cursor_execute(su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
 
                 su_con.commit()
