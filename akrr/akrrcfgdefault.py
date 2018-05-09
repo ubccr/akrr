@@ -1,3 +1,5 @@
+import datetime
+
 ###############################################################################
 # XDMoD DB
 ###############################################################################
@@ -16,9 +18,9 @@ xd_db_passwd = "{xd_user_password}"
 # The name that has been chosen for the 'modw' database. Note: CHANGE THIS AT YOUR OWN RISK.
 xd_db_name = "modw"
 
-#==============================================================================
+# ==============================================================================
 # MOD_AKRR DATABASE
-#==============================================================================
+# ==============================================================================
 
 # The host name of the database server that the 'mod_akrr' database is served from.
 akrr_db_host = xd_db_host
@@ -35,11 +37,11 @@ akrr_db_passwd = "{akrr_user_password}"
 # The name that has been chosen for the 'mod_akrr' database. Note: CHANGE THIS AT YOUR OWN RISK.
 akrr_db_name = "mod_akrr"
 
-#==============================================================================
+# ==============================================================================
 # External DB (In most cases same as Internal DB)
 # NOTE: this database ( and the credentials required ) are usually the same as
 #       the 'mod_akrr' database.
-#==============================================================================
+# ==============================================================================
 export_db_host = akrr_db_host
 export_db_port = akrr_db_port
 export_db_user = akrr_db_user
@@ -123,11 +125,11 @@ completed_tasks_dir = "../comptasks"
 ###############################################################################
 # AKRR parameters
 ###############################################################################
-#Number of sub-processes (workers) to handle tasks  
+# Number of sub-processes (workers) to handle tasks
 max_task_handlers = 4
 
-#redirect task processing to log file
-redirect_task_processing_to_log_file=True
+# redirect task processing to log file
+redirect_task_processing_to_log_file = True
 
 # The 'id' of the pickling protocol to use.
 task_pickling_protocol = 0
@@ -138,12 +140,11 @@ scheduled_tasks_loop_sleep_time = 1.0
 ###############################################################################
 # Error handling and repeat time
 ###############################################################################
-# class datetime.timedelt format
+# class datetime.timedelta format
 # class datetime.timedelta([days[, seconds[, microseconds[, milliseconds[, minutes[, hours[, weeks]]]]]]])
-import datetime
 
 ############################
-# Default error handking
+# Default error handling
 ############################
 
 # Maximal number of regular fatal errors (regular in sense no special treatment)
@@ -151,7 +152,7 @@ max_fatal_errors_for_task = 10
 # Default repeat time
 active_task_default_attempt_repeat = datetime.timedelta(minutes=30)
 
-#***************************
+# ***************************
 # handler hangs
 # ##########################
 
@@ -177,6 +178,3 @@ export_db_max_repeat_attempts = 48
 
 # The default parameters that should be made available to each task.
 default_task_params = {'test_run': False}
-
-
-

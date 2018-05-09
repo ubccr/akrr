@@ -1,5 +1,5 @@
-from logging import INFO,DEBUG
-from logging import basicConfig,critical,error,warn,warning,info,debug,getLogger
+from logging import INFO, DEBUG
+from logging import basicConfig, critical, error, warning, info, debug, getLogger
 
 verbose = False
 error_count = 0
@@ -34,3 +34,10 @@ def log_input(message, *args):
         formatted_message = ''
 
     print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)
+
+
+def test_log():
+    critical("test critical")
+    error("test error")
+    warning("test warning")
+    info("test info")

@@ -27,7 +27,7 @@ Good side code can be modified on host and can be run on uncommitted code.
 Bad side root user can affect files. So on strange errors run
  
 ```bash
-sudo chown -R $USER:$USER *
+sudo chown -R $USER:$USER ./
 ```
 
 

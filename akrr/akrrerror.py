@@ -2,6 +2,7 @@
 akrr exceptions etc.
 """
 
+
 class akrrError(Exception):
     def __init__(self, errmsg=None, errcode=None, extra=None, e=None):
         self.code = errcode

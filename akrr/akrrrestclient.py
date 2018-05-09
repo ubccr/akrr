@@ -22,127 +22,135 @@ from socket import error as SocketError
 import errno
 import time
 import sys
-#initialization
+
+# initialization
 
 
+restapi_host = "127.0.0.1"
+# restapi_host='appkernel'
+restapi_host = 'localhost'
+if cfg.restapi_host != "":
+    restapi_host = cfg.restapi_host
+# set full address
+restapi_host = 'https://' + restapi_host + ':' + str(cfg.restapi_port) + cfg.restapi_apiroot
 
-restapi_host="127.0.0.1"
-#restapi_host='appkernel'
-restapi_host='localhost'
-if cfg.restapi_host!= "":
-    restapi_host=cfg.restapi_host
-#set full address
-restapi_host='https://' + restapi_host +':' + str(cfg.restapi_port) + cfg.restapi_apiroot
+ssl_verify = False
+ssl_cert = cfg.restapi_certfile
 
-ssl_verify=False
-ssl_cert=cfg.restapi_certfile
+waitingTimeOnBusyServer = 0.1
+numberOfRepeatConnnectionOnBusyServer = 20
 
-waitingTimeOnBusyServer=0.1
-numberOfRepeatConnnectionOnBusyServer=20
+token = "None"
 
-token="None"
 
 def get_token():
-    attemptsToConnect=0
-    #the cycle is walk around for 104 error (busy server)
-    while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
+    attemptsToConnect = 0
+    # the cycle is walk around for 104 error (busy server)
+    while attemptsToConnect < numberOfRepeatConnnectionOnBusyServer:
         try:
-            r = requests.get(restapi_host +'/token', auth=(cfg.restapi_rw_username, cfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)
-            if r.status_code!=200:
-                raise Exception("Can not get token for AKRR REST API ( "+restapi_host+" )\n"+
-                   "See server response below\n"+json.dumps(r.json(),indent=4))
+            r = requests.get(restapi_host + '/token', auth=(cfg.restapi_rw_username, cfg.restapi_rw_password),
+                             verify=ssl_verify, cert=ssl_cert)
+            if r.status_code != 200:
+                raise Exception("Can not get token for AKRR REST API ( " + restapi_host + " )\n" +
+                                "See server response below\n" + json.dumps(r.json(), indent=4))
             global token
-            token=r.json()['data']['token']
+            token = r.json()['data']['token']
             break
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
-                raise # Not 104 error
-            time.sleep(waitingTimeOnBusyServer*random.uniform(0.0,1.0))
-            attemptsToConnect+=1
+                raise  # Not 104 error
+            time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
+            attemptsToConnect += 1
 
-def get(url,**kwargs):
-    attemptsToConnect=0
-    #the cycle is walk around for 104 error (busy server)
-    while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
+
+def get(url, **kwargs):
+    attemptsToConnect = 0
+    # the cycle is walk around for 104 error (busy server)
+    while attemptsToConnect < numberOfRepeatConnnectionOnBusyServer:
         try:
-            r=requests.get(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
-            if r.status_code==401:
-                #renew token
+            r = requests.get(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
+            if r.status_code == 401:
+                # renew token
                 get_token()
-                r=requests.get(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
+                r = requests.get(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
-                raise # Not 104 error
-            time.sleep(waitingTimeOnBusyServer*random.uniform(0.0,1.0))
-            attemptsToConnect+=1
+                raise  # Not 104 error
+            time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
+            attemptsToConnect += 1
         except requests.exceptions.ConnectionError as e:
             get_token()
-            attemptsToConnect+=1
+            attemptsToConnect += 1
     return r
 
-def post(url,**kwargs):
-    attemptsToConnect=0
-    #the cycle is walk around for 104 error (busy server)
-    while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
+
+def post(url, **kwargs):
+    attemptsToConnect = 0
+    # the cycle is walk around for 104 error (busy server)
+    while attemptsToConnect < numberOfRepeatConnnectionOnBusyServer:
         try:
-            r=requests.post(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
-            if r.status_code==401:
-                #renew token
+            r = requests.post(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
+            if r.status_code == 401:
+                # renew token
                 get_token()
-                r=requests.post(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
+                r = requests.post(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
-                raise # Not 104 error
-            time.sleep(waitingTimeOnBusyServer*random.uniform(0.0,1.0))
-            attemptsToConnect+=1
+                raise  # Not 104 error
+            time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
+            attemptsToConnect += 1
         except requests.exceptions.ConnectionError as e:
             get_token()
-            attemptsToConnect+=1
-    return r  
-def put(url,**kwargs):
-    attemptsToConnect=0
-    #the cycle is walk around for 104 error (busy server)
-    while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
-        try:
-            r=requests.put(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
-            if r.status_code==401:
-                #renew token
-                get_token()
-                r=requests.put(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
-            break
-        except SocketError as e:
-            if e.errno != errno.ECONNRESET:
-                raise # Not 104 error
-            time.sleep(waitingTimeOnBusyServer*random.uniform(0.0,1.0))
-            attemptsToConnect+=1
-        except requests.exceptions.ConnectionError as e:
-            get_token()
-            attemptsToConnect+=1
+            attemptsToConnect += 1
     return r
 
-def delete(url,**kwargs):
-    attemptsToConnect=0
-    #the cycle is walk around for 104 error (busy server)
-    while attemptsToConnect<numberOfRepeatConnnectionOnBusyServer:
+
+def put(url, **kwargs):
+    attemptsToConnect = 0
+    # the cycle is walk around for 104 error (busy server)
+    while attemptsToConnect < numberOfRepeatConnnectionOnBusyServer:
         try:
-            r=requests.delete(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
-            if r.status_code==401:
-                #renew token
+            r = requests.put(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
+            if r.status_code == 401:
+                # renew token
                 get_token()
-                r=requests.delete(restapi_host+url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert,**kwargs)
+                r = requests.put(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
         except SocketError as e:
             if e.errno != errno.ECONNRESET:
-                raise # Not 104 error
-            time.sleep(waitingTimeOnBusyServer*random.uniform(0.0,1.0))
-            attemptsToConnect+=1
+                raise  # Not 104 error
+            time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
+            attemptsToConnect += 1
         except requests.exceptions.ConnectionError as e:
             get_token()
-            attemptsToConnect+=1
+            attemptsToConnect += 1
     return r
+
+
+def delete(url, **kwargs):
+    attemptsToConnect = 0
+    # the cycle is walk around for 104 error (busy server)
+    while attemptsToConnect < numberOfRepeatConnnectionOnBusyServer:
+        try:
+            r = requests.delete(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
+            if r.status_code == 401:
+                # renew token
+                get_token()
+                r = requests.delete(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
+            break
+        except SocketError as e:
+            if e.errno != errno.ECONNRESET:
+                raise  # Not 104 error
+            time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
+            attemptsToConnect += 1
+        except requests.exceptions.ConnectionError as e:
+            get_token()
+            attemptsToConnect += 1
+    return r
+
 
 if __name__ == '__main__':
-    #do some testing
-    r=get("scheduled_tasks")
+    # do some testing
+    r = get("scheduled_tasks")

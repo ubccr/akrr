@@ -1,11 +1,9 @@
 import sys
-import datetime
 import time
 import inspect
 import os
 import re
 import traceback
-import types
 
 import MySQLdb
 import MySQLdb.cursors
@@ -19,31 +17,31 @@ import logging as log
 
 from .akrrerror import akrrError
 
-#log("initial loading",highlight="ok")
+# log("initial loading",highlight="ok")
 # directory of this file
 curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-akrr_dirs=get_akrr_dirs()
+akrr_dirs = get_akrr_dirs()
 
-in_src_install=akrr_dirs['in_src_install']
-akrr_mod_dir=akrr_dirs['akrr_mod_dir']
-akrr_bin_dir=akrr_dirs['akrr_bin_dir']
-akrr_cli_fullpath=akrr_dirs['akrr_cli_fullpath']
-akrr_cfg=akrr_dirs['akrr_cfg']
-akrr_home=akrr_dirs['akrr_home']
-cfg_dir=akrr_dirs['cfg_dir']
-templates_dir=akrr_dirs['templates_dir']
-default_dir=akrr_dirs['default_dir']
-appker_repo_dir=akrr_dirs['appker_repo_dir']
+in_src_install = akrr_dirs['in_src_install']
+akrr_mod_dir = akrr_dirs['akrr_mod_dir']
+akrr_bin_dir = akrr_dirs['akrr_bin_dir']
+akrr_cli_fullpath = akrr_dirs['akrr_cli_fullpath']
+akrr_cfg = akrr_dirs['akrr_cfg']
+akrr_home = akrr_dirs['akrr_home']
+cfg_dir = akrr_dirs['cfg_dir']
+templates_dir = akrr_dirs['templates_dir']
+default_dir = akrr_dirs['default_dir']
+appker_repo_dir = akrr_dirs['appker_repo_dir']
 
-#load default values
+# load default values
 from .akrrcfgdefault import *
 
-#load akrr params
+# load akrr params
 exec(open(cfg_dir + "/akrr.conf").read())
 
-#set default values for unset variables
-#make absolute paths from relative
+# set default values for unset variables
+# make absolute paths from relative
 if data_dir[0] != '/':
     data_dir = os.path.abspath(os.path.join(cfg_dir, data_dir))
 if completed_tasks_dir[0] != '/':
@@ -51,8 +49,8 @@ if completed_tasks_dir[0] != '/':
 
 if restapi_certfile != '/':
     restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
-#wrongfields technical fields from loading python file which we don't want to 
-#see in resource and app kernel parameters dict
+# wrongfields technical fields from loading python file which we don't want to
+# see in resource and app kernel parameters dict
 wrongfieldsdict = {}
 exec('wrongfieldsdict="wrongfieldsdict"', wrongfieldsdict)
 wrongfields = list(wrongfieldsdict.keys())
@@ -64,46 +62,48 @@ wrongfields = list(wrongfieldsdict.keys())
 ###################################################################################################
 resources = {}
 
+
 def verifyResourceParams(resource):
     """
     Perform simplistic resource parameters validation
     
     raises error
     """
-    #check that parameters for presents and type
-    #format: key,type,can be None,must have parameter 
-    parameters_types=[
-        ['info',                        str,       False,False],
-        ['localScratch',                str,       False,True],
-        ['batchJobTemplate',            str,       False,True],
-        ['remoteAccessNode',            str,       False,True],
-        ['name',                        str,       False,False],
-        ['akrrCommonCommandsTemplate',   str,       False,True],
-        ['networkScratch',              str,       False,True],
-        ['ppn',                         int,          False,True],
-        ['remoteCopyMethod',            str,       False,True],
-        ['sshUserName',                 str,       False,True],
-        ['sshPassword',                 str,       True, False],
-        ['sshPrivateKeyFile',           str,       True, False],
-        ['sshPrivateKeyPassword',       str,       True, False],
-        ['batchScheduler',              str,       False,True],
-        ['remoteAccessMethod',          str,       False,True],
-        ['appKerDir',                   str,       False,True],
-        ['akrrCommonCleanupTemplate',    str,       False,True],
-        ['akrrData',                     str,       False,True]
+    # check that parameters for presents and type
+    # format: key,type,can be None,must have parameter
+    parameters_types = [
+        ['info', str, False, False],
+        ['localScratch', str, False, True],
+        ['batchJobTemplate', str, False, True],
+        ['remoteAccessNode', str, False, True],
+        ['name', str, False, False],
+        ['akrrCommonCommandsTemplate', str, False, True],
+        ['networkScratch', str, False, True],
+        ['ppn', int, False, True],
+        ['remoteCopyMethod', str, False, True],
+        ['sshUserName', str, False, True],
+        ['sshPassword', str, True, False],
+        ['sshPrivateKeyFile', str, True, False],
+        ['sshPrivateKeyPassword', str, True, False],
+        ['batchScheduler', str, False, True],
+        ['remoteAccessMethod', str, False, True],
+        ['appKerDir', str, False, True],
+        ['akrrCommonCleanupTemplate', str, False, True],
+        ['akrrData', str, False, True]
     ]
-    
-    for variable,ttype,nulable,must in parameters_types:
-        if (must==True) and (variable not in resource):
-            raise NameError("Syntax error in "+resource['name']+"\nVariable %s is not set"%(variable,))
+
+    for variable, ttype, nulable, must in parameters_types:
+        if (must == True) and (variable not in resource):
+            raise NameError("Syntax error in " + resource['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in resource:
             continue
-        if type(resource[variable])==type(None) and nulable==False:
-            raise TypeError("Syntax error in "+resource['name']+"\nVariable %s can not be None"%(variable,))
-        if type(resource[variable])!=ttype and not (type(resource[variable])==type(None) and nulable==True):
-            raise TypeError("Syntax error in "+resource['name']+
-                   "\nVariable %s should be %s"%(variable,str(ttype))+
-                   ". But it is "+str(type(resource[variable])))
+        if type(resource[variable]) == type(None) and nulable == False:
+            raise TypeError("Syntax error in " + resource['name'] + "\nVariable %s can not be None" % (variable,))
+        if type(resource[variable]) != ttype and not (type(resource[variable]) == type(None) and nulable == True):
+            raise TypeError("Syntax error in " + resource['name'] +
+                            "\nVariable %s should be %s" % (variable, str(ttype)) +
+                            ". But it is " + str(type(resource[variable])))
+
 
 def loadResource(resource_name):
     """
@@ -113,53 +113,54 @@ def loadResource(resource_name):
     raises error if can not load
     """
     try:
-        default_resource_cfg_filename=os.path.join(default_dir,"default.resource.conf")
-        resource_cfg_filename=os.path.join(cfg_dir,'resources',resource_name,"resource.conf")
-        
+        default_resource_cfg_filename = os.path.join(default_dir, "default.resource.conf")
+        resource_cfg_filename = os.path.join(cfg_dir, 'resources', resource_name, "resource.conf")
+
         if not os.path.isfile(default_resource_cfg_filename):
-            raise akrrError("Default resource configuration file do not exists (%s)!"%default_resource_cfg_filename)
+            raise akrrError("Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
         if not os.path.isfile(resource_cfg_filename):
-            raise akrrError("Resource configuration file do not exists (%s)!"%resource_cfg_filename)
-        
-        tmp={}
-        exec(open(default_resource_cfg_filename).read(),tmp)
+            raise akrrError("Resource configuration file do not exists (%s)!" % resource_cfg_filename)
+
+        tmp = {}
+        exec(open(default_resource_cfg_filename).read(), tmp)
         exec(open(resource_cfg_filename).read(), tmp)
-        resource={}
-        for key,val in tmp.items():
-            if inspect.ismodule(val):continue
-            if wrongfields.count(key)>0:continue
-            resource[key]=val
-        
-        #mapped options in resource input file to those used in AKRR
-        if 'akrrData' in resource:resource['akrrdata']=resource['akrrData']
-        if 'appKerDir' in resource:resource['AppKerDir']=resource['appKerDir']
-        if 'name' not in resource:resource['name']=resource_name
-        
-        #last modification time for future reloading
-        resource['default_resource_cfg_filename']=default_resource_cfg_filename
-        resource['resource_cfg_filename']=resource_cfg_filename
-        resource['default_resource_cfg_file_mtime']=os.path.getmtime(default_resource_cfg_filename)
-        resource['resource_cfg_file_mtime']=os.path.getmtime(resource_cfg_filename)
-        
-        #here should be validation
+        resource = {}
+        for key, val in tmp.items():
+            if inspect.ismodule(val): continue
+            if wrongfields.count(key) > 0: continue
+            resource[key] = val
+
+        # mapped options in resource input file to those used in AKRR
+        if 'akrrData' in resource: resource['akrrdata'] = resource['akrrData']
+        if 'appKerDir' in resource: resource['AppKerDir'] = resource['appKerDir']
+        if 'name' not in resource: resource['name'] = resource_name
+
+        # last modification time for future reloading
+        resource['default_resource_cfg_filename'] = default_resource_cfg_filename
+        resource['resource_cfg_filename'] = resource_cfg_filename
+        resource['default_resource_cfg_file_mtime'] = os.path.getmtime(default_resource_cfg_filename)
+        resource['resource_cfg_file_mtime'] = os.path.getmtime(resource_cfg_filename)
+
+        # here should be validation
         verifyResourceParams(resource)
-        
+
         return resource
     except Exception:
-        log.exception("Exception occurred during resource configuration loading for %s."%resource_name)
-        raise akrrError("Can not load resource configuration for %s."%resource_name)
-    
+        log.exception("Exception occurred during resource configuration loading for %s." % resource_name)
+        raise akrrError("Can not load resource configuration for %s." % resource_name)
+
+
 def loadAllResources():
     """
     load all resources from configuration directory
     """
     global resources
     for resource_name in os.listdir(cfg_dir + "/resources"):
-        if resource_name not in ['notactive','templates']:
+        if resource_name not in ['notactive', 'templates']:
             # log("loading "+resource_name)
             try:
-                resource=loadResource(resource_name)
-                resources[resource_name]=resource
+                resource = loadResource(resource_name)
+                resources[resource_name] = resource
             except Exception:
                 log.exception("Exception occurred during resources loading.")
 
@@ -173,23 +174,24 @@ def FindResourceByName(resource_name):
     """
     global resources
     if resource_name not in resources:
-        resource=loadResource(resource_name)
-        resources[resource_name]=resource
-    
-    resource=resources[resource_name]
-    if (os.path.getmtime(resource['default_resource_cfg_filename'])!=resource['default_resource_cfg_file_mtime'] or
-        os.path.getmtime(resource['resource_cfg_filename'])!=resource['resource_cfg_file_mtime']):
+        resource = loadResource(resource_name)
+        resources[resource_name] = resource
+
+    resource = resources[resource_name]
+    if (os.path.getmtime(resource['default_resource_cfg_filename']) != resource['default_resource_cfg_file_mtime'] or
+            os.path.getmtime(resource['resource_cfg_filename']) != resource['resource_cfg_file_mtime']):
         del resources[resource_name]
-        resource=loadResource(resource_name)
-        resources[resource_name]=resource
+        resource = loadResource(resource_name)
+        resources[resource_name] = resource
     return resources[resource_name]
+
 
 loadAllResources()
 ###################################################################################################
-#check rest-api certificate
+# check rest-api certificate
 #
 if not os.path.isfile(restapi_certfile):
-    #assuming it is relative to akrrcfg
+    # assuming it is relative to akrrcfg
     restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
 if not os.path.isfile(restapi_certfile):
     raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
@@ -201,33 +203,35 @@ if not os.path.isfile(restapi_certfile):
 ###################################################################################################
 apps = {}
 
+
 def verifyAppParams(app):
     """
     Perform simplistic app parameters validation
     
     raises error
     """
-    #check that parameters for presents and type
-    #format: key,type,can be None,must have parameter 
-    parameters_types=[
-        ['parser',               str,      False,True],
-        ['executable',           str,       True,True],
-        ['input',                str,       True,True],
-        ['walllimit',            int,         False,True],
-        ['runScript',            dict,        False,False]
+    # check that parameters for presents and type
+    # format: key,type,can be None,must have parameter
+    parameters_types = [
+        ['parser', str, False, True],
+        ['executable', str, True, True],
+        ['input', str, True, True],
+        ['walllimit', int, False, True],
+        ['runScript', dict, False, False]
     ]
-    
-    for variable,ttype,nulable,must in parameters_types:
-        if (must==True) and (variable not in app):
-            raise NameError("Syntax error in "+app['name']+"\nVariable %s is not set"%(variable,))
+
+    for variable, ttype, nulable, must in parameters_types:
+        if (must == True) and (variable not in app):
+            raise NameError("Syntax error in " + app['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in app:
             continue
-        if type(app[variable])==type(None) and nulable==False:
-            raise TypeError("Syntax error in "+app['name']+"\nVariable %s can not be None"%(variable,))
-        if type(app[variable])!=ttype and not (type(app[variable])==type(None) and nulable==True):
-            raise TypeError("Syntax error in "+app['name']+
-                   "\nVariable %s should be %s"%(variable,str(ttype))+
-                   ". But it is "+str(type(app[variable])))
+        if type(app[variable]) == type(None) and nulable == False:
+            raise TypeError("Syntax error in " + app['name'] + "\nVariable %s can not be None" % (variable,))
+        if type(app[variable]) != ttype and not (type(app[variable]) == type(None) and nulable == True):
+            raise TypeError("Syntax error in " + app['name'] +
+                            "\nVariable %s should be %s" % (variable, str(ttype)) +
+                            ". But it is " + str(type(app[variable])))
+
 
 def loadApp(app_name):
     """
@@ -237,71 +241,78 @@ def loadApp(app_name):
     raises error if can not load
     """
     try:
-        default_app_cfg_filename=os.path.join(default_dir,"default.app.conf")
-        app_cfg_filename=os.path.join(default_dir,app_name+".app.conf")
-        
+        default_app_cfg_filename = os.path.join(default_dir, "default.app.conf")
+        app_cfg_filename = os.path.join(default_dir, app_name + ".app.conf")
+
         if not os.path.isfile(default_app_cfg_filename):
-            raise akrrError("Default application kernel configuration file do not exists (%s)!"%default_app_cfg_filename)
+            raise akrrError(
+                "Default application kernel configuration file do not exists (%s)!" % default_app_cfg_filename)
         if not os.path.isfile(app_cfg_filename):
-            raise akrrError("application kernel configuration file do not exists (%s)!"%app_cfg_filename)
-        
-        tmp={}
+            raise akrrError("application kernel configuration file do not exists (%s)!" % app_cfg_filename)
+
+        tmp = {}
         exec(open(default_app_cfg_filename).read(), tmp)
         exec(open(app_cfg_filename).read(), tmp)
-        app={}
-        for key,val in tmp.items():
-            if inspect.ismodule(val):continue
-            if wrongfields.count(key)>0:continue
-            app[key]=val
-        #load resource specific parameters
+        app = {}
+        for key, val in tmp.items():
+            if inspect.ismodule(val): continue
+            if wrongfields.count(key) > 0: continue
+            app[key] = val
+        # load resource specific parameters
         for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
-            if resource_name not in ['notactive','templates']:
-                resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
+            if resource_name not in ['notactive', 'templates']:
+                resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
+                                                                  app_name + ".app.conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
-                    tmp=copy.deepcopy(app['appkernelOnResource']['default'])
-                    exec(compile(open(resource_specific_app_cfg_filename).read(), resource_specific_app_cfg_filename, 'exec'),tmp)
-                    app['appkernelOnResource'][resource_name]={}
-                    for key,val in tmp.items():
-                        if inspect.ismodule(val):continue
-                        if wrongfields.count(key)>0:continue
-                        app['appkernelOnResource'][resource_name][key]=val
-                    app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_filename']=resource_specific_app_cfg_filename
-                    app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_mtime']=os.path.getmtime(resource_specific_app_cfg_filename)
-        
-        #mapped options in app input file to those used in AKRR
-        if 'name' not in app:app['name']=app_name
-        if 'nickname' not in app:app['nickname']=app_name+".@nnodes@"
-        
-        #last modification time for future reloading
-        app['default_app_cfg_filename']=default_app_cfg_filename
-        app['app_cfg_filename']=app_cfg_filename
-        app['default_app_cfg_file_mtime']=os.path.getmtime(default_app_cfg_filename)
-        app['app_cfg_file_mtime']=os.path.getmtime(app_cfg_filename)
-        
-        #here should be validation
+                    tmp = copy.deepcopy(app['appkernelOnResource']['default'])
+                    exec(compile(open(resource_specific_app_cfg_filename).read(), resource_specific_app_cfg_filename,
+                                 'exec'), tmp)
+                    app['appkernelOnResource'][resource_name] = {}
+                    for key, val in tmp.items():
+                        if inspect.ismodule(val): continue
+                        if wrongfields.count(key) > 0: continue
+                        app['appkernelOnResource'][resource_name][key] = val
+                    app['appkernelOnResource'][resource_name][
+                        'resource_specific_app_cfg_filename'] = resource_specific_app_cfg_filename
+                    app['appkernelOnResource'][resource_name][
+                        'resource_specific_app_cfg_file_mtime'] = os.path.getmtime(resource_specific_app_cfg_filename)
+
+        # mapped options in app input file to those used in AKRR
+        if 'name' not in app: app['name'] = app_name
+        if 'nickname' not in app: app['nickname'] = app_name + ".@nnodes@"
+
+        # last modification time for future reloading
+        app['default_app_cfg_filename'] = default_app_cfg_filename
+        app['app_cfg_filename'] = app_cfg_filename
+        app['default_app_cfg_file_mtime'] = os.path.getmtime(default_app_cfg_filename)
+        app['app_cfg_file_mtime'] = os.path.getmtime(app_cfg_filename)
+
+        # here should be validation
         verifyAppParams(app)
-        
+
         return app
     except Exception:
-        log.exception("Exception occurred during app kernel configuration loading for %s."%app_name)
-        raise akrrError("Can not load app configuration for %s."%app_name)
+        log.exception("Exception occurred during app kernel configuration loading for %s." % app_name)
+        raise akrrError("Can not load app configuration for %s." % app_name)
+
 
 def loadAllApp():
     """
     load all resources from configuration directory
     """
     global apps
-    for fl in os.listdir(os.path.join(curdir,'default_conf')):
-        if fl=="default.app.conf":
+    for fl in os.listdir(os.path.join(curdir, 'default_conf')):
+        if fl == "default.app.conf":
             continue
         if fl.endswith(".app.conf"):
-            app_name=re.sub('.app.conf$','',fl)
-            #log("loading "+app_name)
+            app_name = re.sub('.app.conf$', '', fl)
+            # log("loading "+app_name)
             try:
-                app=loadApp(app_name)
-                apps[app_name]=app
+                app = loadApp(app_name)
+                apps[app_name] = app
             except Exception:
                 log.exception("Exception occurred during app kernel configuration loading.")
+
 
 def FindAppByName(app_name):
     """
@@ -312,82 +323,90 @@ def FindAppByName(app_name):
     """
     global apps
     if app_name not in apps:
-        app=loadApp(app_name)
-        apps[app_name]=app
+        app = loadApp(app_name)
+        apps[app_name] = app
         return apps[app_name]
-    
-    reloadAppCfg=False
-    app=apps[app_name]
+
+    reloadAppCfg = False
+    app = apps[app_name]
     #
-    if (os.path.getmtime(app['default_app_cfg_filename'])!=app['default_app_cfg_file_mtime'] or
-        os.path.getmtime(app['app_cfg_filename'])!=app['app_cfg_file_mtime']):
-        reloadAppCfg=True
-    
-    #check if new resources was added
+    if (os.path.getmtime(app['default_app_cfg_filename']) != app['default_app_cfg_file_mtime'] or
+            os.path.getmtime(app['app_cfg_filename']) != app['app_cfg_file_mtime']):
+        reloadAppCfg = True
+
+    # check if new resources was added
     for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
-        if resource_name not in ['notactive','templates']:
-            resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
+        if resource_name not in ['notactive', 'templates']:
+            resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
+                                                              app_name + ".app.conf")
             if os.path.isfile(resource_specific_app_cfg_filename):
                 if resource_name not in app['appkernelOnResource']:
-                    reloadAppCfg=True
+                    reloadAppCfg = True
                 else:
-                    if app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_mtime']!=os.path.getmtime(resource_specific_app_cfg_filename):
-                        reloadAppCfg=True
-    #check if new resources were removed
+                    if app['appkernelOnResource'][resource_name][
+                        'resource_specific_app_cfg_file_mtime'] != os.path.getmtime(resource_specific_app_cfg_filename):
+                        reloadAppCfg = True
+    # check if new resources were removed
     for resource_name in app['appkernelOnResource']:
         if resource_name not in ['default']:
-            resource_specific_app_cfg_filename=os.path.join(cfg_dir, "resources",resource_name,app_name+".app.conf")
+            resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
+                                                              app_name + ".app.conf")
             if not os.path.isfile(resource_specific_app_cfg_filename):
-                reloadAppCfg=True
-            
+                reloadAppCfg = True
+
     if reloadAppCfg:
         del apps[app_name]
-        app=loadApp(app_name)
-        apps[app_name]=app
+        app = loadApp(app_name)
+        apps[app_name] = app
     return apps[app_name]
 
+
 loadAllApp()
+
 
 def PrintOutResourceAndAppSummary():
     print(">" * 112)
     print("# Resources:")
     print("#" * 112)
-    for _,r in resources.items():
+    for _, r in resources.items():
         print(r['name'])
     print("#" * 112)
     print("# Applications:")
     print("#" * 112)
-    for _,a in apps.items():
+    for _, a in apps.items():
         print(a['name'], "'walllimit':" + str(a['walllimit']))
     print("<" * 112)
-#PrintOutResourceAndAppSummary()
 
 
-#SSH remote access
+# PrintOutResourceAndAppSummary()
+
+
+# SSH remote access
 sshTimeout = 60
 shellPrompt = "PROMPTtTtT"
 sshTimeSleep = 0.25
 sshCommandStartEcho = "StArTEd_ExeCUTEtIoM_SucCeSsFully"
 sshCommandEndEcho = "ExeCUTEd_SucCeSsFully"
 
-promptsCollection={}
+promptsCollection = {}
+
 
 def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKeyFile=None, PrivateKeyPassword=None,
               logfile=None, command=None, pwd1=None, pwd2=None):
     """login to remote machine and return pexpect.spawn instance.
     if command!=None will execute commands and return the output"""
-    #pack command line and arguments
+    # pack command line and arguments
     cmd = ssh
     mode = 'ssh'
     if ssh.find('scp') >= 0:
         mode = 'scp'
 
     cmdarg = []
-    #Add identity file if needed
+    # Add identity file if needed
     if PrivateKeyFile != None:
         cmdarg.extend(["-i", PrivateKeyFile])
         cmd += " -i " + PrivateKeyFile
-    #Add username@host
+    # Add username@host
     if mode == 'ssh':
         if username != None:
             cmdarg.append("%s@%s" % (username, remotemachine))
@@ -396,92 +415,90 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             cmdarg.append("%s" % (remotemachine))
             cmd += " %s" % (remotemachine)
 
-        if command != None and ssh!='ssh-copy-id':
+        if command != None and ssh != 'ssh-copy-id':
             cmdarg.append("\" %s;echo %s\"" % (command, sshCommandStartEcho))
             cmd += " \"echo %s;%s;echo %s\"" % (sshCommandStartEcho, command, sshCommandEndEcho)
     else:
         command = pwd2
         cmd += " %s %s" % (pwd1, pwd2)
     print(cmd)
-    
-    #find the prompt
-    #if 
-    #tmp=$(set +x; (PS4=$PS1; set -x; :) 2>&1); tmp=${tmp#*.}; echo ${tmp%:}
-    
-    
-    #Try to get access
+
+    # find the prompt
+    # if
+    # tmp=$(set +x; (PS4=$PS1; set -x; :) 2>&1); tmp=${tmp#*.}; echo ${tmp%:}
+
+    # Try to get access
     from . import pexpect
 
     rsh = None
     try:
-        rsh = pexpect.spawn(cmd, encoding='utf-8')  #, logfile=logfile)
-        #rsh.setwinsize(256,512)
+        rsh = pexpect.spawn(cmd, encoding='utf-8')  # , logfile=logfile)
+        # rsh.setwinsize(256,512)
 
         rsh.logfile_read = logfile
-        
+
         expect = [
             "Are you sure you want to continue connecting (yes/no)?",
             '[Pp]assword:',
             "Enter passphrase for key",
-            
-            #username+'.*[\$>]\s*$',
-            #'[#\$>]\s*',
-            #'[^#]*[#\$]\s*',
-            #':~>\s*$'#,
-            #shellPrompt
+
+            # username+'.*[\$>]\s*$',
+            # '[#\$>]\s*',
+            # '[^#]*[#\$]\s*',
+            # ':~>\s*$'#,
+            # shellPrompt
         ]
-        addedPromptSearch=False
-        if mode == 'ssh' and command == None and password==None and PrivateKeyPassword==None:
-            #i.e. expecting passwordless access
+        addedPromptSearch = False
+        if mode == 'ssh' and command == None and password == None and PrivateKeyPassword == None:
+            # i.e. expecting passwordless access
             expect.append('[#\$>]\s*')
-            addedPromptSearch=True
+            addedPromptSearch = True
         bOnHeadnode = False
 
-        
         sshTimeoutNew = sshTimeout
         if mode == 'ssh' and command == None:
-            sshTimeoutNew=2.0
-        countPasses=0
+            sshTimeoutNew = 2.0
+        countPasses = 0
         PasswordCount = 0
         PrivateKeyPasswordCount = 0
-        
+
         while not bOnHeadnode:
-            i=-1
+            i = -1
             try:
                 i = rsh.expect(expect, timeout=sshTimeoutNew)
             except pexpect.TIMEOUT as e:
                 if mode == 'ssh' and command == None:
-                    #add prompts
-                    if countPasses==0:
-                        if password==None and PrivateKeyPassword==None:
+                    # add prompts
+                    if countPasses == 0:
+                        if password == None and PrivateKeyPassword == None:
                             expect.append('[#\$>]\s*')
-                            addedPromptSearch=True
+                            addedPromptSearch = True
                             sshTimeoutNew = sshTimeout
-                        i=6
+                        i = 6
                     else:
-                        #assuming it has unrecognized prompt
-                        #lets try to sent it
+                        # assuming it has unrecognized prompt
+                        # lets try to sent it
                         rsh.sendline(" export PS1='%s '" % (shellPrompt))
-                        rsh.expect(shellPrompt, timeout=sshTimeout) #twice because one from echo
+                        rsh.expect(shellPrompt, timeout=sshTimeout)  # twice because one from echo
                         rsh.expect(shellPrompt, timeout=sshTimeout)
-                        i=6
+                        i = 6
                 else:
                     raise e
-            countPasses+=1
-            if i == 0:  #Are you sure you want to continue connecting (yes/no)?
+            countPasses += 1
+            if i == 0:  # Are you sure you want to continue connecting (yes/no)?
                 rsh.sendline('yes')
-            if i == 1:  #[pP]assword
+            if i == 1:  # [pP]assword
                 if password != None:
                     if PasswordCount > 0:
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
                         raise akrrError("Password for %s is incorrect." % remotemachine)
-                    time.sleep(sshTimeSleep)  #so that the remote host have some time to turn off echo
+                    time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(password)
-                    #add prompt search since password already asked
+                    # add prompt search since password already asked
                     expect.append('[#\$>]\s*')
-                    addedPromptSearch=True
+                    addedPromptSearch = True
                     PasswordCount += 1
                 else:
                     rsh.sendcontrol('c')
@@ -491,16 +508,16 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             if i == 2:
                 if PrivateKeyPassword != None:
                     if PrivateKeyPasswordCount > 0:
-                        #i.e. PrivateKeyPassword was entered several times incorrectly and now remote servise asking for password
+                        # i.e. PrivateKeyPassword was entered several times incorrectly and now remote servise asking for password
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
                         raise akrrError("Private key password for %s is incorrect." % remotemachine)
-                    time.sleep(sshTimeSleep)  #so that the remote host have some time to turn off echo
+                    time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(PrivateKeyPassword)
-                    #add prompt search since password already asked
+                    # add prompt search since password already asked
                     expect.append('[#\$>]\s*')
-                    addedPromptSearch=True
+                    addedPromptSearch = True
                     PrivateKeyPasswordCount += 1
                 else:
                     rsh.sendcontrol('c')
@@ -509,25 +526,27 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     raise akrrError("%s had requested a private key password and one was not provided." % remotemachine)
             if i >= 3:
                 bOnHeadnode = True
-                #are we really there?
-                
+                # are we really there?
+
         if mode == 'ssh' and command == None:
-            rsh.sendline(" echo %s;\\\nexport PS1='%s ';\\\necho %s" % (sshCommandStartEcho, shellPrompt, sshCommandEndEcho))
+            rsh.sendline(
+                " echo %s;\\\nexport PS1='%s ';\\\necho %s" % (sshCommandStartEcho, shellPrompt, sshCommandEndEcho))
             rsh.sendline(" ")
             rsh.sendline(" ")
-            r=sshCommandEndEcho+r'.+'+shellPrompt+r'.+'+shellPrompt+r'.+'+shellPrompt
-            rsh.expect(r, timeout=sshTimeout)  #this pattern ensure proper handling when it thinks that in ssh hello message there is a prompt
-            
+            r = sshCommandEndEcho + r'.+' + shellPrompt + r'.+' + shellPrompt + r'.+' + shellPrompt
+            rsh.expect(r,
+                       timeout=sshTimeout)  # this pattern ensure proper handling when it thinks that in ssh hello message there is a prompt
+
             time.sleep(1)
-            #test that we really in prompt
-            msg=sshCommand(rsh,"echo TeStTeStTeStThEproMPT")
-            if msg.strip()!="TeStTeStTeStThEproMPT":
+            # test that we really in prompt
+            msg = sshCommand(rsh, "echo TeStTeStTeStThEproMPT")
+            if msg.strip() != "TeStTeStTeStThEproMPT":
                 raise akrrError("%s can not determine prompt." % remotemachine)
-        rsh.remotemachine=remotemachine
+        rsh.remotemachine = remotemachine
         if logfile != None: logfile.flush()
-        #print expect[i]
+        # print expect[i]
     except pexpect.TIMEOUT as e:
-        #print "pexpect.TIMEOUT"
+        # print "pexpect.TIMEOUT"
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
@@ -552,16 +571,16 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             del rsh
             raise akrrError("Probably %s refused the connection. " % remotemachine + msg, e=e)
         else:
-            #user trying to execute command remotely
+            # user trying to execute command remotely
             msg = copy.deepcopy(rsh.before)
             rsh.close(force=True)
             del rsh
             return msg[(msg.find('\n', msg.find(sshCommandStartEcho) + 5) + len("\n") + 0):msg.rfind(sshCommandEndEcho)]
-    #print "}"*100
+    # print "}"*100
     if mode == 'ssh' and command != None:
-        #print "!"*100
-        #print rsh.before
-        #print "!"*100
+        # print "!"*100
+        # print rsh.before
+        # print "!"*100
         return copy.deepcopy(rsh.before)
     return rsh
 
@@ -576,7 +595,7 @@ def sshResource(resource, command=None):
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
     logfile = sys.stdout
-    #logfile=None
+    # logfile=None
 
     rsh = sshAccess(headnode, ssh=remoteAccessMethod, username=username, password=sshPassword,
                     PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
@@ -594,7 +613,7 @@ def scpFromResource(resource, pwd1, pwd2, opt=""):
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
     logfile = sys.stdout
-    #logfile=None
+    # logfile=None
     pwd1fin = ""
     if username != None:
         pwd1fin += " %s@%s:%s" % (username, remotemachine, pwd1)
@@ -607,9 +626,9 @@ def scpFromResource(resource, pwd1, pwd2, opt=""):
     return rsh
 
 
-def scpToResource(resource, pwd1, pwd2, opt="",logfile=None):
-    if logfile==None:
-        logfile=sys.stdout
+def scpToResource(resource, pwd1, pwd2, opt="", logfile=None):
+    if logfile == None:
+        logfile = sys.stdout
     name = resource['name']
     remotemachine = resource.get('remoteAccessNode', name)
     remoteInvocationMethod = resource.get('remoteCopyMethod', 'scp') + " " + opt + " "
@@ -618,8 +637,8 @@ def scpToResource(resource, pwd1, pwd2, opt="",logfile=None):
     sshPrivateKeyFile = resource.get('sshPrivateKeyFile', None)
     sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
 
-    #logfile = sys.stdout
-    #logfile=None
+    # logfile = sys.stdout
+    # logfile=None
     pwd2fin = ""
     if username != None:
         pwd2fin += " %s@%s:%s" % (username, remotemachine, pwd2)
@@ -633,13 +652,13 @@ def scpToResource(resource, pwd1, pwd2, opt="",logfile=None):
 
 
 def sshCommandNoReturn(sh, cmd):
-    cmdfin = " "+cmd
+    cmdfin = " " + cmd
     try:
-        #flush the buffer
-        sh.read_nonblocking (1000000, 0)
+        # flush the buffer
+        sh.read_nonblocking(1000000, 0)
     except:
         pass
-    
+
     sh.sendline(cmdfin)
     sh.expect(shellPrompt, timeout=sshTimeout)
 
@@ -650,34 +669,34 @@ def sshCommandNoReturn(sh, cmd):
 def sshCommand(sh, cmd):
     cmdfin = " echo %s;\\\n%s;\\\necho %s" % (sshCommandStartEcho, cmd, sshCommandEndEcho)
     try:
-        #flush the buffer
-        sh.read_nonblocking (1000000, 0)
+        # flush the buffer
+        sh.read_nonblocking(1000000, 0)
     except:
         pass
-    
+
     sh.sendline(cmdfin)
     sh.expect(shellPrompt, timeout=sshTimeout)
     msg = sh.before
-    msg=msg[(msg.find('\n', msg.rfind(sshCommandStartEcho) + 5) + len("\n") + 0):msg.rfind(sshCommandEndEcho)]
+    msg = msg[(msg.find('\n', msg.rfind(sshCommandStartEcho) + 5) + len("\n") + 0):msg.rfind(sshCommandEndEcho)]
     regex = re.compile(r'\x1b[^m]*m')
-    return regex.sub("",msg)
+    return regex.sub("", msg)
 
 
 def replaceATvarAT(s, ds):
     """ replaces @variable@ by ds[any]['variable'] """
     d = {}
-    #print "#"*80
+    # print "#"*80
     for di in ds:
         d.update(di)
     while s.find("@") >= 0:
-        #print s
+        # print s
         at1 = s.find("@")
         at2 = s.find("@", at1 + 1)
         varname = s[at1 + 1:at2]
         varvalue = d[varname]
-        #print "#",varname,varvalue
+        # print "#",varname,varvalue
         s = s.replace("@" + varname + "@", str(varvalue))
-        #print s
+        # print s
     return s
 
 
@@ -692,10 +711,10 @@ def printException(Str=None):
 
 def CleanUnicode(s):
     if s == None: return None
-    
+
     if type(s) is bytes:
-        s=s.decode("utf-8")
-    
+        s = s.decode("utf-8")
+
     replacements = {
         '\u2018': "'",
         '\u2019': "'",
@@ -755,6 +774,7 @@ def getXDDB(dictCursor=False):
     cur = db.cursor()
     return db, cur
 
+
 def getExportDB(dictCursor=False):
     if dictCursor:
         db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
@@ -765,8 +785,5 @@ def getExportDB(dictCursor=False):
     cur = db.cursor()
     return (db, cur)
 
-from .util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
 
-
-
-
+from .util import getFormatedRepeatIn, getTimeDeltaRepeatIn, getFormatedTimeToStart, getDatatimeTimeToStart
