@@ -808,21 +808,21 @@ class akrrScheduler:
         tasks=self.dbCur.fetchall()
         for row in tasks[:3]:
             print(row)
-        print("\nTasks completed with errors (last 5):")
+
+        # Tasks completed with errors
         self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
-            ORDER BY time_finished  DESC;''')
-        
+            ORDER BY time_finished  DESC LIMIT 5;''')
         tasks=self.dbCur.fetchall()
-        count=0
-        for row in tasks:
-            (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
-            if re.match("ERROR:", status, re.M):
-               TaskDir=akrrtask.GetLocalTaskDir(resource,app,datetimestamp,False)
-               print("Done with errors: %s %5d %s\n"%(time_finished,task_id,TaskDir),resource_param,app_param,task_param,group_id,"\n", status,"\n", statusinfo)
-               count+=1
-            if count >=5:
-                break
+        if len(tasks)==0:
+            print("\nThere were no tasks completed with errors.")
+        else:
+            print("\nTasks completed with errors (last %d):"%(len(tasks)))
+            for row in tasks:
+                (task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id)=row
+                if re.match("ERROR:", status, re.M):
+                   TaskDir=akrrtask.GetLocalTaskDir(resource,app,datetimestamp,False)
+                   print("Done with errors: %s %5d %s\n"%(time_finished,task_id,TaskDir),resource_param,app_param,task_param,group_id,"\n", status,"\n", statusinfo)
                
     def reprocessCompletedTasks(self, resource, appkernel, time_start, time_end, Verbose=False):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
