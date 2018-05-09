@@ -475,7 +475,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.GetResultFiles(raiseError=True)
 
             # get the performance data
-            parserfilename = os.path.join(cfg.curdir, "appkernelsparsers", self.app['parser'])
+            parserfilename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
             import imp
             with open(parserfilename, 'rb') as fp:
                 thisAppKerParser = imp.load_module(

@@ -12,7 +12,7 @@ import sys
 import io
 import argparse
 
-from akrr.util import getFormatedRepeatIn,getTimeDeltaRepeatIn,getFormatedTimeToStart,getDatatimeTimeToStart
+from akrr.util import get_formatted_repeat_in,get_timedelta_repeat_in,get_formatted_time_to_start,get_datetime_time_to_start
 #NOTE: do not globally import akrrcfg or other modules which invoke akrrcfg
 
 def tuples_to_dict(*tuples):
@@ -234,12 +234,12 @@ def calculate_random_start_time(start_time, periodicity, time_start, time_end):
             the provided periodicity and time_start / time_end
     """
     
-    time_to_start = getDatatimeTimeToStart(start_time).replace(
+    time_to_start = get_datetime_time_to_start(start_time).replace(
         hour=0,
         minute=0,
         second=0,
         microsecond=0)
-    repeat_in = getTimeDeltaRepeatIn(periodicity)
+    repeat_in = get_timedelta_repeat_in(periodicity)
 
     if time_to_start and repeat_in:
         spans_multiple_days = repeat_in.days > 1

@@ -1,3 +1,7 @@
+"""
+AKRR configuration
+"""
+
 import sys
 import time
 import inspect
@@ -11,16 +15,15 @@ import MySQLdb.cursors
 import copy
 
 from akrr import get_akrr_dirs
-from .util import which
 
 import logging as log
 
 from .akrrerror import akrrError
 
-# log("initial loading",highlight="ok")
-# directory of this file
-curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+# load default values
+from .akrrcfgdefault import *
 
+# get directories locations for this installation
 akrr_dirs = get_akrr_dirs()
 
 in_src_install = akrr_dirs['in_src_install']
@@ -34,10 +37,7 @@ templates_dir = akrr_dirs['templates_dir']
 default_dir = akrr_dirs['default_dir']
 appker_repo_dir = akrr_dirs['appker_repo_dir']
 
-# load default values
-from .akrrcfgdefault import *
-
-# load akrr params
+# load akrr parameters
 exec(open(cfg_dir + "/akrr.conf").read())
 
 # set default values for unset variables
@@ -301,7 +301,7 @@ def loadAllApp():
     load all resources from configuration directory
     """
     global apps
-    for fl in os.listdir(os.path.join(curdir, 'default_conf')):
+    for fl in os.listdir(os.path.join(akrr_mod_dir, 'default_conf')):
         if fl == "default.app.conf":
             continue
         if fl.endswith(".app.conf"):
@@ -786,4 +786,4 @@ def getExportDB(dictCursor=False):
     return (db, cur)
 
 
-from .util import getFormatedRepeatIn, getTimeDeltaRepeatIn, getFormatedTimeToStart, getDatatimeTimeToStart
+from .util import get_formatted_repeat_in, get_timedelta_repeat_in, get_formatted_time_to_start, get_datetime_time_to_start
