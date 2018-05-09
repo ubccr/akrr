@@ -1,74 +1,56 @@
+import pytest
 import unittest
 
 
-class Test_akrr_util_sql_Functions(unittest.TestCase):
-    def test_get_user_passwd_host_port(self):
-        from akrr.util.sql import get_user_password_host_port
-        # get_user_passwd_host_port(user_password_host_port,default_port=3306)
-        self.assertEqual(
-            get_user_password_host_port("localhost"),
-            (None, None, "localhost", 3306))
-
-        self.assertEqual(
-            get_user_password_host_port("localhost", default_port=3300),
-            (None, None, "localhost", 3300))
-
-        self.assertEqual(
-            get_user_password_host_port("localhost:1238"),
-            (None, None, "localhost", 1238))
-
-        self.assertEqual(
-            get_user_password_host_port("bob:secret@mysql.somewhere.org:1238"),
-            ("bob", "secret", "mysql.somewhere.org", 1238))
-
-        self.assertEqual(
-            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org:1238"),
-            ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238))
-
-        self.assertEqual(
-            get_user_password_host_port("bob:@mysql.somewhere.org:1238"),
-            ("bob", "", "mysql.somewhere.org", 1238))
-
-        self.assertEqual(
-            get_user_password_host_port("bob@mysql.somewhere.org:1238"),
-            ("bob", None, "mysql.somewhere.org", 1238))
-
-        self.assertEqual(
-            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org"),
-            ("bob", "sec@r:et2#", "mysql.somewhere.org", 3306))
-
-        self.assertEqual(
-            get_user_password_host_port("@mysql.somewhere.org:1238"),
-            (None, None, "mysql.somewhere.org", 1238))
-        self.assertEqual(
-            get_user_password_host_port("bob:sec@r:et2#@mysql.somewhere.org", return_dict=True),
-            {"user": "bob", "password": "sec@r:et2#", "host": "mysql.somewhere.org", "port": 3306})
-
-    def test__db_check_priv__identify_priv(self):
-        from akrr.util.sql import _db_check_priv__identify_priv as f
-
-        e1 = ["GRANT USAGE ON *.* TO 'testuser1'@'localhost'"]
-        self.assertEqual(f("mod_akrr", "ALL", e1), False)
-
-        e2 = [
-            "GRANT USAGE ON *.* TO 'akrruser123'@'localhost' IDENTIFIED BY PASSWORD '*1967'",
-            "GRANT ALL PRIVILEGES ON `mod_appkernel`.* TO 'akrruser123'@'localhost'",
-            "GRANT SELECT ON `modw`.* TO 'akrruser123'@'localhost'",
-            "GRANT ALL PRIVILEGES ON `mod_akrr`.* TO 'akrruser123'@'localhost'"
-        ]
-        self.assertEqual(f("mod_akrr", "ALL", e2), True)
-        self.assertEqual(f("dontexists", "ALL", e2), False)
-        self.assertEqual(f("dontexists", "SELECT", e2), False)
-        self.assertEqual(f("mod_akrr", "SELECT", e2), True)
-        self.assertEqual(f("modw", "SELECT", e2), True)
-        self.assertEqual(f("modw", "ALL", e2), False)
+@pytest.mark.parametrize("user_password_host_port, kwargs, expected", [
+    ("localhost", {}, (None, None, "localhost", 3306)),
+    ("localhost:1238", {}, (None, None, "localhost", 1238)),
+    ("localhost", {"default_port": 1238}, (None, None, "localhost", 1238)),
+    ("bob:secret@mysql.somewhere.org:1238", {}, ("bob", "secret", "mysql.somewhere.org", 1238)),
+    ("bob:sec@r:et2#@mysql.somewhere.org:1238", {}, ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238)),
+    ("bob:@mysql.somewhere.org:1238", {}, ("bob", "", "mysql.somewhere.org", 1238)),
+    ("bob@mysql.somewhere.org:1238", {}, ("bob", None, "mysql.somewhere.org", 1238)),
+    ("bob:sec@r:et2#@mysql.somewhere.org", {}, ("bob", "sec@r:et2#", "mysql.somewhere.org", 3306)),
+    ("@mysql.somewhere.org:1238", {}, (None, None, "mysql.somewhere.org", 1238)),
+    ("bob:sec@r:et2#@mysql.somewhere.org", {"return_dict": True},
+     {"user": "bob", "password": "sec@r:et2#", "host": "mysql.somewhere.org", "port": 3306})
+])
+def test_get_user_password_host_port(user_password_host_port, kwargs, expected):
+    from akrr.util.sql import get_user_password_host_port
+    assert get_user_password_host_port(user_password_host_port, **kwargs) == expected
 
 
+test_data_show_grant_example = [
+    ["GRANT USAGE ON *.* TO 'testuser1'@'localhost'"],
+    [
+        "GRANT USAGE ON *.* TO 'akrruser123'@'localhost' IDENTIFIED BY PASSWORD '*1967'",
+        "GRANT ALL PRIVILEGES ON `mod_appkernel`.* TO 'akrruser123'@'localhost'",
+        "GRANT SELECT ON `modw`.* TO 'akrruser123'@'localhost'",
+        "GRANT ALL PRIVILEGES ON `mod_akrr`.* TO 'akrruser123'@'localhost'"
+    ]
+]
+
+
+@pytest.mark.parametrize("db_to_check, priv_to_check, priv_list, expected", [
+    ("mod_akrr", "ALL", test_data_show_grant_example[0], False),
+    ("mod_akrr", "ALL", test_data_show_grant_example[1], True),
+    ("dontexists", "ALL", test_data_show_grant_example[1], False),
+    ("dontexists", "SELECT", test_data_show_grant_example[1], False),
+    ("mod_akrr", "SELECT", test_data_show_grant_example[1], True),
+    ("modw", "SELECT", test_data_show_grant_example[1], True),
+    ("modw", "ALL", test_data_show_grant_example[1], False)
+])
+def test__db_check_priv__identify_priv(db_to_check, priv_to_check, priv_list, expected):
+    from akrr.util.sql import _db_check_priv__identify_priv as f
+    assert f(db_to_check, priv_to_check, priv_list) is expected
+
+
+@pytest.mark.sql
 class Test_akrr_util_sql_Functions_with_SQL(unittest.TestCase):
     """this tests require MySQL server"""
 
-    def __init__(self, methodName='runTest'):
-        super(Test_akrr_util_sql_Functions_with_SQL, self).__init__(methodName)
+    def __init__(self,methodName='runTest'):
+        super(Test_akrr_util_sql_Functions_with_SQL, self).__init__(methodName=methodName)
 
         self.su_sql = "root:@localhost"
 

@@ -77,6 +77,11 @@ def db_exist(cur, name):
 
 
 def _db_check_priv__identify_priv(db_to_check, priv_to_check, priv_list):
+    """
+    internal function for db_check_priv,
+    check that priv_to_check (ALL or SELECT) are set for db_to_check database in priv_list
+    returned by SHOW GRANTS query
+    """
     import re
     for priv_entry in priv_list:
         m = re.match("GRANT (.+) ON (\S+) TO ", priv_entry)
