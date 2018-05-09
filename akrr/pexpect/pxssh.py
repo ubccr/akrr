@@ -20,7 +20,7 @@ PEXPECT LICENSE
 
 '''
 
-from pexpect import ExceptionPexpect, TIMEOUT, EOF, spawn
+from . import ExceptionPexpect, TIMEOUT, EOF, spawn
 import time
 import os
 import sys

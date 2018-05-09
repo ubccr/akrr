@@ -4,7 +4,7 @@ import os.path
 import signal
 import sys
 
-import pexpect
+import akrr.pexpect as pexpect
 
 PY3 = (sys.version_info[0] >= 3)
 
