@@ -1,4 +1,9 @@
-class Colors(object):
+"""
+functions to highlight text in console output
+"""
+
+
+class Colors:
     PURPLE = '\033[95m'
     BLUE = '\033[94m'
     GREEN = '\033[92m'
@@ -10,10 +15,9 @@ class Colors(object):
 
     @staticmethod
     def is_color(value):
-        if value and value in Colors.colors:
+        if value is not None and value in Colors.colors:
             return True
-        else:
-            return False
+        return False
 
 
 def colorize(text, color):

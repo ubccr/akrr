@@ -38,8 +38,8 @@ def get_user_password_host_port(user_password_host_port, default_port=3306, retu
         return {
             "user": user, "password": password, "host": host, "port": port
         }
-    else:
-        return user, password, host, port
+
+    return user, password, host, port
 
 
 def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dict_cursor=True, raise_exception=True):
@@ -84,7 +84,7 @@ def _db_check_priv__identify_priv(db_to_check, priv_to_check, priv_list):
     """
     import re
     for priv_entry in priv_list:
-        m = re.match("GRANT (.+) ON (\S+) TO ", priv_entry)
+        m = re.match(r"GRANT (.+) ON (\S+) TO ", priv_entry)
         if m:
             priv = m.group(1)
             db_table = m.group(2)
@@ -133,14 +133,14 @@ def db_check_priv(cur, db_to_check, priv_to_check, user=None, host=None):
     if priv_to_check == "SELECT":
         if db_exists:
             return priv_correct
-        else:
-            return False
+
+        return False
 
     if priv_to_check[:3] == "ALL":
         if db_exists:
             return priv_correct
-        else:
-            return _db_check_priv__identify_priv("*", priv_to_check, priv_list)
+
+        return _db_check_priv__identify_priv("*", priv_to_check, priv_list)
 
     raise Exception("Can not handle this type of previlege:{}".format(priv_to_check))
 

@@ -16,7 +16,7 @@ def which(program):
     def is_exe(file_path):
         return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
 
-    file_dir, file_name = os.path.split(program)
+    file_dir, _ = os.path.split(program)
     if file_dir:
         if is_exe(program):
             return program
@@ -127,8 +127,8 @@ def get_formatted_time_to_start(time_to_start):
 
     if start_datetime is None:
         return None
-    else:
-        return start_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+    return start_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_datetime_time_to_start(time_to_start):

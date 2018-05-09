@@ -16,6 +16,9 @@ cd /root/src/github.com/${REPO_FULL_NAME}
 # Install RPM
 rpm -Uvh dist/akrr-*.noarch.rpm
 
+# Run pylint tests
+pylint --errors-only akrr.util
+
 # Run unit tests
 mkdir -p shippable/testresults
 mkdir -p shippable/codecoverage
