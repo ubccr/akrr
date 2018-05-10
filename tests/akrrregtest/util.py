@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import subprocess
-from akrr import log
+from akrr.util import log
 
 import akrr.pexpect as pexpect
 

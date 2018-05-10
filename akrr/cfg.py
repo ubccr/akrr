@@ -18,10 +18,10 @@ from akrr import get_akrr_dirs
 
 import logging as log
 
-from .akrrerror import akrrError
+from .akrrerror import AkrrError
 
 # load default values
-from .akrrcfgdefault import *
+from .cfg_default import *
 
 # get directories locations for this installation
 akrr_dirs = get_akrr_dirs()
@@ -117,9 +117,9 @@ def loadResource(resource_name):
         resource_cfg_filename = os.path.join(cfg_dir, 'resources', resource_name, "resource.conf")
 
         if not os.path.isfile(default_resource_cfg_filename):
-            raise akrrError("Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
+            raise AkrrError("Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
         if not os.path.isfile(resource_cfg_filename):
-            raise akrrError("Resource configuration file do not exists (%s)!" % resource_cfg_filename)
+            raise AkrrError("Resource configuration file do not exists (%s)!" % resource_cfg_filename)
 
         tmp = {}
         exec(open(default_resource_cfg_filename).read(), tmp)
@@ -147,7 +147,7 @@ def loadResource(resource_name):
         return resource
     except Exception:
         log.exception("Exception occurred during resource configuration loading for %s." % resource_name)
-        raise akrrError("Can not load resource configuration for %s." % resource_name)
+        raise AkrrError("Can not load resource configuration for %s." % resource_name)
 
 
 def loadAllResources():
@@ -245,10 +245,10 @@ def loadApp(app_name):
         app_cfg_filename = os.path.join(default_dir, app_name + ".app.conf")
 
         if not os.path.isfile(default_app_cfg_filename):
-            raise akrrError(
+            raise AkrrError(
                 "Default application kernel configuration file do not exists (%s)!" % default_app_cfg_filename)
         if not os.path.isfile(app_cfg_filename):
-            raise akrrError("application kernel configuration file do not exists (%s)!" % app_cfg_filename)
+            raise AkrrError("application kernel configuration file do not exists (%s)!" % app_cfg_filename)
 
         tmp = {}
         exec(open(default_app_cfg_filename).read(), tmp)
@@ -293,7 +293,7 @@ def loadApp(app_name):
         return app
     except Exception:
         log.exception("Exception occurred during app kernel configuration loading for %s." % app_name)
-        raise akrrError("Can not load app configuration for %s." % app_name)
+        raise AkrrError("Can not load app configuration for %s." % app_name)
 
 
 def loadAllApp():
@@ -493,7 +493,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise akrrError("Password for %s is incorrect." % remotemachine)
+                        raise AkrrError("Password for %s is incorrect." % remotemachine)
                     time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(password)
                     # add prompt search since password already asked
@@ -504,7 +504,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise akrrError("%s had requested a password and one was not provided." % remotemachine)
+                    raise AkrrError("%s had requested a password and one was not provided." % remotemachine)
             if i == 2:
                 if PrivateKeyPassword != None:
                     if PrivateKeyPasswordCount > 0:
@@ -512,7 +512,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise akrrError("Private key password for %s is incorrect." % remotemachine)
+                        raise AkrrError("Private key password for %s is incorrect." % remotemachine)
                     time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(PrivateKeyPassword)
                     # add prompt search since password already asked
@@ -523,7 +523,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise akrrError("%s had requested a private key password and one was not provided." % remotemachine)
+                    raise AkrrError("%s had requested a private key password and one was not provided." % remotemachine)
             if i >= 3:
                 bOnHeadnode = True
                 # are we really there?
@@ -541,7 +541,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             # test that we really in prompt
             msg = sshCommand(rsh, "echo TeStTeStTeStThEproMPT")
             if msg.strip() != "TeStTeStTeStThEproMPT":
-                raise akrrError("%s can not determine prompt." % remotemachine)
+                raise AkrrError("%s can not determine prompt." % remotemachine)
         rsh.remotemachine = remotemachine
         if logfile != None: logfile.flush()
         # print expect[i]
@@ -550,7 +550,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
-        raise akrrError("Timeout period elapsed prior establishing the connection to %s.\n" % remotemachine + msg, e=e)
+        raise AkrrError("Timeout period elapsed prior establishing the connection to %s.\n" % remotemachine + msg, e=e)
     except pexpect.EOF as e:
         ExeCUTEd_SucCeSsFully = False
         if command != None:
@@ -569,7 +569,7 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
             msg = copy.deepcopy(rsh.before)
             rsh.close(force=True)
             del rsh
-            raise akrrError("Probably %s refused the connection. " % remotemachine + msg, e=e)
+            raise AkrrError("Probably %s refused the connection. " % remotemachine + msg, e=e)
         else:
             # user trying to execute command remotely
             msg = copy.deepcopy(rsh.before)

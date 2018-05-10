@@ -9,7 +9,7 @@ import io
 import re
 
 from akrr import cfg
-from akrr import log
+from akrr.util import log
 
 from . import resource_deploy
 
@@ -429,7 +429,7 @@ def get_remote_access_method():
                 ask_for_user_name = not ask_for_user_name
                 continue
             if action_list[action][0] == "UseExistingPrivateKey":
-                log.info("Available private keys:"+"\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
+                log.info("Available private keys:" + "\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
                 while True:
                     log.log_input("Select key number from list above:")
                     try:

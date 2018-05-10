@@ -7,7 +7,7 @@ import getpass
 import subprocess
 import string
 
-from akrr import log
+from akrr.util import log
 
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.

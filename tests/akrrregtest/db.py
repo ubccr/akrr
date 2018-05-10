@@ -44,7 +44,7 @@ def get_xd_db(su=False, dict_cursor=True):
 
 def drop_db(db, cur, db_name, dry_run=False):
     """remove dbname database from db,cur connection"""
-    from akrr import log
+    from akrr.util import log
     cur.execute("SHOW databases")
     databases = cur.fetchall()
     if db_name in {v["Database"] for v in databases}:

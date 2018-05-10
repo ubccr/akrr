@@ -9,7 +9,7 @@ import re
 import copy
 import random
 
-from .akrrerror import akrrError
+from .akrrerror import AkrrError
 
 from .akrrtaskbase import akrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
     active_task_default_attempt_repeat, killExprs
@@ -97,7 +97,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
                 msg = cfg.sshCommand(sh, cmd)
                 if msg.find("DOESNOTEXIST") >= 0:
-                    raise akrrError("Can not create directory %s on %s." % (d, self.resource['name']))
+                    raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
             # akrrdata
             CheckAndCreateDir(self, sh, self.resource['akrrdata'])
@@ -232,9 +232,9 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 try:
                     JobID = int(matchObj.group(1))
                 except:
-                    raise akrrError("Can't get job id. " + msg)
+                    raise AkrrError("Can't get job id. " + msg)
             else:
-                raise akrrError("Can't get job id. " + msg)
+                raise AkrrError("Can't get job id. " + msg)
 
             cfg.sshCommand(sh, "echo %d > job.id" % (JobID))
 

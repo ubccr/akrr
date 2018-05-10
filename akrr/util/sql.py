@@ -43,7 +43,6 @@ def get_user_password_host_port(user_password_host_port, default_port=3306, retu
 
 
 def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dict_cursor=True, raise_exception=True):
-    import MySQLdb
     import MySQLdb.cursors
 
     kwarg = {
@@ -157,7 +156,7 @@ def cursor_execute(cur, query, args=None, dry_run=False):
     if not dry_run:
         cur.execute(query, args)
     else:
-        from akrr import log
+        from akrr.util import log
         if args is not None:
             if isinstance(args, dict):
                 args = dict((key, cur.connection.literal(item)) for key, item in args.items())

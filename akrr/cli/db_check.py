@@ -7,7 +7,7 @@ cur_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))
 if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
-from akrr import log
+from akrr.util import log
 import MySQLdb
 
 def check_rw_db(connection_func, pre_msg, post_msg):

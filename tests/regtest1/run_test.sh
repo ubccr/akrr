@@ -29,7 +29,7 @@ fi
 
 echo "akrr to use: ${which_akrr}"
 echo "akrrregtest to use: ${which_akrrregtest}"
-
+echo "current work directory: $(pwd)"
 #exit if any command fails
 set -e
 

@@ -1,5 +1,5 @@
 import os
-from akrr import log
+from akrr.util import log
 import argparse
 
 

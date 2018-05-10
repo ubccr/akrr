@@ -1,5 +1,5 @@
 """Execution of akrr resource config"""
-from akrr import log
+from akrr.util import log
 
 from .util import get_bash, ExpectTimeout
 
@@ -174,13 +174,13 @@ def resource_deploy(resource_name, test_appkernel=None, test_nodes=None, deploy_
         log.error("Deployment has timed out\n")
         with open("out", "rt") as fin:
             out=fin.read()
-            log.error("Unsuccessful deployment\n"+out)
+            log.error("Unsuccessful deployment\n" + out)
         exit(1)
 
     with open("out", "rt") as fin:
         out=fin.read()
         if out.count("you can move to next step") == 0:
-            log.error("Unsuccessful deployment\n"+out)
+            log.error("Unsuccessful deployment\n" + out)
             exit(1)
 
 

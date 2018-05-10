@@ -3,7 +3,7 @@ import sys
 import subprocess
 import shutil
 
-from akrr import log
+from akrr.util import log
 
 from . import cfg
 

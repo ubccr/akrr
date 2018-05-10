@@ -1,6 +1,8 @@
 from logging import INFO, DEBUG
 from logging import basicConfig, critical, error, warning, info, debug, getLogger
 
+from . import colorize
+
 verbose = False
 error_count = 0
 warning_count = 0
@@ -23,8 +25,6 @@ def empty_line():
 
 
 def log_input(message, *args):
-    from .util import colorize
-
     if message:
         if len(args) > 0:
             formatted_message = message.format(*args)

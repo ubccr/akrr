@@ -16,7 +16,7 @@ import socket
 
 from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
-from .akrrerror import akrrError
+from .akrrerror import AkrrError
 
 # from .util import logging as log
 
@@ -143,7 +143,7 @@ class akrrScheduler:
                     "Parent task id: %s" % parent_task_id)
 
                 if cfg.FindResourceByName(resource).get('active', True) == False:
-                    raise akrrError("%s is marked as inactive in AKRR" % (self.resourceName))
+                    raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
 
                 # Check If resource is on maintenance
                 self.dbCur.execute('''SELECT * FROM akrr_resource_maintenance

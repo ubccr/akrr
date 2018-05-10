@@ -12,7 +12,7 @@ def get_akrr_dirs():
     import os
     import inspect
     from .util import which
-    from . import log
+    from akrr.util import log
 
     # AKRR configuration can be in three places
     # 1) AKRR_CONF if AKRR_CONF environment variable is defined
@@ -36,15 +36,15 @@ def get_akrr_dirs():
         if in_src_install:
             akrr_home = os.path.dirname(akrr_mod_dir)
             akrr_cfg = os.path.join(akrr_home, 'etc', 'akrr.conf')
-            log.debug("In-source installation, AKRR configuration is in "+akrr_cfg)
+            log.debug("In-source installation, AKRR configuration is in " + akrr_cfg)
         else:
             akrr_home = os.path.expanduser("~/akrr")
             akrr_cfg = os.path.expanduser("~/akrr/etc/akrr.conf")
-            log.debug("AKRR configuration is in "+akrr_cfg)
+            log.debug("AKRR configuration is in " + akrr_cfg)
 
     else:
         akrr_home = os.path.dirname(os.path.dirname(akrr_cfg))
-        log.debug("AKRR_CONF is set. AKRR configuration is in "+akrr_cfg)
+        log.debug("AKRR_CONF is set. AKRR configuration is in " + akrr_cfg)
 
     # location of akrr cfg directory
     cfg_dir = os.path.dirname(akrr_cfg)

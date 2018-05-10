@@ -13,8 +13,8 @@ import requests
 
 from akrr import cfg
 from akrr import akrrrestclient
-from akrr.akrrerror import akrrError
-import akrr.log as log
+from akrr.akrrerror import AkrrError
+import akrr.util.log as log
 
 dry_run = False
 
@@ -198,7 +198,7 @@ def connect_to_resource(resource):
         log.empty_line()
 
         return rsh
-    except akrrError:
+    except AkrrError:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 

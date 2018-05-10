@@ -1,9 +1,6 @@
 import re
 import datetime
 
-from .functional import __or
-from .generators import generateChars, generateNumber
-
 
 def which(program):
     """

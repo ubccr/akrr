@@ -16,7 +16,7 @@ Several setup scenario should be tested
 
 """
 
-from akrr import log
+from akrr.util import log
 
 from .util import get_bash
 

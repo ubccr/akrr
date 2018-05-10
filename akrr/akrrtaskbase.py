@@ -7,7 +7,7 @@ import time
 import copy
 import re
 
-from .akrrerror import akrrError
+from .akrrerror import AkrrError
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
@@ -209,7 +209,7 @@ class akrrTaskHandlerBase:
         # find resource
         self.resource = cfg.FindResourceByName(self.resourceName)
         if self.resource.get('active', True) == False:
-            raise akrrError("%s is marked as inactive in AKRR" % (self.resourceName))
+            raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
 
         # find app
         self.app = cfg.FindAppByName(self.appName)

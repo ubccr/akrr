@@ -12,7 +12,7 @@ from .akrrtaskbase import akrrTaskHandlerBase, submitCommands, jidExtractPattern
     active_task_default_attempt_repeat, killExprs
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
-from .akrrerror import akrrError
+from .akrrerror import AkrrError
 
 
 class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
@@ -206,7 +206,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
                 msg = cfg.sshCommand(sh, cmd)
                 if msg.find("DOESNOTEXIST") >= 0:
-                    raise akrrError("Can not create directory %s on %s." % (d, self.resource['name']))
+                    raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
             # akrrdata
             CheckAndCreateDir(self, sh, self.resource['akrrdata'])
@@ -243,9 +243,9 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                     try:
                         JobID = int(matchObj.group(1))
                     except:
-                        raise akrrError("Can't get job id:\n" + msg)
+                        raise AkrrError("Can't get job id:\n" + msg)
                 else:
-                    raise akrrError("Can't get job id:\n" + msg)
+                    raise AkrrError("Can't get job id:\n" + msg)
 
                 # report
                 if self.resource["gateway_reporting"]:
