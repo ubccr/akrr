@@ -644,44 +644,42 @@ def check_daemon(args):
         exit(1)
     
 
-
-
-
 def app_add_handler(args):
     import akrr.app_add
     return akrr.app_add.app_add(args.resource,args.appkernel,verbose=args.verbose)
+
 
 def app_validate_handler(args):
     import akrr.app_validate
     return akrr.app_validate.app_validate(args.resource,args.appkernel,args.nnodes,verbose=args.verbose)
 
+
 def daemon_handler(args):
     """AKRR daemon handler"""
-    if args.action=='check':
+    log.debug(args)
+    if args.action == 'check':
         return check_daemon(args)
-    
+
     from akrr import cfg
-        
-    if args.cron and args.action in ['checknrestart','restart']:
-        args.append=True
-        args.output_file=os.path.join(cfg.data_dir, 'checknrestart')
-    
-    import akrr
+
+    if args.cron and args.action in ['checknrestart', 'restart']:
+        args.append = True
+        args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
+
     import akrr.akrrscheduler
-    
-    if args.action=="startdeb":
-        akrr.debug=True
-        
+
+    if args.action == "startdeb":
+        akrr.debug = True
+
         if args.max_task_handlers is not None:
-            #akrr.debug_max_task_handlers=args.debug_max_task_handlers
             cfg.max_task_handlers = args.max_task_handlers
         if args.redirect_task_processing_to_log_file is not None:
             cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
-            
+
     return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
     
 
-class cli:
+class CLI:
     def __init__(self):
         log.basicConfig(
             level=log.INFO,
@@ -876,4 +874,4 @@ class cli:
 
     
 if __name__ == '__main__':
-    cli().run()
+    CLI().run()

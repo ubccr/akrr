@@ -15,4 +15,4 @@ if __name__ == '__main__':
     
     
     import akrr.cli
-    akrr.cli.cli().run()
+    akrr.cli.CLI().run()

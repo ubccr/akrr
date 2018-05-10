@@ -18,9 +18,7 @@ from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
 from .akrrerror import AkrrError
 
-# from .util import logging as log
-
-import logging as log
+from .util import log
 
 akrrscheduler = None
 
@@ -2150,31 +2148,7 @@ def akrrd_main2(action='', append=False, output_file=None):
                 log.exception("Exception was thrown during daemon stopping")
             akrrServerStart()
 
-        if log_file1: log_file1.close()
-        if log_file2: log_file2.close()
-
-
-def akrrd_main():
-    parser = argparse.ArgumentParser(description="""Application Kernel Remote Runner (AKRR) daemon launcher.
-    Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
-    """)
-    parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
-    parser.add_argument('-a', '--append', action='store_true',
-                        help="append stdout and stderr to file rather then overwrite")
-
-    subparsers = parser.add_subparsers(title='commands', dest='action');
-    subparsers.add_parser('start', help='launch Application Remote Runner in daemon mode')
-    subparsers.add_parser('stop', help='terminate Application Remote Runner')
-    subparsers.add_parser('restart', help='restart AKRR daemon')
-    subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
-    subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
-    subparsers.add_parser('status', help='print current status of Application Remote Runner')
-    subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
-
-    args = parser.parse_args()
-
-    akrrd_main2(args.action, args.append, args.output_file)
-
-
-if __name__ == '__main__':
-    akrrd_main()
+        if log_file1:
+            log_file1.close()
+        if log_file2:
+            log_file2.close()
