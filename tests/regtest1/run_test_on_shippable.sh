@@ -24,13 +24,18 @@ mkdir -p shippable/testresults
 mkdir -p shippable/codecoverage
 pytest --junitxml=shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
-       ./akrr ./tests/unit_tests
+       ./tests/unit_tests
 #pytest ./akrr ./tests/unit_tests
 
 # Run this regression test
 export PATH=/root/src/github.com/${REPO_FULL_NAME}/tests/bin:$PATH
 /root/src/github.com/${REPO_FULL_NAME}/tests/regtest1/run_test.sh
 
-pytest --junitxml=shippable/testresults/testresults2.xml \
-       --cov=akrr --cov-report=xml:shippable/codecoverage/coverage2.xml \
-       ./tests/sys_tests
+# Rerun unit tests and run system tests together
+rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+# Change directory to test to avoid conflicts between local akrr and system akrr
+cd tests
+pytest --junitxml=shippable/testresults/testresults.xml \
+       --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
+       ./unit_tests ./sys_tests
+cd ..
