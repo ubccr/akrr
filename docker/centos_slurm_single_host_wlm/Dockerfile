@@ -4,7 +4,7 @@ LABEL description="slurm with single host WLM for various testing purposes"
 
 # install dependencies
 RUN \
-    yum update && \
+    yum -y update && \
     yum -y install --setopt=tsflags=nodocs epel-release && \
     yum -y install --setopt=tsflags=nodocs \
         vim perl-Switch\
