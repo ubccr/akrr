@@ -35,7 +35,7 @@ export PATH=/root/src/github.com/${REPO_FULL_NAME}/tests/bin:$PATH
 rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
-pytest --junitxml=shippable/testresults/testresults.xml \
-       --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
+pytest --junitxml=../shippable/testresults/testresults.xml \
+       --cov=akrr --cov-report=xml:../shippable/codecoverage/coverage.xml \
        ./unit_tests ./sys_tests
 cd ..
