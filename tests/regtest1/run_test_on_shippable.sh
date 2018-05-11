@@ -25,7 +25,7 @@ else
     exit 1
 fi
 
-# Run pylint tests
+# Run pylint tests confuses
 pylint --errors-only akrr.util
 
 # Run unit tests
