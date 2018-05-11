@@ -18,7 +18,7 @@ from akrr import get_akrr_dirs
 
 import logging as log
 
-from .akrrerror import AkrrError
+from .akrrerror import *
 
 # load default values
 from .cfg_default import *
@@ -786,4 +786,5 @@ def getExportDB(dictCursor=False):
     return (db, cur)
 
 
-from .util import get_formatted_repeat_in, get_timedelta_repeat_in, get_formatted_time_to_start, get_datetime_time_to_start
+from akrr.util.time import get_formatted_repeat_in, get_timedelta_repeat_in, get_formatted_time_to_start, \
+    get_datetime_time_to_start

@@ -10,22 +10,22 @@ LABEL description="centos for akrr tests"
 # Needed to run:
 #    python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients
 # Needed for tests:
-#     python34-PyYAML python34-pip
-#     pip install pylint coverage pytest pytest-cov
+#     python34-PyYAML python34-pip gromacs
+#     pip install pylint coverage pytest pytest-cov pytest-dependency
 #
 RUN \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs \
         git sudo \
         python34 python34-libs python34-bottle python34-requests python34-mysql openssl openssh-clients \
-        python34-PyYAML python34-pip \
+        python34-PyYAML python34-pip gromacs \
         rpm-build && \
     yum clean all
 
 
 RUN \
     pip3 install --upgrade pip && \
-    pip3 install pylint coverage pytest pytest-cov
+    pip3 install pylint coverage pytest pytest-cov pytest-dependency
 
 # reset entry point
 ENTRYPOINT []

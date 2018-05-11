@@ -24,7 +24,7 @@ def test_which(program, expected):
     (None, None)
 ])
 def test_get_formatted_repeat_in(repeat_in, expected):
-    from akrr.util import get_formatted_repeat_in
+    from akrr.util.time import get_formatted_repeat_in
     assert get_formatted_repeat_in(repeat_in) == expected
 
 
@@ -41,7 +41,7 @@ def test_get_formatted_repeat_in(repeat_in, expected):
     (None, None)
 ])
 def test_get_timedelta_repeat_in(repeat_in, expected):
-    from akrr.util import get_timedelta_repeat_in
+    from akrr.util.time import get_timedelta_repeat_in
     if expected is None:
         with pytest.raises(IOError):
             get_timedelta_repeat_in(repeat_in)
@@ -62,7 +62,7 @@ def test_get_timedelta_repeat_in(repeat_in, expected):
     ("", "start_now")
 ])
 def test_get_formatted_time_to_start(time_to_start, expected):
-    from akrr.util import get_formatted_time_to_start
+    from akrr.util.time import get_formatted_time_to_start
 
     if expected == "start_now":
         dt = datetime.datetime.strptime(get_formatted_time_to_start(time_to_start), "%Y-%m-%d %H:%M:%S") - \
@@ -89,7 +89,7 @@ date_today = datetime.date.today()
     ("", "start_now")
 ])
 def test_get_datetime_time_to_start(time_to_start, expected):
-    from akrr.util import get_datetime_time_to_start
+    from akrr.util.time import get_datetime_time_to_start
 
     if expected is None:
         with pytest.raises(ValueError):

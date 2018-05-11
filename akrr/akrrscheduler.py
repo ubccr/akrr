@@ -1,3 +1,4 @@
+import akrr.util.time
 from . import cfg
 from . import akrrtask
 
@@ -1416,7 +1417,7 @@ class akrrScheduler:
         # determine repeatIn
         repeatInFin = None
         if repeat_in != None:
-            repeatInFin = cfg.get_formatted_repeat_in(repeat_in)
+            repeatInFin = akrr.util.time.get_formatted_repeat_in(repeat_in)
             if repeatInFin == None:
                 raise IOError("Incorrect data-time format for repeating period")
             # check the repeat values
@@ -1482,7 +1483,7 @@ def akrrValidateTaskVariableValue(k, v):
             # i.e. no repetition
             return None
         v = v.strip().strip('"').strip("'")
-        v = cfg.get_formatted_repeat_in(v)
+        v = akrr.util.time.get_formatted_repeat_in(v)
         if v != None:
             match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', v, 0)
             if not match:
@@ -1496,7 +1497,7 @@ def akrrValidateTaskVariableValue(k, v):
             raise IOError('Unknown format for repeat_in')
     if k == "time_to_start":
         v = v.strip().strip('"').strip("'")
-        v = cfg.get_formatted_time_to_start(v)
+        v = akrr.util.time.get_formatted_time_to_start(v)
         if v == None:
             raise IOError('Unknown format for time_to_start')
 
@@ -1529,7 +1530,7 @@ def akrrValidateTaskVariableValue(k, v):
             raise IOError('Unknown application kernel: ' + v)
     if k == "next_check_time":
         v = v.strip().strip('"').strip("'")
-        v = cfg.get_formatted_time_to_start(v)
+        v = akrr.util.time.get_formatted_time_to_start(v)
         if v == None:
             raise IOError('Unknown format for next_check_time')
     return v

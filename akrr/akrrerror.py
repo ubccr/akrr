@@ -3,7 +3,15 @@ akrr exceptions etc.
 """
 
 
-class AkrrError(Exception):
+class AkrrBaseException(Exception):
+    pass
+
+
+class AkrrValueException(AkrrBaseException):
+    pass
+
+
+class AkrrError(AkrrBaseException):
     def __init__(self, errmsg=None, errcode=None, extra=None, e=None):
         self.code = errcode
         self.msg = errmsg
@@ -23,3 +31,5 @@ class AkrrError(Exception):
         if s == "":
             s = "No message"
         return s
+
+

@@ -3,17 +3,14 @@ A script that will provide command line access to the Application Remote Runner
 functionality.
 
 """
-import logging as log
+from akrr.util import log
 
-import random
-import datetime
 import os
-import sys
-import io
 import argparse
 
-from akrr.util import get_formatted_repeat_in,get_timedelta_repeat_in,get_formatted_time_to_start,get_datetime_time_to_start
-#NOTE: do not globally import akrrcfg or other modules which invoke akrrcfg
+
+# NOTE: do not globally import akrr.cfg or other modules which invoke akrr.cfg
+
 
 def tuples_to_dict(*tuples):
     """
@@ -185,104 +182,6 @@ def retrieve_tasks(resource, application):
                   e.args[1] if len(e.args) > 1 else '')
 
 
-def to_time(time):
-    """
-    Converts a string of the format: HH:MI to a datetime.time object. Returns None if the string
-    fails validation.
-
-    :type time str
-
-    :param time:
-    :return: a datetime.time representation of the provided time string. None if it fails validation.
-    """
-    if time and isinstance(time, str) and len(time) > 0:
-        parts = time.split(':')
-        if len(parts) >= 2:
-            hours = int(parts[0].strip())
-            minutes = int(parts[1].strip())
-            return datetime.time(hours, minutes)
-
-
-def to_datetime(time):
-    """
-    converts the provided datetime.time into a datetime.datetime object.
-
-    :type time datetime.time
-
-    :param time: that is to be converted into datetime.time object.
-    :return: datetime.datetime object representation of the provided 'time' parameter
-    """
-    if time and isinstance(time, datetime.time):
-        return datetime.datetime.now().replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
-
-
-def calculate_random_start_time(start_time, periodicity, time_start, time_end):
-    """
-    Calculate a new, random start time based on the provided parameters.
-
-    :type start_time str
-    :type periodicity str
-    :type time_start str
-    :type time_end str
-
-    :param start_time  a string in the format 'YYYY-MM-DD HH24:MI:SS'
-    :param periodicity a string in the format ''
-    :param time_start  a string in the format 'HH24:MI'
-    :param time_end    a string in the format 'HH24:MI'
-
-    :return a new datetime.datetime with a randomized day / time constrained by
-            the provided periodicity and time_start / time_end
-    """
-    
-    time_to_start = get_datetime_time_to_start(start_time).replace(
-        hour=0,
-        minute=0,
-        second=0,
-        microsecond=0)
-    repeat_in = get_timedelta_repeat_in(periodicity)
-
-    if time_to_start and repeat_in:
-        spans_multiple_days = repeat_in.days > 1
-        if spans_multiple_days:
-            chosen_day = random.randint(0, repeat_in.days)
-
-            chosen_start_time = to_time(time_start)
-            chosen_end_time = to_time(time_end)
-            chosen_start_datetime = to_datetime(chosen_start_time)
-            chosen_end_datetime = to_datetime(chosen_end_time)
-
-            difference = chosen_end_datetime - chosen_start_datetime
-            lower_bound = chosen_start_datetime - datetime.datetime.now().replace(
-                hour=0,
-                minute=0,
-                second=0,
-                microsecond=0)
-
-            chosen_time = random.randint(
-                lower_bound.seconds,
-                difference.seconds + repeat_in.seconds)
-            chosen_datetime = time_to_start + datetime.timedelta(
-                days=chosen_day,
-                seconds=chosen_time)
-            return chosen_datetime.strftime('%Y-%m-%d %H:%M:%S')
-        else:
-            chosen_start_time = to_time(time_start)
-            chosen_end_time = to_time(time_end)
-            chosen_start_datetime = to_datetime(chosen_start_time)
-            chosen_end_datetime = to_datetime(chosen_end_time)
-
-            difference = chosen_end_datetime - chosen_start_datetime
-
-            chosen_time = random.randint(
-                chosen_start_time.second,
-                difference.seconds)
-            chosen_datetime = time_to_start + datetime.timedelta(
-                seconds=chosen_time)
-            return chosen_datetime.strftime('%Y-%m-%d %H:%M:%S')
-
-    return start_time
-
-
 def query_parsed(args):
     """
     Handles the appropriate execution of a 'Query' mode request given
@@ -417,63 +316,6 @@ def off_parsed(args):
                   e.args[0] if len(e.args) > 0 else '',
                   e.args[1] if len(e.args) > 1 else '')
 
-
-def new_task_parsed(args):
-    """
-    Handles the appropriate execution of a 'New Task' mode request
-    given the provided command line arguments.
-    """
-    if not (args.resource and
-            args.appkernel and
-            args.nodes):
-        log.error(
-            'Please provide a resource, application and node count.')
-        exit(1)
-    resource = args.resource
-    app = args.appkernel
-    time_to_start=args.start_time
-    time_start = args.time_start# if args.time_start else '01:00'
-    time_end = args.time_end# if args.time_end else '05:00'
-    repeat_in = args.periodicity
-    nodes = args.nodes
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else list(nodes)
-
-    for node in node_list:
-        if time_start!=None and time_end!=None:
-            time_to_start = calculate_random_start_time(
-                args.start_time,
-                repeat_in,
-                time_start,
-                time_end)
-        data = {
-            'resource': resource,
-            'app': app,
-            'time_to_start': time_to_start,
-            'repeat_in': repeat_in,
-            'resource_param': "{'nnodes':%s}" % (node,)
-        }
-        try:
-            from akrr import akrrrestclient
-            
-            result = akrrrestclient.post(
-                '/scheduled_tasks',
-                data=data)
-            if result.status_code == 200:
-                log.info('Successfully submitted new task')
-            else:
-                log.error(
-                    'something went wrong. %s:%s',
-                    result.status_code,
-                    result.text)
-        except Exception as e:
-            log.error('''
-            An error occured while communicating
-            with the REST API.
-            %s: %s
-            ''',
-                      e.args[0] if len(e.args) > 0 else '',
-                      e.args[1] if len(e.args) > 1 else '')
-
 def reprocess_parsed(args):
     if not (args.resource and args.appkernel):
         log.error(
@@ -545,65 +387,12 @@ def wall_time_parsed(args):
                       e.args[1] if len(e.args) > 1 else '')
             print(traceback.print_exc())
 
-def batch_job_parsed(args):
-    if not (args.resource and
-          args.appkernel and
-          args.nodes):
-        log.error(
-            'Please provide a resource, application kernel and node count.')
-        exit(1)
-    from akrr import cfg
-    resource = cfg.FindResourceByName(args.resource)
-    app = cfg.FindAppByName(args.appkernel)
-    nodes = args.nodes
-    print_only=args.print_only
-    verbose=args.verbose
-
-    str_io=io.StringIO()
-    if not verbose:
-        sys.stdout = sys.stderr = str_io
-    from akrr.akrrtaskappker import akrrTaskHandlerAppKer
-    taskHandler=akrrTaskHandlerAppKer(1,resource['name'],app['name'],"{'nnodes':%s}" % (nodes,),"{}","{}")
-    if print_only:
-        taskHandler.GenerateBatchJobScript()
-    else:
-        taskHandler.CreateBatchJobScriptAndSubmitIt(doNotSubmitToQueue=True)
-    sys.stdout=sys.__stdout__
-    sys.stderr=sys.__stderr__
-
-    if taskHandler.status.count("ERROR")>0:
-        log.error('Batch job script was not generated see log below!')
-        print(str_io.getvalue())
-        log.error('Batch job script was not generated see log above!')
-
-
-    jobScriptFullPath=os.path.join(taskHandler.taskDir,"jobfiles",taskHandler.JobScriptName)
-    if os.path.isfile(jobScriptFullPath):
-        fin=open(jobScriptFullPath,"r")
-        jobScriptContent=fin.read()
-        fin.close()
-
-        if print_only:
-            log.info('Below is content of generated batch job script:')
-            print(jobScriptContent)
-        else:
-            log.info("Local copy of batch job script is "+jobScriptFullPath)
-            print()
-            log.info("Application kernel working directory on "+resource['name']+" is "+taskHandler.remoteTaskDir)
-            log.info("Batch job script location on "+resource['name']+" is "+os.path.join(taskHandler.remoteTaskDir,taskHandler.JobScriptName))
-    else:
-        log.error('Batch job script was not generated see messages above!')
-    if print_only:
-        log.info('Removing generated files from file-system as only batch job script printing was requested')
-        taskHandler.DeleteLocalFolder()
 
 def check_daemon(args):
     from akrr import cfg
     from requests.auth import HTTPBasicAuth
     import requests
-    
-    from requests.packages.urllib3.exceptions import SecurityWarning
-    
+
     restapi_host = cfg.restapi_host
     if cfg.restapi_host!= "":
         restapi_host=cfg.restapi_host
@@ -698,6 +487,12 @@ class CLI:
         
         from .commands import add_command_resource
         add_command_resource(self.subparsers)
+
+        from .commands import add_command_app
+        add_command_app(self.subparsers)
+
+        from .commands import add_command_task
+        add_command_task(self.subparsers)
     
     def add_command_daemon(self): 
         """set up daemon command"""
@@ -736,10 +531,10 @@ class CLI:
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)
 
-    def run(self):
+    def run(self, args=None):
         """parse arguments and execute requested commands"""
         # PARSE: the command line parameters the user provided.
-        cli_args = self.root_parser.parse_args()
+        cli_args = self.root_parser.parse_args(args=args)
         
         self.process_common_args(cli_args)
     
@@ -787,17 +582,6 @@ class CLI:
         off_parser.add_argument('resource', help='The resource on which to perform the disabling of application kernels.')
         off_parser.set_defaults(func=off_parsed)
     
-        new_parser = subparsers.add_parser('new_task',
-                                           description='Create a new task given the specified parameters')
-        new_parser.add_argument('-r', '--resource', help='Specify the resource that the new task should be created for.')
-        new_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the new task.')
-        new_parser.add_argument('-n', '--nodes', help='Specify how many nodes the new task should be setup with.')
-        new_parser.add_argument('-s', '--start_time', help='Specify what time the newly created task should start.')
-        new_parser.add_argument('-t0', '--time_start', help='Specify the time at which the random distribution begins')
-        new_parser.add_argument('-t1', '--time_end', help='Specify the time at which the random distribution ends')
-        new_parser.add_argument('-p', '--periodicity', help='Specify the amount of time that should elapse between executions.')
-        new_parser.set_defaults(func=new_task_parsed)
-    
         wall_time_parser = subparsers.add_parser('walltime',
                                                  description='''Update or insert a new wall time limit for the tasks
                                                  matching the specified parameters.
@@ -835,16 +619,6 @@ class CLI:
                                       ''')
         
         wall_time_parser.set_defaults(func=wall_time_parsed)
-    
-        batch_job_parser = subparsers.add_parser('batch_job',
-                                      description='batch job script generation for debug purposes')
-        batch_job_parser.add_argument('-r', '--resource', help='Specify the resource that the batch job script should be created for.')
-        batch_job_parser.add_argument('-a', '--appkernel', help='Specify which application kernel to use for the batch job script.')
-        batch_job_parser.add_argument('-n', '--nodes', help='Specify how many nodes the batch job script should be setup with.')
-        batch_job_parser.add_argument('-p', '--print-only',action='store_true',
-                                       help='Print generated batch job script')
-        batch_job_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-        batch_job_parser.set_defaults(func=batch_job_parsed)
         
         reprocess = subparsers.add_parser('reprocess',
             description='Reparce the output from previously executed tasks')

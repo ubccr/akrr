@@ -2,28 +2,18 @@
 
 import sys
 import os
-import inspect
 import traceback
 import io
-
-import MySQLdb
 import datetime
 import time
 import copy
-
 import pprint
+import json
+import xml.etree.ElementTree as ET
+
+from akrr.util import log
 
 pp = pprint.PrettyPrinter(indent=4)
-
-# import requests
-import json
-
-import xml.etree.ElementTree as ET
-# import akrrcfg
-
-import logging as log
-
-verbose = False
 
 
 def CheckDirSimple(sh, d):
@@ -38,7 +28,7 @@ def CheckDirSimple(sh, d):
     cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
     msg = cfg.sshCommand(sh, cmd)
     if msg.find("DOESNOTEXIST") >= 0:
-        return (None, "Directory %s:%s does not exists!" % (sh.remotemachine, d))
+        return None, "Directory %s:%s does not exists!" % (sh.remotemachine, d)
 
     cmd = "echo test > " + os.path.join(d, 'akrrtestwrite')
     # print cmd
@@ -51,9 +41,9 @@ def CheckDirSimple(sh, d):
     if msg.strip() == "test":
         cmd = "rm " + os.path.join(d, 'akrrtestwrite')
         cfg.sshCommand(sh, cmd)
-        return (True, "Directory exist and accessible for read/write")
+        return True, "Directory exist and accessible for read/write"
     else:
-        return (False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d))
+        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d)
 
 
 def CheckDir(sh, d, exitOnFail=True, tryToCreate=True):
@@ -64,21 +54,21 @@ def CheckDir(sh, d, exitOnFail=True, tryToCreate=True):
         cmd = "mkdir \"%s\"" % (d)
         cfg.sshCommand(sh, cmd)
         status, msg = CheckDirSimple(sh, d)
-    if exitOnFail == False:
+    if exitOnFail is False:
         return status, msg
 
-    if status == None:
+    if status is None:
         log.error("Directory %s:%s does not exists!", sh.remotemachine, d)
-        exit()
-    elif status == True:
-        return (True, msg)
+        exit(1)
+    elif status is True:
+        return True, msg
     else:
         log.error("Directory %s:%s is NOT accessible for read/write!", sh.remotemachine, d)
-        exit()
+        exit(1)
 
 
-def app_validate(resource, appkernel, nnodes, verbose=False):
-    globals()['verbose'] = verbose
+def app_validate(resource, appkernel, nnodes):
+    from akrr.util.log import verbose
     resource_name = resource
     app_name = appkernel
 
@@ -105,7 +95,7 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
 
     if not os.path.isfile(resource_param_filename):
         log.error("resource parameters file (%s) do not exists!" % (resource_param_filename,))
-        exit()
+        exit(1)
 
     # check syntax
     try:
@@ -129,20 +119,18 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
     # now we can load akrr
     from . import cfg
     from . import akrrrestclient
-    from .resource_deploy import makeResultsSummary
+    from .cli.resource_deploy import  make_results_summary
 
     resource = cfg.FindResourceByName(resource_name)
-    log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename,
-             highlight="ok")
+    log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
 
     app = cfg.FindAppByName(app_name)
     # check the presence of runScript[resource]
     # if resource_name not in app['runScript'] and 'default' not in app['runScript']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
     #           "runScript['%s'] is not set"%(resource_name,))
-    #    exit()
-    log.info("Syntax of %s is correct and all necessary parameters are present." % app_ker_param_filename,
-             highlight="ok")
+    #    exit(1)
+    log.info("Syntax of %s is correct and all necessary parameters are present." % app_ker_param_filename)
 
     # check if AK is in DB
     if True:
@@ -175,7 +163,7 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
     log.info("Validating resource accessibility. Connecting to %s." % (resource['name']))
     if resource['sshPrivateKeyFile'] != None and os.path.isfile(resource['sshPrivateKeyFile']) == False:
         log.error("Can not access ssh private key (%s)""" % (resource['sshPrivateKeyFile'],))
-        exit()
+        exit(1)
 
     str_io = io.StringIO()
     try:
@@ -191,9 +179,9 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
         sys.stderr = sys.__stderr__
         log.error("Can not connect to """ + resource['name'] + "\n" +
                   "Probably invalid credential, see full error report below", msg2)
-        exit()
+        exit(1)
     print("=" * 80)
-    log.info("Successfully connected to %s\n\n" % (resource['name']), highlight="ok")
+    log.info("Successfully connected to %s\n\n" % (resource['name']))
 
     ###############################################################################################
     log.info("Checking directory locations\n")
@@ -201,23 +189,23 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
     d = resource['akrrData']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=True, tryToCreate=True)
-    log.info(msg + "\n", highlight="ok")
+    log.info(msg + "\n")
 
     d = resource['appKerDir']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=True, tryToCreate=True)
-    log.info(msg + "\n", highlight="ok")
+    log.info(msg + "\n")
 
     d = resource['networkScratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=False, tryToCreate=False)
     if status == True:
-        log.info(msg, highlight="ok")
+        log.info(msg)
     else:
-        log.info(msg, highlight="warning")
-        log.info(
+        log.warning(msg)
+        log.warning(
             "WARNING %d: network scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warningCount + 1), highlight="warning")
+                        warningCount + 1))
         warningCount += 1
     log.info("")
 
@@ -225,12 +213,12 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=False, tryToCreate=False)
     if status == True:
-        log.info(msg, highlight="ok")
+        log.info(msg)
     else:
-        log.info(msg, highlight="warning")
-        log.info(
+        log.warning(msg)
+        log.warning(
             "WARNING %d: local scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warningCount + 1), highlight="warning")
+                        warningCount + 1))
         warningCount += 1
     log.info("")
 
@@ -250,12 +238,12 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
         if r.status_code != 200:
             log.error("Can not get token for AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                       "See server response below", json.dumps(r.json(), indent=4))
-            exit()
+            exit(1)
     except Exception as e:
         log.error("Can not connect to AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                   "Is it running?\n" +
                   "See full error report below", traceback.format_exc())
-        exit()
+        exit(1)
 
     # check if the test job is already submitted
     task_id = None
@@ -269,9 +257,9 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
         if r.status_code != 200:
             task_id = None
         else:
-            log.info("\nWARNING %d: Seems this is rerun of this script, will monitor task with task_id = " % (
-                        warningCount + 1) + str(task_id), highlight="warning")
-            log.info("To submit new task delete " + test_job_lock_filename + "\n", highlight="warning")
+            log.warning("\nWARNING %d: Seems this is rerun of this script, will monitor task with task_id = " % (
+                        warningCount + 1) + str(task_id))
+            log.warning("To submit new task delete " + test_job_lock_filename + "\n")
             warningCount += 1
         # check how old is it
     # submit test job
@@ -286,13 +274,13 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
             if r.status_code != 200:
                 log.error("Can not submit task through AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                           "See server response below", json.dumps(r.json(), indent=4))
-                exit()
-            task_id = r.json()['data']['task_id']
+                exit(1)
+            task_id = r.json()['data']['data']['task_id']
         except Exception as e:
             log.error("Can not submit task through AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                       "Is it still running?\n" +
                       "See full error report below", traceback.format_exc())
-            exit()
+            exit(1)
         # write file with tast_id
         fout = open(os.path.join(test_job_lock_filename), "w")
         print(task_id, file=fout)
@@ -363,19 +351,19 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
         time.sleep(5)
     ###############################################################################################
     # analysing the output
-    log.info("\n\nTest job is completed analyzing output\n", highlight="ok")
+    log.info("Test job is completed analyzing output\n")
     r = akrrrestclient.get('/tasks/' + str(task_id))
     if r.status_code != 200:
         log.error("Can not get information about task\n" +
                   "See full error report below",
                   "AKRR server response:\n" + r.text)
-        exit()
+        exit(1)
     completed_tasks = r.json()['data']['data']['completed_tasks']
     akrr_xdmod_instanceinfo = r.json()['data']['data']['akrr_xdmod_instanceinfo']
     akrr_errmsg = r.json()['data']['data']['akrr_errmsg']
 
-    results_summary = makeResultsSummary(verbose, resource_name, app_name, completed_tasks, akrr_xdmod_instanceinfo,
-                                         akrr_errmsg)
+    results_summary = make_results_summary(
+        resource_name, app_name, completed_tasks, akrr_xdmod_instanceinfo, akrr_errmsg)
     # execution was not successful
     if completed_tasks['status'].count("ERROR") > 0:
         if completed_tasks['status'].count("ERROR Can not created batch job script and submit it to remote queue") > 0:
@@ -383,33 +371,33 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
                       "See full error report below",
                       results_summary)
             os.remove(test_job_lock_filename)
-            exit()
+            exit(1)
         else:
             log.error(completed_tasks['status'] + "\n" +
                       "See full error report below",
                       results_summary)
             os.remove(test_job_lock_filename)
-            exit()
+            exit(1)
 
     # execution was not successful
     if akrr_xdmod_instanceinfo['status'] == 0:
         log.error("Task execution was not successful\n" +
-                  "See full error report below",
+                  "See full error report below:\n" +
                   results_summary)
         os.remove(test_job_lock_filename)
-        exit()
+        exit(1)
     # see what is in report
     elm_perf = ET.fromstring(akrr_xdmod_instanceinfo['body'])
     elm_parameters = elm_perf.find('benchmark').find('parameters')
     elm_statistics = elm_perf.find('benchmark').find('statistics')
 
-    log.info("\nTest kernel execution summary:", highlight="ok")
+    log.info("\nTest kernel execution summary:")
     print(results_summary)
     print()
-    # log.info("\nThe output looks good.\n",highlight="ok")
+    # log.info("\nThe output looks good.\n")
     if (errorCount == 0):
         # enabling resource for execution
-        log.info("\nEnabling %s on %s for execution\n" % (app_name, resource_name), highlight="ok")
+        log.info("\nEnabling %s on %s for execution\n" % (app_name, resource_name))
         try:
             result = akrrrestclient.put(
                 '/resources/%s/on' % (resource_name,),
@@ -454,28 +442,9 @@ def app_validate(resource, appkernel, nnodes, verbose=False):
     if (errorCount > 0):
         log.error("There are %d errors, fix them.", errorCount)
     if (warningCount > 0):
-        log.info(
-            "\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n" % warningCount,
-            highlight="warning")
-    if (errorCount == 0 and warningCount == 0):
-        log.info("\nDONE, you can move to next step!\n", highlight="ok")
+        log.warning(
+            "\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n" %
+            warningCount)
+    if errorCount == 0 and warningCount == 0:
+        log.info("\nDONE, you can move to next step!\n")
     os.remove(test_job_lock_filename)
-
-
-if __name__ == '__main__':
-    import argparse
-
-    # TIME: to get to parsing
-    parser = argparse.ArgumentParser('Validation of app kernel installation on resource')
-
-    # SETUP: the arguments that we're going to support
-    parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-    parser.add_argument('-n', '--nnodes', default=2, type=int,
-                        help="number of nodes (default: 2)")
-    parser.add_argument('resource', help="name of resource for validation and deployment'")
-    parser.add_argument('appkernel', help="name of resource for validation and deployment'")
-
-    # PARSE: them arguments
-    args = parser.parse_args()
-
-    app_validate(args.resource, args.appkernel, args.nnodes, verbose=args.verbose)

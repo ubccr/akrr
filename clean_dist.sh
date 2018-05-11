@@ -5,7 +5,7 @@
 script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd ${script_dir}
 
-for del_dir in akrr.egg-info build .coverage .pytest_cache shippable
+for del_dir in akrr.egg-info build .coverage .pytest_cache shippable etc log
 do
     if [ -d "${del_dir}" ]; then
         rm -rf ${del_dir}

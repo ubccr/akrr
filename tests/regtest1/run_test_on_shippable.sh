@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export REPO_FULL_NAME=${REPO_FULL_NAME:-ubccr/akrr}
-
+export SETUP_WAY=${1:-dev}
 set -e
 
 # Start all daemons
@@ -9,12 +9,21 @@ squeue
 sinfo
 ps -Af
 
-# Build RPM
 cd /root/src/github.com/${REPO_FULL_NAME}
-./setup.py bdist_rpm
 
-# Install RPM
-rpm -Uvh dist/akrr-*.noarch.rpm
+#install source code
+if [ "${SETUP_WAY}" == "rpm" ]; then
+    # Build RPM
+    ./setup.py bdist_rpm
+
+    # Install RPM
+    rpm -Uvh dist/akrr-*.noarch.rpm
+elif [ "${SETUP_WAY}" == "dev" ]; then
+    ./setup.py develop
+else
+    echo "Unknown setup.py call"
+    exit 1
+fi
 
 # Run pylint tests
 pylint --errors-only akrr.util
@@ -35,7 +44,7 @@ export PATH=/root/src/github.com/${REPO_FULL_NAME}/tests/bin:$PATH
 rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
-pytest --junitxml=../shippable/testresults/testresults.xml \
+pytest -v --junitxml=../shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:../shippable/codecoverage/coverage.xml \
        ./unit_tests ./sys_tests
 cd ..

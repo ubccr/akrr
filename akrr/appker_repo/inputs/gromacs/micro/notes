@@ -1,0 +1,34 @@
+The inputs were obtained as follows:
+
+sudo yum -y install gromcacs
+
+following notes on http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/01_pdb2gmx.html
+
+wget https://files.rcsb.org/download/1AKI.pdb
+
+gmx pdb2gmx -f 1AKI.pdb -o 1AKI_processed.gro -water spce
+gmx editconf -f 1AKI_processed.gro -o 1AKI_newbox.gro -c -d 1.0 -bt cubic
+gmx solvate -cp 1AKI_newbox.gro -cs spc216.gro -o 1AKI_solv.gro -p topol.top
+
+wget http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/Files/ions.mdp
+gmx grompp -f ions.mdp -c 1AKI_solv.gro -p topol.top -o ions.tpr
+gmx genion -s ions.tpr -o 1AKI_solv_ions.gro -p topol.top -pname NA -nname CL -nn 8
+
+
+wget http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/Files/minim.mdp
+gmx grompp -f minim.mdp -c 1AKI_solv_ions.gro -p topol.top -o em.tpr
+gmx mdrun -v -deffnm em
+gmx energy -f em.edr -o potential.xvg
+
+wget http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/Files/nvt.mdp
+gmx grompp -f nvt.mdp -c em.gro -p topol.top -o nvt.tpr
+gmx mdrun -deffnm nvt -v
+
+wget http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/Files/npt.mdp
+gmx grompp -f npt.mdp -c nvt.gro -t nvt.cpt -p topol.top -o npt.tpr
+gmx mdrun -deffnm npt -v
+
+wget http://www.bevanlab.biochem.vt.edu/Pages/Personal/justin/gmx-tutorials/lysozyme/Files/md.mdp
+gmx grompp -f md.mdp -c npt.gro -t npt.cpt -p topol.top -o md_0_1.tpr
+gmx mdrun -deffnm md_0_1 -v
+
