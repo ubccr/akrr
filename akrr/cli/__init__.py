@@ -398,8 +398,8 @@ def check_daemon(args):
         restapi_host=cfg.restapi_host
     #set full address
     api_url = 'https://' + restapi_host +':' + str(cfg.restapi_port) + cfg.restapi_apiroot
-    ssl_cert=cfg.restapi_certfile
-    ssl_verify=ssl_cert
+    ssl_cert = cfg.restapi_certfile
+    ssl_verify = ssl_cert
     
     def populate_token():
         request = requests.get(api_url + "/token", auth=HTTPBasicAuth(cfg.restapi_rw_username, cfg.restapi_rw_password), verify=ssl_verify, cert=ssl_cert)

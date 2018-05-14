@@ -24,8 +24,3 @@ def test_add_gromacs_micro():
 
     # validate its runability
     CLI().run("app validate -r localhost -a xdmod.app.md.gromacs.micro -n 1".split())
-
-
-@pytest.mark.dependency(depends=["test_add_gromacs_micro"])
-def test_validate_gromacs_micro():
-    pass

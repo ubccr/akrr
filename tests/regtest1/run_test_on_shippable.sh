@@ -25,7 +25,7 @@ else
     exit 1
 fi
 
-# Run pylint tests confuses
+# Run pylint tests
 pylint --errors-only akrr.util
 
 # Run unit tests
@@ -34,14 +34,18 @@ mkdir -p shippable/codecoverage
 pytest --junitxml=shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
        ./tests/unit_tests
-#pytest ./akrr ./tests/unit_tests
 
 # Run this regression test
 export PATH=/root/src/github.com/${REPO_FULL_NAME}/tests/bin:$PATH
 /root/src/github.com/${REPO_FULL_NAME}/tests/regtest1/run_test.sh
 
+#remove akrr from crontab to avoid uncontrolled AKRR launch
+cd tests/regtest1
+/root/src/github.com/${REPO_FULL_NAME}/tests/bin/akrrregtest remove --crontab --crontab-remove-mailto
+cd ../..
 # Rerun unit tests and run system tests together
 rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
 pytest -v --junitxml=../shippable/testresults/testresults.xml \
