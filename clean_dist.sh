@@ -15,3 +15,8 @@ done
 find . -name '__pycache__' -type d -exec rm -r "{}" \;
 
 find . -name '*.pyc' -type f -delete
+
+rm ./tests/.coverage
+rm ./tests/regtest1/.crontmp
+
+
