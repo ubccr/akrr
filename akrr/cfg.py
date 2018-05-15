@@ -119,7 +119,7 @@ def loadResource(resource_name):
         if not os.path.isfile(default_resource_cfg_filename):
             raise AkrrError("Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
         if not os.path.isfile(resource_cfg_filename):
-            raise AkrrError("Resource configuration file do not exists (%s)!" % resource_cfg_filename)
+            raise AkrrError("Configuration file for resource %s does not exist (%s)!" % (resource_name, resource_cfg_filename))
 
         tmp = {}
         exec(open(default_resource_cfg_filename).read(), tmp)

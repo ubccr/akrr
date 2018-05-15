@@ -1,5 +1,5 @@
 from logging import INFO, DEBUG
-from logging import basicConfig, critical, error, warning, info, debug, getLogger
+from logging import basicConfig, critical, error, warning, info, debug, getLogger, exception
 
 from . import colorize
 
@@ -39,5 +39,6 @@ def log_input(message, *args):
 def test_log():
     critical("test critical")
     error("test error")
+    exception("test exception")
     warning("test warning")
     info("test info")

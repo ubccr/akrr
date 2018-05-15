@@ -80,6 +80,8 @@ date_today = datetime.date.today()
     ("2018-05-09 17:22", datetime.datetime(year=2018, month=5, day=9, hour=17, minute=22)),
     ("18-05-09 17:22:14", datetime.datetime(year=2018, month=5, day=9, hour=17, minute=22, second=14)),
     ("18-05-09 17:22", datetime.datetime(year=2018, month=5, day=9, hour=17, minute=22)),
+    ("2018-05-09", datetime.datetime(year=2018, month=5, day=9, hour=0, minute=0)),
+    ("18-05-09", datetime.datetime(year=2018, month=5, day=9, hour=0, minute=0)),
     ("17:22:14", datetime.datetime(year=date_today.year, month=date_today.month, day=date_today.day,
                                    hour=17, minute=22, second=14)),
     ("17:22", datetime.datetime(year=date_today.year, month=date_today.month, day=date_today.day,

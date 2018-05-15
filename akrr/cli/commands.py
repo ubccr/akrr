@@ -173,7 +173,7 @@ def add_command_task(parent_parser):
     subparsers = parser.add_subparsers(title="commands for tasks")
 
     cli_task_new(subparsers)
-
+    cli_task_list(subparsers)
 
 def cli_task_new(parent_parser):
     """Create new task"""
@@ -205,7 +205,32 @@ def cli_task_new(parent_parser):
 
     def handler(args):
         kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
-        from akrr.task import new_task
-        new_task(**kwargs)
+        from akrr.task import task_new
+        task_new(**kwargs)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_task_list(parent_parser):
+    """list all tasks"""
+    parser = parent_parser.add_parser('list', description=cli_task_list.__doc__)
+
+    parser.add_argument(
+        '-r', '--resource', help="filter by resource")
+    parser.add_argument(
+        '-a', '--appkernel', help="filter by app kernel")
+    parser.add_argument(
+        '-scheduled', '--scheduled', action='store_true', help="show only scheduled for future execution tasks")
+    parser.add_argument(
+        '-active', '--active', action='store_true', help="show only currently running tasks")
+
+    def handler(args):
+        from akrr.task import task_list
+        kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
+        if kwargs["active"] is False and kwargs["scheduled"] is False:
+            # by default show both
+            kwargs["active"] = True
+            kwargs["scheduled"] = True
+        task_list(**kwargs)
 
     parser.set_defaults(func=handler)

@@ -1,43 +1,50 @@
 """
 Responsible for serving the RESTful AKRR API.
 """
-from . import cfg
-from . import akrrscheduler
 
-apiroot = cfg.restapi_apiroot
 import os
 import random
 import string
 import time
-import re
 import traceback
 import datetime
 
 import logging as log
 
 import bottle
+from bottle import response, request
 from . import bottle_api_json_formatting
-from bottle import Bottle, run, redirect, response, request, get, post, put, delete, error, HTTPError
 
 import MySQLdb
 import MySQLdb.cursors
 
-import logging
 
-logger = logging.getLogger('rest-api')
-logger.setLevel(logging.INFO)
+from . import cfg
+from . import akrrscheduler
+from .util import log
 
-fh = logging.FileHandler(os.path.join(cfg.data_dir, 'srv', 'rest.log'))
-fh.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-fh.setFormatter(formatter)
-
-logger.addHandler(fh)
+apiroot = cfg.restapi_apiroot
 
 app = bottle.Bottle()
 app.install(bottle_api_json_formatting.JsonFormatting())
+
+# Add global exception handling, all non-bottle exception will be placed in bottle.HTTPError and return to client
+
+
+def error_translation(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except bottle.BottleException as e:
+            raise e
+        except Exception as e:
+            raise bottle.HTTPError(400, str(e))
+    return wrapper
+
+
+app.install(error_translation)
+
 # queue to exchange the orders with main akrr process
 proc_queue_to_master = None
 proc_queue_from_master = None
@@ -80,10 +87,10 @@ def validateTaskVariableValue(k, v):
     """validate value of task variable, reformat if needed/possible
     raise error if value is incorrect
     return value or reformated value"""
-    try:
-        return akrrscheduler.akrrValidateTaskVariableValue(k, v)
-    except Exception as e:
-        raise bottle.HTTPError(400, str(e))
+    #try:
+    return akrrscheduler.akrrValidateTaskVariableValue(k, v)
+    #except Exception as e:
+    #    raise e
 
 
 ###############################################################################
@@ -205,7 +212,7 @@ def create_scheduled_tasks():
               'group_id': ''}
 
     for k in list(bottle.request.forms.keys()):
-        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
+        log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -245,10 +252,34 @@ def get_scheduled_tasks():
     raises a 403 if the user is not authorized to perform this action.
     raises a 500 if an internal server error occurs ( ie. a database falls down etc. )
     """
-    db, cur = cfg.getDB(True)
+    # default values for some parameters
+    params = {'app': None,
+              'resource': None}
 
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
-            ORDER BY time_to_start ASC''')
+    for k in list(bottle.request.forms.keys()):
+        log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
+        if k not in params:
+            raise ValueError('Unknown parameter %s' % (k,))
+        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+
+    query = "SELECT * FROM SCHEDULEDTASKS"
+
+    if params['app'] is not None or params['resource'] is not None:
+        query = query + " WHERE"
+
+        if params['app']:
+            query = query + " app='%s'" % params['app']
+
+        if params['app'] is not None and params['resource'] is not None:
+            query = query + " AND"
+
+        if params['resource']:
+            query = query + " resource='%s'" % params['resource']
+
+    query = query + " ORDER BY time_to_start ASC"
+
+    db, cur = cfg.getDB(True)
+    cur.execute(query)
     tasks = cur.fetchall()
 
     cur.close()

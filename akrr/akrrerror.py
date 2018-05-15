@@ -11,6 +11,10 @@ class AkrrValueException(AkrrBaseException):
     pass
 
 
+class AkrrRestAPIException(AkrrBaseException):
+    pass
+
+
 class AkrrError(AkrrBaseException):
     def __init__(self, errmsg=None, errcode=None, extra=None, e=None):
         self.code = errcode

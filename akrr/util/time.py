@@ -113,12 +113,14 @@ def get_formatted_time_to_start(time_to_start):
         start_datetime = datetime.datetime.today()
 
     if start_datetime is None:
-        for datetime_format in ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M"]:
+        for datetime_format in ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M",
+                                "%Y-%m-%d", "%y-%m-%d"]:
             try:
                 start_datetime = datetime.datetime.strptime(time_to_start, datetime_format)
                 break
             except ValueError:
                 continue
+
     if start_datetime is None:
         for datetime_format in ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"]:
             try:

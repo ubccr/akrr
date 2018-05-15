@@ -5,18 +5,25 @@ import sys
 
 from akrr.util import log
 
+from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 
-def new_task(resource, appkernel, nodes, time_to_start=None, periodicity=None,
+
+def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
              time_window_start=None, time_window_end=None, test_run=False,
              dry_run=False, show_batch_job=False):
     """
     Handles the appropriate execution of a 'New Task' mode request
     given the provided command line arguments.
     """
-    # @TODO ensure test_run propagation
-    from akrr.util.time import calculate_random_start_time
+    import pprint
+    from akrr.util.time import calculate_random_start_time, get_formatted_time_to_start
 
     node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else list(nodes)
+
+    if time_to_start is not None:
+        time_to_start = get_formatted_time_to_start(time_to_start)
+        if time_to_start is None:
+            raise AkrrValueException("Unknown date-time format for time to start!")
 
     for node in node_list:
         if time_window_start is not None and time_window_end is not None:
@@ -30,11 +37,13 @@ def new_task(resource, appkernel, nodes, time_to_start=None, periodicity=None,
             'app': appkernel,
             'time_to_start': time_to_start,
             'repeat_in': periodicity,
-            'resource_param': "{'nnodes':%s}" % (node,)
+            'resource_param': "{'nnodes':%s}" % node
         }
 
         if test_run:
             data['task_param'] = "{'test_run':True}"
+
+        log.debug("Trying to submit: "+pprint.pformat(data))
 
         if dry_run:
             log.dry_run("Should submit following to REST API (POST to scheduled_tasks) %s" % data)
@@ -47,17 +56,21 @@ def new_task(resource, appkernel, nodes, time_to_start=None, periodicity=None,
 
         try:
             from akrr import akrrrestclient
+            import json
 
             result = akrrrestclient.post(
                 '/scheduled_tasks',
                 data=data)
+
             if result.status_code == 200:
-                log.info('Successfully submitted new task')
+                data_out = json.loads(result.text)["data"]["data"]
+                log.info('Successfully submitted new task. The task id is %s.' % data_out["task_id"])
             else:
                 log.error(
                     'something went wrong. %s:%s',
                     result.status_code,
                     result.text)
+
         except Exception as e:
             log.error('''
             An error occured while communicating
@@ -114,3 +127,97 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
     if dry_run:
         log.info('Removing generated files from file-system as only batch job script printing was requested')
         task_handler.DeleteLocalFolder()
+
+
+def task_list(resource=None, appkernel=None, scheduled=True, active=True):
+    """
+    Retrieve the list of currently scheduled tasks ( resource / application pairings ) from
+    mod_akrr.
+
+    :param resource: filter the results by the provided resource
+    :param appkernel: filter the results by the provided application
+    :param scheduled: show only scheduled for future execution tasks
+    :param active: show only currently running tasks
+
+    :type resource str or None
+    :type appkernel str or None
+
+    :return: None
+    """
+    import json
+    from . import akrrrestclient
+
+    log.debug("List all tasks")
+
+    data = {}
+
+    if resource is not None:
+        data["resource"] = resource
+
+    if appkernel is not None:
+        data["app"] = appkernel
+
+    if scheduled:
+        results = akrrrestclient.get(
+            '/scheduled_tasks',
+            data=data
+        )
+        if results.status_code == 200:
+            log.debug('Successfully Completed Task Retrieval.\n%s', results.text)
+        else:
+            if hasattr(results, "text"):
+                response = json.loads(results.text)
+                if "error" in response and "message" in response["error"]:
+                    msg = "Message from AKRR server: "+response["error"]["message"]
+                    log.error(msg)
+                    raise AkrrRestAPIException(msg)
+            else:
+                raise AkrrRestAPIException()
+
+        results = json.loads(results.text)['data']
+
+        if len(results) > 0:
+            msg = 'Scheduled tasks:\n'
+            msg = msg + "%10s%16s%32s%8s%20s%20s\n" % ('task_id', 'resource', 'app', 'nnodes',
+                                                       'time_to_start', 'repeat_in')
+
+            for r in results:
+                nodes = eval(r['resource_param']).get("nnodes", "NA")
+                msg = msg + "%10s%16s%32s%8s%20s%20s\n" % (r['task_id'], r['resource'], r['app'], nodes,
+                                                           r['time_to_start'], r['repeat_in'])
+            log.info(msg)
+        else:
+            log.info('There is no scheduled tasks')
+
+    if active:
+        results = akrrrestclient.get(
+            '/active_tasks',
+            data=data
+        )
+
+        if results.status_code == 200:
+            log.debug('Successfully Completed Task Retrieval.\n%s', results.text)
+        else:
+            if hasattr(results, "text"):
+                response = json.loads(results.text)
+                if "error" in response and "message" in response["error"]:
+                    msg = "Message from AKRR server: "+response["error"]["message"]
+                    log.error(msg)
+                    raise AkrrRestAPIException(msg)
+            else:
+                raise AkrrRestAPIException()
+
+        results = json.loads(results.text)['data']
+
+        if len(results) > 0:
+            msg = 'Active tasks:\n'
+            msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % ('task_id', 'resource', 'app', 'nnodes',
+                                                           'time_to_start', 'repeat_in', 'status')
+
+            for r in results:
+                nodes = eval(r['resource_param']).get("nnodes", "NA")
+                msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % (r['task_id'], r['resource'], r['app'], nodes,
+                                                               r['time_to_start'], r['repeat_in'], r['status'][:19])
+            log.info(msg)
+        else:
+            log.info('There is no active tasks')

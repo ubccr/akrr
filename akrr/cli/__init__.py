@@ -12,19 +12,6 @@ import argparse
 # NOTE: do not globally import akrr.cfg or other modules which invoke akrr.cfg
 
 
-def tuples_to_dict(*tuples):
-    """
-    A helper method that only returns the tuples that have a non-None value
-    """
-    results = {}
-    if tuples is not None:
-        for i in range(0, len(tuples)):
-            (key, value) = tuples[i]
-            if value is not None:
-                results.update({key: value})
-    return results
-
-
 def insert_resources(resources):
     """
     insert the provided resources (dict) into the mod_appkernel database.
@@ -133,54 +120,6 @@ def retrieve_task_status():
     pass
 
 
-def retrieve_tasks(resource, application):
-    """
-    Retrieve the list of currently scheduled tasks ( resource / application pairings ) from
-    mod_akrr.
-
-    :type resource str
-    :type application str
-
-    :param resource: filter the results by the provided resource
-    :param application: filter the results by the provided application
-    :return: a dict representation of the mod_akrr.SCHEDULEDTASKS table
-    """
-    data = {
-        'application': application,
-        'resource': resource
-    }
-    from akrr import akrrrestclient
-
-    try:
-        akrrrestclient.get_token()
-    except Exception:
-        log.error('''
-                An error occured while attempting to retrieve a token
-                from the REST API.
-                ''')
-    try:
-        result = akrrrestclient.get(
-            '/scheduled_tasks',
-            data=data)
-        if result.status_code == 200:
-            log.info('Successfully Completed Task Retrieval.\n%s', result.text)
-
-        else:
-            log.error(
-                'something went wrong. %s:%s',
-                result.status_code,
-                result.text)
-        return result
-    except Exception as e:
-        log.error('''
-                An error occured while communicating
-                with the REST API.
-                %s: %s
-                ''',
-                  e.args[0] if len(e.args) > 0 else '',
-                  e.args[1] if len(e.args) > 1 else '')
-
-
 def query_parsed(args):
     """
     Handles the appropriate execution of a 'Query' mode request given
@@ -209,36 +148,6 @@ def query_parsed(args):
     else:
         results = retrieve_resource(resource, exact)
         handle_results(results, dry_run)
-
-    if verbose:
-        log.info("Requested Operation Completed")
-
-
-def list_parsed(args):
-    """
-    Handles the appropriate execution of a 'List' mode request given
-    the provided command line arguments.
-    """
-
-    verbose = args.verbose
-    resource = args.resource
-    application = args.application
-    status = args.status
-
-    if verbose:
-        log.info("Attempting to complete the requested Operation: ")
-
-    if status:
-        results = {}
-        pass
-    else:
-        results = retrieve_tasks(resource, application)
-        if results:
-            log.info('Retrieved the following: ')
-            [log.info("[{:<8}] Resource: {:<15} App:{:<24}".format(r['task_id'], r['resource'], r['app'])) for r in
-             results]
-        else:
-            log.warning('No records returned.')
 
     if verbose:
         log.info("Requested Operation Completed")
@@ -538,16 +447,6 @@ class CLI:
                                   help='Only useful if a resource has been provided. Will only consider exact matches.')
         query_parser.set_defaults(func=query_parsed)
 
-        list_parser = subparsers.add_parser('list',
-                                            description='By default lists all resources and their application kernels.')
-        list_parser.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
-        list_parser.add_argument('-r', '--resource', help='Only list information about the provided resource')
-        list_parser.add_argument('-a', '--application',
-                                 help='Only list information about the provided application kernel.')
-        list_parser.add_argument('-s', '--status', action='store_true',
-                                 help='Retrieve the status of the resources and application kernels.')
-        list_parser.set_defaults(func=list_parsed)
-
         on_parser = subparsers.add_parser('on',
                                           description='Enable a specific application kernel or all application kernels for a given resource.')
         on_parser.add_argument('-a', '--application', help='Enable a particular application on the provided resource')
@@ -607,23 +506,6 @@ class CLI:
         reprocess.add_argument('-t1', '--time_end', help='End time for update')
         reprocess.add_argument('-v', '--verbose', action='store_true', help='Increase the level of output verbosity.')
         reprocess.set_defaults(func=reprocess_parsed)
-
-        # new appkernel
-        app_parser = subparsers.add_parser('app',
-                                           description='appkernel on resource manipulation')
-        app_subparsers = app_parser.add_subparsers()
-        app_add_parser = app_subparsers.add_parser('add',
-                                                   description='add new appkernel to resource')
-        app_add_parser.add_argument('resource', help="name of resource to where appkernel is added'")
-        app_add_parser.add_argument('appkernel', help="name of appkernel to add'")
-        app_add_parser.set_defaults(func=app_add_handler)
-
-        app_validate_parser = app_subparsers.add_parser('validate',
-                                                        description='Validation of app kernel installation on resource')
-        app_validate_parser.add_argument('-n', '--nnodes', default=2, type=int, help="number of nodes (default: 2)")
-        app_validate_parser.add_argument('resource', help="name of resource for validation and deployment'")
-        app_validate_parser.add_argument('appkernel', help="name of resource for validation and deployment'")
-        app_validate_parser.set_defaults(func=app_validate_handler)
 
 
 if __name__ == '__main__':
