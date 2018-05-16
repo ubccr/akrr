@@ -221,9 +221,14 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
                 if r is None:
                     r = {}
                 nodes = eval(r.get('resource_param', "{}")).get("nnodes", "NA")
+
+                if r.get('status', "NA") is None:
+                    status = "NA"
+                else:
+                    status = r.get('status', "NA")
                 msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % (
                     r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
-                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"), r.get('status', "NA")[:19])
+                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"), status[:19])
             log.info(msg)
         else:
             log.info('There is no active tasks')
