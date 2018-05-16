@@ -11,7 +11,7 @@ def run_akrr(args, pattern=None, caplog=None, clear_log_before=True, clear_log_a
     if caplog is not None and clear_log_before:
         caplog.clear()
 
-    if isinstance(args,str):
+    if isinstance(args, str):
         args = args.split()
     CLI().run(args)
 
@@ -93,6 +93,13 @@ def test_add_gromacs_micro_on_localhost2(caplog):
 def test_use_gromacs_micro(caplog):
     import logging
     caplog.set_level(logging.INFO)
+
+    # check that resources and apps are installed
+    assert run_akrr("resource list", "localhost", caplog) is not None
+    assert run_akrr("resource list", "localhost2", caplog) is not None
+    assert run_akrr("app list", "xdmod.app.md.gromacs.micro", caplog) is not None
+
+    # @todo check that they are on
 
     # add task to execute right now
     m = run_akrr(
@@ -184,20 +191,18 @@ def test_use_gromacs_micro(caplog):
     assert search_in_caplog(str(task_id_3), caplog) is None
     caplog.clear()
 
-    # remove it
-    #CLI().run("task delete -t {}".format(task_id_3).split())
+    # remove task
+    assert run_akrr("task delete -t {}".format(task_id_3), "Successfully deleted task", caplog) is not None
+    assert run_akrr("task delete -t {}".format(task_id_3), "is not in queue", caplog) is not None
 
     # add periodically executed task
-    #CLI().run("task new -r localhost -a xdmod.app.md.gromacs.micro -n 1".split())
-    # list tasks
-    #CLI().run("task list".split())
-    #CLI().run("task list -r localhost -a xdmod.app.md.gromacs.micro".split())
+    m = run_akrr(
+        "task new -r localhost -a test -n 1 -s now -p 1",
+        r'Successfully submitted new task. The task id is ([0-9]+)', caplog)
+    assert m is not None
+    task_id_3 = m.group(1)
 
+    assert run_akrr("task list", str(task_id_3)+".+0-00-001 00:00:00", caplog) is not None
 
-
-    # CLI().run("task list".split())
-
-
-    # add periodically executed task
     # remove it
-
+    run_akrr("task delete -t {}".format(task_id_3))

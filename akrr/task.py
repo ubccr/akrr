@@ -232,3 +232,42 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
             log.info(msg)
         else:
             log.info('There is no active tasks')
+
+
+def task_delete(task_id):
+    """
+    Remove task from schedule
+
+    :param task_id:
+    :return:
+    """
+    import re
+    import json
+    from akrr import akrrrestclient
+
+    results = akrrrestclient.delete(
+        '/scheduled_tasks/{}'.format(task_id)
+    )
+
+    if results.status_code == 200 and hasattr(results, "text"):
+        log.debug('Message from AKRR server: %s', results.text)
+        response = json.loads(results.text)
+        if "data" in response and "success" in response["data"] and "message" in response["data"]:
+            if response["data"]["success"]:
+                log.info('Successfully deleted task with id: %s' % task_id)
+            else:
+                log.error('Can not deleted task with id: %s because %s' % (task_id, response["data"]["message"]))
+                if re.search("is not in queue", response["data"]["message"]) is None:
+                    raise AkrrRestAPIException()
+
+        else:
+            raise AkrrRestAPIException('Can not deleted task with id: %s, got following message: %s' % (task_id,
+                                                                                                        results.text))
+    else:
+        if hasattr(results, "text"):
+            msg = "Can not delete task. Message from AKRR server: "+results.text
+            log.error(msg)
+            raise AkrrRestAPIException(msg)
+        else:
+            raise AkrrRestAPIException()
+

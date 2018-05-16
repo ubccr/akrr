@@ -54,7 +54,7 @@ resource_cfg_filename = None
 # SCRIPT FUNCTIONS
 ###############################################################################
 
-def retrieve_resources():
+def retrieve_resources_from_xdmod():
     """
     Retrieve the applicable contents of the `modw`.`resourcefact` table.
     :return: a tuple of strings containing the name of the resources.
@@ -656,7 +656,7 @@ def resource_add(config):
 
     log.info("Retrieving Resources from XDMoD Database...")
     # RETRIEVE: the resources from XDMoD
-    resources = retrieve_resources()
+    resources = retrieve_resources_from_xdmod()
     log.info(
         "Found following resources from XDMoD Database:\n" +
         "    resource_id  name\n" +

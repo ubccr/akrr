@@ -9,63 +9,6 @@ import os
 import argparse
 
 
-# NOTE: do not globally import akrr.cfg or other modules which invoke akrr.cfg
-
-
-def insert_resources(resources):
-    """
-    insert the provided resources (dict) into the mod_appkernel database.
-
-    :type resources dict
-
-    :param resources: a dict of resources that should be inserted into the
-                      mod_appkernel.resource database.
-    :return: void
-    """
-    from akrr import cfg
-
-    if resources is not None and len(resources) > 0:
-        parameters = tuple([(resource['name'], int(resource['id']), False) for (resource) in resources])
-        resources_parameters = tuple([(resource['name'], int(resource['id'])) for (resource) in resources])
-
-        connection, cursor = cfg.getAKDB()
-        with connection:
-            cursor.executemany('''
-            INSERT INTO `mod_appkernel`.`resource`
-            (resource, xdmod_resource_id, visible)
-            VALUES(%s, %s, %s)
-            ''', parameters)
-            cursor.executemany('''
-            INSERT INTO `mod_akrr`.`resources`
-            (name, xdmod_resource_id)
-            VALUES(%s, %s)
-            ''', resources_parameters)
-
-
-def insert_resource(resource):
-    """
-    Insert the provided resource (dict) into the mod_appkernel database.
-
-    :type resource dict
-
-    :param resource:
-    :return: void
-    """
-    from akrr import cfg
-    if resource is not None:
-        name, m_id = resource
-        connection, cursor = cfg.getAKDB()
-        with connection:
-            cursor.execute('''
-            INSERT INTO `mod_appkernel`.`resource`
-            (resource, xdmod_resource_id, visible)
-            VALUES(%s, %s, %s)
-            ''', (name, m_id, False))
-            cursor.execute('''
-            INSERT INTO `mod_akrr`.`resources`
-            (name, xdmod_resource_id)
-            VALUES(%s, %s)
-            ''', (name, m_id))
 
 
 def retrieve_resources():
@@ -315,16 +258,6 @@ def check_daemon(args):
         log.info('REST API is up and running!')
     else:
         exit(1)
-
-
-def app_add_handler(args):
-    import akrr.app_add
-    return akrr.app_add.app_add(args.resource, args.appkernel, verbose=args.verbose)
-
-
-def app_validate_handler(args):
-    import akrr.app_validate
-    return akrr.app_validate.app_validate(args.resource, args.appkernel, args.nnodes, verbose=args.verbose)
 
 
 def daemon_handler(args):

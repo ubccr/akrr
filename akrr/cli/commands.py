@@ -46,8 +46,11 @@ def add_command_resource(parent_parser):
     # deploy
     cli_resource_deploy(subparsers)
 
+    # list
+    cli_resource_list(subparsers)
+
     # remove
-    cli_resource_remove(subparsers)
+    #cli_resource_remove(subparsers)
 
 
 def cli_resource_add(parent_parser):
@@ -107,6 +110,19 @@ def cli_resource_remove(parent_parser):
     parser.set_defaults(func=handler)
 
 
+def cli_resource_list(parent_parser):
+    """list all resource"""
+    parser = parent_parser.add_parser('list', description=cli_app_list.__doc__)
+
+    def handler(_):
+        from akrr.util import log
+        from akrr import cfg
+
+        log.info("Resource:\n    "+"\n    ".join(list(cfg.resources.keys())))
+
+    parser.set_defaults(func=handler)
+
+
 def add_command_app(parent_parser):
     """application manipulation"""
     parser = parent_parser.add_parser('app', description=add_command_resource.__doc__)
@@ -159,7 +175,7 @@ def cli_app_list(parent_parser):
     """list all appkernels"""
     parser = parent_parser.add_parser('list', description=cli_app_list.__doc__)
 
-    def handler(args):
+    def handler(_):
         from akrr.util import log
         from akrr.app import app_list
         log.info("Appkernels:\n"+"\n    ".join(app_list()))
@@ -174,6 +190,8 @@ def add_command_task(parent_parser):
 
     cli_task_new(subparsers)
     cli_task_list(subparsers)
+    cli_task_delete(subparsers)
+
 
 def cli_task_new(parent_parser):
     """Create new task"""
@@ -232,5 +250,19 @@ def cli_task_list(parent_parser):
             kwargs["active"] = True
             kwargs["scheduled"] = True
         task_list(**kwargs)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_task_delete(parent_parser):
+    """Remove task from schedule"""
+    parser = parent_parser.add_parser('delete', description=cli_task_list.__doc__)
+
+    parser.add_argument(
+        '-t', '--task-id', required=True, type=int, help="task id")
+
+    def handler(args):
+        from akrr.task import task_delete
+        task_delete(args.task_id)
 
     parser.set_defaults(func=handler)

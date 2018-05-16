@@ -741,7 +741,7 @@ class akrrScheduler:
                 "success": False,
                 "message": str(e)
             }
-            log.exception()
+            log.exception(str(e))
         self.proc_queue_from_master.put(response)
 
     def monitor(self):
