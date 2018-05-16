@@ -15,6 +15,7 @@ def resource_add(
         headnode='localhost',
         user='user',
         authentication_method=None,
+        private_keys_number=None,
         password=None,
         private_key_name=None,
         private_key_passphrase=None,
@@ -79,9 +80,15 @@ def resource_add(
             r'.*INPUT.* Select option from list above.*\n\[\S+\] ',
             str(authentication_method), timeout=super_fast_timeout)
 
-        bash.expectSendline(
-            r'.*INPUT.* Enter password for.*\n',
-            password, timeout=super_fast_timeout)
+        if private_keys_number is not None:
+            bash.expectSendline(
+                r'.*INPUT.* Select key number from list above.*\n',
+                str(private_keys_number), timeout=super_fast_timeout)
+
+        if password is not None:
+            bash.expectSendline(
+                r'.*INPUT.* Enter password for.*\n',
+                password, timeout=super_fast_timeout)
 
         if private_key_name is not None:
             bash.expectSendline(

@@ -52,3 +52,6 @@ echo "Testing AKRR resource deployment "
 ${which_akrr} -v resource deploy -r localhost -n 1
 
 ${which_akrr} daemon status
+
+echo "Adding second resource without deployment"
+${which_akrrregtest} -v resource add -r localhost2

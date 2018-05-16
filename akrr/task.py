@@ -188,7 +188,7 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
                 msg = msg + "%10s%16s%32s%8s%20s%20s\n" % (
                     r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
                     r.get('time_to_start', "NA"), r.get('repeat_in', "NA"))
-                log.info(msg)
+            log.info(msg)
         else:
             log.info('There is no scheduled tasks')
 

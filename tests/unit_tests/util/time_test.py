@@ -55,11 +55,17 @@ def test_get_timedelta_repeat_in(repeat_in, expected):
     ("2018-05-09 17:22", "2018-05-09 17:22:00"),
     ("18-05-09 17:22:14", "2018-05-09 17:22:14"),
     ("18-05-09 17:22", "2018-05-09 17:22:00"),
+    ("2018-05-09T17:22:14", "2018-05-09 17:22:14"),
+    ("2018-05-09T17:22", "2018-05-09 17:22:00"),
+    ("18-05-09T17:22:14", "2018-05-09 17:22:14"),
+    ("18-05-09T17:22", "2018-05-09 17:22:00"),
     ("17:22:14", datetime.date.today().strftime("%Y-%m-%d") + " 17:22:14"),
     ("17:22", datetime.date.today().strftime("%Y-%m-%d") + " 17:22:00"),
     ("1b", None),
     (None, "start_now"),
-    ("", "start_now")
+    ("", "start_now"),
+    ("today", "start_now"),
+    ("now", "start_now")
 ])
 def test_get_formatted_time_to_start(time_to_start, expected):
     from akrr.util.time import get_formatted_time_to_start

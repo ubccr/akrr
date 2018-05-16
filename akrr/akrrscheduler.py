@@ -782,61 +782,45 @@ class akrrScheduler:
                 print(row)
             time.sleep(1)
 
-    def status(self):
+    def check_status(self):
         """like monitor only print once"""
         pid = akrrGetPIDofServer()
         if pid == None:
-            print("AKRR Server is down")
+            log.info("AKRR Server is down")
         else:
-            print("AKRR Server is up and it's PID is %d" % (pid))
+            log.info("AKRR Server is up and it's PID is %d" % (pid))
 
-        print("Scheduled Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-        self.dbCur.execute('''SELECT * FROM SCHEDULEDTASKS ORDER BY time_to_start ASC;''')
-        tasks = self.dbCur.fetchall()
-        for row in tasks:
-            print(row)
-        print("Active Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-        # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
+        from .task import task_list
 
-        self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,next_check_time,task_lock,status,statusinfo,statusupdatetime
-            FROM ACTIVETASKS
-            ORDER BY task_id;''')  # next_check_time,time_to_start ASC;''')
-        tasks = self.dbCur.fetchall()
-        for row in tasks:
-            (task_id, resource, app, datetimestamp, next_check_time, task_lock, status, statusinfo,
-             statusupdatetime) = row
-            print("-" * 120)
-            print("%-10d %-14s %-40s %-25s %-20s %6d" % (
-            task_id, resource, app, datetimestamp, next_check_time, task_lock))
-            print("\t%s" % (datetimestamp), status)
-            print(statusinfo)
+        task_list()
 
-        print("Completed Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-        # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
+        msg = "Completed Tasks (%s) :\n" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
 
         self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,statusinfo,time_finished
             FROM COMPLETEDTASKS
-            ORDER BY time_finished DESC;''')
+            ORDER BY time_finished DESC LIMIT 5;''')
 
         tasks = self.dbCur.fetchall()
-        for row in tasks[:3]:
-            print(row)
+        msg = msg + "\n".join([str(row) for row in tasks])
+        log.info(msg)
+
 
         # Tasks completed with errors
         self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
             ORDER BY time_finished  DESC LIMIT 5;''')
         tasks = self.dbCur.fetchall()
+
         if len(tasks) == 0:
-            print("\nThere were no tasks completed with errors.")
+            log.info("\nThere were no tasks completed with errors.")
         else:
-            print("\nTasks completed with errors (last %d):" % (len(tasks)))
+            log.info("\nTasks completed with errors (last %d):" % (len(tasks)))
             for row in tasks:
                 (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
                  resource_param, app_param, task_param, group_id) = row
                 if re.match("ERROR:", status, re.M):
                     TaskDir = akrrtask.GetLocalTaskDir(resource, app, datetimestamp, False)
-                    print("Done with errors: %s %5d %s\n" % (time_finished, task_id, TaskDir), resource_param,
+                    log.info("Done with errors: %s %5d %s\n" % (time_finished, task_id, TaskDir), resource_param,
                           app_param, task_param, group_id, "\n", status, "\n", statusinfo)
 
     def reprocessCompletedTasks(self, resource, appkernel, time_start, time_end, Verbose=False):
@@ -2137,7 +2121,7 @@ def akrrd_main2(action='', append=False, output_file=None):
             sch.monitor()
         elif (action == 'status'):
             sch = akrrScheduler()
-            sch.status()
+            sch.check_status()
         elif (action == 'checknrestart'):
             akrrServerCheckNRestart()
 

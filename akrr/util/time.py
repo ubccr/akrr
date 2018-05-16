@@ -109,11 +109,15 @@ def get_timedelta_repeat_in(repeat_in):
 def get_formatted_time_to_start(time_to_start):
     # determine start_datetime
     start_datetime = None
-    if time_to_start is None or time_to_start == "":  # i.e. start now
+    if time_to_start is None or time_to_start in ["", "today", "now"]:
         start_datetime = datetime.datetime.today()
+
+    if time_to_start in ["tomorrow"]:
+        start_datetime = datetime.datetime.today()+datetime.timedelta(days=1)
 
     if start_datetime is None:
         for datetime_format in ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M",
+                                "%Y-%m-%dT%H:%M", "%Y-%m-%dT%H:%M:%S", "%y-%m-%dT%H:%M:%S", "%y-%m-%dT%H:%M",
                                 "%Y-%m-%d", "%y-%m-%d"]:
             try:
                 start_datetime = datetime.datetime.strptime(time_to_start, datetime_format)
@@ -129,6 +133,7 @@ def get_formatted_time_to_start(time_to_start):
                 break
             except ValueError:
                 continue
+
 
     if start_datetime is None:
         return None
