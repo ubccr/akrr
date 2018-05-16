@@ -182,10 +182,13 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
                                                        'time_to_start', 'repeat_in')
 
             for r in results:
-                nodes = eval(r['resource_param']).get("nnodes", "NA")
-                msg = msg + "%10s%16s%32s%8s%20s%20s\n" % (r['task_id'], r['resource'], r['app'], nodes,
-                                                           r['time_to_start'], r['repeat_in'])
-            log.info(msg)
+                if r is None:
+                    r = {}
+                nodes = eval(r.get('resource_param', "{}")).get("nnodes", "NA")
+                msg = msg + "%10s%16s%32s%8s%20s%20s\n" % (
+                    r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
+                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"))
+                log.info(msg)
         else:
             log.info('There is no scheduled tasks')
 
@@ -215,9 +218,12 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
                                                            'time_to_start', 'repeat_in', 'status')
 
             for r in results:
-                nodes = eval(r['resource_param']).get("nnodes", "NA")
-                msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % (r['task_id'], r['resource'], r['app'], nodes,
-                                                               r['time_to_start'], r['repeat_in'], r['status'][:19])
+                if r is None:
+                    r = {}
+                nodes = eval(r.get('resource_param', "{}")).get("nnodes", "NA")
+                msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % (
+                    r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
+                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"), r.get('status', "NA")[:19])
             log.info(msg)
         else:
             log.info('There is no active tasks')
