@@ -208,10 +208,10 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 if msg.find("DOESNOTEXIST") >= 0:
                     raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
-            # akrrdata
-            CheckAndCreateDir(self, sh, self.resource['akrrdata'])
+            # akrr_data
+            CheckAndCreateDir(self, sh, self.resource['akrr_data'])
             # dir for app
-            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrrdata'], self.appName))
+            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrr_data'], self.appName))
             # dir for task
             CheckAndCreateDir(self, sh, self.remoteTaskDir)
             # CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))

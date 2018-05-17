@@ -84,8 +84,8 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
     from akrr import cfg
     from akrr.util.log import verbose
 
-    resource = cfg.FindResourceByName(resource)
-    app = cfg.FindAppByName(appkernel)
+    resource = cfg.find_resource_by_name(resource)
+    app = cfg.find_app_by_name(appkernel)
 
     str_io = io.StringIO()
     if not verbose:

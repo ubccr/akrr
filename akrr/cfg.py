@@ -16,7 +16,7 @@ import copy
 
 from akrr import get_akrr_dirs
 
-import logging as log
+from .util import log
 
 from .akrrerror import *
 
@@ -38,7 +38,8 @@ default_dir = akrr_dirs['default_dir']
 appker_repo_dir = akrr_dirs['appker_repo_dir']
 
 # load akrr parameters
-exec(open(cfg_dir + "/akrr.conf").read())
+with open(cfg_dir + "/akrr.conf", "r") as file_in:
+    exec(file_in.read())
 
 # set default values for unset variables
 # make absolute paths from relative
@@ -49,11 +50,6 @@ if completed_tasks_dir[0] != '/':
 
 if restapi_certfile != '/':
     restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
-# wrongfields technical fields from loading python file which we don't want to
-# see in resource and app kernel parameters dict
-wrongfieldsdict = {}
-exec('wrongfieldsdict="wrongfieldsdict"', wrongfieldsdict)
-wrongfields = list(wrongfieldsdict.keys())
 
 ###################################################################################################
 #
@@ -63,11 +59,10 @@ wrongfields = list(wrongfieldsdict.keys())
 resources = {}
 
 
-def verifyResourceParams(resource):
+def verify_resource_params(resource: dict):
     """
     Perform simplistic resource parameters validation
-    
-    raises error
+    raises TypeError or NameError on problems
     """
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
@@ -89,60 +84,66 @@ def verifyResourceParams(resource):
         ['remoteAccessMethod', str, False, True],
         ['appKerDir', str, False, True],
         ['akrrCommonCleanupTemplate', str, False, True],
-        ['akrrData', str, False, True]
+        ['akrr_data', str, False, True]
     ]
 
-    for variable, ttype, nulable, must in parameters_types:
-        if (must == True) and (variable not in resource):
+    for variable, m_type, nullable, must in parameters_types:
+        if (must is True) and (variable not in resource):
             raise NameError("Syntax error in " + resource['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in resource:
             continue
-        if type(resource[variable]) == type(None) and nulable == False:
+        if resource[variable] is None and not nullable:
             raise TypeError("Syntax error in " + resource['name'] + "\nVariable %s can not be None" % (variable,))
-        if type(resource[variable]) != ttype and not (type(resource[variable]) == type(None) and nulable == True):
+        if not isinstance(resource[variable], m_type) and not (resource[variable] is None and nullable):
             raise TypeError("Syntax error in " + resource['name'] +
-                            "\nVariable %s should be %s" % (variable, str(ttype)) +
+                            "\nVariable %s should be %s" % (variable, str(m_type)) +
                             ". But it is " + str(type(resource[variable])))
+    return True
 
 
-def loadResource(resource_name):
+def load_resource(resource_name: str):
     """
     load resource configuration file, do minimalistic validation
     return dict with resource parameters
     
     raises error if can not load
     """
+    import warnings
+    from .util import exec_files_to_dict
+
     try:
         default_resource_cfg_filename = os.path.join(default_dir, "default.resource.conf")
         resource_cfg_filename = os.path.join(cfg_dir, 'resources', resource_name, "resource.conf")
 
         if not os.path.isfile(default_resource_cfg_filename):
-            raise AkrrError("Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
+            raise AkrrError(
+                "Default resource configuration file do not exists (%s)!" % default_resource_cfg_filename)
         if not os.path.isfile(resource_cfg_filename):
-            raise AkrrError("Configuration file for resource %s does not exist (%s)!" % (resource_name, resource_cfg_filename))
+            raise AkrrError(
+                "Configuration file for resource %s does not exist (%s)!" % (resource_name, resource_cfg_filename))
 
-        tmp = {}
-        exec(open(default_resource_cfg_filename).read(), tmp)
-        exec(open(resource_cfg_filename).read(), tmp)
-        resource = {}
-        for key, val in tmp.items():
-            if inspect.ismodule(val): continue
-            if wrongfields.count(key) > 0: continue
-            resource[key] = val
+        # execute conf file
+        resource = exec_files_to_dict(default_resource_cfg_filename, resource_cfg_filename)
 
         # mapped options in resource input file to those used in AKRR
-        if 'akrrData' in resource: resource['akrrdata'] = resource['akrrData']
-        if 'appKerDir' in resource: resource['AppKerDir'] = resource['appKerDir']
-        if 'name' not in resource: resource['name'] = resource_name
+        if 'name' not in resource:
+            resource['name'] = resource_name
+
+        # here should be depreciated options and renames
+        if 'akrrData' in resource:
+            warnings.warn("Rename akrrData to akrr_data", DeprecationWarning)
+            resource['akrr_data'] = resource['akrrData']
+        if 'appKerDir' in resource:
+            resource['AppKerDir'] = resource['appKerDir']
 
         # last modification time for future reloading
         resource['default_resource_cfg_filename'] = default_resource_cfg_filename
         resource['resource_cfg_filename'] = resource_cfg_filename
-        resource['default_resource_cfg_file_mtime'] = os.path.getmtime(default_resource_cfg_filename)
-        resource['resource_cfg_file_mtime'] = os.path.getmtime(resource_cfg_filename)
+        resource['default_resource_cfg_file_last_mod_time'] = os.path.getmtime(default_resource_cfg_filename)
+        resource['resource_cfg_file_last_mod_time'] = os.path.getmtime(resource_cfg_filename)
 
         # here should be validation
-        verifyResourceParams(resource)
+        verify_resource_params(resource)
 
         return resource
     except Exception:
@@ -150,22 +151,22 @@ def loadResource(resource_name):
         raise AkrrError("Can not load resource configuration for %s." % resource_name)
 
 
-def loadAllResources():
+def load_all_resources():
     """
     load all resources from configuration directory
     """
     global resources
     for resource_name in os.listdir(cfg_dir + "/resources"):
         if resource_name not in ['notactive', 'templates']:
-            # log("loading "+resource_name)
+            log.debug2("loading "+resource_name)
             try:
-                resource = loadResource(resource_name)
+                resource = load_resource(resource_name)
                 resources[resource_name] = resource
-            except Exception:
-                log.exception("Exception occurred during resources loading.")
+            except Exception as e:
+                log.exception("Exception occurred during resources loading:"+str(e))
 
 
-def FindResourceByName(resource_name):
+def find_resource_by_name(resource_name):
     """
     return resource parameters
     if resource configuration file was modified will reload it
@@ -174,24 +175,25 @@ def FindResourceByName(resource_name):
     """
     global resources
     if resource_name not in resources:
-        resource = loadResource(resource_name)
+        resource = load_resource(resource_name)
         resources[resource_name] = resource
 
     resource = resources[resource_name]
-    if (os.path.getmtime(resource['default_resource_cfg_filename']) != resource['default_resource_cfg_file_mtime'] or
-            os.path.getmtime(resource['resource_cfg_filename']) != resource['resource_cfg_file_mtime']):
+    if os.path.getmtime(resource['default_resource_cfg_filename']) != \
+            resource['default_resource_cfg_file_last_mod_time'] or \
+            os.path.getmtime(resource['resource_cfg_filename']) != resource['resource_cfg_file_last_mod_time']:
         del resources[resource_name]
-        resource = loadResource(resource_name)
+        resource = load_resource(resource_name)
         resources[resource_name] = resource
     return resources[resource_name]
 
 
-loadAllResources()
+load_all_resources()
 ###################################################################################################
 # check rest-api certificate
 #
 if not os.path.isfile(restapi_certfile):
-    # assuming it is relative to akrrcfg
+    # assuming it is relative to akrr.conf file
     restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
 if not os.path.isfile(restapi_certfile):
     raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
@@ -204,7 +206,7 @@ if not os.path.isfile(restapi_certfile):
 apps = {}
 
 
-def verifyAppParams(app):
+def verify_app_params(app):
     """
     Perform simplistic app parameters validation
     
@@ -220,26 +222,27 @@ def verifyAppParams(app):
         ['runScript', dict, False, False]
     ]
 
-    for variable, ttype, nulable, must in parameters_types:
-        if (must == True) and (variable not in app):
+    for variable, m_type, nullable, must in parameters_types:
+        if must and (variable not in app):
             raise NameError("Syntax error in " + app['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in app:
             continue
-        if type(app[variable]) == type(None) and nulable == False:
+        if app[variable] is None and not nullable:
             raise TypeError("Syntax error in " + app['name'] + "\nVariable %s can not be None" % (variable,))
-        if type(app[variable]) != ttype and not (type(app[variable]) == type(None) and nulable == True):
+        if not isinstance(app[variable], m_type) and not (app[variable] is None and nullable):
             raise TypeError("Syntax error in " + app['name'] +
-                            "\nVariable %s should be %s" % (variable, str(ttype)) +
+                            "\nVariable %s should be %s" % (variable, str(m_type)) +
                             ". But it is " + str(type(app[variable])))
 
 
-def loadApp(app_name):
+def load_app(app_name):
     """
     load app configuration file, do minimalistic validation
     return dict with app parameters
     
     raises error if can not load
     """
+    from .util import exec_files_to_dict
     try:
         default_app_cfg_filename = os.path.join(default_dir, "default.app.conf")
         app_cfg_filename = os.path.join(default_dir, app_name + ".app.conf")
@@ -250,45 +253,35 @@ def loadApp(app_name):
         if not os.path.isfile(app_cfg_filename):
             raise AkrrError("application kernel configuration file do not exists (%s)!" % app_cfg_filename)
 
-        tmp = {}
-        exec(open(default_app_cfg_filename).read(), tmp)
-        exec(open(app_cfg_filename).read(), tmp)
-        app = {}
-        for key, val in tmp.items():
-            if inspect.ismodule(val): continue
-            if wrongfields.count(key) > 0: continue
-            app[key] = val
+        app = exec_files_to_dict(default_app_cfg_filename, app_cfg_filename)
+
         # load resource specific parameters
         for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
             if resource_name not in ['notactive', 'templates']:
                 resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
                                                                   app_name + ".app.conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
-                    tmp = copy.deepcopy(app['appkernelOnResource']['default'])
-                    exec(compile(open(resource_specific_app_cfg_filename).read(), resource_specific_app_cfg_filename,
-                                 'exec'), tmp)
-                    app['appkernelOnResource'][resource_name] = {}
-                    for key, val in tmp.items():
-                        if inspect.ismodule(val): continue
-                        if wrongfields.count(key) > 0: continue
-                        app['appkernelOnResource'][resource_name][key] = val
+                    app['appkernelOnResource'][resource_name] = exec_files_to_dict(
+                        resource_specific_app_cfg_filename, var_in=app['appkernelOnResource']['default'])
                     app['appkernelOnResource'][resource_name][
                         'resource_specific_app_cfg_filename'] = resource_specific_app_cfg_filename
-                    app['appkernelOnResource'][resource_name][
-                        'resource_specific_app_cfg_file_mtime'] = os.path.getmtime(resource_specific_app_cfg_filename)
+                    app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] = \
+                        os.path.getmtime(resource_specific_app_cfg_filename)
 
         # mapped options in app input file to those used in AKRR
-        if 'name' not in app: app['name'] = app_name
-        if 'nickname' not in app: app['nickname'] = app_name + ".@nnodes@"
+        if 'name' not in app:
+            app['name'] = app_name
+        if 'nickname' not in app:
+            app['nickname'] = app_name + ".@nnodes@"
 
         # last modification time for future reloading
         app['default_app_cfg_filename'] = default_app_cfg_filename
         app['app_cfg_filename'] = app_cfg_filename
-        app['default_app_cfg_file_mtime'] = os.path.getmtime(default_app_cfg_filename)
-        app['app_cfg_file_mtime'] = os.path.getmtime(app_cfg_filename)
+        app['default_app_cfg_file_last_mod_time'] = os.path.getmtime(default_app_cfg_filename)
+        app['app_cfg_file_last_mod_time'] = os.path.getmtime(app_cfg_filename)
 
         # here should be validation
-        verifyAppParams(app)
+        verify_app_params(app)
 
         return app
     except Exception:
@@ -296,7 +289,7 @@ def loadApp(app_name):
         raise AkrrError("Can not load app configuration for %s." % app_name)
 
 
-def loadAllApp():
+def load_all_app():
     """
     load all resources from configuration directory
     """
@@ -308,13 +301,13 @@ def loadAllApp():
             app_name = re.sub('.app.conf$', '', fl)
             # log("loading "+app_name)
             try:
-                app = loadApp(app_name)
+                app = load_app(app_name)
                 apps[app_name] = app
-            except Exception:
-                log.exception("Exception occurred during app kernel configuration loading.")
+            except Exception as e:
+                log.exception("Exception occurred during app kernel configuration loading: " + str(e))
 
 
-def FindAppByName(app_name):
+def find_app_by_name(app_name):
     """
     return apps parameters
     if resource configuration file was modified will reload it
@@ -323,16 +316,16 @@ def FindAppByName(app_name):
     """
     global apps
     if app_name not in apps:
-        app = loadApp(app_name)
+        app = load_app(app_name)
         apps[app_name] = app
         return apps[app_name]
 
-    reloadAppCfg = False
+    reload_app_cfg = False
     app = apps[app_name]
     #
-    if (os.path.getmtime(app['default_app_cfg_filename']) != app['default_app_cfg_file_mtime'] or
-            os.path.getmtime(app['app_cfg_filename']) != app['app_cfg_file_mtime']):
-        reloadAppCfg = True
+    if (os.path.getmtime(app['default_app_cfg_filename']) != app['default_app_cfg_file_last_mod_time'] or
+            os.path.getmtime(app['app_cfg_filename']) != app['app_cfg_file_last_mod_time']):
+        reload_app_cfg = True
 
     # check if new resources was added
     for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
@@ -341,44 +334,40 @@ def FindAppByName(app_name):
                                                               app_name + ".app.conf")
             if os.path.isfile(resource_specific_app_cfg_filename):
                 if resource_name not in app['appkernelOnResource']:
-                    reloadAppCfg = True
+                    reload_app_cfg = True
                 else:
-                    if app['appkernelOnResource'][resource_name][
-                        'resource_specific_app_cfg_file_mtime'] != os.path.getmtime(resource_specific_app_cfg_filename):
-                        reloadAppCfg = True
+                    if app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] != \
+                            os.path.getmtime(resource_specific_app_cfg_filename):
+                        reload_app_cfg = True
     # check if new resources were removed
     for resource_name in app['appkernelOnResource']:
         if resource_name not in ['default']:
             resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
                                                               app_name + ".app.conf")
             if not os.path.isfile(resource_specific_app_cfg_filename):
-                reloadAppCfg = True
+                reload_app_cfg = True
 
-    if reloadAppCfg:
+    if reload_app_cfg:
         del apps[app_name]
-        app = loadApp(app_name)
+        app = load_app(app_name)
         apps[app_name] = app
     return apps[app_name]
 
 
-loadAllApp()
+load_all_app()
 
 
-def PrintOutResourceAndAppSummary():
-    print(">" * 112)
-    print("# Resources:")
-    print("#" * 112)
+def print_out_resource_and_app_summary():
+    msg = "Resources and app kernels configuration summary:\n"
+
+    msg = msg + "Resources:\n"
     for _, r in resources.items():
-        print(r['name'])
-    print("#" * 112)
-    print("# Applications:")
-    print("#" * 112)
+        msg = msg + "    "+r['name']
+
+    msg = msg + "Applications:"
     for _, a in apps.items():
-        print(a['name'], "'walllimit':" + str(a['walllimit']))
-    print("<" * 112)
-
-
-# PrintOutResourceAndAppSummary()
+        msg = msg + "    {} {}".format(a['name'], a['walllimit'])
+    log.info(msg)
 
 
 # SSH remote access
@@ -784,7 +773,3 @@ def getExportDB(dictCursor=False):
                              passwd=export_db_passwd, db=export_db_name)
     cur = db.cursor()
     return (db, cur)
-
-
-from akrr.util.time import get_formatted_repeat_in, get_timedelta_repeat_in, get_formatted_time_to_start, \
-    get_datetime_time_to_start

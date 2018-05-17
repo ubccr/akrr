@@ -103,13 +103,13 @@ class akrrTaskHandlerBase:
         self.app = None
 
         # just check that resource and app exists
-        self.resource = cfg.FindResourceByName(self.resourceName)
-        self.app = cfg.FindAppByName(self.appName)
+        self.resource = cfg.find_resource_by_name(self.resourceName)
+        self.app = cfg.find_app_by_name(self.appName)
 
         self.timeStamp = self.CreateLocalDirectoryForTask()
         # set a directory for task already should exists
         self.SetDirNames(cfg.data_dir)
-        self.remoteTaskDir = self.GetRemoteTaskDir(self.resource['akrrdata'], self.appName, self.timeStamp)
+        self.remoteTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], self.appName, self.timeStamp)
 
         self.oldstatus = "Does not exist"
         self.status = "Activated"
@@ -119,13 +119,13 @@ class akrrTaskHandlerBase:
         self.ToDoNextString = "FirstStep"
         self.oldToDoNextString = "Does not exist"
 
-    def SetDirNames(self, akrrdata_dir):
-        self.resourceDir = os.path.join(akrrdata_dir, self.resourceName)
+    def SetDirNames(self, akrr_data_dir):
+        self.resourceDir = os.path.join(akrr_data_dir, self.resourceName)
         self.appDir = os.path.join(self.resourceDir, self.appName)
         self.taskDir = os.path.join(self.appDir, self.timeStamp)
 
-    def GetRemoteTaskDir(self, akrrdata_dir, appName, timeStamp):
-        return os.path.join(akrrdata_dir, appName, timeStamp)
+    def GetRemoteTaskDir(self, akrr_data_dir, appName, timeStamp):
+        return os.path.join(akrr_data_dir, appName, timeStamp)
 
     def GetJobScriptName(self, appName):
         return appName + ".job"
@@ -207,12 +207,12 @@ class akrrTaskHandlerBase:
         self.status = "Activating"
 
         # find resource
-        self.resource = cfg.FindResourceByName(self.resourceName)
+        self.resource = cfg.find_resource_by_name(self.resourceName)
         if self.resource.get('active', True) == False:
             raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
 
         # find app
-        self.app = cfg.FindAppByName(self.appName)
+        self.app = cfg.find_app_by_name(self.appName)
 
         self.CreateBatchJobScriptAndSubmitIt()
         # creating batch files input files etc
@@ -312,11 +312,11 @@ class akrrTaskHandlerBase:
 
         # should remove ../../ etc
         rt = os.path.normpath(self.remoteTaskDir)
-        ad = os.path.normpath(self.resource['akrrdata'])
+        ad = os.path.normpath(self.resource['akrr_data'])
         if rt == ad:
-            raise IOError("can not remove akrrdata")
+            raise IOError("can not remove akrr_data")
         if os.path.commonprefix([rt, ad]) != ad:
-            raise IOError("can not remove remote task folder. The folder should be in akrrdata")
+            raise IOError("can not remove remote task folder. The folder should be in akrr_data")
 
         print("removing remote task folder:\n\t%s" % (self.remoteTaskDir))
         msg = cfg.sshResource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))

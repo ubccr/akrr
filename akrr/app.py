@@ -11,13 +11,13 @@ def app_add(resource, appkernel, dry_run=False):
     log.info("Generating application kernel configuration for %s on %s", appkernel, resource)
 
     try:
-        cfg.FindResourceByName(resource)
+        cfg.find_resource_by_name(resource)
     except Exception:
         msg = "Can not find resource: %s" % resource
         log.error(msg)
         raise AkrrValueException(msg)
     try:
-        cfg.FindAppByName(appkernel)
+        cfg.find_app_by_name(appkernel)
     except Exception:
         msg = "Can not find application kernel: %s" % appkernel
         log.error(msg)
@@ -49,3 +49,81 @@ def app_add(resource, appkernel, dry_run=False):
 def app_list():
     from .cfg import apps
     return list(apps.keys())
+
+
+def on_parsed(args):
+    """
+    Handles the appropriate execution of an 'On' mode request given
+    the provided command line arguments.
+    """
+    data = {
+        'application': args.application if args.application else ''
+    }
+
+    try:
+        from akrr import akrrrestclient
+
+        result = akrrrestclient.put(
+            '/resources/{0}/on'.format(args.resource),
+            data=data)
+        if result.status_code == 200:
+            message = 'Successfully enabled {0} -> {1}.\n{2}' if args.application and args.resource \
+                else 'Successfully enabled all applications on {0}.\n{1}'
+            parameters = (args.application, args.resource, result.text) if args.application and args.resource \
+                else (args.resource, result.text)
+            log.info(message.format(*parameters))
+        else:
+            log.error(
+                'something went wrong.%s:%s',
+                result.status_code,
+                result.text)
+    except Exception as e:
+        log.error('''
+            An error occured while communicating
+            with the REST API.
+            %s: %s
+            ''',
+                  e.args[0] if len(e.args) > 0 else '',
+                  e.args[1] if len(e.args) > 1 else '')
+
+
+def off_parsed(args):
+    """
+    Handles the appropriate execution of an 'Off' mode request given
+    the provided command line arguments.
+    """
+    data = {
+        'application': args.application if args.application else ''
+    }
+
+    try:
+        from akrr import akrrrestclient
+
+        result = akrrrestclient.put(
+            '/resources/{0}/off'.format(args.resource),
+            data=data)
+
+        if result.status_code == 200:
+            message = 'Successfully disabled {0} -> {1}.\n{2}' if args.application and args.resource \
+                else 'Successfully disabled all applications on {0}.\n{1}'
+            parameters = (args.application, args.resource, result.text) if args.application and args.resource \
+                else (args.resource, result.text)
+            log.info(message.format(*parameters))
+        else:
+            log.error(
+                'something went wrong. %s:%s',
+                result.status_code,
+                result.text)
+    except Exception as e:
+        log.error('''
+            An error occured while communicating
+            with the REST API.
+            %s: %s
+            ''',
+                  e.args[0] if len(e.args) > 0 else '',
+                  e.args[1] if len(e.args) > 1 else '')
+
+
+def resource_app_enable(resource=None, appkernel=None, dry_run=False):
+    pass
+

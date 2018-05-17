@@ -131,8 +131,8 @@ def akrrGetTaskHandlerFromPkl(picklefilename):
     th.oldstatus = copy.deepcopy(th.status)
     th.oldToDoNextString = copy.deepcopy(th.ToDoNextString)
 
-    th.resource = cfg.FindResourceByName(th.resourceName)
-    th.app = cfg.FindAppByName(th.appName)
+    th.resource = cfg.find_resource_by_name(th.resourceName)
+    th.app = cfg.find_app_by_name(th.appName)
 
     return th
 
@@ -188,7 +188,7 @@ if __name__ == "__main__":
         print("wrong number of arguments")
         exit()
 
-    cfg.PrintOutResourceAndAppSummary()
+    cfg.print_out_resource_and_app_summary()
 
     if sys.argv[1] == "start":
         if len(sys.argv) < 5:

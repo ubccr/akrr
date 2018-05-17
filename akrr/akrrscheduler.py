@@ -141,7 +141,7 @@ class akrrScheduler:
                     "Task parameters: %s\n\t" % task_param +
                     "Parent task id: %s" % parent_task_id)
 
-                if cfg.FindResourceByName(resource).get('active', True) == False:
+                if cfg.find_resource_by_name(resource).get('active', True) == False:
                     raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
 
                 # Check If resource is on maintenance
@@ -1415,9 +1415,9 @@ class akrrScheduler:
                         "If repeating period is calendar months or years then increment in day/hours/mins/secs should be zero.")
 
         # check if resource exists
-        cfg.FindResourceByName(resource)
+        cfg.find_resource_by_name(resource)
         # check if app exists
-        cfg.FindAppByName(app)
+        cfg.find_app_by_name(app)
         # determine repeatIn
         log.info(
             "New task:\n\t" +
@@ -1502,13 +1502,13 @@ def akrrValidateTaskVariableValue(k, v):
             raise IOError("incorrect format for resource_param['nnodes'] must be integer")
     if k == "resource":
         try:
-            cfg.FindResourceByName(v)
+            cfg.find_resource_by_name(v)
         except Exception:
             log.exception("Exception occurred during resource record searching.")
             raise IOError('Unknown resource: ' + v)
     if k == "app":
         try:
-            cfg.FindAppByName(v)
+            cfg.find_app_by_name(v)
         except Exception:
             log.exception("Exception occurred during app kernel; record searching.")
             raise IOError('Unknown application kernel: ' + v)
@@ -1944,7 +1944,7 @@ def akrrServerStart():
 
     # finally
     log.info("Starting Application Remote Runner")
-    # akrrcfg.PrintOutResourceAndAppSummary()
+    # akrrcfg.print_out_resource_and_app_summary()
     global akrrscheduler
     akrrscheduler = akrrScheduler()
     akrrscheduler.run()

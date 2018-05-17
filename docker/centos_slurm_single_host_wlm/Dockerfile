@@ -53,8 +53,8 @@ RUN \
     ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
     ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 # if there is a need for root access through ssh following should be added
-#    echo 'root:root' |chpasswd && \
-#    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+    echo 'root:root' |chpasswd && \
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
 EXPOSE 22
 

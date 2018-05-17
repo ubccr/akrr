@@ -121,10 +121,10 @@ def app_validate(resource, appkernel, nnodes):
     from . import akrrrestclient
     from .cli.resource_deploy import  make_results_summary
 
-    resource = cfg.FindResourceByName(resource_name)
+    resource = cfg.find_resource_by_name(resource_name)
     log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
 
-    app = cfg.FindAppByName(app_name)
+    app = cfg.find_app_by_name(app_name)
     # check the presence of runScript[resource]
     # if resource_name not in app['runScript'] and 'default' not in app['runScript']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
@@ -186,7 +186,7 @@ def app_validate(resource, appkernel, nnodes):
     ###############################################################################################
     log.info("Checking directory locations\n")
 
-    d = resource['akrrData']
+    d = resource['akrr_data']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=True, tryToCreate=True)
     log.info(msg + "\n")

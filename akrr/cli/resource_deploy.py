@@ -115,6 +115,7 @@ def make_results_summary(resource_name, app_name, completed_tasks,
 
 def validate_resource_parameter_file(resource_name):
     """validate resource parameter file and return dictionary with resource configuration"""
+    # @todo reuse  cfg.verify_resource_params
     default_resource_param_filename = os.path.join(cfg.akrr_mod_dir, "default_conf", "default.resource.conf")
     resource_param_filename = os.path.join(cfg.cfg_dir, "resources", resource_name, "resource.conf")
 
@@ -134,7 +135,7 @@ def validate_resource_parameter_file(resource_name):
         raise e
 
     # now we can load akrr
-    resource = cfg.FindResourceByName(resource_name)
+    resource = cfg.find_resource_by_name(resource_name)
 
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
@@ -158,7 +159,7 @@ def validate_resource_parameter_file(resource_name):
         ['appKerDir', str, False, True],
         ['akrrCommonCleanupTemplate', str, False, True],
         # ['nodeListSetterTemplate',      types.StringType,       False,True],
-        ['akrrData', str, False, True]
+        ['akrr_data', str, False, True]
     ]
 
     for variable, m_type, can_be_none, must in parameters_types:
@@ -221,7 +222,7 @@ def check_shell(rsh, resource):
 def check_create_dirs(rsh, resource):
     log.info("Checking directory locations\n")
 
-    d = resource['akrrData']
+    d = resource['akrr_data']
     log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
@@ -718,7 +719,7 @@ echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
 echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['networkScratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['localScratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_APPKER_DIR=\\"''' + resource['appKerDir'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_AKRR_DIR=\\"''' + resource['akrrData'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc
 echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
 ''')
         log.debug2(out)

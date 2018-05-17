@@ -42,7 +42,7 @@ sshPrivateKeyPassword = None
 
 networkScratch = None
 localScratch = "/tmp"
-akrrData = None
+akrr_data = None
 appKerDir = None
 batchScheduler = None
 batchJobHeaderTemplate = None
@@ -104,7 +104,7 @@ def create_resource_config(file_path, queuing_system):
     template = update_template(template, 'ppn', in_quotes=False)
     for v in ['remoteAccessNode', 'remoteAccessMethod', 'remoteCopyMethod',
               'sshUserName', 'sshPassword', 'sshPrivateKeyFile', 'sshPrivateKeyPassword',
-              'networkScratch', 'localScratch', 'akrrData', 'appKerDir', 'batchScheduler']:
+              'networkScratch', 'localScratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
         template = update_template(template, v)
     template += "\n\n"
 
@@ -529,7 +529,7 @@ def get_file_system_access_points():
     global resource_name
     global networkScratch
     global localScratch
-    global akrrData
+    global akrr_data
     global appKerDir
 
     home_dir = cfg.sshCommand(rsh, "echo $HOME").strip()
@@ -598,24 +598,24 @@ def get_file_system_access_points():
         else:
             log.error(msg)
     appKerDir = cfg.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
-    # akrrData
+    # akrr_data
     akrr_data_default = os.path.join(home_dir, "akrr_data", resource_name)
     if network_scratch_visible:
         akrr_data_default = os.path.join(networkScratch, "akrr_data", resource_name)
     while True:
         log.log_input(
             "Enter future locations for app kernels working directories (can or even should be on scratch space):")
-        akrrData = input("[%s]" % akrr_data_default)
-        if akrrData.strip() == "":
-            akrrData = akrr_data_default
-        status, msg = resource_deploy.check_dir(rsh, akrrData, exit_on_fail=False, try_to_create=True)
+        akrr_data = input("[%s]" % akrr_data_default)
+        if akrr_data.strip() == "":
+            akrr_data = akrr_data_default
+        status, msg = resource_deploy.check_dir(rsh, akrr_data, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
             log.empty_line()
             break
         else:
             log.error(msg)
-    akrrData = cfg.sshCommand(rsh, "echo %s" % (akrrData,)).strip()
+    akrr_data = cfg.sshCommand(rsh, "echo %s" % (akrr_data,)).strip()
 
 
 def resource_add(config):
@@ -639,7 +639,7 @@ def resource_add(config):
     global sshPrivateKeyPassword
     global networkScratch
     global localScratch
-    global akrrData
+    global akrr_data
     global appKerDir
     global batchScheduler
     global batchJobHeaderTemplate
@@ -722,7 +722,7 @@ def resource_add(config):
               "sshPrivateKeyPassword: {}".format(sshPrivateKeyPassword) +
               "networkScratch: {}".format(networkScratch) +
               "localScratch: {}".format(localScratch) +
-              "akrrData: {}".format(akrrData) +
+              "akrr_data: {}".format(akrr_data) +
               "appKerDir: {}".format(appKerDir) +
               "batchScheduler: {}".format(batchScheduler) +
               "batchJobHeaderTemplate: {}".format(batchJobHeaderTemplate) + "\n")

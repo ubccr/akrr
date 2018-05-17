@@ -266,3 +266,22 @@ def cli_task_delete(parent_parser):
         task_delete(args.task_id)
 
     parser.set_defaults(func=handler)
+
+
+def cli_enable(parent_parser):
+    """enable resource, app or specific app on a particular resource"""
+    parser = parent_parser.add_parser('enable',
+                                      description=cli_app_add.__doc__)
+
+    parser.add_argument(
+        '-r', '--resource', required=True, help="name of resource")
+    parser.add_argument(
+        '-a', '--appkernel', required=True, help="name of app kernel")
+    parser.add_argument(
+        '--dry-run', action='store_true', help="Dry Run, just show the changes without doing them")
+
+    def handler(args):
+        from akrr.app import resource_app_enable
+        resource_app_enable(args.resource, args.appkernel, args.dry_run)
+
+    parser.set_defaults(func=handler)

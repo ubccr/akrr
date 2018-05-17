@@ -99,10 +99,10 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 if msg.find("DOESNOTEXIST") >= 0:
                     raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
-            # akrrdata
-            CheckAndCreateDir(self, sh, self.resource['akrrdata'])
+            # akrr_data
+            CheckAndCreateDir(self, sh, self.resource['akrr_data'])
             # dir for app
-            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrrdata'], self.appName))
+            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrr_data'], self.appName))
             # dir for task
             CheckAndCreateDir(self, sh, self.remoteTaskDir)
             # CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))
@@ -148,7 +148,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 random.shuffle(subTaskInfo)
             subTasksExecution = ""
             for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrrdata'], subtask_app, subtask_datetimestamp)
+                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetimestamp)
                 SubTaskJobScriptName = self.GetJobScriptName(subtask_app)
                 SubTaskJobScriptPath = os.path.join(remoteSubTaskDir, SubTaskJobScriptName)
 
@@ -240,7 +240,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
 
             # cp job id to subtasks
             for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrrdata'], subtask_app, subtask_datetimestamp)
+                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetimestamp)
                 cfg.sshCommand(sh, "cp job.id %s" % (remoteSubTaskDir))
 
             self.RemoteJobID = JobID
