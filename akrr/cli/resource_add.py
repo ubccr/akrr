@@ -389,10 +389,14 @@ def get_remote_access_method():
             action_list = [("TryAgain", "The private and public keys was generated manually, right now. Try again.")]
             # check private keys
             user_home_dir = os.path.expanduser("~")
-            private_keys = [
-                os.path.join(user_home_dir, '.ssh', f[:-4]) for f in os.listdir(os.path.join(user_home_dir, '.ssh'))
-                if os.path.isfile(os.path.join(user_home_dir, '.ssh', f))
-                and f[-4:] == '.pub' and os.path.isfile(os.path.join(user_home_dir, '.ssh', f[:-4]))]
+            user_ssh_dir = os.path.join(user_home_dir, '.ssh')
+            if os.path.isdir(user_ssh_dir):
+                private_keys = [
+                    os.path.join(user_ssh_dir, f[:-4]) for f in os.listdir(user_ssh_dir)
+                    if os.path.isfile(os.path.join(user_ssh_dir, f))
+                    and f[-4:] == '.pub' and os.path.isfile(os.path.join(user_ssh_dir, f[:-4]))]
+            else:
+                private_keys = []
 
             if len(private_keys) > 0:
                 action_list.append(("UseExistingPrivateKey", "Use existing private and public key."))
