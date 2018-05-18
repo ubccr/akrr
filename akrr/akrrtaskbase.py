@@ -1,3 +1,4 @@
+import akrr.util.ssh
 from . import cfg
 import os
 import sys
@@ -319,7 +320,7 @@ class akrrTaskHandlerBase:
             raise IOError("can not remove remote task folder. The folder should be in akrr_data")
 
         print("removing remote task folder:\n\t%s" % (self.remoteTaskDir))
-        msg = cfg.sshResource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))
+        msg = akrr.util.ssh.sshResource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))
         print(msg)
 
     def WriteErrorXML(self, filename, bCDATA=False):

@@ -8,6 +8,7 @@ import getpass
 import io
 import re
 
+import akrr.util.ssh
 from akrr import cfg
 from akrr.util import log
 
@@ -246,9 +247,9 @@ def check_connection_to_resource():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                          PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
-                          command='ls')
+            akrr.util.ssh.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+                                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
+                                    command='ls')
 
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -295,10 +296,10 @@ def check_connection_to_resource():
                         log.empty_line()
                         str_io = io.StringIO()
                         sys.stdout = sys.stderr = str_io
-                        cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
-                                      password=sshPassword4thisSession,
-                                      PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
-                                      command='')
+                        akrr.util.ssh.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
+                                                password=sshPassword4thisSession,
+                                                PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
+                                                command='')
 
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
@@ -477,10 +478,10 @@ def get_remote_access_method():
                     if sshPrivateKeyPassword.strip() == "":
                         sshPrivateKeyPassword = None
                     # copy keys
-                    cfg.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
-                                  password=sshPassword4thisSession,
-                                  PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
-                                  command='')
+                    akrr.util.ssh.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
+                                            password=sshPassword4thisSession,
+                                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
+                                            command='')
                     ask_for_user_name = not ask_for_user_name
                     continue
 
@@ -496,10 +497,10 @@ def get_remote_access_method():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            rsh = cfg.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                                PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
-                                logfile=sys.stdout,
-                                command=None)
+            rsh = akrr.util.ssh.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
+                                          PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
+                                          logfile=sys.stdout,
+                                          command=None)
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
         except Exception as e:
@@ -532,8 +533,8 @@ def get_file_system_access_points():
     global akrr_data
     global appKerDir
 
-    home_dir = cfg.sshCommand(rsh, "echo $HOME").strip()
-    scratch_network_dir = cfg.sshCommand(rsh, "echo $SCRATCH").strip()
+    home_dir = akrr.util.ssh.sshCommand(rsh, "echo $HOME").strip()
+    scratch_network_dir = akrr.util.ssh.sshCommand(rsh, "echo $SCRATCH").strip()
 
     # localScratch
     local_scratch_default = "/tmp"
@@ -552,7 +553,7 @@ def get_file_system_access_points():
             log.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
             log.empty_line()
             break
-    localScratch = cfg.sshCommand(rsh, "echo %s" % (localScratch,)).strip()
+    localScratch = akrr.util.ssh.sshCommand(rsh, "echo %s" % (localScratch,)).strip()
     # networkScratch
     network_scratch_default = ""
     if scratch_network_dir != "":
@@ -582,7 +583,7 @@ def get_file_system_access_points():
         else:
             log.warning(msg)
             break
-    networkScratch = cfg.sshCommand(rsh, "echo %s" % (networkScratch,)).strip()
+    networkScratch = akrr.util.ssh.sshCommand(rsh, "echo %s" % (networkScratch,)).strip()
     # appKerDir
     appker_dir_default = os.path.join(home_dir, "appker", resource_name)
     while True:
@@ -597,7 +598,7 @@ def get_file_system_access_points():
             break
         else:
             log.error(msg)
-    appKerDir = cfg.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
+    appKerDir = akrr.util.ssh.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
     # akrr_data
     akrr_data_default = os.path.join(home_dir, "akrr_data", resource_name)
     if network_scratch_visible:
@@ -615,7 +616,7 @@ def get_file_system_access_points():
             break
         else:
             log.error(msg)
-    akrr_data = cfg.sshCommand(rsh, "echo %s" % (akrr_data,)).strip()
+    akrr_data = akrr.util.ssh.sshCommand(rsh, "echo %s" % (akrr_data,)).strip()
 
 
 def resource_add(config):

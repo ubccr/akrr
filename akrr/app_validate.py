@@ -11,6 +11,7 @@ import pprint
 import json
 import xml.etree.ElementTree as ET
 
+import akrr.util.ssh
 from akrr.util import log
 
 pp = pprint.PrettyPrinter(indent=4)
@@ -26,21 +27,21 @@ def CheckDirSimple(sh, d):
     from . import cfg
     dir(sh)
     cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
-    msg = cfg.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.sshCommand(sh, cmd)
     if msg.find("DOESNOTEXIST") >= 0:
         return None, "Directory %s:%s does not exists!" % (sh.remotemachine, d)
 
     cmd = "echo test > " + os.path.join(d, 'akrrtestwrite')
     # print cmd
-    msg = cfg.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.sshCommand(sh, cmd)
     # print msg
     cmd = "cat " + os.path.join(d, 'akrrtestwrite')
     # print cmd
-    msg = cfg.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.sshCommand(sh, cmd)
     # print msg
     if msg.strip() == "test":
         cmd = "rm " + os.path.join(d, 'akrrtestwrite')
-        cfg.sshCommand(sh, cmd)
+        akrr.util.ssh.sshCommand(sh, cmd)
         return True, "Directory exist and accessible for read/write"
     else:
         return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d)
@@ -52,7 +53,7 @@ def CheckDir(sh, d, exitOnFail=True, tryToCreate=True):
     if tryToCreate == True and status == None:
         log.info("Directory %s:%s does not exists, will try to create it" % (sh.remotemachine, d))
         cmd = "mkdir \"%s\"" % (d)
-        cfg.sshCommand(sh, cmd)
+        akrr.util.ssh.sshCommand(sh, cmd)
         status, msg = CheckDirSimple(sh, d)
     if exitOnFail is False:
         return status, msg
@@ -168,7 +169,7 @@ def app_validate(resource, appkernel, nnodes):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = cfg.sshResource(resource)
+        rsh = akrr.util.ssh.sshResource(resource)
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
