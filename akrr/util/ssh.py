@@ -16,8 +16,10 @@ ssh_command_end_echo = "ExeCUTEd_SucCeSsFully"
 def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
                private_key_file=None, private_key_password=None,
                logfile=None, command=None, pwd1=None, pwd2=None):
-    """login to remote machine and return pexpect.spawn instance.
-    if command!=None will execute commands and return the output"""
+    """
+    login to remote machine and return pexpect.spawn instance.
+    if command!=None will execute commands and return the output
+    """
     # pack command line and arguments
     cmd = ssh
     mode = 'ssh'
@@ -207,7 +209,8 @@ def ssh_resource(resource, command=None):
     # logfile=None
 
     rsh = ssh_access(headnode, ssh=remote_access_method, username=username, password=ssh_password,
-                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
+                     logfile=logfile,
                      command=command)
     return rsh
 
@@ -215,7 +218,7 @@ def ssh_resource(resource, command=None):
 def scp_from_resource(resource, pwd1, pwd2, opt=""):
     name = resource['name']
     remote_machine = resource.get('remoteAccessNode', name)
-    remoteInvocationMethod = resource.get('remote_copy_method', 'scp') + " " + opt + " "
+    remote_invocation_method = resource.get('remote_copy_method', 'scp') + " " + opt + " "
     username = resource.get('ssh_username', None)
     ssh_password = resource.get('ssh_password', None)
     ssh_private_key_file = resource.get('ssh_private_key_file', None)
@@ -224,23 +227,24 @@ def scp_from_resource(resource, pwd1, pwd2, opt=""):
     logfile = sys.stdout
     # logfile=None
     pwd1fin = ""
-    if username != None:
+    if username is not None:
         pwd1fin += " %s@%s:%s" % (username, remote_machine, pwd1)
     else:
         pwd1fin += " %s:%s" % (remote_machine, pwd1)
 
-    rsh = ssh_access(remote_machine, ssh=remoteInvocationMethod, username=username, password=ssh_password,
-                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+    rsh = ssh_access(remote_machine, ssh=remote_invocation_method, username=username, password=ssh_password,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
+                     logfile=logfile,
                      pwd1=pwd1fin, pwd2=pwd2)
     return rsh
 
 
 def scp_to_resource(resource, pwd1, pwd2, opt="", logfile=None):
-    if logfile == None:
+    if logfile is None:
         logfile = sys.stdout
     name = resource['name']
     remote_machine = resource.get('remoteAccessNode', name)
-    remoteInvocationMethod = resource.get('remote_copy_method', 'scp') + " " + opt + " "
+    remote_invocation_method = resource.get('remote_copy_method', 'scp') + " " + opt + " "
     username = resource.get('ssh_username', None)
     ssh_password = resource.get('ssh_password', None)
     ssh_private_key_file = resource.get('ssh_private_key_file', None)
@@ -249,26 +253,29 @@ def scp_to_resource(resource, pwd1, pwd2, opt="", logfile=None):
     # logfile = sys.stdout
     # logfile=None
     pwd2fin = ""
-    if username != None:
+    if username is not None:
         pwd2fin += " %s@%s:%s" % (username, remote_machine, pwd2)
     else:
         pwd2fin += " %s:%s" % (remote_machine, pwd2)
 
-    rsh = ssh_access(remote_machine, ssh=remoteInvocationMethod, username=username, password=ssh_password,
-                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+    rsh = ssh_access(remote_machine, ssh=remote_invocation_method, username=username, password=ssh_password,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
+                     logfile=logfile,
                      pwd1=pwd1, pwd2=pwd2fin)
     return rsh
 
 
 def ssh_command_no_return(sh, cmd):
-    cmdfin = " " + cmd
+    from akrr.pexpect.exceptions import ExceptionPexpect
+
+    cmd_fin = " " + cmd
     try:
         # flush the buffer
         sh.read_nonblocking(1000000, 0)
-    except:
+    except (ValueError, ExceptionPexpect):
         pass
 
-    sh.sendline(cmdfin)
+    sh.sendline(cmd_fin)
     sh.expect(shell_prompt, timeout=ssh_timeout)
 
     msg = sh.before
@@ -276,11 +283,13 @@ def ssh_command_no_return(sh, cmd):
 
 
 def ssh_command(sh, cmd):
+    from akrr.pexpect.exceptions import ExceptionPexpect
+
     cmd_fin = " echo %s;\\\n%s;\\\necho %s" % (ssh_command_start_echo, cmd, ssh_command_end_echo)
     try:
         # flush the buffer
         sh.read_nonblocking(1000000, 0)
-    except:
+    except (ValueError, ExceptionPexpect):
         pass
 
     sh.sendline(cmd_fin)

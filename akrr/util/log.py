@@ -36,7 +36,22 @@ def log_input(message, *args):
     print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)
 
 
+def log_traceback(m_str=None):
+    import traceback
+    msg = "###### Exception ######\n"
+    if m_str is not None:
+        msg = msg + m_str+"\n"
+
+    msg = msg + traceback.format_exc()
+    exception(msg)
+
+
 def test_log():
+    basicConfig(
+        level=INFO,
+        format="[%(asctime)s - %(levelname)s] %(message)s"
+    )
+    getLogger().setLevel(DEBUG)
     critical("test critical")
     error("test error")
     exception("test exception")

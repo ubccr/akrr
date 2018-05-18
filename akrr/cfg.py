@@ -4,7 +4,6 @@ AKRR configuration
 
 import os
 import re
-import traceback
 
 import MySQLdb
 import MySQLdb.cursors
@@ -60,7 +59,7 @@ def verify_resource_params(resource: dict):
     raises TypeError or NameError on problems
     """
 
-    import  warnings
+    import warnings
     # mapped renamed parameters
     renamed_parameters = [
         ('localScratch', 'local_scratch'),
@@ -409,15 +408,6 @@ def replaceATvarAT(s, ds):
         s = s.replace("@" + varname + "@", str(varvalue))
         # print s
     return s
-
-
-def printException(Str=None):
-    print("###### Exception ######" + ">" * 97)
-    if Str != None:
-        print(Str)
-        print("-" * 120)
-    print(traceback.format_exc())
-    print("###### Exception ######" + "<" * 97)
 
 
 def CleanUnicode(s):

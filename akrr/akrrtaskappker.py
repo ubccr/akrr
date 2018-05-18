@@ -1,3 +1,4 @@
+import akrr.util.log
 import akrr.util.ssh
 from . import cfg
 import os
@@ -187,7 +188,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         except Exception as e:
             self.status = "ERROR: Can not created batch job script"
             self.statusinfo = traceback.format_exc()
-            cfg.printException(self.status)
+            akrr.util.log.log_traceback(self.status)
             raise e
 
     def CreateBatchJobScriptAndSubmitIt(self, doNotSubmitToQueue=False):
@@ -318,7 +319,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             else:
                 self.FatalErrorsCount += 1
 
-            cfg.printException(self.status)
+            akrr.util.log.log_traceback(self.status)
             return cfg.repeat_after_fails_to_submit_to_the_queue
 
     def CheckTheJobOnRemoteMachine(self):
@@ -400,7 +401,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status = "ERROR Can not check the status of the job on remote resource"
             self.statusinfo = traceback.format_exc()
             self.FatalErrorsCount += 1
-            cfg.printException(self.status)
+            akrr.util.log.log_traceback(self.status)
             return active_task_default_attempt_repeat
         self.status = "CheckTheJobOnRemoteMachine"
         self.statusinfo = "CheckTheJobOnRemoteMachine"
@@ -533,7 +534,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status = "ERROR: Error happens during processing of output."
             self.statusinfo = traceback.format_exc()
             self.FatalErrorsCount += 1
-            cfg.printException(self.status)
+            akrr.util.log.log_traceback(self.status)
             self.ToDoNextString = "PushToDB"
             self.WriteErrorXML(resultFile)
             return datetime.timedelta(seconds=3)
@@ -612,7 +613,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             self.status = "ERROR: Error happens during processing of output."
             self.statusinfo = traceback.format_exc()
             self.FatalErrorsCount += 1
-            cfg.printException(self.status)
+            akrr.util.log.log_traceback(self.status)
             self.ToDoNextString = "PushToDB"
             self.WriteErrorXML(resultFile)
             return datetime.timedelta(seconds=3)
@@ -645,12 +646,12 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 self.PushToDBAttemps = 1
 
             if self.PushToDBAttemps <= cfg.export_db_max_repeat_attempts:
-                cfg.printException("AKRR server was not able to push to external DB.")
+                akrr.util.log.log_traceback("AKRR server was not able to push to external DB.")
                 self.status = "ERROR: Can not push to external DB, will try again"
                 self.statusinfo = traceback.format_exc()
                 return cfg.export_db_repeat_attempt_in
             else:
-                cfg.printException("AKRR server was not able to push to external DB will only update local.")
+                akrr.util.log.log_traceback("AKRR server was not able to push to external DB will only update local.")
                 self.status = "ERROR: Can not push to external DB, will try again"
                 self.statusinfo = traceback.format_exc()
                 self.ToDoNextString = "IamDone"
