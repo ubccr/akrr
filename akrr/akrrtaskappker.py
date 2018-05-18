@@ -136,7 +136,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             batchvars['akrrTaskWorkingDir'] = self.remoteTaskDir
             batchvars['akrrWallTimeLimit'] = "%02d:%02d:00" % (
             int(batchvars['walllimit']) / 60, int(batchvars['walllimit']) % 60)
-            # batchvars['localPATH']=akrrcfg.sshCommand(sh,"echo $PATH").strip()
+            # batchvars['localPATH']=akrrcfg.ssh_command(sh,"echo $PATH").strip()
             batchvars['akrrAppKerName'] = self.app['name']
             batchvars['akrrResourceName'] = self.resource['name']
             batchvars['akrrTimeStamp'] = self.timeStamp
@@ -198,14 +198,14 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
 
         sh = None
         try:
-            sh = akrr.util.ssh.sshResource(self.resource)
+            sh = akrr.util.ssh.ssh_resource(self.resource)
 
             # Create remote directories if needed
             def CheckAndCreateDir(self, sh, d):
                 cmd = "if [ ! -d  \"%s\" ]\n then mkdir \"%s\"\n fi" % (d, d)
-                akrr.util.ssh.sshCommand(sh, cmd)
+                akrr.util.ssh.ssh_command(sh, cmd)
                 cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
-                msg = akrr.util.ssh.sshCommand(sh, cmd)
+                msg = akrr.util.ssh.ssh_command(sh, cmd)
                 if msg.find("DOESNOTEXIST") >= 0:
                     raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
@@ -218,17 +218,17 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             # CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))
 
             # cd to remoteTaskDir
-            akrr.util.ssh.sshCommand(sh, "cd %s" % (self.remoteTaskDir))
+            akrr.util.ssh.ssh_command(sh, "cd %s" % (self.remoteTaskDir))
 
             # GenerateBatchJobScript
             self.GenerateBatchJobScript()
 
-            msg = akrr.util.ssh.scpToResource(self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName),
-                                              os.path.join(self.remoteTaskDir))
+            msg = akrr.util.ssh.scp_to_resource(self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName),
+                                                os.path.join(self.remoteTaskDir))
             if doNotSubmitToQueue:
                 return
-            ##akrrcfg.sshCommandNoReturn(sh,"cat > %s << EOF1234567\n%s\nEOF1234567\n"%(self.JobScriptName,jobScript))
-            akrr.util.ssh.sshCommand(sh, "cat %s " % (self.JobScriptName))
+            ##akrrcfg.ssh_command_no_return(sh,"cat > %s << EOF1234567\n%s\nEOF1234567\n"%(self.JobScriptName,jobScript))
+            akrr.util.ssh.ssh_command(sh, "cat %s " % (self.JobScriptName))
 
             # send to queue
             from string import Template
@@ -237,7 +237,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 # i.e. submit to queue only if task is independent
                 sendToQueue = Template(submitCommands[self.resource['batchScheduler']]).substitute(
                     scriptPath=self.JobScriptName)
-                msg = akrr.util.ssh.sshCommand(sh, sendToQueue)
+                msg = akrr.util.ssh.ssh_command(sh, sendToQueue)
                 matchObj = re.search(jidExtractPatterns[self.resource['batchScheduler']], msg, re.M | re.S)
 
                 if matchObj:
@@ -250,11 +250,11 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
 
                 # report
                 if self.resource["gateway_reporting"]:
-                    akrr.util.ssh.sshCommand(sh, "module load gateway-usage-reporting")
-                    akrr.util.ssh.sshCommand(sh, r'gateway_submit_attributes -gateway_user ' + self.resource[
+                    akrr.util.ssh.ssh_command(sh, "module load gateway-usage-reporting")
+                    akrr.util.ssh.ssh_command(sh, r'gateway_submit_attributes -gateway_user ' + self.resource[
                         "gateway_user"] + r''' -submit_time "`date '+%F %T %:z'`" -jobid ''' + JobIDstr)
 
-            akrr.util.ssh.sshCommand(sh, "echo %d > job.id" % (JobID))
+            akrr.util.ssh.ssh_command(sh, "echo %d > job.id" % (JobID))
 
             self.RemoteJobID = JobID
             self.TimeJobSubmetedToRemoteQueue = datetime.datetime.today()
@@ -265,8 +265,8 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             sh = None
             print("\nRemoteJobID=", self.RemoteJobID)
             print("copying files from remote machine")
-            msg = akrr.util.ssh.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                os.path.join(self.taskDir, "jobfiles"), "-r")
+            msg = akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                                                  os.path.join(self.taskDir, "jobfiles"), "-r")
 
             # update DB time_submitted_to_queue
             db, cur = cfg.getDB()
@@ -327,14 +327,14 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             print("### Checking the job status on remote machine")
             from string import Template
 
-            sh = akrr.util.ssh.sshResource(self.resource)
+            sh = akrr.util.ssh.ssh_resource(self.resource)
 
             # if it is subtask get master task id from job.id file (it should be replaced by master task)
             if self.RemoteJobID == 0:
                 try:
                     print(self.remoteTaskDir)
                     self.RemoteJobID = int(
-                        akrr.util.ssh.sshCommand(sh, "cat %s" % (os.path.join(self.remoteTaskDir, "job.id"))))
+                        akrr.util.ssh.ssh_command(sh, "cat %s" % (os.path.join(self.remoteTaskDir, "job.id"))))
                 except:
                     self.RemoteJobID = 0
 
@@ -342,7 +342,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             cmd = Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
             rege = Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
 
-            msg = akrr.util.ssh.sshCommand(sh, cmd)
+            msg = akrr.util.ssh.ssh_command(sh, cmd)
             sh.sendline("exit")
             sh.close(force=True)
             del sh
@@ -361,8 +361,8 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                     print("Removing job from remote queue.")
                     self.Terminate()
                     print("copying files from remote machine")
-                    akrr.util.ssh.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                  os.path.join(self.taskDir, "jobfiles"), "-r")
+                    akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                                                    os.path.join(self.taskDir, "jobfiles"), "-r")
                     # print msg
                     print("Deleting all files from remote machine")
                     self.DeleteRemoteFolder()
@@ -380,8 +380,8 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             else:
                 print("Not in queue. Either exited with error or executed successfully.")
                 print("copying files from remote machine")
-                msg = akrr.util.ssh.scpFromResource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                    os.path.join(self.taskDir, "jobfiles"), "-r")
+                msg = akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                                                      os.path.join(self.taskDir, "jobfiles"), "-r")
                 # print msg
                 print("Deleting all files from remote machine")
                 self.DeleteRemoteFolder()
@@ -1010,7 +1010,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             from string import Template
             kE = killExprs[self.resource['batchScheduler']]
             cmd = Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
-            msg = akrr.util.ssh.sshResource(self.resource, cmd)
+            msg = akrr.util.ssh.ssh_resource(self.resource, cmd)
             print(msg)
             self.status = "Task is probably removed from remote queue."
             self.statusinfo = copy.deepcopy(msg)

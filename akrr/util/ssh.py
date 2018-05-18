@@ -3,17 +3,19 @@ import re
 import sys
 import time
 
+from akrr.util import log
 from akrr.akrrerror import AkrrError
 
-sshTimeout = 60
-shellPrompt = "PROMPTtTtT"
-sshTimeSleep = 0.25
-sshCommandStartEcho = "StArTEd_ExeCUTEtIoM_SucCeSsFully"
-sshCommandEndEcho = "ExeCUTEd_SucCeSsFully"
+ssh_timeout = 60
+shell_prompt = "PROMPTtTtT"
+ssh_time_sleep = 0.25
+ssh_command_start_echo = "StArTEd_ExeCUTEtIoM_SucCeSsFully"
+ssh_command_end_echo = "ExeCUTEd_SucCeSsFully"
 
 
-def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKeyFile=None, PrivateKeyPassword=None,
-              logfile=None, command=None, pwd1=None, pwd2=None):
+def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
+               private_key_file=None, private_key_password=None,
+               logfile=None, command=None, pwd1=None, pwd2=None):
     """login to remote machine and return pexpect.spawn instance.
     if command!=None will execute commands and return the output"""
     # pack command line and arguments
@@ -22,257 +24,243 @@ def sshAccess(remotemachine, ssh='ssh', username=None, password=None, PrivateKey
     if ssh.find('scp') >= 0:
         mode = 'scp'
 
-    cmdarg = []
+    cmd_arg = []
     # Add identity file if needed
-    if PrivateKeyFile != None:
-        cmdarg.extend(["-i", PrivateKeyFile])
-        cmd += " -i " + PrivateKeyFile
+    if private_key_file is not None:
+        cmd_arg.extend(["-i", private_key_file])
+        cmd += " -i " + private_key_file
     # Add username@host
     if mode == 'ssh':
-        if username != None:
-            cmdarg.append("%s@%s" % (username, remotemachine))
-            cmd += " %s@%s" % (username, remotemachine)
+        if username is not None:
+            cmd_arg.append("%s@%s" % (username, remote_machine))
+            cmd += " %s@%s" % (username, remote_machine)
         else:
-            cmdarg.append("%s" % (remotemachine))
-            cmd += " %s" % (remotemachine)
+            cmd_arg.append("%s" % remote_machine)
+            cmd += " %s" % remote_machine
 
-        if command != None and ssh != 'ssh-copy-id':
-            cmdarg.append("\" %s;echo %s\"" % (command, sshCommandStartEcho))
-            cmd += " \"echo %s;%s;echo %s\"" % (sshCommandStartEcho, command, sshCommandEndEcho)
+        if command is not None and ssh != 'ssh-copy-id':
+            cmd_arg.append("\" %s;echo %s\"" % (command, ssh_command_start_echo))
+            cmd += " \"echo %s;%s;echo %s\"" % (ssh_command_start_echo, command, ssh_command_end_echo)
     else:
         command = pwd2
         cmd += " %s %s" % (pwd1, pwd2)
-    print(cmd)
+    log.debug(cmd)
 
     # find the prompt
-    # if
-    # tmp=$(set +x; (PS4=$PS1; set -x; :) 2>&1); tmp=${tmp#*.}; echo ${tmp%:}
 
     # Try to get access
     from akrr import pexpect
 
     rsh = None
     try:
-        rsh = pexpect.spawn(cmd, encoding='utf-8')  # , logfile=logfile)
-        # rsh.setwinsize(256,512)
+        rsh = pexpect.spawn(cmd, encoding='utf-8')
 
         rsh.logfile_read = logfile
 
         expect = [
             "Are you sure you want to continue connecting (yes/no)?",
             '[Pp]assword:',
-            "Enter passphrase for key",
-
-            # username+'.*[\$>]\s*$',
-            # '[#\$>]\s*',
-            # '[^#]*[#\$]\s*',
-            # ':~>\s*$'#,
-            # shellPrompt
+            "Enter passphrase for key"
         ]
-        addedPromptSearch = False
-        if mode == 'ssh' and command == None and password == None and PrivateKeyPassword == None:
+
+        if mode == 'ssh' and command is None and password is None and private_key_password is None:
             # i.e. expecting passwordless access
             expect.append('[#\$>]\s*')
-            addedPromptSearch = True
-        bOnHeadnode = False
 
-        sshTimeoutNew = sshTimeout
-        if mode == 'ssh' and command == None:
-            sshTimeoutNew = 2.0
-        countPasses = 0
-        PasswordCount = 0
-        PrivateKeyPasswordCount = 0
+        on_headnode = False
 
-        while not bOnHeadnode:
-            i = -1
+        ssh_timeout_new = ssh_timeout
+        if mode == 'ssh' and command is None:
+            ssh_timeout_new = 2.0
+        count_passes = 0
+        password_count = 0
+        private_key_password_count = 0
+
+        while not on_headnode:
             try:
-                i = rsh.expect(expect, timeout=sshTimeoutNew)
+                i = rsh.expect(expect, timeout=ssh_timeout_new)
             except pexpect.TIMEOUT as e:
-                if mode == 'ssh' and command == None:
+                if mode == 'ssh' and command is None:
                     # add prompts
-                    if countPasses == 0:
-                        if password == None and PrivateKeyPassword == None:
+                    if count_passes == 0:
+                        if password is None and private_key_password is None:
                             expect.append('[#\$>]\s*')
-                            addedPromptSearch = True
-                            sshTimeoutNew = sshTimeout
+                            ssh_timeout_new = ssh_timeout
                         i = 6
                     else:
                         # assuming it has unrecognized prompt
                         # lets try to sent it
-                        rsh.sendline(" export PS1='%s '" % (shellPrompt))
-                        rsh.expect(shellPrompt, timeout=sshTimeout)  # twice because one from echo
-                        rsh.expect(shellPrompt, timeout=sshTimeout)
+                        rsh.sendline(" export PS1='%s '" % shell_prompt)
+                        rsh.expect(shell_prompt, timeout=ssh_timeout)  # twice because one from echo
+                        rsh.expect(shell_prompt, timeout=ssh_timeout)
                         i = 6
                 else:
                     raise e
-            countPasses += 1
+            count_passes += 1
             if i == 0:  # Are you sure you want to continue connecting (yes/no)?
                 rsh.sendline('yes')
             if i == 1:  # [pP]assword
-                if password != None:
-                    if PasswordCount > 0:
+                if password is not None:
+                    if password_count > 0:
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise AkrrError("Password for %s is incorrect." % remotemachine)
-                    time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
+                        raise AkrrError("Password for %s is incorrect." % remote_machine)
+                    time.sleep(ssh_time_sleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(password)
                     # add prompt search since password already asked
                     expect.append('[#\$>]\s*')
-                    addedPromptSearch = True
-                    PasswordCount += 1
+                    password_count += 1
                 else:
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise AkrrError("%s had requested a password and one was not provided." % remotemachine)
+                    raise AkrrError("%s had requested a password and one was not provided." % remote_machine)
             if i == 2:
-                if PrivateKeyPassword != None:
-                    if PrivateKeyPasswordCount > 0:
-                        # i.e. PrivateKeyPassword was entered several times incorrectly and now remote servise asking for password
+                if private_key_password is not None:
+                    if private_key_password_count > 0:
+                        # i.e. PrivateKeyPassword was entered several times incorrectly and
+                        # now remote servise asking for password
                         rsh.sendcontrol('c')
                         rsh.close(force=True)
                         del rsh
-                        raise AkrrError("Private key password for %s is incorrect." % remotemachine)
-                    time.sleep(sshTimeSleep)  # so that the remote host have some time to turn off echo
-                    rsh.sendline(PrivateKeyPassword)
+                        raise AkrrError("Private key password for %s is incorrect." % remote_machine)
+                    time.sleep(ssh_time_sleep)  # so that the remote host have some time to turn off echo
+                    rsh.sendline(private_key_password)
                     # add prompt search since password already asked
                     expect.append('[#\$>]\s*')
-                    addedPromptSearch = True
-                    PrivateKeyPasswordCount += 1
+                    private_key_password_count += 1
                 else:
                     rsh.sendcontrol('c')
                     rsh.close(force=True)
                     del rsh
-                    raise AkrrError("%s had requested a private key password and one was not provided." % remotemachine)
+                    raise AkrrError("%s had requested a private key password and one was not provided." %
+                                    remote_machine)
             if i >= 3:
-                bOnHeadnode = True
+                on_headnode = True
                 # are we really there?
 
-        if mode == 'ssh' and command == None:
-            rsh.sendline(
-                " echo %s;\\\nexport PS1='%s ';\\\necho %s" % (sshCommandStartEcho, shellPrompt, sshCommandEndEcho))
+        if mode == 'ssh' and command is None:
+            rsh.sendline(" echo %s;\\\nexport PS1='%s ';\\\necho %s" % (ssh_command_start_echo, shell_prompt,
+                                                                        ssh_command_end_echo))
             rsh.sendline(" ")
             rsh.sendline(" ")
-            r = sshCommandEndEcho + r'.+' + shellPrompt + r'.+' + shellPrompt + r'.+' + shellPrompt
-            rsh.expect(r,
-                       timeout=sshTimeout)  # this pattern ensure proper handling when it thinks that in ssh hello message there is a prompt
 
+            # this pattern ensure proper handling when it thinks that in ssh hello message there is a prompt
+            r = ssh_command_end_echo + r'.+' + shell_prompt + r'.+' + shell_prompt + r'.+' + shell_prompt
+            rsh.expect(r, timeout=ssh_timeout)
             time.sleep(1)
             # test that we really in prompt
-            msg = sshCommand(rsh, "echo TeStTeStTeStThEproMPT")
+            msg = ssh_command(rsh, "echo TeStTeStTeStThEproMPT")
             if msg.strip() != "TeStTeStTeStThEproMPT":
-                raise AkrrError("%s can not determine prompt." % remotemachine)
-        rsh.remotemachine = remotemachine
-        if logfile != None: logfile.flush()
-        # print expect[i]
+                raise AkrrError("%s can not determine prompt." % remote_machine)
+        rsh.remote_machine = remote_machine
+        if logfile is not None:
+            logfile.flush()
     except pexpect.TIMEOUT as e:
-        # print "pexpect.TIMEOUT"
         msg = copy.deepcopy(rsh.before)
         rsh.close(force=True)
         del rsh
-        raise AkrrError("Timeout period elapsed prior establishing the connection to %s.\n" % remotemachine + msg, e=e)
+        raise AkrrError("Timeout period elapsed prior establishing the connection to %s.\n" % remote_machine + msg, e=e)
     except pexpect.EOF as e:
-        ExeCUTEd_SucCeSsFully = False
-        if command != None:
+        executed_successfully = False
+        if command is not None:
             ll = rsh.before.splitlines(False)
             if len(ll) > 1:
-                if ll[-1].endswith(sshCommandEndEcho) or ll[-2].endswith(sshCommandEndEcho):
-                    ExeCUTEd_SucCeSsFully = True
+                if ll[-1].endswith(ssh_command_end_echo) or ll[-2].endswith(ssh_command_end_echo):
+                    executed_successfully = True
             if len(ll) > 0:
-                if ll[-1].endswith(sshCommandEndEcho):
-                    ExeCUTEd_SucCeSsFully = True
+                if ll[-1].endswith(ssh_command_end_echo):
+                    executed_successfully = True
             if mode == 'scp':
-                ExeCUTEd_SucCeSsFully = True
+                executed_successfully = True
             if ssh == 'ssh-copy-id':
-                ExeCUTEd_SucCeSsFully = True
-        if command == None or (command != None and ExeCUTEd_SucCeSsFully == False):
+                executed_successfully = True
+        if command is None or (command is not None and executed_successfully is False):
             msg = copy.deepcopy(rsh.before)
             rsh.close(force=True)
             del rsh
-            raise AkrrError("Probably %s refused the connection. " % remotemachine + msg, e=e)
+            raise AkrrError("Probably %s refused the connection. " % remote_machine + msg, e=e)
         else:
             # user trying to execute command remotely
             msg = copy.deepcopy(rsh.before)
             rsh.close(force=True)
             del rsh
-            return msg[(msg.find('\n', msg.find(sshCommandStartEcho) + 5) + len("\n") + 0):msg.rfind(sshCommandEndEcho)]
-    # print "}"*100
-    if mode == 'ssh' and command != None:
-        # print "!"*100
-        # print rsh.before
-        # print "!"*100
+            return msg[(msg.find('\n', msg.find(ssh_command_start_echo) + 5) + len("\n") + 0):
+                       msg.rfind(ssh_command_end_echo)]
+
+    if mode == 'ssh' and command is not None:
         return copy.deepcopy(rsh.before)
     return rsh
 
 
-def sshResource(resource, command=None):
+def ssh_resource(resource, command=None):
     name = resource['name']
     headnode = resource.get('remoteAccessNode', name)
-    remoteAccessMethod = resource.get('remoteAccessMethod', 'ssh')
-    username = resource.get('sshUserName', None)
-    sshPassword = resource.get('sshPassword', None)
-    sshPrivateKeyFile = resource.get('sshPrivateKeyFile', None)
-    sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
+    remote_access_method = resource.get('remote_access_method', 'ssh')
+    username = resource.get('ssh_username', None)
+    ssh_password = resource.get('ssh_password', None)
+    ssh_private_key_file = resource.get('ssh_private_key_file', None)
+    ssh_private_key_password = resource.get('ssh_private_key_password', None)
 
     logfile = sys.stdout
     # logfile=None
 
-    rsh = sshAccess(headnode, ssh=remoteAccessMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    command=command)
+    rsh = ssh_access(headnode, ssh=remote_access_method, username=username, password=ssh_password,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+                     command=command)
     return rsh
 
 
-def scpFromResource(resource, pwd1, pwd2, opt=""):
+def scp_from_resource(resource, pwd1, pwd2, opt=""):
     name = resource['name']
-    remotemachine = resource.get('remoteAccessNode', name)
-    remoteInvocationMethod = resource.get('remoteCopyMethod', 'scp') + " " + opt + " "
-    username = resource.get('sshUserName', None)
-    sshPassword = resource.get('sshPassword', None)
-    sshPrivateKeyFile = resource.get('sshPrivateKeyFile', None)
-    sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
+    remote_machine = resource.get('remoteAccessNode', name)
+    remoteInvocationMethod = resource.get('remote_copy_method', 'scp') + " " + opt + " "
+    username = resource.get('ssh_username', None)
+    ssh_password = resource.get('ssh_password', None)
+    ssh_private_key_file = resource.get('ssh_private_key_file', None)
+    ssh_private_key_password = resource.get('ssh_private_key_password', None)
 
     logfile = sys.stdout
     # logfile=None
     pwd1fin = ""
     if username != None:
-        pwd1fin += " %s@%s:%s" % (username, remotemachine, pwd1)
+        pwd1fin += " %s@%s:%s" % (username, remote_machine, pwd1)
     else:
-        pwd1fin += " %s:%s" % (remotemachine, pwd1)
+        pwd1fin += " %s:%s" % (remote_machine, pwd1)
 
-    rsh = sshAccess(remotemachine, ssh=remoteInvocationMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    pwd1=pwd1fin, pwd2=pwd2)
+    rsh = ssh_access(remote_machine, ssh=remoteInvocationMethod, username=username, password=ssh_password,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+                     pwd1=pwd1fin, pwd2=pwd2)
     return rsh
 
 
-def scpToResource(resource, pwd1, pwd2, opt="", logfile=None):
+def scp_to_resource(resource, pwd1, pwd2, opt="", logfile=None):
     if logfile == None:
         logfile = sys.stdout
     name = resource['name']
-    remotemachine = resource.get('remoteAccessNode', name)
-    remoteInvocationMethod = resource.get('remoteCopyMethod', 'scp') + " " + opt + " "
-    username = resource.get('sshUserName', None)
-    sshPassword = resource.get('sshPassword', None)
-    sshPrivateKeyFile = resource.get('sshPrivateKeyFile', None)
-    sshPrivateKeyPassword = resource.get('sshPrivateKeyPassword', None)
+    remote_machine = resource.get('remoteAccessNode', name)
+    remoteInvocationMethod = resource.get('remote_copy_method', 'scp') + " " + opt + " "
+    username = resource.get('ssh_username', None)
+    ssh_password = resource.get('ssh_password', None)
+    ssh_private_key_file = resource.get('ssh_private_key_file', None)
+    ssh_private_key_password = resource.get('ssh_private_key_password', None)
 
     # logfile = sys.stdout
     # logfile=None
     pwd2fin = ""
     if username != None:
-        pwd2fin += " %s@%s:%s" % (username, remotemachine, pwd2)
+        pwd2fin += " %s@%s:%s" % (username, remote_machine, pwd2)
     else:
-        pwd2fin += " %s:%s" % (remotemachine, pwd2)
+        pwd2fin += " %s:%s" % (remote_machine, pwd2)
 
-    rsh = sshAccess(remotemachine, ssh=remoteInvocationMethod, username=username, password=sshPassword,
-                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=logfile,
-                    pwd1=pwd1, pwd2=pwd2fin)
+    rsh = ssh_access(remote_machine, ssh=remoteInvocationMethod, username=username, password=ssh_password,
+                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=logfile,
+                     pwd1=pwd1, pwd2=pwd2fin)
     return rsh
 
 
-def sshCommandNoReturn(sh, cmd):
+def ssh_command_no_return(sh, cmd):
     cmdfin = " " + cmd
     try:
         # flush the buffer
@@ -281,23 +269,23 @@ def sshCommandNoReturn(sh, cmd):
         pass
 
     sh.sendline(cmdfin)
-    sh.expect(shellPrompt, timeout=sshTimeout)
+    sh.expect(shell_prompt, timeout=ssh_timeout)
 
     msg = sh.before
     return msg
 
 
-def sshCommand(sh, cmd):
-    cmdfin = " echo %s;\\\n%s;\\\necho %s" % (sshCommandStartEcho, cmd, sshCommandEndEcho)
+def ssh_command(sh, cmd):
+    cmd_fin = " echo %s;\\\n%s;\\\necho %s" % (ssh_command_start_echo, cmd, ssh_command_end_echo)
     try:
         # flush the buffer
         sh.read_nonblocking(1000000, 0)
     except:
         pass
 
-    sh.sendline(cmdfin)
-    sh.expect(shellPrompt, timeout=sshTimeout)
+    sh.sendline(cmd_fin)
+    sh.expect(shell_prompt, timeout=ssh_timeout)
     msg = sh.before
-    msg = msg[(msg.find('\n', msg.rfind(sshCommandStartEcho) + 5) + len("\n") + 0):msg.rfind(sshCommandEndEcho)]
+    msg = msg[(msg.find('\n', msg.rfind(ssh_command_start_echo) + 5) + len("\n") + 0):msg.rfind(ssh_command_end_echo)]
     regex = re.compile(r'\x1b[^m]*m')
     return regex.sub("", msg)

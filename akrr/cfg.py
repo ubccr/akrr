@@ -59,24 +59,49 @@ def verify_resource_params(resource: dict):
     Perform simplistic resource parameters validation
     raises TypeError or NameError on problems
     """
+
+    import  warnings
+    # mapped renamed parameters
+    renamed_parameters = [
+        ('localScratch', 'local_scratch'),
+        # ('batchJobTemplate', 'batch_job_template'),
+        # ('remoteAccessNode', 'remote_access_node'),
+        # ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
+        # ('networkScratch', 'network_scratch'),
+        ('sshUserName', 'ssh_username'),
+        ('sshPassword', 'ssh_password'),
+        ('sshPrivateKeyFile', 'ssh_private_key_file'),
+        ('sshPrivateKeyPassword', 'ssh_private_key_password'),
+        ('remoteAccessMethod', 'remote_access_method'),
+        # ('batchScheduler', 'batch_scheduler'),
+        # ('appKerDir', 'appkernel_dir'),
+        # ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_tTemplate'),
+        # ('akrrData', 'akrr_data')
+    ]
+
+    for old_key, new_key in renamed_parameters:
+        if old_key in resource:
+            resource[new_key] = resource.pop(old_key)
+            warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
+    
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types = [
         ['info', str, False, False],
-        ['localScratch', str, False, True],
+        ['local_scratch', str, False, True],
         ['batchJobTemplate', str, False, True],
         ['remoteAccessNode', str, False, True],
         ['name', str, False, False],
         ['akrrCommonCommandsTemplate', str, False, True],
         ['networkScratch', str, False, True],
         ['ppn', int, False, True],
-        ['remoteCopyMethod', str, False, True],
-        ['sshUserName', str, False, True],
-        ['sshPassword', str, True, False],
-        ['sshPrivateKeyFile', str, True, False],
-        ['sshPrivateKeyPassword', str, True, False],
+        ['remote_copy_method', str, False, True],
+        ['ssh_username', str, False, True],
+        ['ssh_password', str, True, False],
+        ['ssh_private_key_file', str, True, False],
+        ['ssh_private_key_password', str, True, False],
         ['batchScheduler', str, False, True],
-        ['remoteAccessMethod', str, False, True],
+        ['remote_access_method', str, False, True],
         ['appKerDir', str, False, True],
         ['akrrCommonCleanupTemplate', str, False, True],
         ['akrr_data', str, False, True]
@@ -93,7 +118,7 @@ def verify_resource_params(resource: dict):
             raise TypeError("Syntax error in " + resource['name'] +
                             "\nVariable %s should be %s" % (variable, str(m_type)) +
                             ". But it is " + str(type(resource[variable])))
-    return True
+    return resource
 
 
 def load_resource(resource_name: str):
@@ -138,7 +163,7 @@ def load_resource(resource_name: str):
         resource['resource_cfg_file_last_mod_time'] = os.path.getmtime(resource_cfg_filename)
 
         # here should be validation
-        verify_resource_params(resource)
+        resource = verify_resource_params(resource)
 
         return resource
     except Exception:

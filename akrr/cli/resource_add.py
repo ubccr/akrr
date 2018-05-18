@@ -33,16 +33,16 @@ rsh = None
 info = None
 ppn = None
 remoteAccessNode = None
-remoteAccessMethod = 'ssh'
-remoteCopyMethod = 'scp'
-sshUserName = None
-sshPassword = None
-sshPassword4thisSession = None
-sshPrivateKeyFile = None
-sshPrivateKeyPassword = None
+remote_access_method = 'ssh'
+remote_copy_method = 'scp'
+ssh_username = None
+ssh_password = None
+ssh_password4thisSession = None
+ssh_private_key_file = None
+ssh_private_key_password = None
 
 networkScratch = None
-localScratch = "/tmp"
+local_scratch = "/tmp"
 akrr_data = None
 appKerDir = None
 batchScheduler = None
@@ -103,9 +103,9 @@ def create_resource_config(file_path, queuing_system):
         return "\n".join(out)
 
     template = update_template(template, 'ppn', in_quotes=False)
-    for v in ['remoteAccessNode', 'remoteAccessMethod', 'remoteCopyMethod',
-              'sshUserName', 'sshPassword', 'sshPrivateKeyFile', 'sshPrivateKeyPassword',
-              'networkScratch', 'localScratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
+    for v in ['remoteAccessNode', 'remote_access_method', 'remote_copy_method',
+              'ssh_username', 'ssh_password', 'ssh_private_key_file', 'ssh_private_key_password',
+              'networkScratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
         template = update_template(template, v)
     template += "\n\n"
 
@@ -231,13 +231,13 @@ def validate_queuing_system(queuing_system):
 def check_connection_to_resource():
     """check the connection to remote resource."""
     global remoteAccessNode
-    global remoteAccessMethod
-    global remoteCopyMethod
-    global sshUserName
-    global sshPassword
-    global sshPassword4thisSession
-    global sshPrivateKeyFile
-    global sshPrivateKeyPassword
+    global remote_access_method
+    global remote_copy_method
+    global ssh_username
+    global ssh_password
+    global ssh_password4thisSession
+    global ssh_private_key_file
+    global ssh_private_key_password
 
     successfully_connected = False
     passphrase_entrance_count = 0
@@ -247,9 +247,9 @@ def check_connection_to_resource():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            akrr.util.ssh.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                                    PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword, logfile=str_io,
-                                    command='ls')
+            akrr.util.ssh.ssh_access(remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=str_io,
+                                     command='ls')
 
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -271,18 +271,18 @@ def check_connection_to_resource():
             m = re.search(r"Enter passphrase for key '(.*)':", response)
             if m:
                 if passphrase_entrance_count >= 3:
-                    sshPrivateKeyPassword = None
-                    sshPrivateKeyFile = None
+                    ssh_private_key_password = None
+                    ssh_private_key_file = None
                     break
                 if passphrase_entrance_count > 0:
                     log.error("Incorrect passphrase try again")
-                sshPrivateKeyFile = m.group(1)
-                log.log_input("Enter passphrase for key '%s':" % sshPrivateKeyFile)
-                sshPrivateKeyPassword = getpass.getpass("")
+                ssh_private_key_file = m.group(1)
+                log.log_input("Enter passphrase for key '%s':" % ssh_private_key_file)
+                ssh_private_key_password = getpass.getpass("")
                 passphrase_entrance_count += 1
                 continue
             m2 = re.search(r"[pP]assword:", response)
-            if m is None and sshPrivateKeyFile is not None and m2:
+            if m is None and ssh_private_key_file is not None and m2:
                 log.warning(
                     "Can not login to head node. "
                     "Probably the public key of private key was not authorized on head node")
@@ -291,15 +291,15 @@ def check_connection_to_resource():
                     try:
                         authorize_key_count += 1
                         log.log_input("Enter password for %s@%s (will be used only during this session):" % (
-                            sshUserName, remoteAccessNode))
-                        sshPassword4thisSession = getpass.getpass("")
+                            ssh_username, remoteAccessNode))
+                        ssh_password4thisSession = getpass.getpass("")
                         log.empty_line()
                         str_io = io.StringIO()
                         sys.stdout = sys.stderr = str_io
-                        akrr.util.ssh.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
-                                                password=sshPassword4thisSession,
-                                                PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=str_io,
-                                                command='')
+                        akrr.util.ssh.ssh_access(remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
+                                                 password=ssh_password4thisSession,
+                                                 private_key_file=ssh_private_key_file, private_key_password=None, logfile=str_io,
+                                                 command='')
 
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
@@ -332,13 +332,13 @@ def check_connection_to_resource():
 def get_remote_access_method():
     global resource_name
     global remoteAccessNode
-    global remoteAccessMethod
-    global remoteCopyMethod
-    global sshUserName
-    global sshPassword
-    global sshPassword4thisSession
-    global sshPrivateKeyFile
-    global sshPrivateKeyPassword
+    global remote_access_method
+    global remote_copy_method
+    global ssh_username
+    global ssh_password
+    global ssh_password4thisSession
+    global ssh_private_key_file
+    global ssh_private_key_password
     global rsh
     global no_ping
 
@@ -359,27 +359,27 @@ def get_remote_access_method():
                 break
             log.error("Incorrect head node name (can not ping %s), try again", remoteAccessNode)
 
-    # set sshUserName
+    # set ssh_username
     current_user = getpass.getuser()
     ask_for_user_name = True
 
     while True:
         if ask_for_user_name:
             log.log_input("Enter username for resource access:")
-            sshUserName = input("[%s] " % current_user)
-            if sshUserName.strip() == "":
-                sshUserName = current_user
-            current_user = sshUserName
+            ssh_username = input("[%s] " % current_user)
+            if ssh_username.strip() == "":
+                ssh_username = current_user
+            current_user = ssh_username
 
         # check password-less access
-        if sshPassword is None:
+        if ssh_password is None:
             log.info("Checking for password-less access")
         else:
             log.info("Checking for resource access")
         successfully_connected = check_connection_to_resource()
 
         if successfully_connected:
-            if sshPassword is None:
+            if ssh_password is None:
                 log.info("Can access resource without password")
             else:
                 log.info("Can access resource")
@@ -429,8 +429,8 @@ def get_remote_access_method():
             if action_list[action][0] == "TryAgain":
                 continue
             if action_list[action][0] == "UsePassword":
-                log.log_input("Enter password for %s@%s:" % (sshUserName, remoteAccessNode))
-                sshPassword = getpass.getpass("")
+                log.log_input("Enter password for %s@%s:" % (ssh_username, remoteAccessNode))
+                ssh_password = getpass.getpass("")
                 ask_for_user_name = not ask_for_user_name
                 continue
             if action_list[action][0] == "UseExistingPrivateKey":
@@ -446,16 +446,16 @@ def get_remote_access_method():
                         break
                     except (ValueError, TypeError):
                         log.error("Incorrect entry, try again.")
-                sshPrivateKeyFile = private_keys[i_key]
+                ssh_private_key_file = private_keys[i_key]
                 ask_for_user_name = not ask_for_user_name
                 continue
             if action_list[action][0] == "GenNewKey":
                 count = 0
                 while True:
                     log.log_input("Enter password for %s@%s (will be used only during this session):" % (
-                        sshUserName, remoteAccessNode))
-                    sshPassword4thisSession = getpass.getpass("")
-                    sshPassword = sshPassword4thisSession
+                        ssh_username, remoteAccessNode))
+                    ssh_password4thisSession = getpass.getpass("")
+                    ssh_password = ssh_password4thisSession
 
                     if check_connection_to_resource():
                         break
@@ -465,27 +465,27 @@ def get_remote_access_method():
 
                 # generate keys
                 log.log_input("Enter private key name:")
-                sshPrivateKeyFile = input("[id_rsa_%s]" % resource_name)
-                if sshPrivateKeyFile.strip() == "":
-                    sshPrivateKeyFile = "id_rsa_%s" % resource_name
-                sshPrivateKeyFile = os.path.join(user_home_dir, '.ssh', sshPrivateKeyFile)
+                ssh_private_key_file = input("[id_rsa_%s]" % resource_name)
+                if ssh_private_key_file.strip() == "":
+                    ssh_private_key_file = "id_rsa_%s" % resource_name
+                ssh_private_key_file = os.path.join(user_home_dir, '.ssh', ssh_private_key_file)
 
                 log.log_input("Enter passphrase for new key (leave empty for passwordless access):")
-                sshPrivateKeyPassword = getpass.getpass("")
+                ssh_private_key_password = getpass.getpass("")
 
                 if dry_run:
                     successfully_connected = True
                 else:
-                    sshPassword = None
+                    ssh_password = None
 
-                    os.system("ssh-keygen -t rsa -N \"%s\" -f %s" % (sshPrivateKeyPassword, sshPrivateKeyFile))
-                    if sshPrivateKeyPassword.strip() == "":
-                        sshPrivateKeyPassword = None
+                    os.system("ssh-keygen -t rsa -N \"%s\" -f %s" % (ssh_private_key_password, ssh_private_key_file))
+                    if ssh_private_key_password.strip() == "":
+                        ssh_private_key_password = None
                     # copy keys
-                    akrr.util.ssh.sshAccess(remoteAccessNode, ssh='ssh-copy-id', username=sshUserName,
-                                            password=sshPassword4thisSession,
-                                            PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=None, logfile=sys.stdout,
-                                            command='')
+                    akrr.util.ssh.ssh_access(remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
+                                             password=ssh_password4thisSession,
+                                             private_key_file=ssh_private_key_file, private_key_password=None, logfile=sys.stdout,
+                                             command='')
                     ask_for_user_name = not ask_for_user_name
                     continue
 
@@ -501,10 +501,10 @@ def get_remote_access_method():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            rsh = akrr.util.ssh.sshAccess(remoteAccessNode, ssh=remoteAccessMethod, username=sshUserName, password=sshPassword,
-                                          PrivateKeyFile=sshPrivateKeyFile, PrivateKeyPassword=sshPrivateKeyPassword,
-                                          logfile=sys.stdout,
-                                          command=None)
+            rsh = akrr.util.ssh.ssh_access(remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                                           private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
+                                           logfile=sys.stdout,
+                                           command=None)
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
         except Exception as e:
@@ -533,21 +533,21 @@ def get_system_characteristics():
 def get_file_system_access_points():
     global resource_name
     global networkScratch
-    global localScratch
+    global local_scratch
     global akrr_data
     global appKerDir
 
-    home_dir = akrr.util.ssh.sshCommand(rsh, "echo $HOME").strip()
-    scratch_network_dir = akrr.util.ssh.sshCommand(rsh, "echo $SCRATCH").strip()
+    home_dir = akrr.util.ssh.ssh_command(rsh, "echo $HOME").strip()
+    scratch_network_dir = akrr.util.ssh.ssh_command(rsh, "echo $SCRATCH").strip()
 
-    # localScratch
+    # local_scratch
     local_scratch_default = "/tmp"
     while True:
         log.log_input("Enter location of local scratch (visible only to single node):")
-        localScratch = input("[%s]" % local_scratch_default)
-        if localScratch.strip() == "":
-            localScratch = local_scratch_default
-        status, msg = resource_deploy.check_dir_simple(rsh, localScratch)
+        local_scratch = input("[%s]" % local_scratch_default)
+        if local_scratch.strip() == "":
+            local_scratch = local_scratch_default
+        status, msg = resource_deploy.check_dir_simple(rsh, local_scratch)
         if status:
             log.info(msg)
             log.empty_line()
@@ -557,7 +557,7 @@ def get_file_system_access_points():
             log.warning('local scratch might be have a different location on head node, so if it is by design it is ok')
             log.empty_line()
             break
-    localScratch = akrr.util.ssh.sshCommand(rsh, "echo %s" % (localScratch,)).strip()
+    local_scratch = akrr.util.ssh.ssh_command(rsh, "echo %s" % (local_scratch,)).strip()
     # networkScratch
     network_scratch_default = ""
     if scratch_network_dir != "":
@@ -587,7 +587,7 @@ def get_file_system_access_points():
         else:
             log.warning(msg)
             break
-    networkScratch = akrr.util.ssh.sshCommand(rsh, "echo %s" % (networkScratch,)).strip()
+    networkScratch = akrr.util.ssh.ssh_command(rsh, "echo %s" % (networkScratch,)).strip()
     # appKerDir
     appker_dir_default = os.path.join(home_dir, "appker", resource_name)
     while True:
@@ -602,7 +602,7 @@ def get_file_system_access_points():
             break
         else:
             log.error(msg)
-    appKerDir = akrr.util.ssh.sshCommand(rsh, "echo %s" % (appKerDir,)).strip()
+    appKerDir = akrr.util.ssh.ssh_command(rsh, "echo %s" % (appKerDir,)).strip()
     # akrr_data
     akrr_data_default = os.path.join(home_dir, "akrr_data", resource_name)
     if network_scratch_visible:
@@ -620,7 +620,7 @@ def get_file_system_access_points():
             break
         else:
             log.error(msg)
-    akrr_data = akrr.util.ssh.sshCommand(rsh, "echo %s" % (akrr_data,)).strip()
+    akrr_data = akrr.util.ssh.ssh_command(rsh, "echo %s" % (akrr_data,)).strip()
 
 
 def resource_add(config):
@@ -636,14 +636,14 @@ def resource_add(config):
     global minimalistic
     global resource_name
     global remoteAccessNode
-    global remoteAccessMethod
-    global remoteCopyMethod
-    global sshUserName
-    global sshPassword
-    global sshPrivateKeyFile
-    global sshPrivateKeyPassword
+    global remote_access_method
+    global remote_copy_method
+    global ssh_username
+    global ssh_password
+    global ssh_private_key_file
+    global ssh_private_key_password
     global networkScratch
-    global localScratch
+    global local_scratch
     global akrr_data
     global appKerDir
     global batchScheduler
@@ -719,14 +719,14 @@ def resource_add(config):
     log.debug("Summary of parameters" +
               "resource_name: {}".format(resource_name) +
               "remoteAccessNode: {}".format(remoteAccessNode) +
-              "remoteAccessMethod: {}".format(remoteAccessMethod) +
-              "remoteCopyMethod: {}".format(remoteCopyMethod) +
-              "sshUserName: {}".format(sshUserName) +
-              "sshPassword: {}".format(sshPassword) +
-              "sshPrivateKeyFile: {}".format(sshPrivateKeyFile) +
-              "sshPrivateKeyPassword: {}".format(sshPrivateKeyPassword) +
+              "remote_access_method: {}".format(remote_access_method) +
+              "remote_copy_method: {}".format(remote_copy_method) +
+              "ssh_username: {}".format(ssh_username) +
+              "ssh_password: {}".format(ssh_password) +
+              "ssh_private_key_file: {}".format(ssh_private_key_file) +
+              "ssh_private_key_password: {}".format(ssh_private_key_password) +
               "networkScratch: {}".format(networkScratch) +
-              "localScratch: {}".format(localScratch) +
+              "local_scratch: {}".format(local_scratch) +
               "akrr_data: {}".format(akrr_data) +
               "appKerDir: {}".format(appKerDir) +
               "batchScheduler: {}".format(batchScheduler) +

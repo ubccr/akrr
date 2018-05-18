@@ -27,44 +27,44 @@ def CheckDirSimple(sh, d):
     from . import cfg
     dir(sh)
     cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
-    msg = akrr.util.ssh.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     if msg.find("DOESNOTEXIST") >= 0:
-        return None, "Directory %s:%s does not exists!" % (sh.remotemachine, d)
+        return None, "Directory %s:%s does not exists!" % (sh.remote_machine, d)
 
     cmd = "echo test > " + os.path.join(d, 'akrrtestwrite')
     # print cmd
-    msg = akrr.util.ssh.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     cmd = "cat " + os.path.join(d, 'akrrtestwrite')
     # print cmd
-    msg = akrr.util.ssh.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     if msg.strip() == "test":
         cmd = "rm " + os.path.join(d, 'akrrtestwrite')
-        akrr.util.ssh.sshCommand(sh, cmd)
+        akrr.util.ssh.ssh_command(sh, cmd)
         return True, "Directory exist and accessible for read/write"
     else:
-        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d)
+        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d)
 
 
 def CheckDir(sh, d, exitOnFail=True, tryToCreate=True):
     from . import cfg
     status, msg = CheckDirSimple(sh, d)
     if tryToCreate == True and status == None:
-        log.info("Directory %s:%s does not exists, will try to create it" % (sh.remotemachine, d))
+        log.info("Directory %s:%s does not exists, will try to create it" % (sh.remote_machine, d))
         cmd = "mkdir \"%s\"" % (d)
-        akrr.util.ssh.sshCommand(sh, cmd)
+        akrr.util.ssh.ssh_command(sh, cmd)
         status, msg = CheckDirSimple(sh, d)
     if exitOnFail is False:
         return status, msg
 
     if status is None:
-        log.error("Directory %s:%s does not exists!", sh.remotemachine, d)
+        log.error("Directory %s:%s does not exists!", sh.remote_machine, d)
         exit(1)
     elif status is True:
         return True, msg
     else:
-        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remotemachine, d)
+        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remote_machine, d)
         exit(1)
 
 
@@ -162,14 +162,14 @@ def app_validate(resource, appkernel, nnodes):
     # connect to resource
     log.info("#" * 80)
     log.info("Validating resource accessibility. Connecting to %s." % (resource['name']))
-    if resource['sshPrivateKeyFile'] != None and os.path.isfile(resource['sshPrivateKeyFile']) == False:
-        log.error("Can not access ssh private key (%s)""" % (resource['sshPrivateKeyFile'],))
+    if resource['ssh_private_key_file'] != None and os.path.isfile(resource['ssh_private_key_file']) == False:
+        log.error("Can not access ssh private key (%s)""" % (resource['ssh_private_key_file'],))
         exit(1)
 
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = akrr.util.ssh.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -210,7 +210,7 @@ def app_validate(resource, appkernel, nnodes):
         warningCount += 1
     log.info("")
 
-    d = resource['localScratch']
+    d = resource['local_scratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = CheckDir(rsh, d, exitOnFail=False, tryToCreate=False)
     if status == True:

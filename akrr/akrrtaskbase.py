@@ -233,7 +233,7 @@ class akrrTaskHandlerBase:
     #            wE=waitExprs[self.resource['batchScheduler']]
     #            cmd =Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
     #            rege=Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
-    #            msg=akrrcfg.sshResource(self.resource,cmd)
+    #            msg=akrrcfg.ssh_resource(self.resource,cmd)
     #            matchObj= wE[1](rege,msg,wE[3])
     #            if matchObj:
     #                print "Still in queue. Either waiting or running"
@@ -320,7 +320,7 @@ class akrrTaskHandlerBase:
             raise IOError("can not remove remote task folder. The folder should be in akrr_data")
 
         print("removing remote task folder:\n\t%s" % (self.remoteTaskDir))
-        msg = akrr.util.ssh.sshResource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))
+        msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))
         print(msg)
 
     def WriteErrorXML(self, filename, bCDATA=False):

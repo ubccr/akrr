@@ -33,33 +33,33 @@ def check_dir_simple(sh, d):
     """
     dir(sh)
     cmd = "if [ -d \"%s\" ]\n then \n echo EXIST\n else echo DOES_NOT_EXIST\n fi" % (d,)
-    msg = akrr.util.ssh.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     if msg.find("DOES_NOT_EXIST") >= 0:
-        return None, "Directory %s:%s does not exists!" % (sh.remotemachine, d)
+        return None, "Directory %s:%s does not exists!" % (sh.remote_machine, d)
 
     cmd = "echo test > " + os.path.join(d, 'akrr_test_write')
     # print cmd
-    akrr.util.ssh.sshCommand(sh, cmd)
+    akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     cmd = "cat " + os.path.join(d, 'akrr_test_write')
     # print cmd
-    msg = akrr.util.ssh.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     if msg.strip() == "test":
         cmd = "rm " + os.path.join(d, 'akrr_test_write')
-        akrr.util.ssh.sshCommand(sh, cmd)
+        akrr.util.ssh.ssh_command(sh, cmd)
         return True, "Directory exist and accessible for read/write"
     else:
-        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d)
+        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d)
 
 
 def check_dir(sh, d, exit_on_fail=True, try_to_create=True):
     status, msg = check_dir_simple(sh, d)
     if try_to_create is True and status is None:
-        log.info("Directory %s:%s does not exists, will try to create it", sh.remotemachine, d)
+        log.info("Directory %s:%s does not exists, will try to create it", sh.remote_machine, d)
         if not dry_run:
             cmd = "mkdir -p \"%s\"" % (d,)
-            akrr.util.ssh.sshCommand(sh, cmd)
+            akrr.util.ssh.ssh_command(sh, cmd)
             status, msg = check_dir_simple(sh, d)
         else:
             status, msg = (True, "Directory exist and accessible for read/write")
@@ -67,12 +67,12 @@ def check_dir(sh, d, exit_on_fail=True, try_to_create=True):
         return status, msg
 
     if status is None:
-        log.error("Directory %s:%s does not exists!", sh.remotemachine, d)
+        log.error("Directory %s:%s does not exists!", sh.remote_machine, d)
         exit()
     elif status is True:
         return True, msg
     else:
-        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remotemachine, d)
+        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remote_machine, d)
         exit()
 
 
@@ -142,7 +142,7 @@ def validate_resource_parameter_file(resource_name):
     # format: key,type,can be None,must have parameter
     parameters_types = [
         ['info', str, False, False],
-        ['localScratch', str, False, True],
+        ['local_scratch', str, False, True],
         ['batchJobTemplate', str, False, True],
         ['remoteAccessNode', str, False, True],
         ['name', str, False, False],
@@ -150,13 +150,13 @@ def validate_resource_parameter_file(resource_name):
         ['networkScratch', str, False, True],
         ['ppn', int, False, True],
         # ['akrrStartAppKerTemplate',      types.StringType,       False,True],
-        ['remoteCopyMethod', str, False, True],
-        ['sshUserName', str, False, True],
-        ['sshPassword', str, True, False],
-        ['sshPrivateKeyFile', str, True, False],
-        ['sshPrivateKeyPassword', str, True, False],
+        ['remote_copy_method', str, False, True],
+        ['ssh_username', str, False, True],
+        ['ssh_password', str, True, False],
+        ['ssh_private_key_file', str, True, False],
+        ['ssh_private_key_password', str, True, False],
         ['batchScheduler', str, False, True],
-        ['remoteAccessMethod', str, False, True],
+        ['remote_access_method', str, False, True],
         ['appKerDir', str, False, True],
         ['akrrCommonCleanupTemplate', str, False, True],
         # ['nodeListSetterTemplate',      types.StringType,       False,True],
@@ -186,14 +186,14 @@ def validate_resource_parameter_file(resource_name):
 def connect_to_resource(resource):
     """connect to resource defined in resource dictionary"""
     log.info("Validating resource accessibility. Connecting to %s.", resource['name'])
-    if resource['sshPrivateKeyFile'] is not None and os.path.isfile(resource['sshPrivateKeyFile']) is False:
-        log.error("Can not access ssh private key (%s)""", resource['sshPrivateKeyFile'])
+    if resource['ssh_private_key_file'] is not None and os.path.isfile(resource['ssh_private_key_file']) is False:
+        log.error("Can not access ssh private key (%s)""", resource['ssh_private_key_file'])
         exit(1)
 
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = akrr.util.ssh.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -212,7 +212,7 @@ def connect_to_resource(resource):
 
 def check_shell(rsh, resource):
     log.info("Checking if shell is BASH\n")
-    msg = akrr.util.ssh.sshCommand(rsh, "echo $BASH")
+    msg = akrr.util.ssh.ssh_command(rsh, "echo $BASH")
     if msg.count("bash") > 0:
         log.info("Shell is BASH\n")
     else:
@@ -247,7 +247,7 @@ def check_create_dirs(rsh, resource):
             "so if it is by design it is ok",
             log.warning_count)
 
-    d = resource['localScratch']
+    d = resource['local_scratch']
     log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status is True:
@@ -271,21 +271,21 @@ def copy_exec_sources_and_inputs(rsh, resource):
         "    HPCC, IMB, IOR and Graph500 source code to remote resource\n")
 
     try:
-        akrr.util.ssh.sshCommand(rsh, "cd %s" % resource['appKerDir'])
-        out = akrr.util.ssh.sshCommand(rsh, "ls " + resource['appKerDir'])
+        akrr.util.ssh.ssh_command(rsh, "cd %s" % resource['appKerDir'])
+        out = akrr.util.ssh.ssh_command(rsh, "ls " + resource['appKerDir'])
         files_in_appker_dir = out.strip().split()
 
         if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
             log.info("Copying app. kernel input tarball to %s", resource['appKerDir'])
             if not dry_run:
-                akrr.util.ssh.scpToResource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
 
             log.info("Unpacking app. kernel input files to %s/inputs", resource['appKerDir'])
             if not dry_run:
-                out = akrr.util.ssh.sshCommand(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
-                out = akrr.util.ssh.sshCommand(rsh, "du -h %s/inputs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "du -h %s/inputs" % resource['appKerDir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
@@ -302,14 +302,14 @@ def copy_exec_sources_and_inputs(rsh, resource):
                 "Copying app. kernel execs tarball to %s\n" % (resource['appKerDir']) +
                 "It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
             if not dry_run:
-                akrr.util.ssh.scpToResource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
             log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs",
                      resource['appKerDir'])
             if not dry_run:
-                out = akrr.util.ssh.sshCommand(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
-                out = akrr.util.ssh.sshCommand(rsh, "df -h %s/execs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "df -h %s/execs" % resource['appKerDir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
@@ -323,7 +323,7 @@ def copy_exec_sources_and_inputs(rsh, resource):
                         log.warning_count, resource['appKerDir'])
             log.warning("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
 
-        akrr.util.ssh.sshCommand(rsh, "rm execs.tar.gz  inputs.tar.gz")
+        akrr.util.ssh.ssh_command(rsh, "rm execs.tar.gz  inputs.tar.gz")
     except Exception as e:
         log.critical("Can not copy files to %s", resource['name'])
         raise e
@@ -331,7 +331,7 @@ def copy_exec_sources_and_inputs(rsh, resource):
 
 def check_appsig(rsh, resource):
     log.info("Testing app.signature calculator on headnode\n")
-    out = akrr.util.ssh.sshCommand(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appKerDir'],))
+    out = akrr.util.ssh.ssh_command(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appKerDir'],))
     if out.count("===ExeBinSignature===") > 0 and out.count("MD5:") > 0:
         log.info("App.signature calculator is working on headnode\n")
     else:
@@ -629,12 +629,12 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = akrr.util.ssh.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
 
         number_of_unknown_hosts = 0
         for node in set(nodes):
             log.debug2(node)
-            out = akrr.util.ssh.sshCommand(rsh, "ping -c 1 %s" % node)
+            out = akrr.util.ssh.ssh_command(rsh, "ping -c 1 %s" % node)
             if out.count("unknown host") > 0:
                 number_of_unknown_hosts += 1
 
@@ -700,10 +700,10 @@ def append_to_bashrc(resource):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = akrr.util.ssh.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
         akrr_header = 'AKRR Remote Resource Environment Variables'
 
-        out = akrr.util.ssh.sshCommand(rsh, '''if [ -e $HOME/.bashrc ]
+        out = akrr.util.ssh.ssh_command(rsh, '''if [ -e $HOME/.bashrc ]
 then
    if [[ `grep "\#''' + akrr_header + ''' \[Start\]" $HOME/.bashrc` == *"''' + akrr_header + ''' [Start]"* ]]
    then
@@ -714,11 +714,11 @@ then
    fi
 fi''')
         log.debug2(out)
-        out = akrr.util.ssh.sshCommand(rsh, '''
+        out = akrr.util.ssh.ssh_command(rsh, '''
 echo "Appending AKRR records to $HOME/.bashrc"
 echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
 echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['networkScratch'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['localScratch'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_APPKER_DIR=\\"''' + resource['appKerDir'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc
 echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
