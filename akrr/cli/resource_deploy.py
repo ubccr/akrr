@@ -11,6 +11,7 @@ import pprint
 import MySQLdb
 import requests
 
+import akrr.db
 import akrr.util.ssh
 from akrr import cfg
 from akrr import akrrrestclient
@@ -743,7 +744,7 @@ def enable_resource_for_execution(resource):
         return
     resource_name = resource['name']
     try:
-        con_ak, cur_ak = cfg.getAKDB(True)
+        con_ak, cur_ak = akrr.db.get_ak_db(True)
 
         cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
         resource_in_ak_db = cur_ak.fetchall()

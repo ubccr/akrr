@@ -13,6 +13,8 @@ import logging as log
 
 import bottle
 from bottle import response, request
+
+import akrr.db
 from . import bottle_api_json_formatting
 
 import MySQLdb
@@ -278,7 +280,7 @@ def get_scheduled_tasks():
 
     query = query + " ORDER BY time_to_start ASC"
 
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute(query)
     tasks = cur.fetchall()
 
@@ -294,7 +296,7 @@ def get_scheduled_task(task_id):
     """
     Retrieve scheduled tasks.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
@@ -320,7 +322,7 @@ def update_scheduled_tasks(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -377,7 +379,7 @@ def delete_scheduled_task_by_id(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -424,7 +426,7 @@ def get_all_active_tasks():
     """
     Retrieve tasks from active_tasks queue.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS''')
     task = cur.fetchall()
@@ -441,7 +443,7 @@ def get_active_tasks(task_id):
     """
     Retrieve task from active_tasks queue.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
@@ -489,7 +491,7 @@ def update_active_tasks(task_id):
                                                                          "%Y-%m-%d %H:%M:%S"))
 
     # get task
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
@@ -527,7 +529,7 @@ def delete_active_tasks(task_id):
     delete task from active_tasks queue.
     """
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM ACTIVETASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -578,7 +580,7 @@ def get_completed_tasks(task_id):
     """
     Retrieve task from completed_tasks.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM COMPLETEDTASKS
             WHERE task_id=%s''', (task_id,))
@@ -699,7 +701,7 @@ def _get_resource_apps(resource, application):
     print(query, parameters)
     rows = None
     try:
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -799,7 +801,7 @@ def _get_resource_app_status(resource, application):
         else ()
     rows = None
     try:
-        connection, cursor = cfg.getAKDB(True)
+        connection, cursor = akrr.db.get_ak_db(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -870,7 +872,7 @@ def get_resources():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -958,7 +960,7 @@ def get_kernels():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1077,7 +1079,7 @@ def _turn_resource_on(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = cfg.getDB()
+        connection, cursor = akrr.db.get_akrr_db()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1104,7 +1106,7 @@ def _does_resource_app_kernel_exist(resource, app_kernel):
     :return: true if there is a record relating them, false if not
     """
 
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     with db:
         cur.execute("""
         SELECT 1
@@ -1128,7 +1130,7 @@ def _resource_exists(resource):
     :param resource:   the resource to check.
     :return: true if it exists, false if it doesn't
     """
-    connection, cursor = cfg.getDB(True)
+    connection, cursor = akrr.db.get_akrr_db(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.resources R WHERE R.name = %s
@@ -1144,7 +1146,7 @@ def _app_kernel_exists(app_kernel):
     :param app_kernel:
     :return: True if it exists, false if it doesn't
     """
-    connection, cursor = cfg.getDB(True)
+    connection, cursor = akrr.db.get_akrr_db(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.app_kernels AK WHERE AK.name = %s
@@ -1248,7 +1250,7 @@ def _turn_resource_off(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = cfg.getDB()
+        connection, cursor = akrr.db.get_akrr_db()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1314,7 +1316,7 @@ def get_walltime_all():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1345,7 +1347,7 @@ def get_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1405,7 +1407,7 @@ def upsert_walltime(resource, app):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1476,7 +1478,7 @@ def get_walltime_by_resource_app(resource, app):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1529,7 +1531,7 @@ def update_walltime_by_id(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1568,7 +1570,7 @@ def delete_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:

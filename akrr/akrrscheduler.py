@@ -1,3 +1,4 @@
+import akrr.db
 import akrr.util.time
 from . import cfg
 from . import akrrtask
@@ -31,7 +32,7 @@ class akrrScheduler:
         # rest api process
         self.restapi_proc = None
         # load Scheduled Tasks DB
-        self.dbCon, self.dbCur = cfg.getDB()
+        self.dbCon, self.dbCur = akrr.db.get_akrr_db()
 
         # Sanitizing
         if not AddingNewTasks:
@@ -614,7 +615,7 @@ class akrrScheduler:
             self.dbCur.execute('''SELECT task_id,statusupdatetime,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,resource_param,app_param,task_param,group_id 
                         FROM ACTIVETASKS;''')
 
-            db, cur = cfg.getExportDB()
+            db, cur = akrr.db.get_akrr_db()
             change = False
 
             for row in self.dbCur.fetchall():
@@ -654,7 +655,7 @@ class akrrScheduler:
                 time.sleep(10)
 
             log.info("Trying to reconnect to DB.")
-            self.dbCon, self.dbCur = cfg.getDB()
+            self.dbCon, self.dbCur = akrr.db.get_akrr_db()
             attemptsToReconnect += 1
 
     def runLoop(self):
@@ -857,7 +858,7 @@ class akrrScheduler:
 
         tasks = self.dbCur.fetchall()
 
-        db, cur = cfg.getExportDB()
+        db, cur = akrr.db.get_akrr_db()
         if Verbose: print("#" * 120)
         for row in tasks:
             (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
@@ -1537,7 +1538,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
     removeFromScheduledQueue=True and removeFromActiveQueue=True and removeDerivedTask=True
     remove this and all derivative tasks from scheduled or active queue
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
@@ -1650,7 +1651,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     """
     print("Akrr Update Task Parameters: %r" % (task_id,))
 
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM SCHEDULEDTASKS
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()

@@ -12,6 +12,7 @@ This script will perform the following steps:
 import sys
 import MySQLdb
 
+import akrr.db
 from akrr.util import log
 
 
@@ -333,7 +334,7 @@ INSERT INTO `akrr_err_regexp` VALUES
     connection_function=None
     if not dry_run:
         from akrr import cfg
-        connection_function=cfg.getDB
+        connection_function= akrr.db.get_akrr_db
         
     create_and_populate_tables(
         default_tables,
@@ -766,7 +767,7 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     connection_function=None
     if not dry_run:
         from akrr import cfg
-        connection_function=cfg.getAKDB
+        connection_function= akrr.db.get_ak_db
     
     create_and_populate_tables(
         default_tables,

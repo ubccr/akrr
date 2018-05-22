@@ -1,3 +1,4 @@
+import akrr.db
 import akrr.util
 import akrr.util.log
 import akrr.util.ssh
@@ -31,7 +32,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         return self.CheckIfSubtasksCreatedJobScripts()
 
     def GetSubTaskInfo(self):
-        db, cur = cfg.getDB()
+        db, cur = akrr.db.get_akrr_db()
 
         cur.execute('''SELECT task_id,status,datetimestamp,resource,app,task_param FROM ACTIVETASKS
                     WHERE task_param LIKE %s AND task_param LIKE '%%masterTaskID%%'
@@ -116,7 +117,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             # get walltime from DB
             dbdefaults = {}
             try:
-                db, cur = cfg.getDB()
+                db, cur = akrr.db.get_akrr_db()
 
                 cur.execute('''SELECT resource,app,resource_param,app_param FROM ACTIVETASKS
                 WHERE task_id=%s ;''', (self.task_id,))
@@ -259,7 +260,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                                                   os.path.join(self.taskDir, "jobfiles"), "-r")
 
             # update DB time_submitted_to_queue
-            db, cur = cfg.getDB()
+            db, cur = akrr.db.get_akrr_db()
 
             cur.execute('''UPDATE ACTIVETASKS
             SET time_submitted_to_queue=%s
@@ -303,7 +304,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         # stack the subtasks
         subTaskInfo = self.GetSubTaskInfo()
 
-        db, cur = cfg.getDB()
+        db, cur = akrr.db.get_akrr_db()
 
         for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
             cur.execute('''UPDATE ACTIVETASKS
@@ -522,7 +523,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
 
     def PushToDB(self, Verbose=True):
 
-        db, cur = cfg.getExportDB()
+        db, cur = akrr.db.get_akrr_db()
         try:
 
             time_finished = None

@@ -8,6 +8,7 @@ import getpass
 import io
 import re
 
+import akrr.db
 import akrr.util.ssh
 from akrr import cfg
 from akrr.util import log
@@ -60,7 +61,7 @@ def retrieve_resources_from_xdmod():
     Retrieve the applicable contents of the `modw`.`resourcefact` table.
     :return: a tuple of strings containing the name of the resources.
     """
-    con, cur = cfg.getXDDB()
+    con, cur = akrr.db.get_xd_db()
 
     if con is None:
         # i.e. AKRR running without modw
@@ -133,7 +134,7 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
     create_resource_config(file_path, queuing_system)
 
     # add entry to mod_appkernel.resource
-    con_ak, cur_ak = cfg.getAKDB(True)
+    con_ak, cur_ak = akrr.db.get_ak_db(True)
 
     cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
     resource_in_ak_db = cur_ak.fetchall()
@@ -151,7 +152,7 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
     else:
         resource_id_in_ak_db = 123
     # add entry to mod_akrr.resource
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM resources WHERE name=%s''', (m_resource_name,))
     resource_in_db = cur.fetchall()
@@ -191,7 +192,7 @@ def validate_resource_name(m_resource_name):
         return False
 
     # check the entry in mod_appkernel
-    con_ak, cur_ak = cfg.getAKDB(True)
+    con_ak, cur_ak = akrr.db.get_ak_db(True)
 
     cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
     resource_in_ak_db = cur_ak.fetchall()
@@ -201,7 +202,7 @@ def validate_resource_name(m_resource_name):
         return False
 
     # check the entry in mod_akrr
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
     cur.execute('''SELECT * FROM resources WHERE name=%s''', (m_resource_name,))
     resource_in_db = cur.fetchall()

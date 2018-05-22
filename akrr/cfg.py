@@ -5,9 +5,6 @@ AKRR configuration
 import os
 import re
 
-import MySQLdb
-import MySQLdb.cursors
-
 from akrr import get_akrr_dirs
 
 from .util import log
@@ -31,26 +28,25 @@ templates_dir = akrr_dirs['templates_dir']
 default_dir = akrr_dirs['default_dir']
 appker_repo_dir = akrr_dirs['appker_repo_dir']
 
-# load akrr parameters
-with open(cfg_dir + "/akrr.conf", "r") as file_in:
-    exec(file_in.read())
 
-# set default values for unset variables
-# make absolute paths from relative
-if data_dir[0] != '/':
-    data_dir = os.path.abspath(os.path.join(cfg_dir, data_dir))
-if completed_tasks_dir[0] != '/':
-    completed_tasks_dir = os.path.abspath(os.path.join(cfg_dir, completed_tasks_dir))
+def verify_akrr_conf():
+    """
+    Verify akrr.conf parameters
+    """
+    import warnings
+    removed_parameters = [
+        "export_db_host",
+        "export_db_port",
+        "export_db_user",
+        "export_db_passwd",
+        "export_db_name"
+    ]
+    for param in removed_parameters:
+        if param in globals():
+            warnings.warn("Parameter {} was removed from akrr.conf".format(param), DeprecationWarning)
 
-if restapi_certfile != '/':
-    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
 
-###################################################################################################
-#
 # Resources Config Routines
-#
-###################################################################################################
-resources = {}
 
 
 def verify_resource_params(resource: dict) -> dict:
@@ -80,8 +76,10 @@ def verify_resource_params(resource: dict) -> dict:
 
     for old_key, new_key in renamed_parameters:
         if old_key in resource:
-            resource[new_key] = resource.pop(old_key)
+            resource[new_key] = resource[old_key]
             warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
+
+    # @todo check string templates for deprecated variables
     
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
@@ -207,9 +205,7 @@ def find_resource_by_name(resource_name):
     return resources[resource_name]
 
 
-###################################################################################################
 # App Kernels Config Routines
-apps = {}
 
 
 def verify_app_params(app):
@@ -373,6 +369,22 @@ def print_out_resource_and_app_summary():
     log.info(msg)
 
 
+# load akrr parameters
+with open(cfg_dir + "/akrr.conf", "r") as file_in:
+    exec(file_in.read())
+
+verify_akrr_conf()
+
+# set default values for unset variables
+# make absolute paths from relative
+if data_dir[0] != '/':
+    data_dir = os.path.abspath(os.path.join(cfg_dir, data_dir))
+if completed_tasks_dir[0] != '/':
+    completed_tasks_dir = os.path.abspath(os.path.join(cfg_dir, completed_tasks_dir))
+
+if restapi_certfile != '/':
+    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
+
 # check rest-api certificate
 if not os.path.isfile(restapi_certfile):
     # assuming it is relative to akrr.conf file
@@ -380,51 +392,8 @@ if not os.path.isfile(restapi_certfile):
 if not os.path.isfile(restapi_certfile):
     raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
 
-
+resources = {}
 load_all_resources()
 
+apps = {}
 load_all_app()
-
-
-def getDB(dictCursor=False):
-    if dictCursor:
-        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
-                             passwd=akrr_db_passwd, db=akrr_db_name, cursorclass=MySQLdb.cursors.DictCursor)
-    else:
-        db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
-                             passwd=akrr_db_passwd, db=akrr_db_name)
-    cur = db.cursor()
-    return db, cur
-
-
-def getAKDB(dictCursor=False):
-    if dictCursor:
-        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
-                             passwd=ak_db_passwd, db=ak_db_name, cursorclass=MySQLdb.cursors.DictCursor)
-    else:
-        db = MySQLdb.connect(host=ak_db_host, port=ak_db_port, user=ak_db_user,
-                             passwd=ak_db_passwd, db=ak_db_name)
-    cur = db.cursor()
-    return db, cur
-
-
-def getXDDB(dictCursor=False):
-    if dictCursor:
-        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
-                             passwd=xd_db_passwd, db=xd_db_name, cursorclass=MySQLdb.cursors.DictCursor)
-    else:
-        db = MySQLdb.connect(host=xd_db_host, port=xd_db_port, user=xd_db_user,
-                             passwd=xd_db_passwd, db=xd_db_name)
-    cur = db.cursor()
-    return db, cur
-
-
-def getExportDB(dictCursor=False):
-    if dictCursor:
-        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
-                             passwd=export_db_passwd, db=export_db_name, cursorclass=MySQLdb.cursors.DictCursor)
-    else:
-        db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
-                             passwd=export_db_passwd, db=export_db_name)
-    cur = db.cursor()
-    return db, cur

@@ -10,6 +10,8 @@ import sys
 import traceback
 
 #Set proper path for stand alone test runs
+import akrr.db
+
 if __name__ == "__main__":
     sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../..'))
 
@@ -52,7 +54,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     totalSubtasks=0
     successfulSubtasks=0
     try:
-        db,cur=akrr.cfg.getExportDB()
+        db,cur= akrr.db.get_akrr_db()
         
         for subTaskId in appKerNResVars['subTasksId']:
             cur.execute('''SELECT instance_id,status FROM akrr_xdmod_instanceinfo

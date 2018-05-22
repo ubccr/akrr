@@ -11,6 +11,7 @@ import pprint
 import json
 import xml.etree.ElementTree as ET
 
+import akrr.db
 import akrr.util.ssh
 from akrr.util import log
 
@@ -136,7 +137,7 @@ def app_validate(resource, appkernel, nnodes):
     # check if AK is in DB
     if True:
         # add entry to mod_appkernel.resource
-        dbAK, curAK = cfg.getAKDB(True)
+        dbAK, curAK = akrr.db.get_ak_db(True)
 
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()
@@ -148,7 +149,7 @@ def app_validate(resource, appkernel, nnodes):
         curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
         ak_in_AKDB = curAK.fetchall()[0]
         # add entry to mod_akrr.resource
-        db, cur = cfg.getDB(True)
+        db, cur = akrr.db.get_akrr_db(True)
 
         cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
         ak_in_DB = cur.fetchall()
@@ -413,7 +414,7 @@ def app_validate(resource, appkernel, nnodes):
                 exit(1)
             if True:
                 # add entry to mod_appkernel.resource
-                dbAK, curAK = cfg.getAKDB(True)
+                dbAK, curAK = akrr.db.get_ak_db(True)
 
                 curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
                 ak_in_AKDB = curAK.fetchall()
@@ -425,7 +426,7 @@ def app_validate(resource, appkernel, nnodes):
                 curAK.execute('''UPDATE app_kernel_def SET enabled=1,visible=1  WHERE ak_base_name=%s''', (app_name,))
                 dbAK.commit()
                 # add entry to mod_akrr.resource
-                db, cur = cfg.getDB(True)
+                db, cur = akrr.db.get_akrr_db(True)
 
                 cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
                 ak_in_DB = cur.fetchall()

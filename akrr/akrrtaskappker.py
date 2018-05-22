@@ -1,3 +1,4 @@
+import akrr.db
 import akrr.util
 import akrr.util.log
 import akrr.util.ssh
@@ -35,7 +36,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         # get walltime from DB
         dbdefaults = {}
         try:
-            db, cur = cfg.getDB()
+            db, cur = akrr.db.get_akrr_db()
 
             cur.execute('''SELECT resource,app,resource_param,app_param FROM ACTIVETASKS
             WHERE task_id=%s ;''', (self.task_id,))
@@ -81,7 +82,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                         autoWalltimeLimitOverhead = batchvars['autoWalltimeLimitOverhead'] + 1.0
                     # query last 20 executions of this appkernel on that resource with that node count
 
-                    db, cur = cfg.getDB(True)
+                    db, cur = akrr.db.get_akrr_db(True)
 
                     cur.execute('''SELECT resource,reporter,reporternickname,collected,status,walltime FROM akrr_xdmod_instanceinfo
                         WHERE  `resource`=%s AND `reporternickname` =  %s
@@ -271,7 +272,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                                                   os.path.join(self.taskDir, "jobfiles"), "-r")
 
             # update DB time_submitted_to_queue
-            db, cur = cfg.getDB()
+            db, cur = akrr.db.get_akrr_db()
 
             cur.execute('''UPDATE ACTIVETASKS
             SET time_submitted_to_queue=%s
@@ -621,7 +622,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
 
     def PushToDB(self, Verbose=True):
 
-        db, cur = cfg.getExportDB()
+        db, cur = akrr.db.get_akrr_db()
         try:
 
             time_finished = None
