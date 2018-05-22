@@ -47,13 +47,13 @@ if restapi_certfile != '/':
 
 ###################################################################################################
 #
-# Load Resources
+# Resources Config Routines
 #
 ###################################################################################################
 resources = {}
 
 
-def verify_resource_params(resource: dict):
+def verify_resource_params(resource: dict) -> dict:
     """
     Perform simplistic resource parameters validation
     raises TypeError or NameError on problems
@@ -207,21 +207,8 @@ def find_resource_by_name(resource_name):
     return resources[resource_name]
 
 
-load_all_resources()
 ###################################################################################################
-# check rest-api certificate
-#
-if not os.path.isfile(restapi_certfile):
-    # assuming it is relative to akrr.conf file
-    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
-if not os.path.isfile(restapi_certfile):
-    raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
-
-###################################################################################################
-#
-# Load App Kernels
-#
-###################################################################################################
+# App Kernels Config Routines
 apps = {}
 
 
@@ -373,9 +360,6 @@ def find_app_by_name(app_name):
     return apps[app_name]
 
 
-load_all_app()
-
-
 def print_out_resource_and_app_summary():
     msg = "Resources and app kernels configuration summary:\n"
 
@@ -389,58 +373,17 @@ def print_out_resource_and_app_summary():
     log.info(msg)
 
 
-# SSH remote access
+# check rest-api certificate
+if not os.path.isfile(restapi_certfile):
+    # assuming it is relative to akrr.conf file
+    restapi_certfile = os.path.abspath(os.path.join(cfg_dir, restapi_certfile))
+if not os.path.isfile(restapi_certfile):
+    raise ValueError('Cannot locate SSL certificate for rest-api HTTPS server', restapi_certfile)
 
 
-def replaceATvarAT(s, ds):
-    """ replaces @variable@ by ds[any]['variable'] """
-    d = {}
-    # print "#"*80
-    for di in ds:
-        d.update(di)
-    while s.find("@") >= 0:
-        # print s
-        at1 = s.find("@")
-        at2 = s.find("@", at1 + 1)
-        varname = s[at1 + 1:at2]
-        varvalue = d[varname]
-        # print "#",varname,varvalue
-        s = s.replace("@" + varname + "@", str(varvalue))
-        # print s
-    return s
+load_all_resources()
 
-
-def CleanUnicode(s):
-    if s == None: return None
-
-    if type(s) is bytes:
-        s = s.decode("utf-8")
-
-    replacements = {
-        '\u2018': "'",
-        '\u2019': "'",
-    }
-    for src, dest in replacements.items():
-        s = s.replace(src, dest)
-    return s
-
-
-def formatRecursively(s, d, keepDoubleBrakets=False):
-    s = s.replace('{{', 'LeFtyCurlyBrrakkets')
-    s = s.replace('}}', 'RiGhTyCurlyBrrakkets')
-    s0 = s.format(**d)
-    while s0 != s:
-        s = s0
-        s = s.replace('{{', 'LeFtyCurlyBrrakkets')
-        s = s.replace('}}', 'RiGhTyCurlyBrrakkets')
-        s0 = s.format(**d)
-    if keepDoubleBrakets:
-        s0 = s0.replace('LeFtyCurlyBrrakkets', '{{')
-        s0 = s0.replace('RiGhTyCurlyBrrakkets', '}}')
-    else:
-        s0 = s0.replace('LeFtyCurlyBrrakkets', '{')
-        s0 = s0.replace('RiGhTyCurlyBrrakkets', '}')
-    return s0
+load_all_app()
 
 
 def getDB(dictCursor=False):
@@ -451,7 +394,7 @@ def getDB(dictCursor=False):
         db = MySQLdb.connect(host=akrr_db_host, port=akrr_db_port, user=akrr_db_user,
                              passwd=akrr_db_passwd, db=akrr_db_name)
     cur = db.cursor()
-    return (db, cur)
+    return db, cur
 
 
 def getAKDB(dictCursor=False):
@@ -484,4 +427,4 @@ def getExportDB(dictCursor=False):
         db = MySQLdb.connect(host=export_db_host, port=export_db_port, user=export_db_user,
                              passwd=export_db_passwd, db=export_db_name)
     cur = db.cursor()
-    return (db, cur)
+    return db, cur

@@ -63,3 +63,66 @@ def exec_files_to_dict(*files: str, var_in: dict=None) -> dict:
         with open(f, "r") as file_in:
             exec(file_in.read(), tmp)
     return clear_from_build_in_var(tmp)
+
+
+def clean_unicode(s):
+    if s is None:
+        return None
+
+    if type(s) is bytes:
+        s = s.decode("utf-8")
+
+    replacements = {
+        '\u2018': "'",
+        '\u2019': "'",
+    }
+    for src, dest in replacements.items():
+        s = s.replace(src, dest)
+    return s
+
+
+def format_recursively(s: str, d: dict, keep_double_brackets: bool=False) -> str:
+    """
+    Recursively format sting `s` using dictionary `d` until where are no more substitution.
+    Return resulting string.
+
+    Double curly brackets are escaped, for example "{{variable}}" would be NOT substituted.
+
+    If `keep_double_brackets` set to try at the end all double curly brackets are replaced
+    by single brackets. This is done for creation of batch bash scripts, with bracked used
+    for variables.
+    """
+    s = s.replace('{{', 'LeFtyCurlyBrackets')
+    s = s.replace('}}', 'RiGhTyCurlyBrackets')
+    s0 = s.format(**d)
+    while s0 != s:
+        s = s0
+        s = s.replace('{{', 'LeFtyCurlyBrackets')
+        s = s.replace('}}', 'RiGhTyCurlyBrackets')
+        s0 = s.format(**d)
+    if keep_double_brackets:
+        s0 = s0.replace('LeFtyCurlyBrackets', '{{')
+        s0 = s0.replace('RiGhTyCurlyBrackets', '}}')
+    else:
+        s0 = s0.replace('LeFtyCurlyBrackets', '{')
+        s0 = s0.replace('RiGhTyCurlyBrackets', '}')
+    return s0
+
+
+def replace_at_var_at(s: str, ds: List[dict]):
+    """
+    Replaces @variable@ in string `s` by ds[furthest]['variable'].
+    `ds` is list of dictionaries
+    """
+    d = {}
+    # print "#"*80
+    for di in ds:
+        d.update(di)
+    while s.find("@") >= 0:
+        # print s
+        at1 = s.find("@")
+        at2 = s.find("@", at1 + 1)
+        var_name = s[at1 + 1:at2]
+        var_value = d[var_name]
+        s = s.replace("@" + var_name + "@", str(var_value))
+    return s

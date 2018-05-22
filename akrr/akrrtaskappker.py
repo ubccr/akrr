@@ -1,3 +1,4 @@
+import akrr.util
 import akrr.util.log
 import akrr.util.ssh
 from . import cfg
@@ -151,17 +152,17 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             # set AppKerLauncher
             # if 'runScript' in batchvars:
             #    if self.resource['name'] in batchvars['runScript']:
-            #        batchvars['akrrStartAppKer']=akrrcfg.formatRecursively(batchvars['runScript'][self.resource['name']],batchvars,keepDoubleBrakets=True)
+            #        batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript'][self.resource['name']],batchvars,keepDoubleBrakets=True)
             #    else:
-            #        batchvars['akrrStartAppKer']=akrrcfg.formatRecursively(batchvars['runScript']['default'],batchvars,keepDoubleBrakets=True)
+            #        batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript']['default'],batchvars,keepDoubleBrakets=True)
 
             # process templates
-            batchvars['akrrCommonCommands'] = cfg.formatRecursively(batchvars['akrrCommonCommandsTemplate'], batchvars,
-                                                                    keepDoubleBrakets=True)
-            # batchvars['akrrCommonTests']=akrrcfg.formatRecursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
+            batchvars['akrrCommonCommands'] = akrr.util.format_recursively(batchvars['akrrCommonCommandsTemplate'], batchvars,
+                                                                           keep_double_brackets=True)
+            # batchvars['akrrCommonTests']=akrrcfg.format_recursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
             # batchvars['akrrStartAppKer']=batchvars['akrrStartAppKerTemplate'].format(**batchvars)
-            batchvars['akrrCommonCleanup'] = cfg.formatRecursively(batchvars['akrrCommonCleanupTemplate'], batchvars,
-                                                                   keepDoubleBrakets=True)
+            batchvars['akrrCommonCleanup'] = akrr.util.format_recursively(batchvars['akrrCommonCleanupTemplate'], batchvars,
+                                                                          keep_double_brackets=True)
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write
             if batchvars['requestTwoNodesForOneNodeAppKer'] == True and batchvars[
@@ -171,8 +172,8 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 batchvars2['akrrNNodes'] = 2 * batchvars['akrrNNodes']
                 batchvars2['akrrNCoresToBorder'] = 2 * batchvars['akrrNCoresToBorder']
                 batchvars2['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrrPPN']
-                batchvars['batchJobHeaderTemplate'] = cfg.formatRecursively(batchvars2['batchJobHeaderTemplate'],
-                                                                            batchvars2)
+                batchvars['batchJobHeaderTemplate'] = akrr.util.format_recursively(batchvars2['batchJobHeaderTemplate'],
+                                                                                   batchvars2)
                 pass
 
             # do parameters adjustment
@@ -180,7 +181,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
                 batchvars['process_params'](batchvars)
 
             # generate job script
-            jobScript = cfg.formatRecursively(self.resource["batchJobTemplate"], batchvars)
+            jobScript = akrr.util.format_recursively(self.resource["batchJobTemplate"], batchvars)
             jobScriptFullPath = os.path.join(self.taskDir, "jobfiles", self.JobScriptName)
             fout = open(jobScriptFullPath, "w")
             fout.write(jobScript)
@@ -723,8 +724,8 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             executionhost = self.resource.get('__regexp__', self.resourceName)
             reporter = self.appName
             # reporternickname="%s.%d"%(self.appName,self.resourceParam['ncpus'])
-            reporternickname = cfg.replaceATvarAT(self.app['nickname'],
-                                                  [self.resource, self.app, self.resourceParam, self.appParam])
+            reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
+                                                           [self.resource, self.app, self.resourceParam, self.appParam])
 
             if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
 
@@ -860,9 +861,9 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """
-        message = cfg.CleanUnicode(message)
-        stderr = cfg.CleanUnicode(stderr)
-        body = cfg.CleanUnicode(body)
+        message = akrr.util.clean_unicode(message)
+        stderr = akrr.util.clean_unicode(stderr)
+        body = akrr.util.clean_unicode(body)
 
         # Get Nodes
         nodes = None
@@ -962,10 +963,10 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                 taskexeclogFileContent = taskexeclogFileContent[:int(0.2 * max_allowed_packet)]
                 taskexeclogFileContent += "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
 
-        appstdoutFileContent = cfg.CleanUnicode(appstdoutFileContent)
-        stderrFileContent = cfg.CleanUnicode(stderrFileContent)
-        stdoutFileContent = cfg.CleanUnicode(stdoutFileContent)
-        taskexeclogFileContent = cfg.CleanUnicode(taskexeclogFileContent)
+        appstdoutFileContent = akrr.util.clean_unicode(appstdoutFileContent)
+        stderrFileContent = akrr.util.clean_unicode(stderrFileContent)
+        stdoutFileContent = akrr.util.clean_unicode(stdoutFileContent)
+        taskexeclogFileContent = akrr.util.clean_unicode(taskexeclogFileContent)
 
         if len(raw) > 0:  # .i.e. updating existing entry
             print("Updating", raw)
@@ -980,7 +981,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                 VALUES (%s,%s,%s,%s,%s)""",
                         (instance_id, (appstdoutFileContent), (stderrFileContent), (stdoutFileContent),
                          taskexeclogFileContent))
-        # (instance_id,akrrcfg.CleanUnicode(appstdoutFileContent),akrrcfg.CleanUnicode(stderrFileContent),akrrcfg.CleanUnicode(stdoutFileContent)))
+        # (instance_id,akrrcfg.clean_unicode(appstdoutFileContent),akrrcfg.clean_unicode(stderrFileContent),akrrcfg.clean_unicode(stdoutFileContent)))
 
     def IamDone(self):
         print("Done", self.taskDir)

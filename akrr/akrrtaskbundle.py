@@ -1,3 +1,4 @@
+import akrr.util
 import akrr.util.log
 import akrr.util.ssh
 from . import cfg
@@ -196,23 +197,23 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
                 batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batchScheduler']]
             # set AppKerLauncher
             # if self.resource['name'] in batchvars['runScript']:
-            #    batchvars['akrrStartAppKer']=akrrcfg.formatRecursively(batchvars['runScript'][self.resource['name']],batchvars,keepDoubleBrakets=True)
+            #    batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript'][self.resource['name']],batchvars,keepDoubleBrakets=True)
             # else:
-            #    batchvars['akrrStartAppKer']=akrrcfg.formatRecursively(batchvars['runScript']['default'],batchvars,keepDoubleBrakets=True)
+            #    batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript']['default'],batchvars,keepDoubleBrakets=True)
 
             # process templates
-            batchvars['akrrCommonCommands'] = cfg.formatRecursively(batchvars['akrrCommonCommandsTemplate'], batchvars,
-                                                                    keepDoubleBrakets=True)
-            # batchvars['akrrCommonTests']=akrrcfg.formatRecursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
+            batchvars['akrrCommonCommands'] = akrr.util.format_recursively(batchvars['akrrCommonCommandsTemplate'], batchvars,
+                                                                           keep_double_brackets=True)
+            # batchvars['akrrCommonTests']=akrrcfg.format_recursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
             # batchvars['akrrStartAppKer']=batchvars['akrrStartAppKerTemplate'].format(**batchvars)
-            batchvars['akrrCommonCleanup'] = cfg.formatRecursively(batchvars['akrrCommonCleanupTemplate'], batchvars,
-                                                                   keepDoubleBrakets=True)
+            batchvars['akrrCommonCleanup'] = akrr.util.format_recursively(batchvars['akrrCommonCleanupTemplate'], batchvars,
+                                                                          keep_double_brackets=True)
 
             # do parameters adjustment
             if 'process_params' in batchvars:
                 batchvars['process_params'](batchvars)
             # generate job script
-            jobScript = cfg.formatRecursively(self.resource["batchJobTemplate"], batchvars)
+            jobScript = akrr.util.format_recursively(self.resource["batchJobTemplate"], batchvars)
             fout = open(os.path.join(self.taskDir, "jobfiles", self.JobScriptName), "w")
             fout.write(jobScript)
             fout.close()
@@ -623,8 +624,8 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             executionhost = self.resource.get('__regexp__', self.resourceName)
             reporter = self.appName
             # reporternickname="%s.%d"%(self.appName,self.resourceParam['ncpus'])
-            reporternickname = cfg.replaceATvarAT(self.app['nickname'],
-                                                  [self.resource, self.app, self.resourceParam, self.appParam])
+            reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
+                                                           [self.resource, self.app, self.resourceParam, self.appParam])
 
             if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
 
@@ -753,9 +754,9 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """
-        message = cfg.CleanUnicode(message)
-        stderr = cfg.CleanUnicode(stderr)
-        body = cfg.CleanUnicode(body)
+        message = akrr.util.clean_unicode(message)
+        stderr = akrr.util.clean_unicode(stderr)
+        body = akrr.util.clean_unicode(body)
 
         # Get Nodes
         nodes = None
@@ -829,7 +830,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         VALUES (%s,%s,%s,%s,%s)""",
                     (instance_id, (appstdoutFileContent), (stderrFileContent), (stdoutFileContent),
                      taskexeclogFileContent))
-        # (instance_id,akrrcfg.CleanUnicode(appstdoutFileContent),akrrcfg.CleanUnicode(stderrFileContent),akrrcfg.CleanUnicode(stdoutFileContent)))
+        # (instance_id,akrrcfg.clean_unicode(appstdoutFileContent),akrrcfg.clean_unicode(stderrFileContent),akrrcfg.clean_unicode(stdoutFileContent)))
 
     def IamDone(self):
         print("Done", self.taskDir)
