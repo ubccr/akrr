@@ -22,7 +22,7 @@ import MySQLdb.cursors
 
 
 from . import cfg
-from . import akrrscheduler
+from . import daemon
 from .util import log
 
 
@@ -90,7 +90,7 @@ def validateTaskVariableValue(k, v):
     raise error if value is incorrect
     return value or reformated value"""
     #try:
-    return akrrscheduler.akrrValidateTaskVariableValue(k, v)
+    return daemon.akrrValidateTaskVariableValue(k, v)
     #except Exception as e:
     #    raise e
 
@@ -223,9 +223,9 @@ def create_scheduled_tasks():
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    from . import akrrscheduler
+    from . import daemon
 
-    sch = akrrscheduler.akrrScheduler(AddingNewTasks=True)
+    sch = daemon.AkrrDaemon(AddingNewTasks=True)
     try:
         task_id = sch.addTask(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
                               params['resource_param'], params['app_param'], params['task_param'],
@@ -340,7 +340,7 @@ def update_scheduled_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to update it
             try:
-                akrrscheduler.akrrUpdateTaskParameters(task_id, update_values, updateDerivedTask=True)
+                daemon.akrrUpdateTaskParameters(task_id, update_values, updateDerivedTask=True)
 
                 return {
                     "success": True,
@@ -392,7 +392,7 @@ def delete_scheduled_task_by_id(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                akrrscheduler.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
+                daemon.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
                                              removeDerivedTask=True)
 
                 return {
@@ -542,7 +542,7 @@ def delete_active_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                akrrscheduler.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
+                daemon.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
                                              removeDerivedTask=True)
 
                 return {

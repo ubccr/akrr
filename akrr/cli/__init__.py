@@ -20,8 +20,8 @@ def reprocess_parsed(args):
     time_end = args.time_end
     verbose = args.verbose
 
-    from akrr import akrrscheduler
-    sch = akrrscheduler.akrrScheduler(AddingNewTasks=True)
+    from akrr import daemon
+    sch = daemon.AkrrDaemon(AddingNewTasks=True)
     sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
 
 
@@ -112,7 +112,7 @@ def daemon_handler(args):
         args.append = True
         args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
 
-    import akrr.akrrscheduler
+    import akrr.daemon
 
     if args.action == "startdeb":
         akrr.debug = True
@@ -122,7 +122,7 @@ def daemon_handler(args):
         if args.redirect_task_processing_to_log_file is not None:
             cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
 
-    return akrr.akrrscheduler.akrrd_main2(args.action, args.append, args.output_file)
+    return akrr.daemon.akrrd_main2(args.action, args.append, args.output_file)
 
 
 class CLI:

@@ -1,8 +1,3 @@
-import akrr.db
-import akrr.util.time
-from . import cfg
-from . import akrrtask
-
 import time
 import os
 
@@ -11,23 +6,28 @@ import datetime
 import re
 import multiprocessing
 import signal
-import traceback
 import copy
 import subprocess
 import socket
 
-from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from . import cfg
+import akrr.db
 
+import akrr.util.time
+from .util import log
+from . import akrrtask
+
+from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 from .akrrerror import AkrrError
 
-from .util import log
 
-akrrscheduler = None
-
-import argparse
+akrr_scheduler = None
 
 
-class akrrScheduler:
+class AkrrDaemon:
+    """
+    AkrrDaemon - start task execution
+    """
     def __init__(self, AddingNewTasks=False):
         # rest api process
         self.restapi_proc = None
@@ -1578,9 +1578,9 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
         t0 = datetime.datetime.now()
         while active_task['task_lock'] != 0:
             # i.e. one of child process is working on this task, will wait till it finished
-            if akrrscheduler != None:
+            if akrr_scheduler != None:
                 # i.e. it is master
-                akrrscheduler.runActiveTasks_CheckTheStep()
+                akrr_scheduler.runActiveTasks_CheckTheStep()
 
             cur.execute('''SELECT * FROM ACTIVETASKS
                 WHERE task_id=%s''', (task_id,))
@@ -1946,9 +1946,9 @@ def akrrServerStart():
     # finally
     log.info("Starting Application Remote Runner")
     # akrrcfg.print_out_resource_and_app_summary()
-    global akrrscheduler
-    akrrscheduler = akrrScheduler()
-    akrrscheduler.run()
+    global akrr_scheduler
+    akrr_scheduler = AkrrDaemon()
+    akrr_scheduler.run()
 
     # Iterate through and close all file descriptors.
     for fd in range(maxfd - 1, -1, -1):
@@ -2009,7 +2009,7 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
     time.sleep(1)
 
     try:
-        sch = akrrScheduler()
+        sch = AkrrDaemon()
 
         # check if the task is in SCHEDULEDTASKS
         sch.ScheduledTasksCur.execute('''SELECT * FROM SCHEDULEDTASKS
@@ -2097,10 +2097,10 @@ def akrrd_main2(action='', append=False, output_file=None):
         pid = akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
         if pid != None:
             raise IOError("Can not start AKRR server because another instance is already running.")
-        global akrrscheduler
-        akrrscheduler = akrrScheduler()
-        akrrscheduler.run()
-        del akrrscheduler
+        global akrr_scheduler
+        akrr_scheduler = AkrrDaemon()
+        akrr_scheduler.run()
+        del akrr_scheduler
     else:
         log_file1 = None
         log_file2 = None
@@ -2118,10 +2118,10 @@ def akrrd_main2(action='', append=False, output_file=None):
         elif (action == 'stop'):
             akrrServerStop()
         elif (action == 'monitor'):
-            sch = akrrScheduler()
+            sch = AkrrDaemon()
             sch.monitor()
         elif (action == 'status'):
-            sch = akrrScheduler()
+            sch = AkrrDaemon()
             sch.check_status()
         elif (action == 'checknrestart'):
             akrrServerCheckNRestart()
