@@ -114,9 +114,9 @@ class akrrTaskHandlerBase:
 
         self.oldstatus = "Does not exist"
         self.status = "Activated"
-        self.statusinfo = "Activated"
+        self.status_info = "Activated"
         self.LastPickledState = -1
-        self.FatalErrorsCount = 0
+        self.fatal_errors_count = 0
         self.ToDoNextString = "FirstStep"
         self.oldToDoNextString = "Does not exist"
 
@@ -192,14 +192,14 @@ class akrrTaskHandlerBase:
         print("IamDone", self.taskDir)
         time.sleep(1)
         self.status = "Done"
-        self.statusinfo = "IamDone"
+        self.status_info = "IamDone"
         return None
 
     def FirstStep(self):
         print("IamDone", self.taskDir)
         time.sleep(1)
         self.status = "FirstStep"
-        self.statusinfo = "FirstStep"
+        self.status_info = "FirstStep"
         self.ToDoNextString = "IamDone"
         return datetime.timedelta(days=0, hours=0, minutes=3)
 
@@ -334,7 +334,7 @@ class akrrTaskHandlerBase:
   </batchJob>
  </xdtas>
 </body> 
-""" % (self.status, self.appName, self.statusinfo)
+""" % (self.status, self.appName, self.status_info)
         if bCDATA:
             content = """<body>
  <xdtas>
@@ -346,7 +346,7 @@ class akrrTaskHandlerBase:
   </batchJob>
  </xdtas>
 </body> 
-""" % (self.status, self.appName, self.statusinfo)
+""" % (self.status, self.appName, self.status_info)
         # now lets try to read to parce it
         import xml.etree.ElementTree as ET
         try:
@@ -363,7 +363,7 @@ class akrrTaskHandlerBase:
   </batchJob>
  </xdtas>
 </body> 
-""" % (self.status, self.appName, self.statusinfo)
+""" % (self.status, self.appName, self.status_info)
             try:
                 tree = ET.fromstring(content)
             except:

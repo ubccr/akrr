@@ -23,8 +23,62 @@ from . import akrrtask
 from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 from .akrrerror import AkrrError
 
-
 akrr_scheduler = None
+
+
+class _FakeProcess:
+    def __init__(self):
+        self.exitcode = 0
+        self.is_alive = True
+
+    def join(self, _):
+        self.is_alive = False
+        return
+
+    def is_alive(self):
+        return self.is_alive
+
+
+def _start_the_task_step(resource_name, app_name, time_stamp, results_queue,
+                         fatal_errors_count=0, fails_to_submit_to_the_queue=0):
+    try:
+        # Redirect logging
+        task_dir = akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)
+        if cfg.redirect_task_processing_to_log_file:
+            akrrtask.RedirectStdoutToLog(os.path.join(task_dir, 'proc', 'log'))
+
+        # Do the task
+        th = akrrtask.akrrGetTaskHandler(resource_name, app_name, time_stamp)
+
+        th.fatal_errors_count = fatal_errors_count
+        th.fails_to_submit_to_the_queue = fails_to_submit_to_the_queue
+
+        repeat_in = th.ToDoNext()
+
+        if th.IsStateChanged():
+            akrrtask.akrrDumpTaskHandler(th)
+
+        m_pid = os.getpid()
+        results_queue.put({
+            'pid': m_pid,
+            "status": th.status,
+            "status_info": th.status_info,
+            "repeat_in": repeat_in,
+            "fatal_errors_count": th.fatal_errors_count,
+            "fails_to_submit_to_the_queue": th.fails_to_submit_to_the_queue,
+        })
+
+        # Redirect logging back
+        if cfg.redirect_task_processing_to_log_file:
+            akrrtask.RedirectStdoutBack()
+
+        return 0
+    except Exception as e:
+        log.exception("Exception was thrown during StartTheStep")
+        log.log_traceback(str(e))
+        if akrrtask.log_file is not None:
+            akrrtask.RedirectStdoutBack()
+        return 1
 
 
 class AkrrDaemon:
@@ -65,10 +119,10 @@ class AkrrDaemon:
         """
         Increment fatal error count of task with id `task_id` by `count`
         """
-        self.dbCur.execute('''SELECT FatalErrorsCount FROM ACTIVETASKS WHERE task_id=%s ;''', (task_id,))
+        self.dbCur.execute('''SELECT fatal_errors_count FROM ACTIVETASKS WHERE task_id=%s ;''', (task_id,))
         fatal_errors_count = self.dbCur.fetchall()[0][0]
         fatal_errors_count += count
-        self.dbCur.execute('''UPDATE ACTIVETASKS SET FatalErrorsCount=%s WHERE task_id=%s ;''',
+        self.dbCur.execute('''UPDATE ACTIVETASKS SET fatal_errors_count=%s WHERE task_id=%s ;''',
                            (fatal_errors_count, task_id))
         self.dbCon.commit()
 
@@ -211,101 +265,50 @@ class AkrrDaemon:
 
             print("<" * 120)
 
-    def runActiveTasks_StartTheStep(self):
-        """For task with expired next_check_time and currently not handled
-        start a proccess to handle it"""
-
-        def StartTheStep(resourceName, appName, timeStamp, ResultsQueue, FatalErrorsCount=0, FailsToSubmitToTheQueue=0):
-            try:
-                # Redirect logging
-                taskDir = akrrtask.GetLocalTaskDir(resourceName, appName, timeStamp)
-                if cfg.redirect_task_processing_to_log_file:
-                    akrrtask.RedirectStdoutToLog(os.path.join(taskDir, 'proc', 'log'))
-
-                # Do the task
-                th = akrrtask.akrrGetTaskHandler(resourceName, appName, timeStamp)
-
-                th.FatalErrorsCount = FatalErrorsCount
-                th.FailsToSubmitToTheQueue = FailsToSubmitToTheQueue
-
-                repeatein = th.ToDoNext()
-
-                if th.IsStateChanged():
-                    akrrtask.akrrDumpTaskHandler(th)
-                # else:
-                #    if hasattr(th, "FailsToSubmitToTheQueue"):
-                #        th.LastPickledState-=1
-                #        akrrtask.akrrDumpTaskHandler(th)
-
-                pid = os.getpid()
-                ResultsQueue.put({
-                    'pid': pid,
-                    "status": th.status,
-                    "statusinfo": th.statusinfo,
-                    "repeatein": repeatein,
-                    "FatalErrorsCount": th.FatalErrorsCount,
-                    "FailsToSubmitToTheQueue": th.FailsToSubmitToTheQueue,
-                })
-
-                # Redirect logging back
-                if cfg.redirect_task_processing_to_log_file:
-                    akrrtask.RedirectStdoutBack()
-
-                return 0
-            except Exception:
-                log.exception("Exception was thrown during StartTheStep")
-                if akrrtask.log_file != None:
-                    akrrtask.RedirectStdoutBack()
-                return 1
-
-        timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+    def run_active_tasks__start_the_step(self):
+        """
+        For task with expired next_check_time and currently not handled
+        start a proccess to handle it
+        """
+        time_now = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Get all tasks which should be started
-        self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,FatalErrorsCount,FailsToSubmitToTheQueue FROM ACTIVETASKS
+        self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,fatal_errors_count,fails_to_submit_to_the_queue FROM ACTIVETASKS
             WHERE next_check_time<=%s AND task_lock=0
-            ORDER BY next_check_time ASC ;''', (timenow,))
-        tasksToCheck = self.dbCur.fetchall()
+            ORDER BY next_check_time ASC ;''', (time_now,))
+        tasks_to_check = self.dbCur.fetchall()
 
-        iTasksSend = 0
-        for row in tasksToCheck:
+        i_tasks_send = 0
+        for row in tasks_to_check:
             if self.maxTaskHandlers == 0:
                 # Executing task by main thread
-                (task_id, resourceName, appName, timeStamp, FatalErrorsCount, FailsToSubmitToTheQueue) = row
-                log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resourceName, appName, timeStamp)))
-
-                class fakeProcess:
-                    def __init__(self):
-                        self.exitcode = 0
-
-                    def join(self, t):
-                        return
-
-                    def is_alive(self):
-                        return False
+                (task_id, resource_name, app_name, time_stamp, fatal_errors_count, fails_to_submit_to_the_queue) = row
+                log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)))
 
                 self.Workers.append({
                     "task_id": task_id,
                     "pid": os.getpid(),
                     "timestarted": datetime.datetime.today(),
-                    "process": fakeProcess(),
+                    "process": _FakeProcess(),
                 })
 
-                StartTheStep(resourceName, appName, timeStamp, self.ResultsQueue, 0, FailsToSubmitToTheQueue)
+                _start_the_task_step(
+                    resource_name, app_name, time_stamp, self.ResultsQueue, 0, fails_to_submit_to_the_queue)
                 self.dbCon.commit()
+                continue
 
             if len(self.Workers) >= self.maxTaskHandlers:
                 # all workers are busy skipping the
                 return
 
-            (task_id, resourceName, appName, timeStamp, FatalErrorsCount, FailsToSubmitToTheQueue) = row
-            log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resourceName, appName, timeStamp)))
+            (task_id, resource_name, app_name, time_stamp, fatal_errors_count, fails_to_submit_to_the_queue) = row
+            log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)))
             try:
-                p = multiprocessing.Process(target=StartTheStep, args=(
-                resourceName, appName, timeStamp, self.ResultsQueue, 0, FailsToSubmitToTheQueue))
+                p = multiprocessing.Process(
+                    target=_start_the_task_step,
+                    args=(resource_name, app_name, time_stamp, self.ResultsQueue, 0, fails_to_submit_to_the_queue))
                 p.start()
                 pid = p.pid
-                self.dbCur.execute('''UPDATE ACTIVETASKS
-                    SET task_lock=%s
-                    WHERE task_id=%s ;''', (pid, task_id))
+                self.dbCur.execute('''UPDATE ACTIVETASKS SET task_lock=%s WHERE task_id=%s ;''', (pid, task_id))
 
                 self.Workers.append({
                     "task_id": task_id,
@@ -314,22 +317,18 @@ class AkrrDaemon:
                     "process": p,
                 })
 
-                iTasksSend += 1
-            except Exception:
+                i_tasks_send += 1
+            except Exception as e:
                 log.exception("Exception occurred during process start for next step execution")
+                log.log_traceback(str(e))
                 self.add_fatal_errors_for_task_count(task_id)
-                # raise
 
-        if iTasksSend > 0:
+        if i_tasks_send > 0:
             self.dbCon.commit()
-            # print StartTheStep(resourceName,appName,timeStamp)
-            # print "Back"
-
-            # print "\n>>> "+timenow+" "+">"*96
-            # print "<"*120
 
     def runActiveTasks_CheckTheStep(self):
         """
+        check the task's step state
         """
         timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Get all tasks which should be started
@@ -345,9 +344,9 @@ class AkrrDaemon:
             task_id = self.Workers[iP]['task_id']
             pid = self.Workers[iP]['pid']
 
-            self.dbCur.execute('''SELECT FatalErrorsCount,FailsToSubmitToTheQueue FROM ACTIVETASKS
+            self.dbCur.execute('''SELECT fatal_errors_count,fails_to_submit_to_the_queue FROM ACTIVETASKS
                 WHERE task_id=%s;''', (task_id,))
-            (FatalErrorsCount, FailsToSubmitToTheQueue) = self.dbCur.fetchall()[0]
+            (fatal_errors_count, fails_to_submit_to_the_queue) = self.dbCur.fetchall()[0]
 
             while not self.ResultsQueue.empty():
                 r = self.ResultsQueue.get()
@@ -363,20 +362,20 @@ class AkrrDaemon:
                 continue
 
             status = "None"
-            statusinfo = "None"
-            repeatein = None
+            status_info = "None"
+            repeat_in = None
             if p.exitcode == -signal.SIGTERM:  # process the case when process was terminated
                 dt = datetime.datetime.today() - self.Workers[iP]['timestarted']
                 if dt > self.max_wall_time_for_task_handlers:  # 1) exceed the max time (the process, not the real task on remote machine)
                     status = "Task handler process was terminated."
-                    statusinfo = "The task handler process was terminated probably due to overtime."
-                    repeatein = self.repeat_after_forcible_termination
-                    FatalErrorsCount += 1
+                    status_info = "The task handler process was terminated probably due to overtime."
+                    repeat_in = self.repeat_after_forcible_termination
+                    fatal_errors_count += 1
                 else:  # 2) the process was killed by system or by user
                     status = "Task handler process was terminated."
-                    statusinfo = "The task handler process was terminated externally."
-                    repeatein = self.repeat_after_forcible_termination
-                    FatalErrorsCount += 1
+                    status_info = "The task handler process was terminated externally."
+                    repeat_in = self.repeat_after_forcible_termination
+                    fatal_errors_count += 1
             else:  # process normal exit of process
                 # Process the results
                 while not self.ResultsQueue.empty():  # organized results in dict with pid keys
@@ -388,21 +387,21 @@ class AkrrDaemon:
                         "\n\tat this point treat it as forcibly terminated"
                     )
                     status = "Task handler process was terminated."
-                    statusinfo = "the process was finished but results was not sent. At this point treat it as forcibly terminated"
-                    repeatein = self.repeat_after_forcible_termination
-                    FatalErrorsCount += 1
+                    status_info = "the process was finished but results was not sent. At this point treat it as forcibly terminated"
+                    repeat_in = self.repeat_after_forcible_termination
+                    fatal_errors_count += 1
                 else:
                     r = self.Results[pid]
                     status = copy.deepcopy(r['status'])
-                    statusinfo = copy.deepcopy(r['statusinfo'])
-                    repeatein = copy.deepcopy(r['repeatein'])
-                    FatalErrorsCount += r['FatalErrorsCount']
-                    FailsToSubmitToTheQueue = r['FailsToSubmitToTheQueue']
+                    status_info = copy.deepcopy(r['status_info'])
+                    repeat_in = copy.deepcopy(r['repeat_in'])
+                    fatal_errors_count += r['fatal_errors_count']
+                    fails_to_submit_to_the_queue = r['fails_to_submit_to_the_queue']
                     del self.Results[pid]
 
             timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-            if FatalErrorsCount > self.max_fatal_errors_for_task:  # if too much errors terminate the execution
-                repeatein = None
+            if fatal_errors_count > self.max_fatal_errors_for_task:  # if too much errors terminate the execution
+                repeat_in = None
                 status = status + " Number of errors exceeded allowed maximum and task was terminated."
                 self.dbCon.commit()
                 self.dbCon.commit()
@@ -418,18 +417,18 @@ class AkrrDaemon:
                     log.error("Can not push to DB")
                 akrrtask.akrrDumpTaskHandler(th)
                 status = copy.deepcopy(th.status)
-                statusinfo = copy.deepcopy(th.statusinfo)
+                status_info = copy.deepcopy(th.status_info)
                 del th
 
             # Read log
 
             # Update error counters on DB
             self.dbCur.execute('''UPDATE ACTIVETASKS
-                SET FatalErrorsCount=%s,FailsToSubmitToTheQueue=%s
-                WHERE task_id=%s ;''', (FatalErrorsCount, FailsToSubmitToTheQueue, task_id))
+                SET fatal_errors_count=%s,fails_to_submit_to_the_queue=%s
+                WHERE task_id=%s ;''', (fatal_errors_count, fails_to_submit_to_the_queue, task_id))
             self.dbCon.commit()
             # update DB
-            if status == "Done" or repeatein == None:
+            if status == "Done" or repeat_in == None:
                 # we need to remove it from ACTIVETASKS and add to COMPLETEDTASKS
                 resource = None
                 app = None
@@ -437,22 +436,22 @@ class AkrrDaemon:
                 try:
                     self.dbCon.commit()
                     self.dbCon.commit()
-                    self.dbCur.execute('''SELECT statusupdatetime,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,time_activated,
-                            time_submitted_to_queue,resource_param,app_param,task_param,group_id,FatalErrorsCount,FailsToSubmitToTheQueue,
+                    self.dbCur.execute('''SELECT statusupdatetime,status,status_info,time_to_start,repeat_in,resource,app,datetimestamp,time_activated,
+                            time_submitted_to_queue,resource_param,app_param,task_param,group_id,fatal_errors_count,fails_to_submit_to_the_queue,
                             parent_task_id 
                         FROM ACTIVETASKS
                         WHERE task_id=%s;''', (task_id,))
-                    (statusupdatetime, status_prev, statusinfo_prev, time_to_start, repeat_in, resource, app,
+                    (statusupdatetime, status_prev, status_info_prev, time_to_start, repeat_in, resource, app,
                      datetimestamp, time_activated, time_submitted_to_queue, resource_param, app_param, task_param,
-                     group_id, FatalErrorsCount, FailsToSubmitToTheQueue, parent_task_id) = self.dbCur.fetchone()
+                     group_id, fatal_errors_count, fails_to_submit_to_the_queue, parent_task_id) = self.dbCur.fetchone()
 
                     self.dbCur.execute('''INSERT INTO COMPLETEDTASKS
-                    (task_id,time_finished,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,time_activated,time_submitted_to_queue,resource_param,app_param,task_param,group_id,FatalErrorsCount,FailsToSubmitToTheQueue,parent_task_id)
+                    (task_id,time_finished,status,status_info,time_to_start,repeat_in,resource,app,datetimestamp,time_activated,time_submitted_to_queue,resource_param,app_param,task_param,group_id,fatal_errors_count,fails_to_submit_to_the_queue,parent_task_id)
                     VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);''',
-                                       (task_id, statusupdatetime, status, statusinfo, time_to_start, repeat_in,
+                                       (task_id, statusupdatetime, status, status_info, time_to_start, repeat_in,
                                         resource, app, datetimestamp, time_activated, time_submitted_to_queue,
-                                        resource_param, app_param, task_param, group_id, FatalErrorsCount,
-                                        FailsToSubmitToTheQueue, parent_task_id))
+                                        resource_param, app_param, task_param, group_id, fatal_errors_count,
+                                        fails_to_submit_to_the_queue, parent_task_id))
                     self.dbCur.execute('''DELETE FROM ACTIVETASKS
                         WHERE task_id=%s;''', (task_id,))
                 except Exception:
@@ -461,10 +460,10 @@ class AkrrDaemon:
                     self.dbCon.rollback()
                     self.dbCon.rollback()
 
-                    FatalErrorsCount += 1
+                    fatal_errors_count += 1
                     self.dbCur.execute('''UPDATE ACTIVETASKS
-                        SET task_lock=0,FatalErrorsCount=%s
-                        WHERE task_id=%s ;''', (FatalErrorsCount, task_id))
+                        SET task_lock=0,fatal_errors_count=%s
+                        WHERE task_id=%s ;''', (fatal_errors_count, task_id))
 
                 self.dbCon.commit()
                 self.dbCon.commit()
@@ -485,11 +484,11 @@ class AkrrDaemon:
 
             else:
                 # we need to resubmit and update
-                nextround = datetime.datetime.today() + repeatein
+                nextround = datetime.datetime.today() + repeat_in
                 nextround = nextround.strftime("%Y-%m-%d %H:%M:%S")
                 self.dbCur.execute('''UPDATE ACTIVETASKS
-                    SET task_lock=0, status=%s,statusinfo=%s,next_check_time=%s,statusupdatetime=%s
-                    WHERE task_id=%s ;''', (status, statusinfo, nextround, timenow, task_id))
+                    SET task_lock=0, status=%s,status_info=%s,next_check_time=%s,statusupdatetime=%s
+                    WHERE task_id=%s ;''', (status, status_info, nextround, timenow, task_id))
                 self.dbCon.commit()
             # remove worker from list
 
@@ -566,14 +565,14 @@ class AkrrDaemon:
         # @todo is it happence in task now?
         return None
         try:
-            self.dbCur.execute('''SELECT task_id,statusupdatetime,status,statusinfo,time_to_start,repeat_in,resource,app,datetimestamp,resource_param,app_param,task_param,group_id 
+            self.dbCur.execute('''SELECT task_id,statusupdatetime,status,status_info,time_to_start,repeat_in,resource,app,datetimestamp,resource_param,app_param,task_param,group_id 
                         FROM ACTIVETASKS;''')
 
             db, cur = akrr.db.get_akrr_db()
             change = False
 
             for row in self.dbCur.fetchall():
-                (task_id, statusupdatetime, status_prev, statusinfo_prev, time_to_start, repeat_in, resource, app,
+                (task_id, statusupdatetime, status_prev, status_info_prev, time_to_start, repeat_in, resource, app,
                  datetimestamp, resource_param, app_param, task_param, group_id) = row
 
             if change:
@@ -624,7 +623,7 @@ class AkrrDaemon:
                 if self.bRunScheduledTasks:
                     self.run_scheduled_tasks()
                 if self.bRunActiveTasks_StartTheStep:
-                    self.runActiveTasks_StartTheStep()
+                    self.run_active_tasks__start_the_step()
                 if self.bRunActiveTasks_CheckTheStep:
                     self.runActiveTasks_CheckTheStep()
 
@@ -718,7 +717,7 @@ class AkrrDaemon:
             print("Active Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
             # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
 
-            self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,next_check_time,task_lock,status,statusinfo,statusupdatetime
+            self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,next_check_time,task_lock,status,status_info,statusupdatetime
                 FROM ACTIVETASKS
                 ORDER BY next_check_time,time_to_start ASC;''')
             tasks = self.dbCur.fetchall()
@@ -728,7 +727,7 @@ class AkrrDaemon:
             print("Completed Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
             # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
 
-            self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,statusinfo,time_finished
+            self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,status_info,time_finished
                 FROM COMPLETEDTASKS
                 ORDER BY time_finished DESC;''')
 
@@ -751,7 +750,7 @@ class AkrrDaemon:
 
         msg = "Completed Tasks (%s) :\n" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
 
-        self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,statusinfo,time_finished
+        self.dbCur.execute('''SELECT task_id,resource,app,datetimestamp,resource_param,app_param,status,status_info,time_finished
             FROM COMPLETEDTASKS
             ORDER BY time_finished DESC LIMIT 5;''')
 
@@ -761,7 +760,7 @@ class AkrrDaemon:
 
 
         # Tasks completed with errors
-        self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
+        self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
             ORDER BY time_finished  DESC LIMIT 5;''')
         tasks = self.dbCur.fetchall()
@@ -771,12 +770,12 @@ class AkrrDaemon:
         else:
             log.info("\nTasks completed with errors (last %d):" % (len(tasks)))
             for row in tasks:
-                (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
+                (task_id, time_finished, status, status_info, time_to_start, datetimestamp, repeat_in, resource, app,
                  resource_param, app_param, task_param, group_id) = row
                 if re.match("ERROR:", status, re.M):
                     TaskDir = akrrtask.GetLocalTaskDir(resource, app, datetimestamp, False)
                     log.info("Done with errors: %s %5d %s\n" % (time_finished, task_id, TaskDir), resource_param,
-                          app_param, task_param, group_id, "\n", status, "\n", statusinfo)
+                          app_param, task_param, group_id, "\n", status, "\n", status_info)
 
     def reprocessCompletedTasks(self, resource, appkernel, time_start, time_end, Verbose=False):
         """reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling"""
@@ -793,7 +792,7 @@ class AkrrDaemon:
         if time_start != None and time_end == None:
             print("Time frame: from ", time_start)
 
-        sqlquote = "SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id\n"
+        sqlquote = "SELECT task_id,time_finished,status, status_info,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id\n"
         sqlquote += "FROM COMPLETEDTASKS\n"
         cond = []
         if resource != None:
@@ -815,7 +814,7 @@ class AkrrDaemon:
         db, cur = akrr.db.get_akrr_db()
         if Verbose: print("#" * 120)
         for row in tasks:
-            (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
+            (task_id, time_finished, status, status_info, time_to_start, datetimestamp, repeat_in, resource, app,
              resource_param, app_param, task_param, group_id) = row
             TaskDir = akrrtask.GetLocalTaskDir(resource, app, datetimestamp, False)
             if Verbose:
@@ -827,8 +826,8 @@ class AkrrDaemon:
                 print("TaskDir:", TaskDir)
                 print("-" * 120)
                 print("status: %s" % (status))
-                # print "statusinfo:"
-                # print statusinfo
+                # print "status_info:"
+                # print status_info
                 print("=" * 120)
 
             # Get All States
@@ -852,13 +851,13 @@ class AkrrDaemon:
             # akrrtask.akrrDumpTaskHandler(ths[-1])
             if re.match("ERROR:", ths[-1].status, re.M):
                 print("Done with errors:", TaskDir, ths[-1].status)
-            if ths[-1].status != status or ths[-1].statusinfo != statusinfo:
+            if ths[-1].status != status or ths[-1].status_info != status_info:
                 print("status changed")
                 print(status)
                 print(ths[-1].status)
                 self.dbCur.execute('''UPDATE COMPLETEDTASKS
-                    SET status=%s,statusinfo=%s
-                    WHERE task_id=%s ;''', (ths[-1].status, ths[-1].statusinfo, task_id))
+                    SET status=%s,status_info=%s
+                    WHERE task_id=%s ;''', (ths[-1].status, ths[-1].status_info, task_id))
                 self.dbCon.commit()
             if Verbose and 0:
                 print("States history:")
@@ -866,7 +865,7 @@ class AkrrDaemon:
                 for th in ths:
                     print(th.statefilename)
                     print(th.status)
-                    print(th.statusinfo)
+                    print(th.status_info)
                     print("-" * 120)
             if Verbose:
                 print("#" * 120)
@@ -882,7 +881,7 @@ class AkrrDaemon:
             """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling""")
         print("Time: %s" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
 
-        self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
+        self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
             where time_finished > "2013-11-31"
             ORDER BY task_id DESC;''')
@@ -893,7 +892,7 @@ class AkrrDaemon:
 
         if Verbose: print("#" * 120)
         for row in tasks:
-            (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
+            (task_id, time_finished, status, status_info, time_to_start, datetimestamp, repeat_in, resource, app,
              resource_param, app_param, task_param, group_id) = row
             TaskDir = None
             try:
@@ -910,8 +909,8 @@ class AkrrDaemon:
                 print("TaskDir:", TaskDir)
                 print("-" * 120)
                 print("status: %s" % (status))
-                print("statusinfo:")
-                print(statusinfo)
+                print("status_info:")
+                print(status_info)
                 print("=" * 120)
 
             appstdoutFileContent = None
@@ -991,7 +990,7 @@ class AkrrDaemon:
                     appstdoutFile = None
                     resultFile = os.path.join(th.taskDir, "result.xml")
 
-                    if hasattr(th, 'ReportFormat'):  # i.e. fatal error and the last one is already in status/statusinfo
+                    if hasattr(th, 'ReportFormat'):  # i.e. fatal error and the last one is already in status/status_info
                         if th.ReportFormat == "Error":
                             print("Error")
 
@@ -1054,7 +1053,7 @@ class AkrrDaemon:
                         if completed:
                             root.find('body').find('performance').find('benchmark').find('statistics')
                         self.status = "Task was completed successfully."
-                        self.statusinfo = "Done"
+                        self.status_info = "Done"
                     except:
                         completed = None
 
@@ -1112,7 +1111,7 @@ class AkrrDaemon:
             """Reprocess the output from Completed task one more time with hope that new task handlers have a better implementation of error handling""")
         print("Time: %s" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
 
-        self.dbCur.execute('''SELECT task_id,time_finished,status, statusinfo,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
+        self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetimestamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
             FROM COMPLETEDTASKS
             ORDER BY task_id DESC;''')
 
@@ -1121,7 +1120,7 @@ class AkrrDaemon:
         pass
         if Verbose: print("#" * 120)
         for row in tasks:
-            (task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, repeat_in, resource, app,
+            (task_id, time_finished, status, status_info, time_to_start, datetimestamp, repeat_in, resource, app,
              resource_param, app_param, task_param, group_id) = row
             TaskDir = None
             try:
@@ -1138,8 +1137,8 @@ class AkrrDaemon:
                 print("TaskDir:", TaskDir)
                 print("-" * 120)
                 print("status: %s" % (status))
-                print("statusinfo:")
-                print(statusinfo)
+                print("status_info:")
+                print(status_info)
                 print("-" * 120)
 
             appstdoutFileContent = None
@@ -1235,14 +1234,14 @@ class AkrrDaemon:
             OutputFromRemoteHostIsPresent = True
             appstdout, stderr, stdout = rows[0]
 
-        # Get akrr_statusinfo and  akrr_status
-        self.dbCur.execute('''SELECT status,statusinfo
+        # Get akrr_status_info and  akrr_status
+        self.dbCur.execute('''SELECT status,status_info
             FROM COMPLETEDTASKS
             WHERE task_id=%s;''', (task_id,))
         rows = self.dbCur.fetchall()
-        akrr_status, akrr_statusinfo = (None, None)
+        akrr_status, akrr_status_info = (None, None)
         if len(rows) > 0:
-            akrr_status, akrr_statusinfo = rows[0]
+            akrr_status, akrr_status_info = rows[0]
 
         # Get reg_exps
         self.dbCur.execute('''SELECT id,reg_exp,reg_exp_opt,source
@@ -1257,7 +1256,7 @@ class AkrrDaemon:
             ['appstdout', appstdout],
             ['stderr', stderr],
             ['stdout', stdout],
-            ['akrr_statusinfo', akrr_statusinfo],
+            ['akrr_status_info', akrr_status_info],
             ['akrr_status', akrr_status],
         ]
         # apply reg. exp.

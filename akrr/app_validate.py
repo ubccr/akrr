@@ -312,7 +312,7 @@ def app_validate(resource, appkernel, nnodes):
             elif response_json["data"]["queue"] == "active_tasks":
                 msg_body += "Task is in active_tasks queue.\n"
                 msg_body += "Status: " + str(response_json["data"]["data"]['status']) + "\n"
-                msg_body += "Status info:\n" + str(response_json["data"]["data"]['statusinfo']) + "\n"
+                msg_body += "Status info:\n" + str(response_json["data"]["data"]['status_info']) + "\n"
             elif response_json["data"]["queue"] == "completed_tasks":
                 msg_body += "Task is completed!\n"
                 completed_tasks = r.json()['data']['data']['completed_tasks']
@@ -326,7 +326,7 @@ def app_validate(resource, appkernel, nnodes):
                     msg_body += "\tstatus: " + str(akrr_xdmod_instanceinfo['status']) + "\n"
                     if akrr_xdmod_instanceinfo['status'] == 0:
                         msg_body += "\tstatus2: " + completed_tasks['status'] + "\n"
-                    msg_body += "\tstatusinfo: " + completed_tasks['statusinfo'] + "\n"
+                    msg_body += "\tstatus_info: " + completed_tasks['status_info'] + "\n"
             else:
                 msg_body += r.text + "\n"
 
