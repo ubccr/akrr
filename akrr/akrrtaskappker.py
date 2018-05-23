@@ -38,7 +38,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
         try:
             db, cur = akrr.db.get_akrr_db()
 
-            cur.execute('''SELECT resource,app,resource_param,app_param FROM ACTIVETASKS
+            cur.execute('''SELECT resource,app,resource_param,app_param FROM active_tasks
             WHERE task_id=%s ;''', (self.task_id,))
             raw = cur.fetchall()
             if len(raw) > 0:
@@ -274,7 +274,7 @@ class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
             # update DB time_submitted_to_queue
             db, cur = akrr.db.get_akrr_db()
 
-            cur.execute('''UPDATE ACTIVETASKS
+            cur.execute('''UPDATE active_tasks
             SET time_submitted_to_queue=%s
             WHERE task_id=%s ;''', (datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), self.task_id))
 

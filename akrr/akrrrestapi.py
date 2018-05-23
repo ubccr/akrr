@@ -264,7 +264,7 @@ def get_scheduled_tasks():
             raise ValueError('Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
 
-    query = "SELECT * FROM SCHEDULEDTASKS"
+    query = "SELECT * FROM scheduled_tasks"
 
     if params['app'] is not None or params['resource'] is not None:
         query = query + " WHERE"
@@ -298,7 +298,7 @@ def get_scheduled_task(task_id):
     """
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -323,7 +323,7 @@ def update_scheduled_tasks(task_id):
 
     # is the task still in scheduled queue and what time left till it execution
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -380,7 +380,7 @@ def delete_scheduled_task_by_id(task_id):
 
     # is the task still in scheduled queue and what time left till it execution
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -428,7 +428,7 @@ def get_all_active_tasks():
     """
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS''')
+    cur.execute('''SELECT * FROM active_tasks''')
     task = cur.fetchall()
 
     cur.close()
@@ -445,7 +445,7 @@ def get_active_tasks(task_id):
     """
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -493,7 +493,7 @@ def update_active_tasks(task_id):
     # get task
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -507,11 +507,11 @@ def update_active_tasks(task_id):
 
         time.sleep(cfg.scheduled_tasks_loop_sleep_time * 0.45)
 
-        cur.execute('''SELECT * FROM ACTIVETASKS
+        cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
         task = cur.fetchall()
     #
-    cur.execute('''UPDATE ACTIVETASKS
+    cur.execute('''UPDATE active_tasks
             SET next_check_time=%s
             WHERE task_id=%s''', (update_values['next_check_time'], task_id))
     cur.close()
@@ -530,7 +530,7 @@ def delete_active_tasks(task_id):
     """
     # is the task still in scheduled queue and what time left till it execution
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -582,7 +582,7 @@ def get_completed_tasks(task_id):
     """
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM COMPLETEDTASKS
+    cur.execute('''SELECT * FROM completed_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -658,7 +658,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE R.name LIKE %s
@@ -670,7 +670,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE ST.app LIKE %s
@@ -680,7 +680,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE R.name LIKE %s
@@ -690,7 +690,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     ORDER BY resource, app
@@ -731,7 +731,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -751,7 +751,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -770,7 +770,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -789,7 +789,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     ORDER BY R.name, AKD.name
@@ -824,7 +824,7 @@ def get_unique_tasks():
     Retrieve the list of currently scheduled tasks ( resource / application pairings ) from
     mod_akrr.
 
-    :return: a JSON encoded representation of the mod_akrr.SCHEDULEDTASKS table (resource, app) .
+    :return: a JSON encoded representation of the mod_akrr.scheduled_tasks table (resource, app) .
     """
 
     # RETRIEVE: the query parameters that were provided, if any. x

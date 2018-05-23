@@ -34,7 +34,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
     def GetSubTaskInfo(self):
         db, cur = akrr.db.get_akrr_db()
 
-        cur.execute('''SELECT task_id,status,datetime_stamp,resource,app,task_param FROM ACTIVETASKS
+        cur.execute('''SELECT task_id,status,datetime_stamp,resource,app,task_param FROM active_tasks
                     WHERE task_param LIKE %s AND task_param LIKE '%%masterTaskID%%'
                     ORDER BY  task_id ASC 
                     ''', ("%%%d%%" % (self.task_id,),))
@@ -119,7 +119,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             try:
                 db, cur = akrr.db.get_akrr_db()
 
-                cur.execute('''SELECT resource,app,resource_param,app_param FROM ACTIVETASKS
+                cur.execute('''SELECT resource,app,resource_param,app_param FROM active_tasks
                 WHERE task_id=%s ;''', (self.task_id,))
                 raw = cur.fetchall()
                 (resource, app, resource_param, app_param) = raw[0]
@@ -262,7 +262,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             # update DB time_submitted_to_queue
             db, cur = akrr.db.get_akrr_db()
 
-            cur.execute('''UPDATE ACTIVETASKS
+            cur.execute('''UPDATE active_tasks
             SET time_submitted_to_queue=%s
             WHERE task_id=%s ;''', (datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), self.task_id))
 
@@ -307,7 +307,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         db, cur = akrr.db.get_akrr_db()
 
         for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-            cur.execute('''UPDATE ACTIVETASKS
+            cur.execute('''UPDATE active_tasks
                             SET next_check_time=%s
                             WHERE task_id=%s ;''', (datetime.datetime.today(), subtask_id))
 

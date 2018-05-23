@@ -81,8 +81,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
 
     # DEFINE: the default tables to be created.
     default_tables = (
-        ('ACTIVETASKS', '''
-        CREATE TABLE IF NOT EXISTS `ACTIVETASKS` (
+        ('active_tasks', '''
+        CREATE TABLE IF NOT EXISTS `active_tasks` (
         `task_id` INT(11) DEFAULT NULL,
         `next_check_time` DATETIME NOT NULL,
         `status` TEXT,
@@ -211,8 +211,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         UNIQUE KEY `instance_id` (`instance_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
-        ('COMPLETEDTASKS', '''
-        CREATE TABLE IF NOT EXISTS `COMPLETEDTASKS` (
+        ('completed_tasks', '''
+        CREATE TABLE IF NOT EXISTS `completed_tasks` (
         `task_id` INT(11) DEFAULT NULL,
         `time_finished` DATETIME DEFAULT NULL,
         `status` TEXT,
@@ -242,8 +242,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         PRIMARY KEY (`node_id`)
         ) ENGINE=MyISAM AUTO_INCREMENT=1704 DEFAULT CHARSET=latin1;
         '''),
-        ('SCHEDULEDTASKS', '''
-        CREATE TABLE IF NOT EXISTS `SCHEDULEDTASKS` (
+        ('scheduled_tasks', '''
+        CREATE TABLE IF NOT EXISTS `scheduled_tasks` (
         `task_id` INT(11) NOT NULL AUTO_INCREMENT,
         `time_to_start` DATETIME DEFAULT NULL,
         `repeat_in` CHAR(20) DEFAULT NULL,
@@ -290,10 +290,10 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
         ('akrr_erran', '''
-        CREATE OR REPLACE VIEW `akrr_erran` AS select `c`.`task_id` AS `task_id`,`c`.`time_finished` AS `time_finished`,`c`.`resource` AS `resource`,`c`.`app` AS `app`,`c`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`ii`.`walltime` AS `walltime`,`ii`.`body` AS `body`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout` from ((`COMPLETEDTASKS` `c` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) where ((`c`.`task_id` = `ii`.`instance_id`) and (`c`.`task_id` = `em`.`task_id`));
+        CREATE OR REPLACE VIEW `akrr_erran` AS select `c`.`task_id` AS `task_id`,`c`.`time_finished` AS `time_finished`,`c`.`resource` AS `resource`,`c`.`app` AS `app`,`c`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`ii`.`walltime` AS `walltime`,`ii`.`body` AS `body`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout` from ((`completed_tasks` `c` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) where ((`c`.`task_id` = `ii`.`instance_id`) and (`c`.`task_id` = `em`.`task_id`));
         '''),
         ('akrr_erran2', '''
-        CREATE OR REPLACE VIEW `akrr_erran2` AS select `ct`.`task_id` AS `task_id`,`ct`.`time_finished` AS `time_finished`,`ct`.`resource` AS `resource`,`ct`.`app` AS `app`,`ct`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`em`.`err_regexp_id` AS `err_regexp_id`,`re`.`err_msg` AS `err_msg`,`ii`.`walltime` AS `walltime`,`ct`.`status` AS `akrr_status`,`ct`.`status` AS `akrr_status_info`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout`,`ii`.`body` AS `ii_body`,`ii`.`message` AS `ii_msg` from (((`COMPLETEDTASKS` `ct` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) join `akrr_err_regexp` `re`) where ((`ct`.`task_id` = `ii`.`instance_id`) and (`ct`.`task_id` = `em`.`task_id`) and (`re`.`id` = `em`.`err_regexp_id`));
+        CREATE OR REPLACE VIEW `akrr_erran2` AS select `ct`.`task_id` AS `task_id`,`ct`.`time_finished` AS `time_finished`,`ct`.`resource` AS `resource`,`ct`.`app` AS `app`,`ct`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`em`.`err_regexp_id` AS `err_regexp_id`,`re`.`err_msg` AS `err_msg`,`ii`.`walltime` AS `walltime`,`ct`.`status` AS `akrr_status`,`ct`.`status` AS `akrr_status_info`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout`,`ii`.`body` AS `ii_body`,`ii`.`message` AS `ii_msg` from (((`completed_tasks` `ct` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) join `akrr_err_regexp` `re`) where ((`ct`.`task_id` = `ii`.`instance_id`) and (`ct`.`task_id` = `em`.`task_id`) and (`re`.`id` = `em`.`err_regexp_id`));
         '''),
         ('akrr_err_distribution_alltime', '''
         CREATE OR REPLACE VIEW `akrr_err_distribution_alltime` AS select count(0) AS `Rows`,`akrr_erran2`.`err_regexp_id` AS `err_regexp_id`,`akrr_erran2`.`err_msg` AS `err_msg` from `akrr_erran2` group by `akrr_erran2`.`err_regexp_id` order by `akrr_erran2`.`err_regexp_id`;

@@ -93,7 +93,7 @@ class AkrrDaemon:
 
         # Sanitizing, set task_lock to 0 in case if previous instance didn't exit properly
         if not adding_new_tasks:
-            self.dbCur.execute("UPDATE ACTIVETASKS SET task_lock=0 WHERE task_lock>0 ;")
+            self.dbCur.execute("UPDATE active_tasks SET task_lock=0 WHERE task_lock>0 ;")
             self.dbCon.commit()
         #
         self.maxTaskHandlers = cfg.max_task_handlers
@@ -119,10 +119,10 @@ class AkrrDaemon:
         """
         Increment fatal error count of task with id `task_id` by `count`
         """
-        self.dbCur.execute('''SELECT fatal_errors_count FROM ACTIVETASKS WHERE task_id=%s ;''', (task_id,))
+        self.dbCur.execute('''SELECT fatal_errors_count FROM active_tasks WHERE task_id=%s ;''', (task_id,))
         fatal_errors_count = self.dbCur.fetchall()[0][0]
         fatal_errors_count += count
-        self.dbCur.execute('''UPDATE ACTIVETASKS SET fatal_errors_count=%s WHERE task_id=%s ;''',
+        self.dbCur.execute('''UPDATE active_tasks SET fatal_errors_count=%s WHERE task_id=%s ;''',
                            (fatal_errors_count, task_id))
         self.dbCon.commit()
 
@@ -147,7 +147,7 @@ class AkrrDaemon:
         self.dbCur.execute(
             '''SELECT task_id, time_to_start, repeat_in, resource, app, resource_param, 
                       app_param, task_param, group_id, parent_task_id
-               FROM mod_akrr.SCHEDULEDTASKS AS s
+               FROM mod_akrr.scheduled_tasks AS s
                WHERE s.time_to_start<=%s
                ORDER BY s.time_to_start ASC''', (time_now_str,))
 
@@ -201,12 +201,12 @@ class AkrrDaemon:
                         log.warning("This app. kernel is scheduled for repeat run, thus will skip this run")
                     else:
                         log.warning("Will postpone the execution by one day")
-                        self.dbCur.execute('''UPDATE SCHEDULEDTASKS
+                        self.dbCur.execute('''UPDATE scheduled_tasks
                             SET time_to_start=%s
                             WHERE task_id=%s ;''', (time_to_start + datetime.timedelta(days=1), task_id))
                         self.dbCon.commit()
 
-                # if a bundle task send subtask to  SCHEDULEDTASKS
+                # if a bundle task send subtask to  scheduled_tasks
                 if app.count("bundle") > 0:
                     task_param = eval(task_param_str)
                     if 'AppKers' in task_param:
@@ -223,7 +223,7 @@ class AkrrDaemon:
                         "%Y-%m-%d %H:%M:%S")
                     # First we'll copy it to ActiveTasks
                     self.dbCur.execute(
-                        '''INSERT INTO ACTIVETASKS 
+                        '''INSERT INTO active_tasks 
                            (task_id,next_check_time,datetime_stamp,time_activated,time_to_start,repeat_in,
                             resource,app,resource_param,app_param,task_lock,task_param,group_id,parent_task_id)
                            VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,%s,%s);''',
@@ -259,7 +259,7 @@ class AkrrDaemon:
                 if repeat_in is not None:
                     self.dbCon.commit()
                 # Now we need to delete it from ScheduledTasks
-                self.dbCur.execute('''DELETE FROM SCHEDULEDTASKS
+                self.dbCur.execute('''DELETE FROM scheduled_tasks
                     WHERE task_id=%s;''', (task_id,))
                 self.dbCon.commit()
 
@@ -272,7 +272,7 @@ class AkrrDaemon:
         """
         time_now = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Get all tasks which should be started
-        self.dbCur.execute('''SELECT task_id,resource,app,datetime_stamp,fatal_errors_count,fails_to_submit_to_the_queue FROM ACTIVETASKS
+        self.dbCur.execute('''SELECT task_id,resource,app,datetime_stamp,fatal_errors_count,fails_to_submit_to_the_queue FROM active_tasks
             WHERE next_check_time<=%s AND task_lock=0
             ORDER BY next_check_time ASC ;''', (time_now,))
         tasks_to_check = self.dbCur.fetchall()
@@ -308,7 +308,7 @@ class AkrrDaemon:
                     args=(resource_name, app_name, time_stamp, self.ResultsQueue, 0, fails_to_submit_to_the_queue))
                 p.start()
                 pid = p.pid
-                self.dbCur.execute('''UPDATE ACTIVETASKS SET task_lock=%s WHERE task_id=%s ;''', (pid, task_id))
+                self.dbCur.execute('''UPDATE active_tasks SET task_lock=%s WHERE task_id=%s ;''', (pid, task_id))
 
                 self.workers.append({
                     "task_id": task_id,
@@ -343,7 +343,7 @@ class AkrrDaemon:
             task_id = self.workers[i_worker]['task_id']
             pid = self.workers[i_worker]['pid']
 
-            self.dbCur.execute('''SELECT fatal_errors_count,fails_to_submit_to_the_queue FROM ACTIVETASKS
+            self.dbCur.execute('''SELECT fatal_errors_count,fails_to_submit_to_the_queue FROM active_tasks
                 WHERE task_id=%s;''', (task_id,))
             (fatal_errors_count, fails_to_submit_to_the_queue) = self.dbCur.fetchall()[0]
 
@@ -408,7 +408,7 @@ class AkrrDaemon:
                 self.dbCon.commit()
                 self.dbCon.commit()
                 self.dbCur.execute(
-                    '''SELECT resource,app,datetime_stamp FROM ACTIVETASKS WHERE task_id=%s;''', (task_id,))
+                    '''SELECT resource,app,datetime_stamp FROM active_tasks WHERE task_id=%s;''', (task_id,))
                 (resource, app, datetime_stamp) = self.dbCur.fetchone()
                 th = akrrtask.akrrGetTaskHandler(resource, app, datetime_stamp)
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
@@ -424,13 +424,13 @@ class AkrrDaemon:
             # Read log
 
             # Update error counters on DB
-            self.dbCur.execute('''UPDATE ACTIVETASKS
+            self.dbCur.execute('''UPDATE active_tasks
                 SET fatal_errors_count=%s,fails_to_submit_to_the_queue=%s
                 WHERE task_id=%s ;''', (fatal_errors_count, fails_to_submit_to_the_queue, task_id))
             self.dbCon.commit()
             # update DB
             if status == "Done" or repeat_in is None:
-                # we need to remove it from ACTIVETASKS and add to COMPLETEDTASKS
+                # we need to remove it from active_tasks and add to completed_tasks
                 resource = None
                 app = None
                 datetime_stamp = None
@@ -443,14 +443,14 @@ class AkrrDaemon:
                             time_submitted_to_queue,resource_param,app_param,task_param,group_id,
                             fatal_errors_count,fails_to_submit_to_the_queue,
                             parent_task_id 
-                        FROM ACTIVETASKS
+                        FROM active_tasks
                         WHERE task_id=%s;''', (task_id,))
                     (status_update_time, status_prev, status_info_prev, time_to_start, repeat_in, resource, app,
                      datetime_stamp, time_activated, time_submitted_to_queue, resource_param, app_param, task_param,
                      group_id, fatal_errors_count, fails_to_submit_to_the_queue, parent_task_id) = self.dbCur.fetchone()
 
                     self.dbCur.execute(
-                        '''INSERT INTO COMPLETEDTASKS
+                        '''INSERT INTO completed_tasks
                            (task_id,time_finished,status,status_info,time_to_start,repeat_in,
                            resource,app,datetime_stamp,
                            time_activated,time_submitted_to_queue,resource_param,app_param,task_param,
@@ -460,16 +460,16 @@ class AkrrDaemon:
                          resource, app, datetime_stamp, time_activated, time_submitted_to_queue,
                          resource_param, app_param, task_param, group_id, fatal_errors_count,
                          fails_to_submit_to_the_queue, parent_task_id))
-                    self.dbCur.execute('''DELETE FROM ACTIVETASKS WHERE task_id=%s;''', (task_id,))
+                    self.dbCur.execute('''DELETE FROM active_tasks WHERE task_id=%s;''', (task_id,))
                 except Exception as e:
                     log.exception(
-                        "Exception occurred during moving task record from ACTIVETASKS to COMPLETEDTASKS table")
+                        "Exception occurred during moving task record from active_tasks to completed_tasks table")
                     log.log_traceback(str(e))
                     self.dbCon.rollback()
                     self.dbCon.rollback()
 
                     fatal_errors_count += 1
-                    self.dbCur.execute('''UPDATE ACTIVETASKS
+                    self.dbCur.execute('''UPDATE active_tasks
                         SET task_lock=0,fatal_errors_count=%s
                         WHERE task_id=%s ;''', (fatal_errors_count, task_id))
 
@@ -491,7 +491,7 @@ class AkrrDaemon:
                 # we need to resubmit and update
                 next_round = datetime.datetime.today() + repeat_in
                 next_round = next_round.strftime("%Y-%m-%d %H:%M:%S")
-                self.dbCur.execute('''UPDATE ACTIVETASKS
+                self.dbCur.execute('''UPDATE active_tasks
                     SET task_lock=0, status=%s,status_info=%s,next_check_time=%s,status_update_time=%s
                     WHERE task_id=%s ;''', (status, status_info, next_round, time_now, task_id))
                 self.dbCon.commit()
@@ -571,7 +571,7 @@ class AkrrDaemon:
         return None
         try:
             self.dbCur.execute('''SELECT task_id,status_update_time,status,status_info,time_to_start,repeat_in,resource,app,datetime_stamp,resource_param,app_param,task_param,group_id 
-                        FROM ACTIVETASKS;''')
+                        FROM active_tasks;''')
 
             db, cur = akrr.db.get_akrr_db()
             change = False
@@ -715,25 +715,25 @@ class AkrrDaemon:
                 print("AKRR Server is up and it's PID is %d" % (pid))
 
             print("Scheduled Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-            self.dbCur.execute('''SELECT * FROM SCHEDULEDTASKS ORDER BY time_to_start ASC;''')
+            self.dbCur.execute('''SELECT * FROM scheduled_tasks ORDER BY time_to_start ASC;''')
             tasks = self.dbCur.fetchall()
             for row in tasks:
                 print(row)
             print("Active Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-            # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
+            # self.dbCur.execute('''SELECT * FROM active_tasks ORDER BY next_check_time,time_to_start ASC;''')
 
             self.dbCur.execute('''SELECT task_id,resource,app,datetime_stamp,next_check_time,task_lock,status,status_info,status_update_time
-                FROM ACTIVETASKS
+                FROM active_tasks
                 ORDER BY next_check_time,time_to_start ASC;''')
             tasks = self.dbCur.fetchall()
             for row in tasks:
                 print(row)
 
             print("Completed Tasks (%s) :" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
-            # self.dbCur.execute('''SELECT * FROM ACTIVETASKS ORDER BY next_check_time,time_to_start ASC;''')
+            # self.dbCur.execute('''SELECT * FROM active_tasks ORDER BY next_check_time,time_to_start ASC;''')
 
             self.dbCur.execute('''SELECT task_id,resource,app,datetime_stamp,resource_param,app_param,status,status_info,time_finished
-                FROM COMPLETEDTASKS
+                FROM completed_tasks
                 ORDER BY time_finished DESC;''')
 
             tasks = self.dbCur.fetchall()
@@ -756,7 +756,7 @@ class AkrrDaemon:
         msg = "Completed Tasks (%s) :\n" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
 
         self.dbCur.execute('''SELECT task_id,resource,app,datetime_stamp,resource_param,app_param,status,status_info,time_finished
-            FROM COMPLETEDTASKS
+            FROM completed_tasks
             ORDER BY time_finished DESC LIMIT 5;''')
 
         tasks = self.dbCur.fetchall()
@@ -766,7 +766,7 @@ class AkrrDaemon:
 
         # Tasks completed with errors
         self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetime_stamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
-            FROM COMPLETEDTASKS
+            FROM completed_tasks
             ORDER BY time_finished  DESC LIMIT 5;''')
         tasks = self.dbCur.fetchall()
 
@@ -798,7 +798,7 @@ class AkrrDaemon:
             print("Time frame: from ", time_start)
 
         sqlquote = "SELECT task_id,time_finished,status, status_info,time_to_start,datetime_stamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id\n"
-        sqlquote += "FROM COMPLETEDTASKS\n"
+        sqlquote += "FROM completed_tasks\n"
         cond = []
         if resource != None:
             cond.append("resource LIKE \"" + resource + "\"\n")
@@ -860,7 +860,7 @@ class AkrrDaemon:
                 print("status changed")
                 print(status)
                 print(ths[-1].status)
-                self.dbCur.execute('''UPDATE COMPLETEDTASKS
+                self.dbCur.execute('''UPDATE completed_tasks
                     SET status=%s,status_info=%s
                     WHERE task_id=%s ;''', (ths[-1].status, ths[-1].status_info, task_id))
                 self.dbCon.commit()
@@ -887,7 +887,7 @@ class AkrrDaemon:
         print("Time: %s" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
 
         self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetime_stamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
-            FROM COMPLETEDTASKS
+            FROM completed_tasks
             where time_finished > "2013-11-31"
             ORDER BY task_id DESC;''')
 
@@ -1117,7 +1117,7 @@ class AkrrDaemon:
         print("Time: %s" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))))
 
         self.dbCur.execute('''SELECT task_id,time_finished,status, status_info,time_to_start,datetime_stamp,repeat_in,resource,app,resource_param,app_param,task_param,group_id
-            FROM COMPLETEDTASKS
+            FROM completed_tasks
             ORDER BY task_id DESC;''')
 
         tasks = self.dbCur.fetchall()
@@ -1241,7 +1241,7 @@ class AkrrDaemon:
 
         # Get akrr_status_info and  akrr_status
         self.dbCur.execute('''SELECT status,status_info
-            FROM COMPLETEDTASKS
+            FROM completed_tasks
             WHERE task_id=%s;''', (task_id,))
         rows = self.dbCur.fetchall()
         akrr_status, akrr_status_info = (None, None)
@@ -1393,7 +1393,7 @@ class AkrrDaemon:
         )
         task_id = None
         if not only_checking:
-            self.dbCur.execute('''INSERT INTO SCHEDULEDTASKS (time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id)
+            self.dbCur.execute('''INSERT INTO scheduled_tasks (time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id)
                     VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)''', (
             timeToStart.strftime("%Y-%m-%d %H:%M:%S"), repeatInFin, resource, app, resource_param, app_param,
             task_param, group_id, parent_task_id))
@@ -1401,16 +1401,16 @@ class AkrrDaemon:
             # self.dbCon.insert_id()
             self.dbCon.commit()
             if parent_task_id == None:
-                self.dbCur.execute("""UPDATE SCHEDULEDTASKS
+                self.dbCur.execute("""UPDATE scheduled_tasks
                         SET parent_task_id=%s
                         WHERE task_id=%s""",
                                    (task_id, task_id))
                 self.dbCon.commit()
-            #                 self.dbCur.execute('''SELECT task_id,parent_task_id FROM SCHEDULEDTASKS WHERE parent_task_id is NULL''')
+            #                 self.dbCur.execute('''SELECT task_id,parent_task_id FROM scheduled_tasks WHERE parent_task_id is NULL''')
         #                 rows=self.dbCur.fetchall()
         #                 for row in rows:
         #                     (m_task_id,m_parent_task_id)=row;
-        #                     self.dbCur.execute("""UPDATE SCHEDULEDTASKS
+        #                     self.dbCur.execute("""UPDATE scheduled_tasks
         #                         SET parent_task_id=%s
         #                         WHERE task_id=%s""",
         #                         (m_task_id,m_task_id))
@@ -1500,7 +1500,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
     remove this and all derivative tasks from scheduled or active queue
     """
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
 
@@ -1513,7 +1513,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
         scheduled_task = possible_task[0]
     else:
         # task might be in active_tasks queue
-        cur.execute('''SELECT * FROM ACTIVETASKS
+        cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
         possible_task = cur.fetchall()
 
@@ -1521,7 +1521,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
             active_task = possible_task[0]
         else:
             # task might be complete_tasks
-            cur.execute('''SELECT * FROM COMPLETEDTASKS
+            cur.execute('''SELECT * FROM completed_tasks
                 WHERE task_id=%s''', (task_id,))
             possible_task = cur.fetchall()
             if len(possible_task) == 1:
@@ -1530,12 +1530,12 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
                 raise IOError("""Task %d is not in queue""" % (task_id))
 
     if removeFromScheduledQueue == True and scheduled_task != None:
-        cur.execute('''DELETE FROM SCHEDULEDTASKS
+        cur.execute('''DELETE FROM scheduled_tasks
                 WHERE task_id=%s;''', (task_id,))
         db.commit()
 
     if removeFromActiveQueue == True and active_task != None:
-        print("Trying to remove task from ACTIVETASKS")
+        print("Trying to remove task from active_tasks")
         t0 = datetime.datetime.now()
         while active_task['task_lock'] != 0:
             # i.e. one of child process is working on this task, will wait till it finished
@@ -1543,7 +1543,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
                 # i.e. it is master
                 akrr_scheduler.runActiveTasks_CheckTheStep()
 
-            cur.execute('''SELECT * FROM ACTIVETASKS
+            cur.execute('''SELECT * FROM active_tasks
                 WHERE task_id=%s''', (task_id,))
             active_task = cur.fetchone()
             if t0 - datetime.datetime.now() > datetime.timedelta(seconds=120):
@@ -1558,7 +1558,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
         if CanBeSafelyRemoved:
             print("The task can be safely removed")
             # remove from DB
-            cur.execute('''DELETE FROM ACTIVETASKS
+            cur.execute('''DELETE FROM active_tasks
                 WHERE task_id=%s;''', (task_id,))
             db.commit()
             # remove from local disk
@@ -1580,7 +1580,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
             tasks_to_delete = []
 
             if removeFromScheduledQueue == True:
-                cur.execute('''SELECT * FROM SCHEDULEDTASKS
+                cur.execute('''SELECT * FROM scheduled_tasks
                     WHERE parent_task_id=%s''', (task_id,))
                 possible_tasks = cur.fetchall()
 
@@ -1589,7 +1589,7 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
                         tasks_to_delete.append(possible_task['task_id'])
 
             if removeFromActiveQueue == True:
-                cur.execute('''SELECT * FROM ACTIVETASKS
+                cur.execute('''SELECT * FROM active_tasks
                     WHERE parent_task_id=%s''', (task_id,))
                 possible_tasks = cur.fetchall()
 
@@ -1613,7 +1613,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     print("Akrr Update Task Parameters: %r" % (task_id,))
 
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
 
@@ -1627,7 +1627,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
         scheduled_task = possible_task[0]
     else:
         # task might be in active_tasks queue
-        cur.execute('''SELECT * FROM ACTIVETASKS
+        cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
         possible_task = cur.fetchall()
 
@@ -1635,7 +1635,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
             active_task = possible_task[0]
         else:
             # task might be complete_tasks
-            cur.execute('''SELECT * FROM COMPLETEDTASKS
+            cur.execute('''SELECT * FROM completed_tasks
                 WHERE task_id=%s''', (task_id,))
             possible_task = cur.fetchall()
             if len(possible_task) == 1:
@@ -1667,7 +1667,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
 
         if len(update_set_var) > 0:
             # update the db
-            cur.execute('UPDATE SCHEDULEDTASKS SET ' + ", ".join(update_set_var) + " WHERE task_id=%s",
+            cur.execute('UPDATE scheduled_tasks SET ' + ", ".join(update_set_var) + " WHERE task_id=%s",
                         tuple(update_set_value))
             db.commit()
     else:
@@ -1688,7 +1688,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
             parent_task_id = task['parent_task_id']
             tasks_to_update = []
 
-            cur.execute('''SELECT * FROM SCHEDULEDTASKS
+            cur.execute('''SELECT * FROM scheduled_tasks
                 WHERE parent_task_id=%s''', (task_id,))
             possible_tasks = cur.fetchall()
 
@@ -1972,35 +1972,35 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
     try:
         sch = AkrrDaemon()
 
-        # check if the task is in SCHEDULEDTASKS
-        sch.ScheduledTasksCur.execute('''SELECT * FROM SCHEDULEDTASKS
+        # check if the task is in scheduled_tasks
+        sch.ScheduledTasksCur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s ;''', (task_id,))
         tasksToRemove = sch.ScheduledTasksCur.fetchone()
         if tasksToRemove != None:
-            sch.ScheduledTasksCur.execute('''DELETE FROM SCHEDULEDTASKS
+            sch.ScheduledTasksCur.execute('''DELETE FROM scheduled_tasks
                 WHERE task_id=%s;''', (task_id,))
             sch.ScheduledTasksCon.commit()
-            sch.ScheduledTasksCur.execute('''SELECT * FROM SCHEDULEDTASKS
+            sch.ScheduledTasksCur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s ;''', (task_id,))
             tasksToRemove = sch.ScheduledTasksCur.fetchone()
             if tasksToRemove == None:
-                print("Task %d was removed from SCHEDULEDTASKS." % (task_id))
+                print("Task %d was removed from scheduled_tasks." % (task_id))
         else:
-            # check if the task is in ACTIVETASKS
-            sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
+            # check if the task is in active_tasks
+            sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
                 WHERE task_id=%s ;''', (task_id,))
             tasksToRemove = sch.ActiveTasksCur.fetchone()
             if tasksToRemove != None:
-                print("Trying to remove task from ACTIVETASKS")
+                print("Trying to remove task from active_tasks")
                 (task_lock, status) = tasksToRemove
                 while task_lock != 0:
-                    sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
+                    sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
                        WHERE task_id=%s ;''', (task_id,))
                     (task_lock, status) = sch.ActiveTasksCur.fetchone()
 
                 CanBeSafelyRemoved = False
                 # get task handler
-                sch.ActiveTasksCur.execute('''SELECT task_id,resource,app,datetime_stamp FROM ACTIVETASKS
+                sch.ActiveTasksCur.execute('''SELECT task_id,resource,app,datetime_stamp FROM active_tasks
                         WHERE task_id=%s;''', (task_id,))
                 (task_id, resourceName, appName, timeStamp) = sch.ActiveTasksCur.fetchone()
                 # Redirect logging
@@ -2016,7 +2016,7 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
                     # akrrtask.RedirectStdoutBack()
 
                     # remove from DB
-                    sch.ActiveTasksCur.execute('''DELETE FROM ACTIVETASKS
+                    sch.ActiveTasksCur.execute('''DELETE FROM active_tasks
                         WHERE task_id=%s;''', (task_id,))
                     sch.ActiveTasksCon.commit()
                     # remove from local disk
@@ -2029,15 +2029,15 @@ def akrrDeleteTaskWithExternalServerInterupt(task_id):
                     print("\t%s" % (status))
 
                 # check again
-                sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM ACTIVETASKS
+                sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
                     WHERE task_id=%s ;''', (task_id,))
                 tasksToRemove = sch.ActiveTasksCur.fetchone()
                 if tasksToRemove == None:
-                    print("Task %d was removed from ACTIVETASKS." % (task_id))
+                    print("Task %d was removed from active_tasks." % (task_id))
                 else:
-                    print("Task %d was NOT removed from ACTIVETASKS." % (task_id))
+                    print("Task %d was NOT removed from active_tasks." % (task_id))
             else:
-                print("Task %d is NOT in SCHEDULEDTASKS or ACTIVETASKS." % (task_id))
+                print("Task %d is NOT in scheduled_tasks or active_tasks." % (task_id))
 
         if pid != None:
             # restore schedule functionality
