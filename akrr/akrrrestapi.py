@@ -225,7 +225,7 @@ def create_scheduled_tasks():
 
     from . import daemon
 
-    sch = daemon.AkrrDaemon(AddingNewTasks=True)
+    sch = daemon.AkrrDaemon(adding_new_tasks=True)
     try:
         task_id = sch.addTask(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
                               params['resource_param'], params['app_param'], params['task_param'],

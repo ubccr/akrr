@@ -21,7 +21,7 @@ def reprocess_parsed(args):
     verbose = args.verbose
 
     from akrr import daemon
-    sch = daemon.AkrrDaemon(AddingNewTasks=True)
+    sch = daemon.AkrrDaemon(adding_new_tasks=True)
     sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
 
 

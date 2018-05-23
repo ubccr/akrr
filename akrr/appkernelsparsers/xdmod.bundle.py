@@ -4,19 +4,12 @@
 # authors: Nikolay Simakov, Charng-Da Lu
 #
 
-import re
 import os
 import sys
 import traceback
 
-#Set proper path for stand alone test runs
-import akrr.db
-
-if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../..'))
-
-
 import akrr
+import akrr.db
 import akrr.cfg
 import akrr.appkernelsparsers.akrrappkeroutputparser
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,total_seconds

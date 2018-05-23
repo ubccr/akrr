@@ -10,10 +10,13 @@ import copy
 import subprocess
 import socket
 
+from typing import Union, Optional
+
 from . import cfg
 import akrr.db
 
 import akrr.util.time
+from akrr.util.time import time_stamp_to_datetime_str
 from .util import log
 from . import akrrtask
 
@@ -28,71 +31,52 @@ class AkrrDaemon:
     """
     AkrrDaemon - start task execution
     """
-    def __init__(self, AddingNewTasks=False):
+    def __init__(self, adding_new_tasks=False):
         # rest api process
         self.restapi_proc = None
         # load Scheduled Tasks DB
         self.dbCon, self.dbCur = akrr.db.get_akrr_db()
 
-        # Sanitizing
-        if not AddingNewTasks:
-            self.dbCur.execute('''UPDATE ACTIVETASKS
-                    SET task_lock=0
-                    WHERE task_lock>0 ;''')
+        # Sanitizing, set task_lock to 0 in case if previous instance didn't exit properly
+        if not adding_new_tasks:
+            self.dbCur.execute("UPDATE ACTIVETASKS SET task_lock=0 WHERE task_lock>0 ;")
             self.dbCon.commit()
         #
         self.maxTaskHandlers = cfg.max_task_handlers
         self.max_wall_time_for_task_handlers = cfg.max_wall_time_for_task_handlers
+
         self.Workers = []
         self.Results = {}
         self.ResultsQueue = multiprocessing.Queue()
+
         self.repeat_after_forcible_termination = cfg.repeat_after_forcible_termination
-        #    self.FatalErrorsForTask={}
         self.max_fatal_errors_for_task = cfg.max_fatal_errors_for_task
 
     def __del__(self):
-        if self.dbCon != None:
+        if self.dbCon is not None:
             self.dbCon.commit()
-            if self.dbCur != None:
+            if self.dbCur is not None:
                 self.dbCur.close()
             self.dbCon.close()
-        if self.restapi_proc != None:
+        if self.restapi_proc is not None:
             self.restapi_proc.terminate()
-        # if self.dbCon!=None:
-        #    self.dbCon.commit()
-        #    if self.dbCur!=None:
-        #        self.dbCur.close()
-        #    self.dbCon.close()
 
-    def AddFatalErrorsForTaskCount(self, task_id, count=1):
-        self.dbCur.execute('''SELECT FatalErrorsCount FROM ACTIVETASKS
-            WHERE task_id=%s ;''', (task_id,))
-        FatalErrorsCount = self.dbCur.fetchall()[0][0]
-        FatalErrorsCount += count
-        self.dbCur.execute('''UPDATE ACTIVETASKS
-            SET FatalErrorsCount=%s
-            WHERE task_id=%s ;''', (FatalErrorsCount, task_id))
+    def add_fatal_errors_for_task_count(self, task_id: Union[str, int], count: int=1):
+        """
+        Increment fatal error count of task with id `task_id` by `count`
+        """
+        self.dbCur.execute('''SELECT FatalErrorsCount FROM ACTIVETASKS WHERE task_id=%s ;''', (task_id,))
+        fatal_errors_count = self.dbCur.fetchall()[0][0]
+        fatal_errors_count += count
+        self.dbCur.execute('''UPDATE ACTIVETASKS SET FatalErrorsCount=%s WHERE task_id=%s ;''',
+                           (fatal_errors_count, task_id))
         self.dbCon.commit()
 
-    #    if self.FatalErrorsForTask.has_key(task_id):
-    #        self.FatalErrorsForTask[task_id]+=count
-    #    else:
-    #        self.FatalErrorsForTask[task_id]=count
-    def runScheduledTasks(self):
-        timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        # Get all tasks which should be started
-        #         self.dbCur.execute('''SELECT task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param, group_id, parent_task_id,
-        #                 r.enabled as resource_enabled, a.enabled as app_kernel_enabled, ra.enabled as resource_app_kernel_enabled
-        #             FROM mod_akrr.SCHEDULEDTASKS AS s
-        #             INNER JOIN resources AS r
-        #             ON s.resource = r.name
-        #             INNER JOIN app_kernels AS a
-        #             ON s.app = a.name
-        #             INNER JOIN resource_app_kernels AS ra
-        #             ON ra.resource_id = r.id AND ra.app_kernel_id=a.id
-        #             WHERE s.time_to_start<=%s
-        #               AND r.enabled=1 AND a.enabled=1 AND ra.enabled=1
-        #             ORDER BY s.time_to_start ASC''',(timenow,))
+    def run_scheduled_tasks(self):
+        """
+        Start task which are due for execution
+        """
+        time_now_str = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # get list of resource from db
         self.dbCur.execute('''SELECT id, name, enabled FROM resources''')
         raw = self.dbCur.fetchall()
@@ -106,26 +90,27 @@ class AkrrDaemon:
         for r in raw:
             appkernel_enabled[r[1]] = r[2]
 
-        self.dbCur.execute('''SELECT task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param, group_id, parent_task_id
-            FROM mod_akrr.SCHEDULEDTASKS AS s
-            WHERE s.time_to_start<=%s
-            ORDER BY s.time_to_start ASC''', (timenow,))
-        tasksToActivate = self.dbCur.fetchall()
-        for row in tasksToActivate:
-            (task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param, group_id,
-             parent_task_id) = row
+        self.dbCur.execute(
+            '''SELECT task_id, time_to_start, repeat_in, resource, app, resource_param, 
+                      app_param, task_param, group_id, parent_task_id
+               FROM mod_akrr.SCHEDULEDTASKS AS s
+               WHERE s.time_to_start<=%s
+               ORDER BY s.time_to_start ASC''', (time_now_str,))
 
-            taskParam = eval(task_param)
-            if taskParam.get('test_run', False) == False:
+        tasks_to_activate = self.dbCur.fetchall()
+        for task_to_activate in tasks_to_activate:
+            (task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param_str, group_id,
+             parent_task_id) = task_to_activate
+
+            task_param = eval(task_param_str)
+            if task_param.get('test_run', False) is False:
                 if resource_enabled.get(resource, 0) == 0 or appkernel_enabled.get(app, 0) == 0:
                     continue
 
-            print("\n>>> " + timenow + " " + ">" * 96)
-
-            TaskActivated = False
-            TaskHandler = None
-            StartTaskExecution = True
-            # Commit all what was pushed before but not commited
+            task_activated = False
+            task_handler = None
+            start_task_execution = True
+            # Commit all what was pushed before but not committed
             # so we can rollback if something will go wrong
             self.dbCon.commit()
             self.dbCon.commit()
@@ -139,116 +124,85 @@ class AkrrDaemon:
                     "Resource parameters: %s\n\t" % resource_param +
                     "Application kernel: %s\n\t" % app +
                     "Application kernel parameters: %s\n\t" % app_param +
-                    "Task parameters: %s\n\t" % task_param +
+                    "Task parameters: %s\n\t" % task_param_str +
                     "Parent task id: %s" % parent_task_id)
 
-                if cfg.find_resource_by_name(resource).get('active', True) == False:
-                    raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
+                if cfg.find_resource_by_name(resource).get('active', True) is False:
+                    raise AkrrError("%s is marked as inactive in AKRR" % resource)
 
                 # Check If resource is on maintenance
-                self.dbCur.execute('''SELECT * FROM akrr_resource_maintenance
-                    WHERE (resource="*" OR resource=%s OR resource LIKE %s OR resource LIKE %s OR resource LIKE %s)
-                    AND start<=%s AND %s<=end;''', (resource, resource, resource, resource, timenow, timenow))
-                raws = self.dbCur.fetchall()
-                if len(raws) > 0:
-                    StartTaskExecution = False
+                self.dbCur.execute(
+                    '''SELECT * FROM akrr_resource_maintenance
+                       WHERE (resource="*" OR resource=%s OR resource LIKE %s OR resource LIKE %s OR resource LIKE %s)
+                       AND start<=%s AND %s<=end;''',
+                    (resource, resource, resource, resource, time_now_str, time_now_str))
+
+                resources_on_maintenance = self.dbCur.fetchall()
+                if len(resources_on_maintenance) > 0:
+                    start_task_execution = False
                     log.warning("Resource (%s) is under maintenance:" % resource)
-                    for raw in raws:
-                        log.warning(raw)
-                    if repeat_in != None:
+                    for resource_on_maintenance in resources_on_maintenance:
+                        log.warning(resource_on_maintenance)
+                    if repeat_in is not None:
                         log.warning("This app. kernel is scheduled for repeat run, thus will skip this run")
                     else:
                         log.warning("Will postpone the execution by one day")
                         self.dbCur.execute('''UPDATE SCHEDULEDTASKS
                             SET time_to_start=%s
                             WHERE task_id=%s ;''', (time_to_start + datetime.timedelta(days=1), task_id))
-
-                # self.dbCon.commit()
+                        self.dbCon.commit()
 
                 # if a bundle task send subtask to  SCHEDULEDTASKS
                 if app.count("bundle") > 0:
-                    taskParam = eval(task_param)
-                    if 'AppKers' in taskParam:
-                        for subtask_app in taskParam['AppKers']:
+                    task_param = eval(task_param_str)
+                    if 'AppKers' in task_param:
+                        for subtask_app in task_param['AppKers']:
                             subtask_task_param = "{'masterTaskID':%d}" % (task_id,)
                             self.addTask(time_to_start, None, resource, subtask_app, resource_param, app_param,
                                          subtask_task_param, group_id, parent_task_id)
 
-                if StartTaskExecution:
-                    TaskHandler = akrrtask.akrrGetNewTaskHandler(task_id, resource, app, resource_param, app_param,
-                                                                 task_param)
-                    akrrtask.akrrDumpTaskHandler(TaskHandler)
+                if start_task_execution:
+                    task_handler = akrrtask.akrrGetNewTaskHandler(
+                        task_id, resource, app, resource_param, app_param, task_param_str)
+                    akrrtask.akrrDumpTaskHandler(task_handler)
                     next_check_time = (datetime.datetime.today() + datetime.timedelta(minutes=1)).strftime(
                         "%Y-%m-%d %H:%M:%S")
                     # First we'll copy it to ActiveTasks
-                    self.dbCur.execute('''INSERT INTO ACTIVETASKS (task_id,next_check_time,datetimestamp,time_activated,time_to_start,repeat_in,resource,app,resource_param,app_param,task_lock,task_param,group_id,parent_task_id)
-                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,%s,%s);''',
-                                       (task_id, next_check_time, TaskHandler.timeStamp,
-                                        datetime.datetime.strptime(TaskHandler.timeStamp,
-                                                                   "%Y.%m.%d.%H.%M.%S.%f").strftime(
-                                            "%Y-%m-%d %H:%M:%S"),
-                                        time_to_start, repeat_in, resource, app, resource_param, app_param, task_param,
-                                        group_id, parent_task_id))
+                    self.dbCur.execute(
+                        '''INSERT INTO ACTIVETASKS 
+                           (task_id,next_check_time,datetimestamp,time_activated,time_to_start,repeat_in,
+                            resource,app,resource_param,app_param,task_lock,task_param,group_id,parent_task_id)
+                           VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,0,%s,%s,%s);''',
+                        (task_id, next_check_time, task_handler.timeStamp,
+                         time_stamp_to_datetime_str(task_handler.timeStamp),
+                         time_to_start, repeat_in, resource, app, resource_param, app_param, task_param_str,
+                         group_id, parent_task_id))
                     # Sanity check on repeat
-                    if repeat_in != None:
-                        match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
-                        if not match:
-                            log.error("Unknown repeat_in format, will set it to None")
-                            repeat_in = None
-                        else:
-                            g = match.group(1, 2, 3, 4, 5, 6)
-                            tao = (int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5]))
-                            if tao[0] == 0 and tao[1] == 0 and tao[2] == 0 and tao[3] == 0 and tao[4] == 0 and tao[
-                                5] == 0:
-                                log.error("repeat_in is zero will set it to None")
-                                repeat_in = None
+                    repeat_in = akrr.util.time.verify_repeat_in(repeat_in)
 
                     # Schedule next
-                    if repeat_in != None:
-                        match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
-                        g = match.group(1, 2, 3, 4, 5, 6)
-                        tao = (int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5]))
-                        match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)',
-                                         time_to_start.strftime("%Y-%m-%d %H:%M:%S"), 0)
-                        g = match.group(1, 2, 3, 4, 5, 6)
-                        t0 = (int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5]))
-
-                        at0 = datetime.datetime(*t0)
-                        adt = datetime.timedelta(tao[2], tao[5], 0, 0, tao[4], tao[3])
-                        current_time = datetime.datetime.now()
-
-                        at1 = at0 + adt
-                        # schedule task only for the future
-                        while at1 < current_time:
-                            at1 += adt
-
-                        if tao[0] != 0 or tao[1] != 0:
-                            y = at1.year + tao[0]
-                            m = at1.month + tao[1]
-                            if m > 12:
-                                y += 1
-                                m -= 12
-                            at1 = at1.replace(year=y, month=m)
-                        nexttime = at1.strftime("%Y-%m-%d %H:%M:%S")
-                        log.info("Schedule another task for %s" % nexttime)
-                        self.addTask(nexttime, repeat_in, resource, app, resource_param, app_param, task_param,
+                    if repeat_in is not None:
+                        next_time = akrr.util.time.get_next_time(time_to_start.strftime("%Y-%m-%d %H:%M:%S"), repeat_in)
+                        log.info("Schedule another task for %s" % next_time)
+                        self.addTask(next_time, repeat_in, resource, app, resource_param, app_param, task_param_str,
                                      group_id, parent_task_id)
                         # self.dbCon.commit()
-                if self.bRunScheduledTasks == False:
+                if self.bRunScheduledTasks is False:
                     # means that the termination signal was send while this function is already running
                     raise IOError("Can not activate task because got a massage to postpone activation")
-                TaskActivated = True
-            except Exception:
-                log.exception("Can not submit job to active tasks, for some reason.")
+                task_activated = True
+            except Exception as e:
+                log.exception("Can not submit job to active tasks")
+                log.log_traceback(str(e))
                 self.dbCon.rollback()
                 self.dbCon.rollback()
-                if TaskHandler != None:
-                    TaskHandler.DeleteLocalFolder()
-            del TaskHandler
-            if TaskActivated == True:
+                if task_handler is not None:
+                    task_handler.DeleteLocalFolder()
+            del task_handler
+            if task_activated is True:
                 # Now commit the changes
                 self.dbCon.commit()
-                if repeat_in != None:
+                if repeat_in is not None:
                     self.dbCon.commit()
                 # Now we need to delete it from ScheduledTasks
                 self.dbCur.execute('''DELETE FROM SCHEDULEDTASKS
@@ -363,7 +317,7 @@ class AkrrDaemon:
                 iTasksSend += 1
             except Exception:
                 log.exception("Exception occurred during process start for next step execution")
-                self.AddFatalErrorsForTaskCount(task_id)
+                self.add_fatal_errors_for_task_count(task_id)
                 # raise
 
         if iTasksSend > 0:
@@ -668,7 +622,7 @@ class AkrrDaemon:
                 self.checkDBandReconnect()
 
                 if self.bRunScheduledTasks:
-                    self.runScheduledTasks()
+                    self.run_scheduled_tasks()
                 if self.bRunActiveTasks_StartTheStep:
                     self.runActiveTasks_StartTheStep()
                 if self.bRunActiveTasks_CheckTheStep:
@@ -1364,8 +1318,11 @@ class AkrrDaemon:
             log.exception("Exception occurred during addTaskNR")
             return None
 
-    def addTask(self, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param, group_id,
-                parent_task_id, only_checking=False):
+    def addTask(self,
+                time_to_start: Optional[str], repeat_in: Union[None, str],
+                resource, app, resource_param,
+                app_param, task_param,
+                group_id, parent_task_id, only_checking=False):
         """Check the format and add task to schedule"""
         log.info(">" * 100)
         log.info("Adding new task")

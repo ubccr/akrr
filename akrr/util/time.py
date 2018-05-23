@@ -1,6 +1,8 @@
 import datetime
 import re
 
+from typing import Optional, Tuple
+
 
 def to_time(time):
     """
@@ -31,6 +33,10 @@ def to_datetime(time):
     """
     if time and isinstance(time, datetime.time):
         return datetime.datetime.now().replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
+
+
+def time_stamp_to_datetime_str(time_stamp: str):
+    return datetime.datetime.strptime(time_stamp, "%Y.%m.%d.%H.%M.%S.%f").strftime("%Y-%m-%d %H:%M:%S")
 
 
 def get_formatted_repeat_in(repeat_in):
@@ -84,6 +90,45 @@ def get_formatted_repeat_in(repeat_in):
             repeat_in_formatted = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, int(g[0]), 0, 0, 0)
 
     return repeat_in_formatted
+
+
+def repeat_in_to_tuple(repeat_in: Optional[str]) -> Optional[Tuple[int, int, int, int, int, int]]:
+    """
+    return tuple with repeat_in values in following format
+    (years,months,days,hours,minutes,seconds) or None
+    Raises ValueError on incorrect format
+    """
+    if repeat_in is None:
+        return None
+    match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
+    if not match:
+        raise ValueError("Unknown repeat_in format")
+    else:
+        g = match.group(1, 2, 3, 4, 5, 6)
+        return int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5])
+
+
+def verify_repeat_in(repeat_in: Optional[str]):
+    """
+    Verify `repeat_in` return standardized format, if format is unknown return None
+    return None if all values are zero
+    """
+    if repeat_in is None:
+        return None
+
+    from . import log
+
+    try:
+        tao = repeat_in_to_tuple(repeat_in)
+    except ValueError:
+        log.error("Unknown repeat_in format, will set it to None")
+        return None
+
+    if tao[0] == 0 and tao[1] == 0 and tao[2] == 0 and tao[3] == 0 and tao[4] == 0 and tao[5] == 0:
+        log.warning("repeat_in is zero will set it to None")
+        return None
+
+    return repeat_in
 
 
 def get_timedelta_repeat_in(repeat_in):
@@ -217,3 +262,33 @@ def calculate_random_start_time(start_time, periodicity, time_start, time_end):
             return chosen_datetime.strftime('%Y-%m-%d %H:%M:%S')
 
     return start_time
+
+
+def get_next_time(previous_time_to_start: str, repeat_in: str) -> str:
+    """
+    Calculate next time for scheduling, the return time is `previous_time_to_start`
+    incremented by `repeat_in` possibly several times until it is in the future
+    """
+    at0 = get_datetime_time_to_start(previous_time_to_start)
+    adt = get_timedelta_repeat_in(repeat_in)
+    tao = repeat_in_to_tuple(repeat_in)
+    current_time = datetime.datetime.now()
+
+    if tao[0] != 0 or tao[1] != 0:
+        # i.e. monthly or annually
+        at1 = at0
+        # schedule task only for the future
+        while at1 < current_time:
+            y = at1.year + tao[0]
+            m = at1.month + tao[1]
+            if m > 12:
+                y += 1
+                m -= 12
+            at1 = at1.replace(year=y, month=m)
+    else:
+        at1 = at0 + adt
+        # schedule task only for the future
+        while at1 < current_time:
+            at1 += adt
+
+    return at1.strftime("%Y-%m-%d %H:%M:%S")
