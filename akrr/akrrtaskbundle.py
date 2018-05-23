@@ -34,16 +34,16 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
     def GetSubTaskInfo(self):
         db, cur = akrr.db.get_akrr_db()
 
-        cur.execute('''SELECT task_id,status,datetimestamp,resource,app,task_param FROM ACTIVETASKS
+        cur.execute('''SELECT task_id,status,datetime_stamp,resource,app,task_param FROM ACTIVETASKS
                     WHERE task_param LIKE %s AND task_param LIKE '%%masterTaskID%%'
                     ORDER BY  task_id ASC 
                     ''', ("%%%d%%" % (self.task_id,),))
         raws = cur.fetchall()
         subTaskInfo = []
-        for task_id, status, datetimestamp, resource, app, task_param in raws:
+        for task_id, status, datetime_stamp, resource, app, task_param in raws:
             task_param = eval(task_param)
             if task_param['masterTaskID'] == self.task_id:
-                subTaskInfo.append([task_id, status, datetimestamp, resource, app, task_param])
+                subTaskInfo.append([task_id, status, datetime_stamp, resource, app, task_param])
 
         cur.close()
         del db
@@ -57,7 +57,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
         subTasksHaveCreatedJobScripts = True
 
         self.status_info = ""
-        for task_id, status, datetimestamp, resource, app, task_param in subTaskInfo:
+        for task_id, status, datetime_stamp, resource, app, task_param in subTaskInfo:
             self.status_info += "%d:%s\n" % (task_id, status)
             if status != None:
                 if status.count("Created batch job script") == 0:
@@ -67,7 +67,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
 
         # Save subtasksid
         self.subTasksId = []
-        for task_id, status, datetimestamp, resource, app, task_param in subTaskInfo:
+        for task_id, status, datetime_stamp, resource, app, task_param in subTaskInfo:
             self.subTasksId.append(task_id)
 
         if subTasksHaveCreatedJobScripts:
@@ -151,8 +151,8 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             if batchvars['shuffleSubtasks']:
                 random.shuffle(subTaskInfo)
             subTasksExecution = ""
-            for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetimestamp)
+            for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
+                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
                 SubTaskJobScriptName = self.GetJobScriptName(subtask_app)
                 SubTaskJobScriptPath = os.path.join(remoteSubTaskDir, SubTaskJobScriptName)
 
@@ -243,8 +243,8 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
             akrr.util.ssh.ssh_command(sh, "echo %d > job.id" % (JobID))
 
             # cp job id to subtasks
-            for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetimestamp)
+            for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
+                remoteSubTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
                 akrr.util.ssh.ssh_command(sh, "cp job.id %s" % (remoteSubTaskDir))
 
             self.RemoteJobID = JobID
@@ -306,7 +306,7 @@ class akrrTaskHandlerBundle(akrrTaskHandlerBase):
 
         db, cur = akrr.db.get_akrr_db()
 
-        for subtask_id, subtask_status, subtask_datetimestamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
+        for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
             cur.execute('''UPDATE ACTIVETASKS
                             SET next_check_time=%s
                             WHERE task_id=%s ;''', (datetime.datetime.today(), subtask_id))

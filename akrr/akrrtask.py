@@ -44,8 +44,8 @@ def RedirectStdoutToLog(logfilename):
     sys.stderr = log_file
     sys.stdout = log_file
 
-    timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-    print(">>> " + timenow + " " + ">" * 96)
+    time_now = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+    print(">>> " + time_now + " " + ">" * 96)
 
 
 def RedirectStdoutBack():
@@ -55,8 +55,8 @@ def RedirectStdoutBack():
 
     if log_file != None:
 
-        timenow = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        print("<<< " + timenow + " " + "<" * 96 + "\n")
+        time_now = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        print("<<< " + time_now + " " + "<" * 96 + "\n")
 
         sys.stderr = original_stderr
         sys.stdout = original_stdout

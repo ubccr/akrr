@@ -85,7 +85,7 @@ def make_results_summary(resource_name, app_name, completed_tasks,
         else:
             return comment + ": " + "Not Present" + "\n"
 
-    task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, completed_tasks['datetimestamp'])
+    task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, completed_tasks['datetime_stamp'])
 
     msg = ""
     msg += "status: " + str(akrr_xdmod_instanceinfo['status']) + "\n"
