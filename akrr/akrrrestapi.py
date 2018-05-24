@@ -90,7 +90,7 @@ def validateTaskVariableValue(k, v):
     raise error if value is incorrect
     return value or reformated value"""
     #try:
-    return daemon.akrrValidateTaskVariableValue(k, v)
+    return daemon.validate_task_parameters(k, v)
     #except Exception as e:
     #    raise e
 
@@ -227,9 +227,9 @@ def create_scheduled_tasks():
 
     sch = daemon.AkrrDaemon(adding_new_tasks=True)
     try:
-        task_id = sch.addTask(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
-                              params['resource_param'], params['app_param'], params['task_param'],
-                              params['group_id'], None)
+        task_id = sch.add_task(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
+                               params['resource_param'], params['app_param'], params['task_param'],
+                               params['group_id'], None)
     except Exception as e:
         raise bottle.HTTPError(400, 'Can not submit task to scheduled_tasks queue:' + traceback.format_exc())
     del sch

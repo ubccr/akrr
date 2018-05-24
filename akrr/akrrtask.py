@@ -156,7 +156,7 @@ def akrrDumpTaskHandler(th):
 
 
 # if __name__ == '__main__':
-#    def addTask(resourceName,appName,resourceParam,appParam,timeToSubmit=None,repetition=None):
+#    def add_task(resourceName,appName,resourceParam,appParam,timeToSubmit=None,repetition=None):
 #        """
 #        
 #        timeToSubmit==None means start right now

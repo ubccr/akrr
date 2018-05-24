@@ -22,7 +22,7 @@ def reprocess_parsed(args):
 
     from akrr import daemon
     sch = daemon.AkrrDaemon(adding_new_tasks=True)
-    sch.reprocessCompletedTasks(resource, appkernel, time_start, time_end, verbose)
+    sch.reprocess_completed_tasks(resource, appkernel, time_start, time_end, verbose)
 
 
 def wall_time_parsed(args):
