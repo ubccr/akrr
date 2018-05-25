@@ -1330,12 +1330,13 @@ this_stdout = None
 this_stderr = None
 
 
-def akrrServerStart():
+def daemon_start():
     """Start AKRR server"""
     # check if AKRR already up
     pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
-    if pid != None:
-        raise IOError("Can not start AKRR server because another instance is already running.")
+    if pid is not None:
+        raise AkrrError("Can not start AKRR server because another instance is already running.")
+
     # check if something already listening on REST API port
     restapi_host = 'localhost'
     if cfg.restapi_host != "":
@@ -1343,28 +1344,28 @@ def akrrServerStart():
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     result = sock.connect_ex((restapi_host, cfg.restapi_port))
     if result == 0:
-        raise IOError(
-            "Can not start AKRR server because another servise listening on %s:%d!" % (restapi_host, cfg.restapi_port))
+        raise AkrrError(
+            "Can not start AKRR server because another service listening on %s:%d!" % (restapi_host, cfg.restapi_port))
 
     def kill_child_processes(parent_pid, sig=signal.SIGTERM):
         ps_command = subprocess.Popen("ps -o pid --ppid %d --noheaders" % parent_pid, shell=True,
                                       stdout=subprocess.PIPE)
         ps_output = ps_command.stdout.read()
-        retcode = ps_command.wait()
-        assert retcode == 0, "ps command returned %d" % retcode
+        return_code = ps_command.wait()
+        assert return_code == 0, "ps command returned %d" % return_code
         for pid_str in ps_output.split("\n")[:-1]:
             os.kill(int(pid_str), sig)
 
     # make dir for logs and check the biggest number
     if not os.path.isdir(cfg.data_dir):
-        raise IOError("Directory %s does not exist or is not directory." % (cfg.data_dir))
+        raise IOError("Directory %s does not exist or is not directory." % cfg.data_dir)
     if not os.path.isdir(os.path.join(cfg.data_dir, "srv")):
         log.info("Directory %s does not exist, creating it." % (os.path.join(cfg.data_dir, "srv")))
         os.mkdir(os.path.join(cfg.data_dir, "srv"))
-    logname = os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
-    while os.path.exists(logname) == True:
-        logname = os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
-    log.info("Writing logs to:\n\t%s" % (logname))
+    log_name = os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
+    while os.path.exists(log_name):
+        log_name = os.path.join(cfg.data_dir, "srv", datetime.datetime.today().strftime("%Y.%m.%d_%H.%M.%f") + ".log")
+    log.info("Writing logs to:\n\t%s" % log_name)
     # createDaemon
     # this was adopted with a minor changes from Chad J. Schroeder  daemonization script
     # http://code.activestate.com/recipes/278731-creating-a-daemon-the-python-way/
@@ -1373,7 +1374,7 @@ def akrrServerStart():
     sys.stderr.flush()
 
     global redirected_filename, this_stdout, this_stderr
-    if redirected_filename != None:
+    if redirected_filename is not None:
         this_stdout.close()
         this_stderr.close()
         sys.stdout, sys.stderr = sys.__stdout__, sys.__stderr__
@@ -1383,28 +1384,22 @@ def akrrServerStart():
     except OSError as e:
         raise Exception("%s [%d]" % (e.strerror, e.errno))
 
-    if (pid == 0):  # i.e. first child
-
-        # print "pid of 1 child",os.getpid()
+    if pid == 0:
+        # i.e. first child
         os.setsid()  # set to be session leader
         try:
             pid = os.fork()
         except OSError as e:
             raise Exception("%s [%d]" % (e.strerror, e.errno))
-        if (pid == 0):  # i.e. grand child
+        if pid == 0:  # i.e. grand child
             os.setsid()  # set to be session leader
             os.chdir(cfg.data_dir)
-            # os.umask(755)
-            # print "pid of 2 child",os.getpid()
-            # print "AKRR Server PID is",os.getpid()
         else:
-            # print "pid of 1 child",os.getpid()
-            os._exit(0)  # i.e. first child is exiting here
+            exit(0)  # i.e. first child is exiting here
     else:
-        # print "pid of 0 child",os.getpid()
         # read the output from daemon till find that it is in the loop
         # wait till daemon start writing logs
-        if redirected_filename != None:
+        if redirected_filename is not None:
             this_stdout = open(redirected_filename, 'a')
             this_stderr = open(redirected_filename, 'a')
 
@@ -1412,16 +1407,16 @@ def akrrServerStart():
             sys.stderr = this_stderr
         dt = 0.25
         t0 = time.time()
-        while time.time() - t0 < 10.0 and not os.path.isfile(logname):
+        while time.time() - t0 < 10.0 and not os.path.isfile(log_name):
             time.sleep(dt)
-        if not os.path.isfile(logname):
+        if not os.path.isfile(log_name):
             log.error("AKRR Server have not start logging yet. Something is wrong! Exiting...")
             kill_child_processes(os.getpid())
-            os._exit(1)  # i.e. parent of first child is exiting here
+            exit(1)  # i.e. parent of first child is exiting here
 
-        log.info("following log: %s", logname)
-        logfile = open(logname, "r")
-        REST_API_up = False
+        log.info("following log: %s", log_name)
+        logfile = open(log_name, "r")
+        rest_api_up = False
         in_the_main_loop = False
         t0 = time.time()
         while time.time() - t0 < 20.0:
@@ -1429,34 +1424,32 @@ def akrrServerStart():
             if len(line) != 0:
                 print(line, end=' ')
                 if line.count("Listening on ") > 0:
-                    REST_API_up = True
+                    rest_api_up = True
                 if line.count("Got into the running loop on ") > 0:
                     in_the_main_loop = True
-                if REST_API_up and in_the_main_loop:
+                if rest_api_up and in_the_main_loop:
                     break
             else:
                 time.sleep(dt)
-        if not REST_API_up:
+        if not rest_api_up:
             log.error("AKRR REST API is not up.\n Something is wrong. Exiting...")
             kill_child_processes(os.getpid())
-            os._exit(1)  # i.e. parent of first child is exiting here
+            exit(1)  # i.e. parent of first child is exiting here
         if not in_the_main_loop:
             log.error("AKRR Server have not reached the loop.\n Something is wrong. Exiting...")
             kill_child_processes(os.getpid())
-            os._exit(1)  # i.e. parent of first child is exiting here
+            exit(1)  # i.e. parent of first child is exiting here
 
         # if here everything should be fine
         log.info("\nAKRR Server successfully reached the loop.")
-        os._exit(0)  # i.e. parent of first child is exiting here
+        exit(0)  # i.e. parent of first child is exiting here
 
     # close all file descriptors
     import resource  # Resource usage information.
     maxfd = resource.getrlimit(resource.RLIMIT_NOFILE)[1]
-    if (maxfd == resource.RLIM_INFINITY):
+    if maxfd == resource.RLIM_INFINITY:
         maxfd = 1024
 
-    print()
-    # print "Redirect the standard I/O to\n\t%s"%(logname)
     # Iterate through and close all file descriptors.
     for fd in range(maxfd - 1, -1, -1):
         try:
@@ -1465,14 +1458,14 @@ def akrrServerStart():
         except OSError:  # ERROR, fd wasn't open to begin with (ignored)
             # print fd
             pass
-    # print "1Redirect the standard I/O to\n\t%s"%(logname)
+
     # Redirect the standard I/O
     # The standard I/O file descriptors are redirected to /dev/null by default.
-    REDIRECT_TO = "/dev/null"
-    if (hasattr(os, "devnull")):
-        REDIRECT_TO = os.devnull
-    f0 = os.open(REDIRECT_TO, os.O_RDONLY)  # standard input (0)
-    f1 = os.open(logname, os.O_WRONLY | os.O_CREAT)  # standard output (1)
+    redirect_to = "/dev/null"
+    if hasattr(os, "devnull"):
+        redirect_to = os.devnull
+    os.open(redirect_to, os.O_RDONLY)  # standard input (0)
+    os.open(log_name, os.O_WRONLY | os.O_CREAT)  # standard output (1)
     # f2=os.open(logname, os.O_WRONLY | os.O_APPEND )    # standard output (1)
     # Duplicate standard input to standard output and standard error.
     # os.dup2(0, 1)            # standard output (1)
@@ -1480,7 +1473,7 @@ def akrrServerStart():
 
     # finally
     log.info("Starting Application Remote Runner")
-    # akrrcfg.print_out_resource_and_app_summary()
+
     global akrr_scheduler
     akrr_scheduler = AkrrDaemon()
     akrr_scheduler.run()
@@ -1491,7 +1484,6 @@ def akrrServerStart():
             os.close(fd)
             pass
         except OSError:  # ERROR, fd wasn't open to begin with (ignored)
-            # print fd
             pass
     return None
 
@@ -1499,7 +1491,7 @@ def akrrServerStart():
 def akrrServerStop():
     """Stop AKRR server"""
     pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
-    if pid == None:
+    if pid is None:
         log.warning("Can not stop AKRR server because none is running.")
         return
 
@@ -1507,14 +1499,14 @@ def akrrServerStop():
     os.kill(pid, signal.SIGTERM)
 
     try:
-        # wait till proccess will finished
+        # wait till process will finished
         while True:
             os.kill(pid, 0)
             time.sleep(0.2)
-    except Exception:
-        pass
+    except Exception as e:
+        log.log_traceback(str(e))
 
-    log.info("Stoped AKRR server (PID: " + str(pid) + ")")
+    log.info("Stopped AKRR server (PID: " + str(pid) + ")")
     return None
 
 
@@ -1525,7 +1517,7 @@ def akrrServerCheckNRestart():
 
     if pid == None:
         print("%s: AKRR server is down will start it" % (t,))
-        akrrServerStart()
+        daemon_start()
     else:
         print("%s: AKRR Server is up and it's PID is %d" % (t, pid))
     return None
@@ -1649,7 +1641,7 @@ def akrrd_main2(action='', append=False, output_file=None):
             sys.stderr = this_stderr
 
         if (action == 'start'):
-            akrrServerStart()
+            daemon_start()
         elif (action == 'stop'):
             akrrServerStop()
         elif (action == 'monitor'):
@@ -1667,7 +1659,7 @@ def akrrd_main2(action='', append=False, output_file=None):
                 akrrServerStop()
             except Exception:
                 log.exception("Exception was thrown during daemon stopping")
-            akrrServerStart()
+            daemon_start()
 
         if log_file1:
             log_file1.close()
