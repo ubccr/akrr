@@ -340,7 +340,7 @@ def update_scheduled_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to update it
             try:
-                daemon.akrrUpdateTaskParameters(task_id, update_values, updateDerivedTask=True)
+                daemon.update_task_parameters(task_id, update_values, update_derived_task=True)
 
                 return {
                     "success": True,
@@ -350,20 +350,20 @@ def update_scheduled_tasks(task_id):
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
-    request = {
-        'fun': 'akrrUpdateTaskParameters',
+    m_request = {
+        'fun': 'update_task_parameters',
         'args': (task_id, update_values),
-        'kargs': {'updateDerivedTask': True}
+        'kargs': {'update_derived_task': True}
     }
-    proc_queue_to_master.put(request)
+    proc_queue_to_master.put(m_request)
     while not proc_queue_from_master.empty():
         pass
-    response = proc_queue_from_master.get()
+    m_response = proc_queue_from_master.get()
 
-    if ("success" in response) and (response["success"] == True):
-        response["message"] = "Task successfully updated!"
+    if ("success" in m_response) and (m_response["success"] == True):
+        m_response["message"] = "Task successfully updated!"
 
-    return response
+    return m_response
 
 
 # DELETE =======================================================================
@@ -392,8 +392,8 @@ def delete_scheduled_task_by_id(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                daemon.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
-                                             removeDerivedTask=True)
+                daemon.delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_queue=True,
+                                   remove_derived_task=True)
 
                 return {
                     "success": True,
@@ -403,20 +403,20 @@ def delete_scheduled_task_by_id(task_id):
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
-    request = {
-        'fun': 'akrrDeleteTask',
+    m_request = {
+        'fun': 'delete_task',
         'args': (task_id,),
-        'kargs': {'removeFromScheduledQueue': True, 'removeFromActiveQueue': True, 'removeDerivedTask': True}
+        'kargs': {'remove_from_scheduled_queue': True, 'remove_from_active_queue': True, 'remove_derived_task': True}
     }
-    proc_queue_to_master.put(request)
+    proc_queue_to_master.put(m_request)
     while not proc_queue_from_master.empty():
         pass
-    response = proc_queue_from_master.get()
+    m_response = proc_queue_from_master.get()
 
-    if ("success" in response) and (response["success"] == True):
-        response["message"] = "Task successfully deleted!"
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Task successfully deleted!"
 
-    return response
+    return m_response
 
 
 # Active task queue
@@ -542,8 +542,8 @@ def delete_active_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                daemon.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
-                                             removeDerivedTask=True)
+                daemon.delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_queue=True,
+                                   remove_derived_task=True)
 
                 return {
                     "success": True,
@@ -558,7 +558,7 @@ def delete_active_tasks(task_id):
         }
     # still here, ask master to do the job
     request = {
-        'fun': 'akrrDeleteTask',
+        'fun': 'delete_task',
         'args': (task_id,),
         'kargs': {'removeFromScheduledQueue': False, 'removeFromActiveQueue': True, 'removeDerivedTask': False}
     }

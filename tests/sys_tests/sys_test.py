@@ -191,6 +191,8 @@ def test_use_gromacs_micro(caplog):
     assert search_in_caplog(str(task_id_3), caplog) is None
     caplog.clear()
 
+    # @todo add update task
+
     # remove task
     assert run_akrr("task delete -t {}".format(task_id_3), "Successfully deleted task", caplog) is not None
     assert run_akrr("task delete -t {}".format(task_id_3), "is not in queue", caplog) is not None

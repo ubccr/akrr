@@ -11,7 +11,7 @@ def test_which(program, expected):
     assert which(program) in expected
 
 
-@pytest.mark.parametrize("repeat_in, expected", [
+@pytest.mark.parametrize("repeat_in,  expected", [
     ("1-12-123 13:12:14", "1-12-123 13:12:14"),
     ("1-12-123 13:12", "1-12-123 13:12:00"),
     ("123 13:12:14", "0-00-123 13:12:14"),
@@ -26,6 +26,27 @@ def test_which(program, expected):
 def test_get_formatted_repeat_in(repeat_in, expected):
     from akrr.util.time import get_formatted_repeat_in
     assert get_formatted_repeat_in(repeat_in) == expected
+
+
+@pytest.mark.parametrize("repeat_in,  expect_exception, expected", [
+    ("1-12-123 13:12:14", False, "1-12-123 13:12:14"),
+    ("1-12-123 13:12", False, "1-12-123 13:12:00"),
+    ("123 13:12:14", False, "0-00-123 13:12:14"),
+    ("123 13:12", False, "0-00-123 13:12:00"),
+    ("13:12:14", False, "0-00-000 13:12:14"),
+    ("13:12", False, "0-00-000 13:12:00"),
+    ("3", False, "0-00-003 00:00:00"),
+    ("d1", True, None),
+    ("1m", True, None),
+    (None, False, None)
+])
+def test_get_formatted_repeat_in_with_raise(repeat_in, expect_exception, expected):
+    from akrr.util.time import get_formatted_repeat_in
+    if expect_exception:
+        with pytest.raises(ValueError):
+            get_formatted_repeat_in(repeat_in, raise_on_fail=True)
+    else:
+        assert get_formatted_repeat_in(repeat_in, raise_on_fail=True) == expected
 
 
 @pytest.mark.parametrize("repeat_in, expected", [

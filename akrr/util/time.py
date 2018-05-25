@@ -39,7 +39,7 @@ def time_stamp_to_datetime_str(time_stamp: str):
     return datetime.datetime.strptime(time_stamp, "%Y.%m.%d.%H.%M.%S.%f").strftime("%Y-%m-%d %H:%M:%S")
 
 
-def get_formatted_repeat_in(repeat_in):
+def get_formatted_repeat_in(repeat_in, raise_on_fail=False):
     """
     Return  formatted repeat_in with following formatting:
     "%01d-%02d-%03d %02d:%02d:%02d" % (years,months,days,hours,minutes,seconds)
@@ -88,6 +88,9 @@ def get_formatted_repeat_in(repeat_in):
         if match is not None:
             g = match.group(1)
             repeat_in_formatted = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, int(g[0]), 0, 0, 0)
+
+    if raise_on_fail and repeat_in_formatted is None:
+        raise ValueError("Unknown repeat_in format")
 
     return repeat_in_formatted
 
@@ -178,7 +181,6 @@ def get_formatted_time_to_start(time_to_start):
                 break
             except ValueError:
                 continue
-
 
     if start_datetime is None:
         return None

@@ -696,7 +696,7 @@ class AkrrDaemon:
             sys.stdout.write("\x1b[J\x1b[2J\x1b[H")
             sys.stdout.flush()
 
-            pid = akrrGetPIDofServer()
+            pid = get_daemon_pid()
             if pid is None:
                 log.info("AKRR Server is down")
             else:
@@ -732,7 +732,7 @@ class AkrrDaemon:
 
     def check_status(self):
         """like monitor only print once"""
-        pid = akrrGetPIDofServer()
+        pid = get_daemon_pid()
         if pid is None:
             log.info("AKRR Server is down")
         else:
@@ -1027,88 +1027,69 @@ class AkrrDaemon:
 def validate_task_parameters(k, v):
     """
     validate value of task variable, reformat if needed/possible
-    raise error if value is incorrect
-    return value or reformated value
+    raise error if value is incorrect. Return value or reformatted value
     """
     if k == "repeat_in":
-        if v == None:
-            # i.e. no repetition
-            return None
+        v = akrr.util.time.get_formatted_repeat_in(v, raise_on_fail=True)
 
-        v = v.strip().strip('"').strip("'")
-        v = akrr.util.time.get_formatted_repeat_in(v)
-        if v != None:
-            match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', v, 0)
-            if not match:
-                raise IOError('Unknown format for repeat_in')
-            else:
-                g = match.group(1, 2, 3, 4, 5, 6)
-                tao = (int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5]))
-                if g[0] == 0 and g[1] == 0 and g[2] == 0 and g[3] == 0 and g[4] == 0 and g[5] == 0:
-                    return None
-        if v == None:
-            raise IOError('Unknown format for repeat_in')
     if k == "time_to_start":
         v = v.strip().strip('"').strip("'")
         v = akrr.util.time.get_formatted_time_to_start(v)
-        if v == None:
-            raise IOError('Unknown format for time_to_start')
+        if v is None:
+            raise ValueError('Unknown format for time_to_start')
 
     if k == 'task_param' or k == 'resource_param' or k == 'app_param':
         try:
             v2 = eval(v)
         except Exception:
-            raise IOError('Unknown format for ' + k)
+            raise ValueError('Unknown format for ' + k)
         if not isinstance(v2, dict):
-            raise IOError('Unknown format for ' + k + '. Must be dict.')
+            raise ValueError('Unknown format for ' + k + '. Must be dict.')
 
     if k == 'resource_param':
         v2 = eval(v)
-        print(v2['nnodes'], isinstance(v2['nnodes'], int))
         if 'nnodes' not in v2:
-            raise IOError('nnodes must be present in ' + k)
+            raise ValueError('nnodes must be present in ' + k)
         if not isinstance(v2['nnodes'], int):
-            raise IOError("incorrect format for resource_param['nnodes'] must be integer")
+            raise ValueError("incorrect format for resource_param['nnodes'] must be integer")
     if k == "resource":
         try:
             cfg.find_resource_by_name(v)
         except Exception:
             log.exception("Exception occurred during resource record searching.")
-            raise IOError('Unknown resource: ' + v)
+            raise ValueError('Unknown resource: ' + v)
     if k == "app":
         try:
             cfg.find_app_by_name(v)
         except Exception:
             log.exception("Exception occurred during app kernel; record searching.")
-            raise IOError('Unknown application kernel: ' + v)
+            raise ValueError('Unknown application kernel: ' + v)
     if k == "next_check_time":
         v = v.strip().strip('"').strip("'")
         v = akrr.util.time.get_formatted_time_to_start(v)
-        if v == None:
-            raise IOError('Unknown format for next_check_time')
+        if v is None:
+            raise ValueError('Unknown format for next_check_time')
     return v
 
 
-# task manipulation
-def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True, removeDerivedTask=True):
+def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_queue=True, remove_derived_task=True):
     """
     remove the task from AKRR server
     
-    removeFromScheduledQueue=True and removeFromActiveQueue=False and removeDerivedTask=False
+    remove_from_scheduled_queue=True and remove_from_active_queue=False and remove_derived_task=False
     remove only from scheduled queue
     
-    removeFromScheduledQueue=False and removeFromActiveQueue=True and removeDerivedTask=False
+    remove_from_scheduled_queue=False and remove_from_active_queue=True and remove_derived_task=False
     remove only from active queue
     
-    removeFromScheduledQueue=True and removeFromActiveQueue=True and removeDerivedTask=False
+    remove_from_scheduled_queue=True and remove_from_active_queue=True and remove_derived_task=False
     remove from scheduled or active queue
     
-    removeFromScheduledQueue=True and removeFromActiveQueue=True and removeDerivedTask=True
+    remove_from_scheduled_queue=True and remove_from_active_queue=True and remove_derived_task=True
     remove this and all derivative tasks from scheduled or active queue
     """
     db, cur = akrr.db.get_akrr_db(True)
-    cur.execute('''SELECT * FROM scheduled_tasks
-            WHERE task_id=%s''', (task_id,))
+    cur.execute('''SELECT * FROM scheduled_tasks WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
 
     scheduled_task = None
@@ -1134,19 +1115,19 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
             if len(possible_task) == 1:
                 complete_task = possible_task[0]
             else:
-                raise IOError("""Task %d is not in queue""" % (task_id))
+                raise ValueError("""Task %d is not in queue""" % task_id)
 
-    if removeFromScheduledQueue == True and scheduled_task != None:
+    if remove_from_scheduled_queue and scheduled_task is not None:
         cur.execute('''DELETE FROM scheduled_tasks
                 WHERE task_id=%s;''', (task_id,))
         db.commit()
 
-    if removeFromActiveQueue == True and active_task != None:
-        print("Trying to remove task from active_tasks")
+    if remove_from_active_queue and active_task is not None:
+        log.info("Trying to remove task from active_tasks")
         t0 = datetime.datetime.now()
         while active_task['task_lock'] != 0:
             # i.e. one of child process is working on this task, will wait till it finished
-            if akrr_scheduler != None:
+            if akrr_scheduler is not None:
                 # i.e. it is master
                 akrr_scheduler.runActiveTasks_CheckTheStep()
 
@@ -1154,19 +1135,17 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
                 WHERE task_id=%s''', (task_id,))
             active_task = cur.fetchone()
             if t0 - datetime.datetime.now() > datetime.timedelta(seconds=120):
-                raise Exception("child proccess handling subtask for too long")
+                raise Exception("child process handling subtask for too long")
 
-        CanBeSafelyRemoved = False
         # get task handler
         th = akrrtask.akrrGetTaskHandler(active_task['resource'], active_task['app'], active_task['datetime_stamp'])
 
-        CanBeSafelyRemoved = th.Terminate()
+        can_be_safely_removed = th.Terminate()
 
-        if CanBeSafelyRemoved:
-            print("The task can be safely removed")
+        if can_be_safely_removed:
+            log.info("The task can be safely removed")
             # remove from DB
-            cur.execute('''DELETE FROM active_tasks
-                WHERE task_id=%s;''', (task_id,))
+            cur.execute('''DELETE FROM active_tasks WHERE task_id=%s;''', (task_id,))
             db.commit()
             # remove from local disk
             th.DeleteRemoteFolder()
@@ -1174,30 +1153,27 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
         else:
             raise Exception("Task can NOT be remove safely. Unimplemented status:" + active_task['status'])
 
-    if removeDerivedTask == True:
+    if remove_derived_task:
         # find derived tasks
         task = scheduled_task
-        if task == None:
+        if task is None:
             task = active_task
-        if task == None:
+        if task is None:
             task = complete_task
-        if task['parent_task_id'] != None:
+        if task['parent_task_id'] is not None:
             task_id = task['task_id']
-            parent_task_id = task['parent_task_id']
             tasks_to_delete = []
 
-            if removeFromScheduledQueue == True:
-                cur.execute('''SELECT * FROM scheduled_tasks
-                    WHERE parent_task_id=%s''', (task_id,))
+            if remove_from_scheduled_queue:
+                cur.execute('''SELECT * FROM scheduled_tasks WHERE parent_task_id=%s''', (task_id,))
                 possible_tasks = cur.fetchall()
 
                 for possible_task in possible_tasks:
                     if possible_task['task_id'] > task_id:
                         tasks_to_delete.append(possible_task['task_id'])
 
-            if removeFromActiveQueue == True:
-                cur.execute('''SELECT * FROM active_tasks
-                    WHERE parent_task_id=%s''', (task_id,))
+            if remove_from_active_queue:
+                cur.execute('''SELECT * FROM active_tasks WHERE parent_task_id=%s''', (task_id,))
                 possible_tasks = cur.fetchall()
 
                 for possible_task in possible_tasks:
@@ -1205,19 +1181,19 @@ def akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue
                         tasks_to_delete.append(possible_task['task_id'])
 
             for task_to_delete in tasks_to_delete:
-                akrrDeleteTask(task_to_delete, removeFromScheduledQueue=removeFromScheduledQueue,
-                               removeFromActiveQueue=removeFromActiveQueue, removeDerivedTask=False)
+                delete_task(task_to_delete, remove_from_scheduled_queue=remove_from_scheduled_queue,
+                            remove_from_active_queue=remove_from_active_queue, remove_derived_task=False)
 
     cur.close()
     db.close()
     return
 
 
-def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
+def update_task_parameters(task_id, new_param, update_derived_task=True):
     """
     update task parameters
     """
-    print("Akrr Update Task Parameters: %r" % (task_id,))
+    log.info("Akrr Update Task Parameters: %r" % task_id)
 
     db, cur = akrr.db.get_akrr_db(True)
     cur.execute('''SELECT * FROM scheduled_tasks
@@ -1228,7 +1204,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     active_task = None
     complete_task = None
 
-    print("Length of Possible Tasks: %r" % (len(possible_task),))
+    log.info("Length of Possible Tasks: %r" % len(possible_task))
     if len(possible_task) == 1:
         # task still in scheduled_tasks queue
         scheduled_task = possible_task[0]
@@ -1248,18 +1224,18 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
             if len(possible_task) == 1:
                 complete_task = possible_task[0]
             else:
-                raise IOError("""Task %d is not in queue""" % (task_id))
+                raise IOError("""Task %d is not in queue""" % task_id)
 
-    if scheduled_task != None:
+    if scheduled_task is not None:
         possible_keys_to_change = list(scheduled_task.keys())
         possible_keys_to_change.remove('task_id')
         possible_keys_to_change.remove('parent_task_id')
         possible_keys_to_change.remove('app')
         possible_keys_to_change.remove('resource')
 
-        print("Scheduled Task Keys: %r" % (list(scheduled_task.keys()),))
-        print("Possible Keys: %r" % (possible_keys_to_change,))
-        print("New Params: %r " % (new_param,))
+        log.info("Scheduled Task Keys: %r" % (list(scheduled_task.keys()),))
+        log.info("Possible Keys: %r" % (possible_keys_to_change,))
+        log.info("New Params: %r " % (new_param,))
         # pack mysql update
         update_set_var = []
         update_set_value = []
@@ -1268,7 +1244,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
                 update_set_var.append(k + "=%s")
                 update_set_value.append(validate_task_parameters(k, new_param[k]))
             else:
-                raise IOError('Can not update %s' % (k,))
+                raise IOError('Can not update %s' % k)
 
         update_set_value.append(scheduled_task['task_id'])
 
@@ -1278,21 +1254,19 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
                         tuple(update_set_value))
             db.commit()
     else:
-        if updateDerivedTask == False:
+        if not update_derived_task:
             raise IOError('Can not update task because it left scheduled_task queue')
 
-    if updateDerivedTask == True and scheduled_task == None:
+    if update_derived_task and scheduled_task is None:
         # find derived tasks
         task = scheduled_task
-        if task == None:
+        if task is None:
             task = active_task
-        if task == None:
+        if task is None:
             task = complete_task
-        print(task)
 
-        if task['parent_task_id'] != None:
+        if task['parent_task_id'] is not None:
             task_id = task['task_id']
-            parent_task_id = task['parent_task_id']
             tasks_to_update = []
 
             cur.execute('''SELECT * FROM scheduled_tasks
@@ -1304,13 +1278,7 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
                     tasks_to_update.append(possible_task)
 
             for task_to_update in tasks_to_update:
-                # new_param2={}
-                # for k,v in new_param.iteritems():
-                #    new_param2[k]=v
-
-                # if "time_to_start" in new_param:
-
-                akrrUpdateTaskParameters(task_to_update['task_id'], new_param, updateDerivedTask=False)
+                update_task_parameters(task_to_update['task_id'], new_param, update_derived_task=False)
         else:
             raise IOError('Can not update task because it left scheduled_task queue')
 
@@ -1319,41 +1287,40 @@ def akrrUpdateTaskParameters(task_id, new_param, updateDerivedTask=True):
     return
 
 
-def akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=False):
+def get_daemon_pid(delete_pid_file_if_daemon_down=False):
     """Return the PID of AKRR server"""
     pid = None
     if os.path.isfile(os.path.join(cfg.data_dir, "akrr.pid")):
         # print "Read process pid from",os.path.join(akrr.data_dir,"akrr.pid")
 
         fin = open(os.path.join(cfg.data_dir, "akrr.pid"), "r")
-        l = fin.readlines()
-        pid = int(l[0])
+        lines = fin.readlines()
+        pid = int(lines[0])
         fin.close()
 
         # Check For the existence of a unix pid
         try:
             os.kill(pid, 0)
-            # print "/proc/%d/cmdline"%(pid)
-            fin = open("/proc/%d/cmdline" % (pid), 'r')
+            fin = open("/proc/%d/cmdline" % pid, 'r')
             cmd = fin.read()
             fin.close()
 
             if cmd.count('akrr') and cmd.count('daemon') and cmd.count('start'):
                 return pid
-        except Exception:
-            pass
-    if pid != None:
+        except Exception as e:
+            log.log_traceback(str(e))
+
+    if pid is not None:
         # if here means that previous session was crushed
-        if bDeletePIDFileIfPIDdoesNotExist:
-            log.warning("""WARNING:File %s exists meaning that another AKRR Scheduler
-            process is already working with this directory.
-            or the previous one had exited incorrectly.""" % (os.path.join(cfg.data_dir, "akrr.pid")))
+        if delete_pid_file_if_daemon_down:
+            log.warning("WARNING:File %s exists meaning that the previous execution was finished incorrectly."
+                        "Removing pid file." %
+                        (os.path.join(cfg.data_dir, "akrr.pid")))
             os.remove(os.path.join(cfg.data_dir, "akrr.pid"))
             return None
         else:
-            raise IOError("""File %s exists meaning that another AKRR Scheduler
-            process is already working with this directory.
-            or the previous one had exited incorrectly.""" % (os.path.join(cfg.data_dir, "akrr.pid")))
+            raise IOError("File %s exists meaning that the previous execution was finished incorrectly." %
+                          (os.path.join(cfg.data_dir, "akrr.pid")))
 
     return pid
 
@@ -1366,7 +1333,7 @@ this_stderr = None
 def akrrServerStart():
     """Start AKRR server"""
     # check if AKRR already up
-    pid = akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
+    pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     if pid != None:
         raise IOError("Can not start AKRR server because another instance is already running.")
     # check if something already listening on REST API port
@@ -1531,7 +1498,7 @@ def akrrServerStart():
 
 def akrrServerStop():
     """Stop AKRR server"""
-    pid = akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
+    pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     if pid == None:
         log.warning("Can not stop AKRR server because none is running.")
         return
@@ -1553,7 +1520,7 @@ def akrrServerStop():
 
 def akrrServerCheckNRestart():
     """Check AKRR server status if not running"""
-    pid = akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
+    pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     t = str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
     if pid == None:
@@ -1567,7 +1534,7 @@ def akrrServerCheckNRestart():
 def akrrDeleteTaskWithExternalServerInterupt(task_id):
     """remove the task from AKRR server"""
     # @todo do we still use it?
-    pid = akrrGetPIDofServer()
+    pid = get_daemon_pid()
 
     if pid != None:
         # ask the server not to start new tasks and subtasks
@@ -1662,7 +1629,7 @@ def akrrd_main2(action='', append=False, output_file=None):
         log.basicConfig(level=log.DEBUG)
         print("Starting Application Remote Runner")
         # check if AKRR already up
-        pid = akrrGetPIDofServer(bDeletePIDFileIfPIDdoesNotExist=True)
+        pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
         if pid != None:
             raise IOError("Can not start AKRR server because another instance is already running.")
         global akrr_scheduler
