@@ -10,7 +10,7 @@ import copy
 import subprocess
 import socket
 
-from typing import Union, Optional
+from typing import Union
 
 from . import cfg
 import akrr.db
@@ -20,7 +20,6 @@ from akrr.util.time import time_stamp_to_datetime_str
 from .util import log
 from . import akrrtask
 
-from .appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 from .akrrerror import AkrrError
 
 akrr_scheduler = None
@@ -1488,7 +1487,7 @@ def daemon_start():
     return None
 
 
-def akrrServerStop():
+def daemon_stop():
     """Stop AKRR server"""
     pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     if pid is None:
@@ -1510,158 +1509,41 @@ def akrrServerStop():
     return None
 
 
-def akrrServerCheckNRestart():
-    """Check AKRR server status if not running"""
+def daemon_check_and_start_if_needed():
+    """Check AKRR daemon, start it if needed"""
     pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     t = str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
 
-    if pid == None:
-        print("%s: AKRR server is down will start it" % (t,))
+    if pid is None:
+        log.info("%s: AKRR server is down will start it" % (t,))
         daemon_start()
     else:
-        print("%s: AKRR Server is up and it's PID is %d" % (t, pid))
+        log.info("%s: AKRR Server is up and it's PID is %d" % (t, pid))
     return None
 
 
-def akrrDeleteTaskWithExternalServerInterupt(task_id):
-    """remove the task from AKRR server"""
-    # @todo do we still use it?
-    pid = get_daemon_pid()
+def daemon_start_in_debug_mode(max_task_handlers=None, redirect_task_processing_to_log_file=None):
+    """
+    Start daemon in debug mode, that is in foreground, debug printing, logs printed to stdout
+    and with `max_task_handlers` processes for task handling (0 means main process will do the job) and
+    if `redirect_task_processing_to_log_file` is set to False, task processing logs will be printed
+    to stdout.
+    """
+    log.basicConfig(level=log.DEBUG)
+    log.info("Starting Application Remote Runner")
 
-    if pid != None:
-        # ask the server not to start new tasks and subtasks
-        os.kill(pid, signal.SIGUSR1)
+    # check if AKRR already up
+    pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
+    if pid is not None:
+        raise AkrrError("Can not start AKRR server because another instance is already running.")
 
-    # sleep a bit
-    time.sleep(1)
+    if max_task_handlers is not None:
+        cfg.max_task_handlers = max_task_handlers
 
-    try:
-        sch = AkrrDaemon()
+    if redirect_task_processing_to_log_file is not None:
+        cfg.redirect_task_processing_to_log_file = bool(redirect_task_processing_to_log_file)
 
-        # check if the task is in scheduled_tasks
-        sch.ScheduledTasksCur.execute('''SELECT * FROM scheduled_tasks
-            WHERE task_id=%s ;''', (task_id,))
-        tasksToRemove = sch.ScheduledTasksCur.fetchone()
-        if tasksToRemove != None:
-            sch.ScheduledTasksCur.execute('''DELETE FROM scheduled_tasks
-                WHERE task_id=%s;''', (task_id,))
-            sch.ScheduledTasksCon.commit()
-            sch.ScheduledTasksCur.execute('''SELECT * FROM scheduled_tasks
-            WHERE task_id=%s ;''', (task_id,))
-            tasksToRemove = sch.ScheduledTasksCur.fetchone()
-            if tasksToRemove == None:
-                print("Task %d was removed from scheduled_tasks." % (task_id))
-        else:
-            # check if the task is in active_tasks
-            sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
-                WHERE task_id=%s ;''', (task_id,))
-            tasksToRemove = sch.ActiveTasksCur.fetchone()
-            if tasksToRemove != None:
-                print("Trying to remove task from active_tasks")
-                (task_lock, status) = tasksToRemove
-                while task_lock != 0:
-                    sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
-                       WHERE task_id=%s ;''', (task_id,))
-                    (task_lock, status) = sch.ActiveTasksCur.fetchone()
-
-                CanBeSafelyRemoved = False
-                # get task handler
-                sch.ActiveTasksCur.execute('''SELECT task_id,resource,app,datetime_stamp FROM active_tasks
-                        WHERE task_id=%s;''', (task_id,))
-                (task_id, resourceName, appName, timeStamp) = sch.ActiveTasksCur.fetchone()
-                # Redirect logging
-                # taskDir=akrrtask.GetLocalTaskDir(resourceName,appName,timeStamp)
-                # akrrtask.RedirectStdoutToLog(os.path.join(taskDir,'proc','log'))
-                th = akrrtask.akrrGetTaskHandler(resourceName, appName, timeStamp)
-
-                CanBeSafelyRemoved = th.Terminate()
-
-                if CanBeSafelyRemoved:
-                    print("The task can be safely removed")
-                    # Redirect logging back
-                    # akrrtask.RedirectStdoutBack()
-
-                    # remove from DB
-                    sch.ActiveTasksCur.execute('''DELETE FROM active_tasks
-                        WHERE task_id=%s;''', (task_id,))
-                    sch.ActiveTasksCon.commit()
-                    # remove from local disk
-                    th.DeleteRemoteFolder()
-                    th.DeleteLocalFolder()
-
-
-                else:
-                    print("Task can NOT be remove safely. Unimplemented status:")
-                    print("\t%s" % (status))
-
-                # check again
-                sch.ActiveTasksCur.execute('''SELECT task_lock,status FROM active_tasks
-                    WHERE task_id=%s ;''', (task_id,))
-                tasksToRemove = sch.ActiveTasksCur.fetchone()
-                if tasksToRemove == None:
-                    print("Task %d was removed from active_tasks." % (task_id))
-                else:
-                    print("Task %d was NOT removed from active_tasks." % (task_id))
-            else:
-                print("Task %d is NOT in scheduled_tasks or active_tasks." % (task_id))
-
-        if pid != None:
-            # restore schedule functionality
-            os.kill(pid, signal.SIGUSR2)
-    except Exception:
-        log.exception("Exception occurred during akrrDeleteTaskWithExternalServerInterupt")
-        if pid != None:
-            # restore schedule functionality
-            os.kill(pid, signal.SIGUSR2)
-        raise
-
-
-def akrrd_main2(action='', append=False, output_file=None):
-    if action == 'startdeb':
-        log.basicConfig(level=log.DEBUG)
-        print("Starting Application Remote Runner")
-        # check if AKRR already up
-        pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
-        if pid != None:
-            raise IOError("Can not start AKRR server because another instance is already running.")
-        global akrr_scheduler
-        akrr_scheduler = AkrrDaemon()
-        akrr_scheduler.run()
-        del akrr_scheduler
-    else:
-        log_file1 = None
-        log_file2 = None
-
-        if output_file != None:
-            global redirected_filename, this_stdout, this_stderr
-            redirected_filename = output_file
-            this_stdout = open(redirected_filename, 'w' if append == False else 'a')
-            this_stderr = open(redirected_filename, 'a')
-            sys.stdout = this_stdout
-            sys.stderr = this_stderr
-
-        if (action == 'start'):
-            daemon_start()
-        elif (action == 'stop'):
-            akrrServerStop()
-        elif (action == 'monitor'):
-            sch = AkrrDaemon()
-            sch.monitor()
-        elif (action == 'status'):
-            sch = AkrrDaemon()
-            sch.check_status()
-        elif (action == 'checknrestart'):
-            akrrServerCheckNRestart()
-
-        elif (action == 'restart'):
-            log.info("Restarting AKRR")
-            try:
-                akrrServerStop()
-            except Exception:
-                log.exception("Exception was thrown during daemon stopping")
-            daemon_start()
-
-        if log_file1:
-            log_file1.close()
-        if log_file2:
-            log_file2.close()
+    global akrr_scheduler
+    akrr_scheduler = AkrrDaemon()
+    akrr_scheduler.run()
+    del akrr_scheduler

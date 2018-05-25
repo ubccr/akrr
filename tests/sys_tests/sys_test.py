@@ -208,3 +208,6 @@ def test_use_gromacs_micro(caplog):
 
     # remove it
     run_akrr("task delete -t {}".format(task_id_3))
+
+    # remove it
+    run_akrr("daemon stop")

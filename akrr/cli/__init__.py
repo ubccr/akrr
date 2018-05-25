@@ -3,10 +3,9 @@ A script that will provide command line access to the Application Remote Runner
 functionality.
 
 """
-from akrr.util import log
-
-import os
 import argparse
+
+from akrr.util import log
 
 
 def reprocess_parsed(args):
@@ -61,7 +60,7 @@ def wall_time_parsed(args):
             if result.status_code == 200:
                 if not listing:
                     log.info('Successfully updated wall time (resource %s: application kernel: %s nodes: %d).' % (
-                    resource, app, nodes))
+                             resource, app, nodes))
                 else:
                     log.info(
                         'Successfully queried walltime records. \n%s',
@@ -82,49 +81,6 @@ def wall_time_parsed(args):
             print(traceback.print_exc())
 
 
-def check_daemon(args):
-    def is_api_up():
-        from akrr import akrrrestclient
-        request = akrrrestclient.get("/scheduled_tasks")
-        if request.status_code == 200:
-            return True
-        else:
-            log.error('Unable to successfully contact the REST API: %s: %s', request.status_code, request.text)
-            return False
-
-    log.info('Beginning check of the AKRR Rest API...')
-    is_up = is_api_up()
-    if is_up:
-        log.info('REST API is up and running!')
-    else:
-        exit(1)
-
-
-def daemon_handler(args):
-    """AKRR daemon handler"""
-    log.debug(args)
-    if args.action == 'check':
-        return check_daemon(args)
-
-    from akrr import cfg
-
-    if args.cron and args.action in ['checknrestart', 'restart']:
-        args.append = True
-        args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
-
-    import akrr.daemon
-
-    if args.action == "startdeb":
-        akrr.debug = True
-
-        if args.max_task_handlers is not None:
-            cfg.max_task_handlers = args.max_task_handlers
-        if args.redirect_task_processing_to_log_file is not None:
-            cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
-
-    return akrr.daemon.akrrd_main2(args.action, args.append, args.output_file)
-
-
 class CLI:
     def __init__(self):
         log.basicConfig(
@@ -137,7 +93,8 @@ class CLI:
 
         self.subparsers = self.root_parser.add_subparsers(title='commands')
 
-        self.add_command_daemon()
+        from .commands import add_command_daemon
+        add_command_daemon(self.subparsers)
 
         from .commands import add_command_setup
         add_command_setup(self.subparsers)
@@ -151,43 +108,14 @@ class CLI:
         from .commands import add_command_task
         add_command_task(self.subparsers)
 
-    def add_command_daemon(self):
-        """set up daemon command"""
-        parser = self.subparsers.add_parser('daemon', description="""Application Kernel Remote Runner (AKRR) daemon launcher.
-        Without arguments will launch AKRR in command line mode, i.e. stdout is to terminal
-        """)
-        parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
-        parser.add_argument('-a', '--append', action='store_true',
-                            help="append stdout and stderr to file rather then overwrite")
-        parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
-
-        subparsers = parser.add_subparsers(title='commands', dest='action');
-        subparsers.add_parser('start', help='launch Application Remote Runner in daemon mode')
-        subparsers.add_parser('stop', help='terminate Application Remote Runner')
-        subparsers.add_parser('restart', help='restart AKRR daemon')
-        subparsers.add_parser('check', help='Check AKRR Daemon Status')
-        subparsers.add_parser('checknrestart', help='check if AKRR daemon is up if not it will restart it')
-        subparsers.add_parser('monitor', help='monitor the activity of Application Remote Runner')
-        subparsers.add_parser('status', help='print current status of Application Remote Runner')
-        startdeb_parsers = subparsers.add_parser('startdeb', help='launch Application Remote Runner in foreground mode')
-        startdeb_parsers.add_argument(
-            '-th', '--max-task-handlers',
-            dest='max_task_handlers',
-            default=None, type=int,
-            help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
-        startdeb_parsers.add_argument(
-            '-redir', '--redirect-task-processing-to-log-file',
-            dest='redirect_task_processing_to_log_file',
-            default=None, type=int,
-            help='Overwrite redirect_task_processing_to_log_file from configuration')
-
-        parser.set_defaults(func=daemon_handler)
+        self.verbose = False
 
     def process_common_args(self, cli_args):
         if "verbose" in cli_args and cli_args.verbose:
             log.verbose = True
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)
+            self.verbose = True
 
     def run(self, args=None):
         """parse arguments and execute requested commands"""
@@ -198,10 +126,9 @@ class CLI:
 
         # EXECUTE: the function provided in the '.set_defaults(func=...)'
         if hasattr(cli_args, "func"):
-            cli_args.func(cli_args)
-        else:
-            log.error("There is no command specified!")
+            return cli_args.func(cli_args)
 
+        log.error("There is no command specified!")
         return
 
         parser = argparse.ArgumentParser(description='command line interface to AKRR')

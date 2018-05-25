@@ -2,6 +2,187 @@
 # Keep CLI commands setup here outside of implementation, to avoid premature cfg loading
 
 
+def add_command_daemon(parent_parser):
+    """
+    Application Kernel Remote Runner (AKRR) daemon control command
+    """
+    parser = parent_parser.add_parser('daemon', description=add_command_daemon.__doc__)
+    subparsers = parser.add_subparsers(title='commands')
+
+    # @todo ensure proper cron execution
+    # parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
+    # parser.add_argument('-a', '--append', action='store_true',
+    #                     help="append stdout and stderr to file rather then overwrite")
+    # parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
+
+    cli_daemon_start(subparsers)
+    cli_daemon_stop(subparsers)
+    cli_daemon_restart(subparsers)
+    cli_daemon_check(subparsers)
+    cli_daemon_checknrestart(subparsers)
+    cli_daemon_monitor(subparsers)
+    cli_daemon_status(subparsers)
+    cli_daemon_startdeb(subparsers)
+
+
+def cli_daemon_start(parent_parser):
+    """launch Application Remote Runner in daemon mode"""
+    parser = parent_parser.add_parser('start', description=cli_daemon_start.__doc__)
+
+    def handler(_):
+        from akrr.daemon import daemon_start
+        return daemon_start()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_stop(parent_parser):
+    """terminate Application Remote Runner"""
+    parser = parent_parser.add_parser('stop', description=cli_daemon_stop.__doc__)
+
+    def handler(_):
+        from akrr.daemon import daemon_stop
+        return daemon_stop()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_restart(parent_parser):
+    """restart AKRR daemon"""
+    parser = parent_parser.add_parser('restart', description=cli_daemon_restart.__doc__)
+
+    def handler(_):
+        from akrr.util import log
+        from akrr.daemon import get_daemon_pid, daemon_start, daemon_stop
+
+        # if args.cron:
+        #    args.append = True
+        #    args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
+
+        log.info("Restarting AKRR")
+        try:
+            if get_daemon_pid(True) is not None:
+                daemon_stop()
+        except Exception as e:
+            log.exception("Exception was thrown during daemon stopping")
+            log.log_traceback(str(e))
+        return daemon_start()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_check(parent_parser):
+    """Check AKRR Daemon Status, using REST API"""
+    parser = parent_parser.add_parser('check', description=cli_daemon_check.__doc__)
+
+    def handler(_):
+        from akrr.util import log
+
+        def is_api_up():
+            from akrr import akrrrestclient
+            request = akrrrestclient.get("/scheduled_tasks")
+            if request.status_code == 200:
+                return True
+            else:
+                log.error('Unable to successfully contact the REST API: %s: %s', request.status_code, request.text)
+                return False
+
+        log.info('Beginning check of the AKRR Rest API...')
+        is_up = is_api_up()
+        if is_up:
+            log.info('REST API is up and running!')
+        else:
+            exit(1)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_checknrestart(parent_parser):
+    """check if AKRR daemon is up if not it will restart it"""
+    parser = parent_parser.add_parser('checknrestart', description=cli_daemon_checknrestart.__doc__)
+
+    def handler(args):
+        from akrr.daemon import daemon_check_and_start_if_needed
+        # if args.cron:
+        #    args.append = True
+        #    args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
+
+        return daemon_check_and_start_if_needed()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_monitor(parent_parser):
+    """monitor the activity of Application Remote Runner"""
+    parser = parent_parser.add_parser('monitor', description=cli_daemon_monitor.__doc__)
+
+    def handler(args):
+        from akrr.daemon import AkrrDaemon
+        sch = AkrrDaemon()
+        return sch.monitor()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_status(parent_parser):
+    """print current status of Application Remote Runner"""
+    parser = parent_parser.add_parser('status', description=cli_daemon_status.__doc__)
+
+    def handler(args):
+        from akrr.daemon import AkrrDaemon
+        sch = AkrrDaemon()
+        return sch.check_status()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_daemon_startdeb(parent_parser):
+    """launch Application Remote Runner in foreground mode"""
+    parser = parent_parser.add_parser('startdeb', description=cli_daemon_startdeb.__doc__)
+
+    parser.add_argument(
+        '-th', '--max-task-handlers',
+        dest='max_task_handlers',
+        default=None, type=int,
+        help='Overwrite max_task_handlers from configuration, if 0 tasks are executed from main thread')
+
+    parser.add_argument(
+        '-redir', '--redirect-task-processing-to-log-file',
+        dest='redirect_task_processing_to_log_file',
+        default=None, type=int,
+        help='Overwrite redirect_task_processing_to_log_file from configuration')
+
+    def handler(args):
+        from akrr.daemon import daemon_start_in_debug_mode
+        return daemon_start_in_debug_mode(
+            max_task_handlers=args.max_task_handlers,
+            redirect_task_processing_to_log_file=args.redirect_task_processing_to_log_file)
+
+    parser.set_defaults(func=handler)
+
+
+def daemon_handler(args):
+    """AKRR daemon handler"""
+    log.debug(args)
+
+    from akrr import cfg
+
+
+
+    import akrr.daemon
+
+    if args.action == "startdeb":
+        akrr.debug = True
+
+        if args.max_task_handlers is not None:
+            cfg.max_task_handlers = args.max_task_handlers
+        if args.redirect_task_processing_to_log_file is not None:
+            cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
+
+    return akrr.daemon.akrrd_main2(args.action, args.append, args.output_file)
+
+
+
 def add_command_setup(parent_parser):
     """Initial AKRR Setup"""
     parser = parent_parser.add_parser('setup', description=add_command_setup.__doc__)
@@ -50,7 +231,7 @@ def add_command_resource(parent_parser):
     cli_resource_list(subparsers)
 
     # remove
-    #cli_resource_remove(subparsers)
+    # cli_resource_remove(subparsers)
 
 
 def cli_resource_add(parent_parser):
