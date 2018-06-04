@@ -42,12 +42,12 @@ def _start_the_task_step(resource_name, app_name, time_stamp, results_queue,
                          fatal_errors_count=0, fails_to_submit_to_the_queue=0):
     try:
         # Redirect logging
-        task_dir = akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)
+        task_dir = akrrtask.get_local_task_dir(resource_name, app_name, time_stamp)
         if cfg.redirect_task_processing_to_log_file:
-            akrrtask.RedirectStdoutToLog(os.path.join(task_dir, 'proc', 'log'))
+            akrrtask.redirect_stdout_to_log(os.path.join(task_dir, 'proc', 'log'))
 
         # Do the task
-        th = akrrtask.akrrGetTaskHandler(resource_name, app_name, time_stamp)
+        th = akrrtask.get_task_handler(resource_name, app_name, time_stamp)
 
         th.fatal_errors_count = fatal_errors_count
         th.fails_to_submit_to_the_queue = fails_to_submit_to_the_queue
@@ -55,7 +55,7 @@ def _start_the_task_step(resource_name, app_name, time_stamp, results_queue,
         repeat_in = th.ToDoNext()
 
         if th.IsStateChanged():
-            akrrtask.akrrDumpTaskHandler(th)
+            akrrtask.dump_task_handler(th)
 
         m_pid = os.getpid()
         results_queue.put({
@@ -69,14 +69,14 @@ def _start_the_task_step(resource_name, app_name, time_stamp, results_queue,
 
         # Redirect logging back
         if cfg.redirect_task_processing_to_log_file:
-            akrrtask.RedirectStdoutBack()
+            akrrtask.redirect_stdout_back()
 
         return 0
     except Exception as e:
         log.exception("Exception was thrown during StartTheStep")
         log.log_traceback(str(e))
         if akrrtask.log_file is not None:
-            akrrtask.RedirectStdoutBack()
+            akrrtask.redirect_stdout_back()
         return 1
 
 
@@ -223,9 +223,9 @@ class AkrrDaemon:
                                           subtask_task_param, group_id, parent_task_id)
 
                 if start_task_execution:
-                    task_handler = akrrtask.akrrGetNewTaskHandler(
+                    task_handler = akrrtask.get_new_task_handler(
                         task_id, resource, app, resource_param, app_param, task_param_str)
-                    akrrtask.akrrDumpTaskHandler(task_handler)
+                    akrrtask.dump_task_handler(task_handler)
                     next_check_time = (datetime.datetime.today() + datetime.timedelta(minutes=1)).strftime(
                         "%Y-%m-%d %H:%M:%S")
                     # First we'll copy it to ActiveTasks
@@ -289,7 +289,7 @@ class AkrrDaemon:
             if self.maxTaskHandlers == 0:
                 # Executing task by main thread
                 (task_id, resource_name, app_name, time_stamp, fatal_errors_count, fails_to_submit_to_the_queue) = row
-                log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)))
+                log.info("Working on:\n\t%s" % (akrrtask.get_local_task_dir(resource_name, app_name, time_stamp)))
 
                 self.workers.append({
                     "task_id": task_id,
@@ -308,7 +308,7 @@ class AkrrDaemon:
                 return
 
             (task_id, resource_name, app_name, time_stamp, fatal_errors_count, fails_to_submit_to_the_queue) = row
-            log.info("Working on:\n\t%s" % (akrrtask.GetLocalTaskDir(resource_name, app_name, time_stamp)))
+            log.info("Working on:\n\t%s" % (akrrtask.get_local_task_dir(resource_name, app_name, time_stamp)))
             try:
                 p = multiprocessing.Process(
                     target=_start_the_task_step,
@@ -417,13 +417,13 @@ class AkrrDaemon:
                 self.dbCur.execute(
                     '''SELECT resource,app,datetime_stamp FROM active_tasks WHERE task_id=%s;''', (task_id,))
                 (resource, app, datetime_stamp) = self.dbCur.fetchone()
-                th = akrrtask.akrrGetTaskHandler(resource, app, datetime_stamp)
+                th = akrrtask.get_task_handler(resource, app, datetime_stamp)
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
                 th.ReportFormat = "Error"
                 th.ProccessResults()
                 if th.PushToDB() is not None:
                     log.error("Can not push to DB")
-                akrrtask.akrrDumpTaskHandler(th)
+                akrrtask.dump_task_handler(th)
                 status = copy.deepcopy(th.status)
                 status_info = copy.deepcopy(th.status_info)
                 del th
@@ -768,7 +768,7 @@ class AkrrDaemon:
                 (task_id, time_finished, status, status_info, time_to_start, datetime_stamp, repeat_in, resource, app,
                  resource_param, app_param, task_param, group_id) = row
                 if re.match("ERROR:", status, re.M):
-                    task_dir = akrrtask.GetLocalTaskDir(resource, app, datetime_stamp, False)
+                    task_dir = akrrtask.get_local_task_dir(resource, app, datetime_stamp, False)
                     log.info("Done with errors: %s %5d %s\n" % (time_finished, task_id, task_dir), resource_param,
                              app_param, task_param, group_id, "\n", status, "\n", status_info)
 
@@ -814,7 +814,7 @@ class AkrrDaemon:
         for row in tasks:
             (task_id, time_finished, status, status_info, time_to_start, datetime_stamp, repeat_in, resource, app,
              resource_param, app_param, task_param, group_id) = row
-            task_dir = akrrtask.GetLocalTaskDir(resource, app, datetime_stamp, False)
+            task_dir = akrrtask.get_local_task_dir(resource, app, datetime_stamp, False)
             if verbose:
                 log.info("task_id:  %-10d     started:      %s    finished: %s    group_id: %s" % (
                          task_id, time_to_start, time_finished, group_id))
@@ -836,7 +836,7 @@ class AkrrDaemon:
             task_states = sorted(task_states)
             for task_state in task_states:
                 pickle_filename = os.path.join(proc_task_dir, task_state)
-                th = akrrtask.akrrGetTaskHandlerFromPkl(pickle_filename)
+                th = akrrtask.get_task_handler_from_pkl(pickle_filename)
                 th.statefilename = task_state
                 th.SetDirNames(cfg.completed_tasks_dir)
 
@@ -1137,7 +1137,7 @@ def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_qu
                 raise Exception("child process handling subtask for too long")
 
         # get task handler
-        th = akrrtask.akrrGetTaskHandler(active_task['resource'], active_task['app'], active_task['datetime_stamp'])
+        th = akrrtask.get_task_handler(active_task['resource'], active_task['app'], active_task['datetime_stamp'])
 
         can_be_safely_removed = th.Terminate()
 

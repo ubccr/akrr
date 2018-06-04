@@ -290,7 +290,7 @@ class AppKerOutputParser:
 
 def testParser(jobdir, processAppKerOutput):
     import akrr.akrrtask
-    taskHandler = akrr.akrrtask.akrrGetTaskHandlerFromJobDir(jobdir)
+    taskHandler = akrr.akrrtask.get_task_handler_from_job_dir(jobdir)
     if taskHandler != None:
         appKerNResVars = {}
         appKerNResVars['resource'] = taskHandler.resource
