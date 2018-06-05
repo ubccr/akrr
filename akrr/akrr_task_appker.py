@@ -12,14 +12,14 @@ import traceback
 import re
 import copy
 
-from .akrr_task_base import akrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
+from .akrr_task_base import AkrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
     active_task_default_attempt_repeat, killExprs
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
 from .akrrerror import AkrrError
 
 
-class akrrTaskHandlerAppKer(akrrTaskHandlerBase):
+class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
     """Task Handler for AppKernel execution and processing"""
 
     def FirstStep(self):

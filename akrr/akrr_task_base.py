@@ -1,85 +1,54 @@
-import akrr.util.ssh
-from . import cfg
 import os
-import sys
-# namdSizes
 import datetime
 import time
 import copy
 import re
 
+import akrr.util.ssh
+from . import cfg
 from .akrrerror import AkrrError
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
+# Batch job submit commands for different workload managers
 submitCommands = {
-    'cobalt': "cqsub `cat $scriptPath`",
-    'dqs': "qsub $scriptPath",
-    'loadleveler': "llsubmit $scriptPath",
-    'lsf': "bsub < $scriptPath",
+    # 'lsf': "bsub < $scriptPath",
     'pbs': "qsub $scriptPath",
-    'pbsxt': "qsub $scriptPath",
-    'pbssgi': "qsub $scriptPath",
     'sge': "qsub $scriptPath",
-    'shell': "/bin/sh $scriptPath",
+    # 'shell': "/bin/sh $scriptPath",
     'slurm': "sbatch $scriptPath"
 }
 
+# Regular expression for extracting job id of submitted batch script
 jidExtractPatterns = {
-    'cobalt': r'^(\d+)',
-    'dqs': r'job (\d+)',
-    'loadleveler': r'"([^"]+)" has been submitted',
-    'lsf': r'<(\d+)',
+    # 'lsf': r'<(\d+)',
     'pbs': r'^(\d+)',
-    'pbsxt': r'^(\d+)',
-    'pbssgi': r'^(\d+)',
     'sge': r'job (\d+)',
-    'shell': r'',  # N/A,
+    # 'shell': r'',  # N/A,
     'slurm': r'^Submitted batch job (\d+)'
 }
 
-# Commands to detect that the job is still queued or running
+# Command and regular expression to detect that the job is still queued or running
 waitExprs = {
-    # 'cobalt'      : ["cqstat 2>&1` =~ /^ *$jobId /m",
-    # 'dqs'         : ["qstat $jobId 2>&1` =~ /-----/",
-    # 'loadleveler' : ["llq $jobId` =~ /[1-9] job step/",
     # 'lsf'         : ["bjobs $jobId` =~ /PEND|RUN|SUSP/",
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
-    # 'pbsxt'       : ["qstat $jobId 2>&1` =~ /-----/",
-    # 'pbssgi'      : ["qstat $jobId 2>&1` =~ /-----/",
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
     'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
     # 'shell'       : ["kill(0, $jobId)"]
 }
-waitExprs['pbsxt'] = waitExprs['pbs']
-waitExprs['pbssgi'] = waitExprs['pbs']
 
 killExprs = {
-    #                cobalt      => "`cqdel $jobId`",
-    #                dqs         => "`qdel $jobId`",
-    #                loadleveler => "`llcancel $jobId`",
-    #                lsf         => "`bkill $jobId`",
+    # 'lsf': ["bkill $jobId"],
     'pbs': ["qdel $jobId"],
-    # pbsxt       => "`qdel $jobId`",
-    # pbssgi      => "`qdel $jobId`",
     'sge': ["qdel $jobId"],
     'slurm': ["scancel $jobId"],
     # shell       => "kill(9, $jobId)"
 }
-killExprs['pbsxt'] = killExprs['pbs']
-killExprs['pbssgi'] = killExprs['pbs']
 
 
-def GetLocalTaskDir(resourceName, appName, timeStamp):
-    taskDir = os.path.join(cfg.data_dir, resourceName, appName, timeStamp)
-    if not os.path.isdir(taskDir):
-        raise IOError("Directory %s does not exist or is not directory." % (taskDir))
-    return taskDir
-
-
-class akrrTaskHandlerBase:
+class AkrrTaskHandlerBase:
     """
-    the schadule will activate the task on timeToSubmit and reschedule new task on repetition
+    the scheduler will activate the task on timeToSubmit and reschedule new task on repetition
     
     timeToSubmit==None means run now
     reschedule==None means run only once
@@ -88,15 +57,15 @@ class akrrTaskHandlerBase:
     Scheduled
     """
 
-    def __init__(self, task_id, resourceName, appName, resourceParam, appParam, taskParam, timeToSubmit=None,
-                 repetition=None, timeStamp=None):
-        self.resourceName = resourceName
-        self.appName = appName
-        self.resourceParam = eval(resourceParam)
-        self.appParam = eval(appParam)
+    def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param, time_to_submit=None,
+                 repetition=None, time_stamp=None):
+        self.resourceName = resource_name
+        self.appName = app_name
+        self.resourceParam = eval(resource_param)
+        self.appParam = eval(app_param)
         self.taskParam = copy.deepcopy(cfg.default_task_params)
-        self.taskParam.update(eval(taskParam))
-        self.timeToSubmit = timeToSubmit
+        self.taskParam.update(eval(task_param))
+        self.timeToSubmit = time_to_submit
         self.repetition = repetition
         self.task_id = task_id
 
@@ -106,6 +75,10 @@ class akrrTaskHandlerBase:
         # just check that resource and app exists
         self.resource = cfg.find_resource_by_name(self.resourceName)
         self.app = cfg.find_app_by_name(self.appName)
+
+        self.resourceDir = None
+        self.appDir = None
+        self.taskDir = None
 
         self.timeStamp = self.CreateLocalDirectoryForTask()
         # set a directory for task already should exists
@@ -125,11 +98,11 @@ class akrrTaskHandlerBase:
         self.appDir = os.path.join(self.resourceDir, self.appName)
         self.taskDir = os.path.join(self.appDir, self.timeStamp)
 
-    def GetRemoteTaskDir(self, akrr_data_dir, appName, timeStamp):
-        return os.path.join(akrr_data_dir, appName, timeStamp)
+    def GetRemoteTaskDir(self, akrr_data_dir, app_name, time_stamp):
+        return os.path.join(akrr_data_dir, app_name, time_stamp)
 
-    def GetJobScriptName(self, appName):
-        return appName + ".job"
+    def GetJobScriptName(self, app_name):
+        return app_name + ".job"
 
     def IsStateChanged(self):
         if self.oldstatus == self.status and self.ToDoNextString == self.oldToDoNextString:
@@ -138,14 +111,18 @@ class akrrTaskHandlerBase:
             return True
 
     def ToDoNext(self):
-        ""
+        """
+        Returns method which should be executed next
+        """
         funToDo = getattr(self, self.ToDoNextString)
         if funToDo == None:
             raise IOError("ToDoNext is None!")
         return funToDo()
 
     def Terminate(self):
-        """return True is task can be safely removed from the DB"""
+        """
+        return True is task can be safely removed from the DB
+        """
         return True
 
     def CreateLocalDirectoryForTask(self):
@@ -220,39 +197,6 @@ class akrrTaskHandlerBase:
         self.status = "Activated"
         self.ToDoNext = self.CheckTheQueue
 
-    #    def CopyInputFilesToRemoteMachine(self):
-    #        self.status="Copying input files to remote machine"
-    #        self.status="Input files was copied to remote machine"
-    #    def SubmitJobToQueue(self):
-    #        self.status="Submiting job to queue"
-    #        self.status="Job was submited to queue"
-    #    def CheckTheQueue(self):
-    #        sh=None
-    #        try:
-    #            from string import Template
-    #            wE=waitExprs[self.resource['batchScheduler']]
-    #            cmd =Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
-    #            rege=Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
-    #            msg=akrrcfg.ssh_resource(self.resource,cmd)
-    #            matchObj= wE[1](rege,msg,wE[3])
-    #            if matchObj:
-    #                print "Still in queue. Either waiting or running"
-    #            else:
-    #                print "Not in queue. Either exited with error or executed successfully."
-    #                self.ToDoNext=self.CopyOutputFilesFromRemoteMachine
-    #            #print msg
-    #        except:
-    #            if sh!=None:
-    #                sh.sendline("exit")
-    #                sh.close(force=True)
-    #                del sh
-    #            raise
-    #        if 0:
-    #            self.status="Checking the queue"
-    #            self.status="Still in the queue"
-    #            self.status="Running"
-    #            self.status="PossibleProblems"
-    #            self.status="Done"
     def CopyOutputFilesFromRemoteMachine(self):
         self.status = "Copying output files from remote machine"
         print(self.status)

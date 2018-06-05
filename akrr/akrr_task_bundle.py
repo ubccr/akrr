@@ -15,11 +15,11 @@ import random
 
 from .akrrerror import AkrrError
 
-from .akrr_task_base import akrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
+from .akrr_task_base import AkrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
     active_task_default_attempt_repeat, killExprs
 
 
-class akrrTaskHandlerBundle(akrrTaskHandlerBase):
+class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
     """Task Handler for Bundled tasks"""
 
     def FirstStep(self):
