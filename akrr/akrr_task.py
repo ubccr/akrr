@@ -6,7 +6,7 @@ import re
 
 from .util import log
 from . import cfg
-from .akrr_task_appker import akrrTaskHandlerAppKer
+from .akrr_task_appker import AkrrTaskHandlerAppKer
 from .akrr_task_bundle import akrrTaskHandlerBundle
 
 
@@ -73,21 +73,16 @@ def redirect_stdout_back():
         raise IOError("stdout was not redirected here")
 
 
-def get_new_task_handler(task_id, resource_name, app_name, resource_param, app_param, task_param, time_to_submit=None,
-                         repetition=None, time_stamp=None):
+def get_new_task_handler(task_id, resource_name, app_name, resource_param, app_param, task_param):
     """
     return new instance of TaskHandler.
     if `app_name` is "*bundle*" it return akrrTaskHandlerBundle to handle bundled task
-    otherwise it return akrrTaskHandlerAppKer to handle single appkernel task.
+    otherwise it return AkrrTaskHandlerAppKer to handle single appkernel task.
     """
     if app_name.count("bundle") > 0:
-        return akrrTaskHandlerBundle(task_id, resource_name, app_name,
-                                     resource_param, app_param, task_param, time_to_submit,
-                                     repetition, time_stamp)
+        return akrrTaskHandlerBundle(task_id, resource_name, app_name, resource_param, app_param, task_param)
     else:
-        return akrrTaskHandlerAppKer(task_id, resource_name, app_name,
-                                     resource_param, app_param, task_param, time_to_submit,
-                                     repetition, time_stamp)
+        return AkrrTaskHandlerAppKer(task_id, resource_name, app_name, resource_param, app_param, task_param)
 
 
 def get_task_handler_from_task_proc_dir(task_proc_dir):

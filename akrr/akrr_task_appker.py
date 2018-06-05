@@ -1,26 +1,33 @@
-import akrr.db
-import akrr.util
-import akrr.util.log
-import akrr.util.ssh
-from . import cfg
 import os
-import sys
-# namdSizes
 import datetime
-import time
 import traceback
 import re
 import copy
 
+
+import akrr.db
+import akrr.util
+import akrr.util.log
+import akrr.util.ssh
+
+from . import cfg
+from .util import log
+
 from .akrr_task_base import AkrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
     active_task_default_attempt_repeat, killExprs
+
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
 from .akrrerror import AkrrError
 
 
-class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
+class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
     """Task Handler for AppKernel execution and processing"""
+
+    def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param):
+        super().__init__(task_id, resource_name, app_name, resource_param, app_param, task_param)
+
+        self.JobScriptName = None
 
     def FirstStep(self):
         #
@@ -31,8 +38,9 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         return self.CreateBatchJobScriptAndSubmitIt()
 
     def GenerateBatchJobScript(self):
-        if not hasattr(self, 'JobScriptName'):
-            self.JobScriptName = self.GetJobScriptName(self.appName)
+        if self.JobScriptName is None:
+            self.JobScriptName = self.GetJobScriptName()
+
         # get walltime from DB
         dbdefaults = {}
         try:
@@ -428,7 +436,7 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     else:
                         return (batchJobDir, stdoutFile, stderrFile, appstdoutFile)
 
-        if batchJobDir != None:
+        if batchJobDir is not None:
             for f in os.listdir(batchJobDir):
                 if re.match("sub.*\.stdout", f):
                     if stdoutFile == None:
@@ -750,7 +758,7 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
         print("TTTTTTTT ", root, status)
 
-        if root != None:
+        if root is not None:
             completed = None
             try:
                 t = root.find('exitStatus').find('completed').text
@@ -767,7 +775,7 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 self.status = "Task was completed successfully."
                 self.status_info = "Done"
             except:
-                completed = None
+                pass
 
             print("TTTTTTTT completedstatus", completed, status)
             error = None
@@ -779,17 +787,17 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 else:
                     error = False
             except:
-                error = None
+                pass
 
             status = 0
-            if completed != None:
+            if completed is not None:
                 if completed:
                     status = 1
 
             print("TTTTTTTT completedstatus", completed, status)
 
-            if completed != None:
-                if completed == True:
+            if completed is not None:
+                if completed:
                     bodyET = root.find('body').find('performance')
                     body = ET.tostring(bodyET)
                     import xml.dom.minidom
@@ -829,9 +837,9 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """ % (reporter)
-            elif completed == None:
-                if error != None:  # i.e. xml with error generated afterwards
-                    if error == True:
+            elif completed is None:
+                if error is not None:  # i.e. xml with error generated afterwards
+                    if error:
                         # fin=open(resultFile,"r")
                         # body=fin.read()
                         # fin.close
@@ -870,7 +878,7 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         nodes = None
         nodesFileName = os.path.join(jobfilesDir, "gen.info")
 
-        if (os.path.isfile(nodesFileName)):
+        if os.path.isfile(nodesFileName):
             parser = AppKerOutputParser()
             parser.parseCommonParsAndStats(geninfo=nodesFileName)
             if hasattr(parser, 'geninfo') and 'nodeList' in parser.geninfo:
@@ -882,16 +890,10 @@ class akrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 if len(nodes.strip().strip(';')) == 0:
                     nodes = None
 
-        import xml.dom.minidom
-        # print "#"*120
-        # print resultFile
-        # print instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,memory,cputime,walltime
-        # print body
-        # cur.execute("""SELECT * FROM akrr_xdmod_instanceinfo WHERE instance_id=%s""",(task_id,))
         internal_failure_code = 0
         if 'masterTaskID' in self.taskParam and appstdoutFile == None:
             internal_failure_code = 10004
-        print("TTTTTTTT completedstatus", completed, status)
+        log.debug("completedstatus", completed, status)
         if raw != None:  # .i.e. new entry
             print("Updating")
             cur.execute("""UPDATE akrr_xdmod_instanceinfo

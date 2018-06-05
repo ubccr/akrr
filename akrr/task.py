@@ -91,8 +91,8 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
     if not verbose:
         sys.stdout = sys.stderr = str_io
 
-    from akrr.akrr_task_appker import akrrTaskHandlerAppKer
-    task_handler = akrrTaskHandlerAppKer(1, resource['name'], app['name'], "{'nnodes':%s}" % (nodes,), "{}", "{}")
+    from akrr.akrr_task_appker import AkrrTaskHandlerAppKer
+    task_handler = AkrrTaskHandlerAppKer(1, resource['name'], app['name'], "{'nnodes':%s}" % (nodes,), "{}", "{}")
     if dry_run:
         task_handler.GenerateBatchJobScript()
     else:

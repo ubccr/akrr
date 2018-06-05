@@ -22,6 +22,11 @@ from .akrr_task_base import AkrrTaskHandlerBase, submitCommands, jidExtractPatte
 class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
     """Task Handler for Bundled tasks"""
 
+    def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param):
+        super().__init__(task_id, resource_name, app_name, resource_param, app_param, task_param)
+
+        self.subTasksId = []
+
     def FirstStep(self):
         #
         self.subTasksId = []

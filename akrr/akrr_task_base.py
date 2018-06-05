@@ -7,6 +7,7 @@ import re
 import akrr.util.ssh
 from . import cfg
 from .akrrerror import AkrrError
+from .util import log
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
@@ -57,16 +58,15 @@ class AkrrTaskHandlerBase:
     Scheduled
     """
 
-    def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param, time_to_submit=None,
-                 repetition=None, time_stamp=None):
+    def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param):
         self.resourceName = resource_name
         self.appName = app_name
         self.resourceParam = eval(resource_param)
         self.appParam = eval(app_param)
         self.taskParam = copy.deepcopy(cfg.default_task_params)
         self.taskParam.update(eval(task_param))
-        self.timeToSubmit = time_to_submit
-        self.repetition = repetition
+        self.timeToSubmit = None
+        self.repetition = None
         self.task_id = task_id
 
         self.resource = None
@@ -101,8 +101,10 @@ class AkrrTaskHandlerBase:
     def GetRemoteTaskDir(self, akrr_data_dir, app_name, time_stamp):
         return os.path.join(akrr_data_dir, app_name, time_stamp)
 
-    def GetJobScriptName(self, app_name):
-        return app_name + ".job"
+    def GetJobScriptName(self, app_name=None):
+        if app_name is not None:
+            return app_name + ".job"
+        return self.appName + ".job"
 
     def IsStateChanged(self):
         if self.oldstatus == self.status and self.ToDoNextString == self.oldToDoNextString:
@@ -114,10 +116,10 @@ class AkrrTaskHandlerBase:
         """
         Returns method which should be executed next
         """
-        funToDo = getattr(self, self.ToDoNextString)
-        if funToDo == None:
+        method_to_run = getattr(self, self.ToDoNextString)
+        if method_to_run is None:
             raise IOError("ToDoNext is None!")
-        return funToDo()
+        return method_to_run()
 
     def Terminate(self):
         """
@@ -126,44 +128,45 @@ class AkrrTaskHandlerBase:
         return True
 
     def CreateLocalDirectoryForTask(self):
-        # create a directory for task
-        resourceDir = os.path.join(cfg.data_dir, self.resourceName)
-        appDir = os.path.join(resourceDir, self.appName)
-        timeStamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        taskDir = os.path.join(appDir, timeStamp)
-        # print timeStamp
-        # print taskDir
+        """
+        Create a directory for task
+        """
+        resource_dir = os.path.join(cfg.data_dir, self.resourceName)
+        app_dir = os.path.join(resource_dir, self.appName)
+        time_stamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
+        task_dir = os.path.join(app_dir, time_stamp)
 
         if not os.path.isdir(cfg.data_dir):
-            raise IOError("Directory %s does not exist or is not directory." % (cfg.data_dir))
-        if not os.path.isdir(resourceDir):
-            print("Directory %s does not exist, creating it." % (resourceDir))
-            os.mkdir(resourceDir)
-        if not os.path.isdir(appDir):
-            print("Directory %s does not exist, creating it." % (appDir))
-            os.mkdir(appDir)
+            raise IOError("Directory %s does not exist or is not directory." % cfg.data_dir)
+        if not os.path.isdir(resource_dir):
+            log.info("Directory %s does not exist, creating it." % resource_dir)
+            os.mkdir(resource_dir)
+        if not os.path.isdir(app_dir):
+            log.info("Directory %s does not exist, creating it." % app_dir)
+            os.mkdir(app_dir)
         if not os.path.isdir(cfg.completed_tasks_dir):
-            raise IOError("Directory %s does not exist or is not directory." % (cfg.completed_tasks_dir))
+            raise IOError("Directory %s does not exist or is not directory." % cfg.completed_tasks_dir)
         if not os.path.isdir(os.path.join(cfg.completed_tasks_dir, self.resourceName)):
-            print("Directory %s does not exist, creating it." % (
+            log.info("Directory %s does not exist, creating it." % (
                 os.path.join(cfg.completed_tasks_dir, self.resourceName)))
             os.mkdir(os.path.join(cfg.completed_tasks_dir, self.resourceName))
         if not os.path.isdir(os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName)):
-            print("Directory %s does not exist, creating it." % (
+            log.info("Directory %s does not exist, creating it." % (
                 os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName)))
             os.mkdir(os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName))
 
-        while os.path.exists(taskDir) == True:
-            print(os.path.exists(taskDir))
-            timeStamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
-            taskDir = os.path.join(appDir, timeStamp)
-        print("Creating task directory: %s" % (taskDir))
-        os.mkdir(taskDir)
-        print("Creating task directories: \n\t%s\n\t%s" % (
-        os.path.join(taskDir, "jobfiles"), os.path.join(taskDir, "proc")))
-        os.mkdir(os.path.join(taskDir, "jobfiles"))
-        os.mkdir(os.path.join(taskDir, "proc"))
-        return timeStamp
+        # Generate unique time_stamp
+        while os.path.exists(task_dir):
+            log.debug2(os.path.exists(task_dir))
+            time_stamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
+            task_dir = os.path.join(app_dir, time_stamp)
+        log.info("Creating task directory: %s" % (task_dir))
+        os.mkdir(task_dir)
+        log.info("Creating task directories: \n\t%s\n\t%s" % (os.path.join(task_dir, "jobfiles"),
+                                                              os.path.join(task_dir, "proc")))
+        os.mkdir(os.path.join(task_dir, "jobfiles"))
+        os.mkdir(os.path.join(task_dir, "proc"))
+        return time_stamp
 
     def IamDone(self):
         print("IamDone", self.taskDir)
@@ -186,8 +189,8 @@ class AkrrTaskHandlerBase:
 
         # find resource
         self.resource = cfg.find_resource_by_name(self.resourceName)
-        if self.resource.get('active', True) == False:
-            raise AkrrError("%s is marked as inactive in AKRR" % (self.resourceName))
+        if not self.resource.get('active', True):
+            raise AkrrError("%s is marked as inactive in AKRR" % self.resourceName)
 
         # find app
         self.app = cfg.find_app_by_name(self.appName)
@@ -263,9 +266,9 @@ class AkrrTaskHandlerBase:
         if os.path.commonprefix([rt, ad]) != ad:
             raise IOError("can not remove remote task folder. The folder should be in akrr_data")
 
-        print("removing remote task folder:\n\t%s" % (self.remoteTaskDir))
-        msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % (self.remoteTaskDir))
-        print(msg)
+        log.info("removing remote task folder:\n\t%s" % self.remoteTaskDir)
+        msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % self.remoteTaskDir)
+        log.info(msg)
 
     def WriteErrorXML(self, filename, bCDATA=False):
         content = """<body>
