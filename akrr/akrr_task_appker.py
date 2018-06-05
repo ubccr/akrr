@@ -12,7 +12,7 @@ import traceback
 import re
 import copy
 
-from .akrrtaskbase import akrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
+from .akrr_task_base import akrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
     active_task_default_attempt_repeat, killExprs
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 

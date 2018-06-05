@@ -454,8 +454,8 @@ def get_active_tasks(task_id):
     if len(task) == 1:
         task = task[0]
         try:
-            from . import akrrtask
-            taskDir = akrrtask.get_local_task_dir(task['resource'], task['app'], task['datetime_stamp'])
+            from . import akrr_task
+            taskDir = akrr_task.get_local_task_dir(task['resource'], task['app'], task['datetime_stamp'])
             logFile = os.path.join(taskDir, 'proc', 'log')
             with open(logFile, "r") as fin:
                 logFileContent = fin.read()
