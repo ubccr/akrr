@@ -12,7 +12,7 @@ from .util import log
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
 # Batch job submit commands for different workload managers
-submitCommands = {
+submit_commands = {
     # 'lsf': "bsub < $scriptPath",
     'pbs': "qsub $scriptPath",
     'sge': "qsub $scriptPath",
@@ -21,7 +21,7 @@ submitCommands = {
 }
 
 # Regular expression for extracting job id of submitted batch script
-jidExtractPatterns = {
+job_id_extract_patterns = {
     # 'lsf': r'<(\d+)',
     'pbs': r'^(\d+)',
     'sge': r'job (\d+)',
@@ -30,7 +30,7 @@ jidExtractPatterns = {
 }
 
 # Command and regular expression to detect that the job is still queued or running
-waitExprs = {
+wait_expressions = {
     # 'lsf'         : ["bjobs $jobId` =~ /PEND|RUN|SUSP/",
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
@@ -38,7 +38,7 @@ waitExprs = {
     # 'shell'       : ["kill(0, $jobId)"]
 }
 
-killExprs = {
+kill_expressions = {
     # 'lsf': ["bkill $jobId"],
     'pbs': ["qdel $jobId"],
     'sge': ["qdel $jobId"],

@@ -13,8 +13,8 @@ import akrr.util.ssh
 from . import cfg
 from .util import log
 
-from .akrr_task_base import AkrrTaskHandlerBase, submitCommands, jidExtractPatterns, waitExprs, \
-    active_task_default_attempt_repeat, killExprs
+from .akrr_task_base import AkrrTaskHandlerBase, submit_commands, job_id_extract_patterns, wait_expressions, \
+    active_task_default_attempt_repeat, kill_expressions
 
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
@@ -246,10 +246,10 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             JobID = 0
             if not 'masterTaskID' in self.taskParam:
                 # i.e. submit to queue only if task is independent
-                sendToQueue = Template(submitCommands[self.resource['batchScheduler']]).substitute(
+                sendToQueue = Template(submit_commands[self.resource['batchScheduler']]).substitute(
                     scriptPath=self.JobScriptName)
                 msg = akrr.util.ssh.ssh_command(sh, sendToQueue)
-                matchObj = re.search(jidExtractPatterns[self.resource['batchScheduler']], msg, re.M | re.S)
+                matchObj = re.search(job_id_extract_patterns[self.resource['batchScheduler']], msg, re.M | re.S)
 
                 if matchObj:
                     try:
@@ -349,7 +349,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 except:
                     self.RemoteJobID = 0
 
-            wE = waitExprs[self.resource['batchScheduler']]
+            wE = wait_expressions[self.resource['batchScheduler']]
             cmd = Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
             rege = Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
 
@@ -1013,7 +1013,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         sh = None
         try:
             from string import Template
-            kE = killExprs[self.resource['batchScheduler']]
+            kE = kill_expressions[self.resource['batchScheduler']]
             cmd = Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
             msg = akrr.util.ssh.ssh_resource(self.resource, cmd)
             print(msg)
