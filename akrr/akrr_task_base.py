@@ -80,54 +80,54 @@ class AkrrTaskHandlerBase:
         self.appDir = None
         self.taskDir = None
 
-        self.timeStamp = self.CreateLocalDirectoryForTask()
+        self.timeStamp = self.create_local_directory_for_task()
         # set a directory for task already should exists
-        self.SetDirNames(cfg.data_dir)
-        self.remoteTaskDir = self.GetRemoteTaskDir(self.resource['akrr_data'], self.appName, self.timeStamp)
+        self.set_dir_names(cfg.data_dir)
+        self.remoteTaskDir = self.get_remote_task_dir(self.resource['akrr_data'], self.appName, self.timeStamp)
 
         self.oldstatus = "Does not exist"
         self.status = "Activated"
         self.status_info = "Activated"
         self.LastPickledState = -1
         self.fatal_errors_count = 0
-        self.ToDoNextString = "FirstStep"
+        self.ToDoNextString = "first_step"
         self.oldToDoNextString = "Does not exist"
 
-    def SetDirNames(self, akrr_data_dir):
+    def set_dir_names(self, akrr_data_dir):
         self.resourceDir = os.path.join(akrr_data_dir, self.resourceName)
         self.appDir = os.path.join(self.resourceDir, self.appName)
         self.taskDir = os.path.join(self.appDir, self.timeStamp)
 
-    def GetRemoteTaskDir(self, akrr_data_dir, app_name, time_stamp):
+    def get_remote_task_dir(self, akrr_data_dir, app_name, time_stamp):
         return os.path.join(akrr_data_dir, app_name, time_stamp)
 
-    def GetJobScriptName(self, app_name=None):
+    def get_job_script_name(self, app_name=None):
         if app_name is not None:
             return app_name + ".job"
         return self.appName + ".job"
 
-    def IsStateChanged(self):
+    def state_changed(self):
         if self.oldstatus == self.status and self.ToDoNextString == self.oldToDoNextString:
             return False
         else:
             return True
 
-    def ToDoNext(self):
+    def to_do_next(self):
         """
         Returns method which should be executed next
         """
         method_to_run = getattr(self, self.ToDoNextString)
         if method_to_run is None:
-            raise IOError("ToDoNext is None!")
+            raise IOError("to_do_next is None!")
         return method_to_run()
 
-    def Terminate(self):
+    def terminate(self):
         """
         return True is task can be safely removed from the DB
         """
         return True
 
-    def CreateLocalDirectoryForTask(self):
+    def create_local_directory_for_task(self):
         """
         Create a directory for task
         """
@@ -168,53 +168,36 @@ class AkrrTaskHandlerBase:
         os.mkdir(os.path.join(task_dir, "proc"))
         return time_stamp
 
-    def IamDone(self):
-        print("IamDone", self.taskDir)
+    def task_is_complete(self):
+        print("task_is_complete", self.taskDir)
         time.sleep(1)
         self.status = "Done"
-        self.status_info = "IamDone"
+        self.status_info = "task_is_complete"
         return None
 
-    def FirstStep(self):
-        print("IamDone", self.taskDir)
+    def first_step(self):
+        print("task_is_complete", self.taskDir)
         time.sleep(1)
-        self.status = "FirstStep"
-        self.status_info = "FirstStep"
-        self.ToDoNextString = "IamDone"
+        self.status = "first_step"
+        self.status_info = "first_step"
+        self.ToDoNextString = "task_is_complete"
         return datetime.timedelta(days=0, hours=0, minutes=3)
 
-    def Activate123(self):
-        """Set the task directory initiate all scripts"""
-        self.status = "Activating"
-
-        # find resource
-        self.resource = cfg.find_resource_by_name(self.resourceName)
-        if not self.resource.get('active', True):
-            raise AkrrError("%s is marked as inactive in AKRR" % self.resourceName)
-
-        # find app
-        self.app = cfg.find_app_by_name(self.appName)
-
-        self.CreateBatchJobScriptAndSubmitIt()
-        # creating batch files input files etc
-        self.status = "Activated"
-        self.ToDoNext = self.CheckTheQueue
-
-    def CopyOutputFilesFromRemoteMachine(self):
+    def copy_output_files_from_remote_machine(self):
         self.status = "Copying output files from remote machine"
         print(self.status)
         exit(0)
         self.status = "Output files was copied from remote machine"
 
-    def ProcessOutput(self):
+    def process_output(self):
         self.status = "Processing output files"
         self.status = "Output files were processed"
 
-    def Archiving(self):
-        self.status = "Archiving results"
+    def archiving(self):
+        self.status = "archiving results"
         self.status = "Done"
 
-    def CreateBatchJobScriptOnSrv(self):
+    def create_batch_job_script_on_srv(self):
         import subprocess
         import sys
         self.JobScriptName = self.appName + ".job"
@@ -247,13 +230,13 @@ class AkrrTaskHandlerBase:
         # switch working directory back
         os.chdir(wd)
 
-    def DeleteLocalFolder(self):
+    def delete_local_folder(self):
         if os.path.isdir(self.taskDir):
             if self.taskDir != '/' and self.taskDir != os.getenv("HOME"):
                 import shutil
                 shutil.rmtree(self.taskDir, True)
 
-    def DeleteRemoteFolder(self):
+    def delete_remote_folder(self):
         # trying to be carefull
         if self.remoteTaskDir == '/':
             raise IOError("can not remove /")
@@ -270,7 +253,7 @@ class AkrrTaskHandlerBase:
         msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % self.remoteTaskDir)
         log.info(msg)
 
-    def WriteErrorXML(self, filename, bCDATA=False):
+    def write_error_xml(self, filename, bCDATA=False):
         content = """<body>
  <xdtas>
   <batchJob>

@@ -52,9 +52,9 @@ def _start_the_task_step(resource_name, app_name, time_stamp, results_queue,
         th.fatal_errors_count = fatal_errors_count
         th.fails_to_submit_to_the_queue = fails_to_submit_to_the_queue
 
-        repeat_in = th.ToDoNext()
+        repeat_in = th.to_do_next()
 
-        if th.IsStateChanged():
+        if th.state_changed():
             akrr_task.dump_task_handler(th)
 
         m_pid = os.getpid()
@@ -420,8 +420,8 @@ class AkrrDaemon:
                 th = akrr_task.get_task_handler(resource, app, datetime_stamp)
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
                 th.ReportFormat = "Error"
-                th.ProccessResults()
-                if th.PushToDB() is not None:
+                th.proccess_results()
+                if th.push_to_db() is not None:
                     log.error("Can not push to DB")
                 akrr_task.dump_task_handler(th)
                 status = copy.deepcopy(th.status)
@@ -838,11 +838,11 @@ class AkrrDaemon:
                 pickle_filename = os.path.join(proc_task_dir, task_state)
                 th = akrr_task.get_task_handler_from_pkl(pickle_filename)
                 th.statefilename = task_state
-                th.SetDirNames(cfg.completed_tasks_dir)
+                th.set_dir_names(cfg.completed_tasks_dir)
 
                 ths.append(th)
-            ths[-1].ProccessResults(verbose)
-            ths[-1].PushToDBRaw(cur, task_id, time_finished, verbose)
+            ths[-1].proccess_results(verbose)
+            ths[-1].push_to_db_raw(cur, task_id, time_finished, verbose)
 
             if re.match("ERROR:", ths[-1].status, re.M):
                 log.info("Done with errors:", task_dir, ths[-1].status)
@@ -1139,7 +1139,7 @@ def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_qu
         # get task handler
         th = akrr_task.get_task_handler(active_task['resource'], active_task['app'], active_task['datetime_stamp'])
 
-        can_be_safely_removed = th.Terminate()
+        can_be_safely_removed = th.terminate()
 
         if can_be_safely_removed:
             log.info("The task can be safely removed")
@@ -1147,8 +1147,8 @@ def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_qu
             cur.execute('''DELETE FROM active_tasks WHERE task_id=%s;''', (task_id,))
             db.commit()
             # remove from local disk
-            th.DeleteRemoteFolder()
-            th.DeleteLocalFolder()
+            th.delete_remote_folder()
+            th.delete_local_folder()
         else:
             raise Exception("Task can NOT be remove safely. Unimplemented status:" + active_task['status'])
 

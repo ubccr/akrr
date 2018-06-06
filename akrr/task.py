@@ -94,9 +94,9 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
     from akrr.akrr_task_appker import AkrrTaskHandlerAppKer
     task_handler = AkrrTaskHandlerAppKer(1, resource['name'], app['name'], "{'nnodes':%s}" % (nodes,), "{}", "{}")
     if dry_run:
-        task_handler.GenerateBatchJobScript()
+        task_handler.generate_batch_job_script()
     else:
-        task_handler.CreateBatchJobScriptAndSubmitIt(doNotSubmitToQueue=True)
+        task_handler.create_batch_job_script_and_submit_it(doNotSubmitToQueue=True)
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
 
@@ -126,7 +126,7 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
         log.error('Batch job script was not generated see messages above!')
     if dry_run:
         log.info('Removing generated files from file-system as only batch job script printing was requested')
-        task_handler.DeleteLocalFolder()
+        task_handler.delete_local_folder()
 
 
 def task_list(resource=None, appkernel=None, scheduled=True, active=True):

@@ -29,17 +29,17 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
         self.JobScriptName = None
 
-    def FirstStep(self):
+    def first_step(self):
         #
         # self.status="FirstStep2"
         # self.status_info="FirstStep2"
         # self.ToDoNextString="FirstStep2"
         # return datetime.timedelta(days=0, hours=0, minutes=1)
-        return self.CreateBatchJobScriptAndSubmitIt()
+        return self.create_batch_job_script_and_submit_it()
 
-    def GenerateBatchJobScript(self):
+    def generate_batch_job_script(self):
         if self.JobScriptName is None:
-            self.JobScriptName = self.GetJobScriptName()
+            self.JobScriptName = self.get_job_script_name()
 
         # get walltime from DB
         dbdefaults = {}
@@ -201,8 +201,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             akrr.util.log.log_traceback(self.status)
             raise e
 
-    def CreateBatchJobScriptAndSubmitIt(self, doNotSubmitToQueue=False):
-        self.JobScriptName = self.GetJobScriptName(self.appName)
+    def create_batch_job_script_and_submit_it(self, doNotSubmitToQueue=False):
+        self.JobScriptName = self.get_job_script_name(self.appName)
         print("### Creating batch job script and submitting it to remote machine")
         # as a current bypass will create a job script remotely and copy it here
         # get ssh to remote resource
@@ -212,7 +212,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             sh = akrr.util.ssh.ssh_resource(self.resource)
 
             # Create remote directories if needed
-            def CheckAndCreateDir(self, sh, d):
+            def check_and_create_dir(self, sh, d):
                 cmd = "if [ ! -d  \"%s\" ]\n then mkdir \"%s\"\n fi" % (d, d)
                 akrr.util.ssh.ssh_command(sh, cmd)
                 cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
@@ -221,18 +221,18 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
 
             # akrr_data
-            CheckAndCreateDir(self, sh, self.resource['akrr_data'])
+            check_and_create_dir(self, sh, self.resource['akrr_data'])
             # dir for app
-            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrr_data'], self.appName))
+            check_and_create_dir(self, sh, os.path.join(self.resource['akrr_data'], self.appName))
             # dir for task
-            CheckAndCreateDir(self, sh, self.remoteTaskDir)
+            check_and_create_dir(self, sh, self.remoteTaskDir)
             # CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))
 
             # cd to remoteTaskDir
             akrr.util.ssh.ssh_command(sh, "cd %s" % (self.remoteTaskDir))
 
-            # GenerateBatchJobScript
-            self.GenerateBatchJobScript()
+            # generate_batch_job_script
+            self.generate_batch_job_script()
 
             msg = akrr.util.ssh.scp_to_resource(self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName),
                                                 os.path.join(self.remoteTaskDir))
@@ -293,7 +293,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 # i.e. idepentent task
                 self.status = "Created batch job script and have submitted it to remote queue."
                 self.status_info = "Remote job ID is %d" % (self.RemoteJobID)
-                self.ToDoNextString = "CheckTheJobOnRemoteMachine"
+                self.ToDoNextString = "check_the_job_on_remote_machine"
 
                 # check first time in 1 minute
                 return datetime.timedelta(days=0, hours=0, minutes=1)
@@ -302,7 +302,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 # i.e. idepentent task
                 self.status = "Created batch job script."
                 self.status_info = "Created batch job script. Waiting for master task to execute it."
-                self.ToDoNextString = "CheckTheJobOnRemoteMachine"
+                self.ToDoNextString = "check_the_job_on_remote_machine"
 
                 # master task will update the time when it will finish task execution
                 return datetime.timedelta(days=111 * 365)
@@ -320,9 +320,9 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     if (self.fails_to_submit_to_the_queue > cfg.max_fails_to_submit_to_the_queue or
                             (self.taskParam['test_run'] == True and self.fails_to_submit_to_the_queue >= 2)):
                         # Stop execution of the task and submit results to db
-                        self.ToDoNextString = "PushToDB"
+                        self.ToDoNextString = "push_to_db"
                         resultFile = os.path.join(self.taskDir, "result.xml")
-                        self.WriteErrorXML(resultFile)
+                        self.write_error_xml(resultFile)
                         return datetime.timedelta(seconds=3)
                 else:
                     self.fails_to_submit_to_the_queue = 1
@@ -332,7 +332,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             akrr.util.log.log_traceback(self.status)
             return cfg.repeat_after_fails_to_submit_to_the_queue
 
-    def CheckTheJobOnRemoteMachine(self):
+    def check_the_job_on_remote_machine(self):
         sh = None
         try:
             print("### Checking the job status on remote machine")
@@ -370,18 +370,18 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     print("Job exceeds the maximal time in queue (%s). And will be terminated." % (
                         str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue))))
                     print("Removing job from remote queue.")
-                    self.Terminate()
+                    self.terminate()
                     print("copying files from remote machine")
                     akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
                                                     os.path.join(self.taskDir, "jobfiles"), "-r")
                     # print msg
                     print("Deleting all files from remote machine")
-                    self.DeleteRemoteFolder()
+                    self.delete_remote_folder()
                     self.status = "ERROR: Job exceeds the maximal time in queue (%s) and was terminated." % (
                         str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue)))
                     self.status_info = "\nLast Status report:\n" + msg
                     self.ReportFormat = "Error"
-                    self.ToDoNextString = "ProccessResults"
+                    self.ToDoNextString = "proccess_results"
                     # del self.RemoteJobID
                     return datetime.timedelta(seconds=3)
 
@@ -395,10 +395,10 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                                                       os.path.join(self.taskDir, "jobfiles"), "-r")
                 # print msg
                 print("Deleting all files from remote machine")
-                self.DeleteRemoteFolder()
+                self.delete_remote_folder()
                 self.status = "Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
                 self.status_info = "Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
-                self.ToDoNextString = "ProccessResults"
+                self.ToDoNextString = "proccess_results"
                 # del self.RemoteJobID
                 self.TimeJobPossiblyCompleted = datetime.datetime.today()
                 return datetime.timedelta(seconds=3)
@@ -413,12 +413,12 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             self.fatal_errors_count += 1
             akrr.util.log.log_traceback(self.status)
             return active_task_default_attempt_repeat
-        self.status = "CheckTheJobOnRemoteMachine"
-        self.status_info = "CheckTheJobOnRemoteMachine"
-        self.ToDoNextString = "CheckTheJobOnRemoteMachine"
+        self.status = "check_the_job_on_remote_machine"
+        self.status_info = "check_the_job_on_remote_machine"
+        self.ToDoNextString = "check_the_job_on_remote_machine"
         return datetime.timedelta(days=0, hours=0, minutes=2)
 
-    def GetResultFiles(self, raiseError=False):
+    def get_result_files(self, raiseError=False):
         jobfilesDir = os.path.join(self.taskDir, "jobfiles")
         batchJobDir = None
         stdoutFile = None
@@ -478,9 +478,9 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 "Error: standard files is not present among job-files copied from remote resource.")
         return (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile)
 
-    def ProccessResults(self, Verbose=True):
+    def proccess_results(self, Verbose=True):
         if 'parser' not in self.app:
-            return self.ProccessResultsOld(Verbose)
+            return self.proccess_results_old(Verbose)
         if Verbose: print("Processing the output")
         try:
             jobfilesDir = os.path.join(self.taskDir, "jobfiles")
@@ -496,11 +496,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             if hasattr(self, 'ReportFormat'):  # i.e. fatal error and the last one is already in status/status_info
                 if self.ReportFormat == "Error":
-                    self.ToDoNextString = "PushToDB"
-                    self.WriteErrorXML(resultFile)
+                    self.ToDoNextString = "push_to_db"
+                    self.write_error_xml(resultFile)
                     return datetime.timedelta(seconds=3)
 
-            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.GetResultFiles(raiseError=True)
+            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files(raiseError=True)
 
             # get the performance data
             parserfilename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
@@ -525,15 +525,15 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             if performance == None:
                 self.status = "ERROR: Job have not finished successfully"
                 self.status_info = ""
-                self.ToDoNextString = "PushToDB"
-                self.WriteErrorXML(resultFile)
+                self.ToDoNextString = "push_to_db"
+                self.write_error_xml(resultFile)
             else:
                 fout = open(resultFile, "w")
                 content = fout.write(performance)
                 fout.close()
                 self.status = "Output was processed and found that kernel either exited with error or executed successfully."
                 self.status_info = "Done"
-                self.ToDoNextString = "PushToDB"
+                self.ToDoNextString = "push_to_db"
                 if hasattr(performance, 'nodeList'):
                     self.nodesList = performance.nodeList
                 else:
@@ -545,11 +545,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             self.status_info = traceback.format_exc()
             self.fatal_errors_count += 1
             akrr.util.log.log_traceback(self.status)
-            self.ToDoNextString = "PushToDB"
-            self.WriteErrorXML(resultFile)
+            self.ToDoNextString = "push_to_db"
+            self.write_error_xml(resultFile)
             return datetime.timedelta(seconds=3)
 
-    def ProccessResultsOld(self, Verbose=True):
+    def proccess_results_old(self, Verbose=True):
         if Verbose: print("Processing the output")
         try:
             jobfilesDir = os.path.join(self.taskDir, "jobfiles")
@@ -557,11 +557,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             if hasattr(self, 'ReportFormat'):  # i.e. fatal error and the last one is already in status/status_info
                 if self.ReportFormat == "Error":
-                    self.ToDoNextString = "PushToDB"
-                    self.WriteErrorXML(resultFile)
+                    self.ToDoNextString = "push_to_db"
+                    self.write_error_xml(resultFile)
                     return datetime.timedelta(seconds=3)
 
-            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.GetResultFiles(raiseError=True)
+            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files(raiseError=True)
 
             # now check if stdoutFile is empty or not
             fin = open(stdoutFile, "r")
@@ -576,15 +576,15 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     if re.search('job killed: walltime *\d+ *exceeded limit *\d+', l):
                         self.status = "ERROR: Job was killed on remote resource due to walltime exceeded limit"
                         self.status_info = l
-                        self.ToDoNextString = "PushToDB"
-                        self.WriteErrorXML(resultFile)
+                        self.ToDoNextString = "push_to_db"
+                        self.write_error_xml(resultFile)
                         return datetime.timedelta(seconds=3)
 
                 if Verbose: print("stdout is too short meaning that application kernel exit prematurely")
                 self.status = "ERROR: stdout is too short meaning that application kernel exit prematurely"
                 self.status_info = "stdout is too short meaning that application kernel exit prematurely"
-                self.WriteErrorXML(resultFile)
-                self.ToDoNextString = "PushToDB"
+                self.write_error_xml(resultFile)
+                self.ToDoNextString = "push_to_db"
                 return datetime.timedelta(seconds=3)
             # here we need to check file
             if remstdout.count("<rep:report") == 0:
@@ -596,13 +596,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     fin.close()
                     self.status_info += "\nappstdout:\n" + remappstdout
 
-                self.WriteErrorXML(resultFile)
-                self.ToDoNextString = "PushToDB"
+                self.write_error_xml(resultFile)
+                self.ToDoNextString = "push_to_db"
                 return datetime.timedelta(seconds=3)
 
             self.status = "Output was processed and found that kernel either exited with error or executed successfully."
             self.status_info = "Done"
-            self.ToDoNextString = "PushToDB"
+            self.ToDoNextString = "push_to_db"
             import shutil
 
             shutil.copy2(stdoutFile, resultFile)
@@ -624,11 +624,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             self.status_info = traceback.format_exc()
             self.fatal_errors_count += 1
             akrr.util.log.log_traceback(self.status)
-            self.ToDoNextString = "PushToDB"
-            self.WriteErrorXML(resultFile)
+            self.ToDoNextString = "push_to_db"
+            self.write_error_xml(resultFile)
             return datetime.timedelta(seconds=3)
 
-    def PushToDB(self, Verbose=True):
+    def push_to_db(self, Verbose=True):
 
         db, cur = akrr.db.get_akrr_db()
         try:
@@ -638,11 +638,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 time_finished = self.TimeJobPossiblyCompleted
             else:
                 time_finished = datetime.datetime.today()
-            self.PushToDBRaw(cur, self.task_id, time_finished, Verbose)
+            self.push_to_db_raw(cur, self.task_id, time_finished, Verbose)
             db.commit()
             cur.close()
             del db
-            self.ToDoNextString = "IamDone"
+            self.ToDoNextString = "task_is_complete"
             return None
         except:
             print(traceback.format_exc())
@@ -664,15 +664,15 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 akrr.util.log.log_traceback("AKRR server was not able to push to external DB will only update local.")
                 self.status = "ERROR: Can not push to external DB, will try again"
                 self.status_info = traceback.format_exc()
-                self.ToDoNextString = "IamDone"
+                self.ToDoNextString = "task_is_complete"
                 return None
 
-    def PushToDBRaw(self, cur, task_id, time_finished, Verbose=True):
+    def push_to_db_raw(self, cur, task_id, time_finished, Verbose=True):
         print("Pushing to DB")
 
         resultFile = os.path.join(self.taskDir, "result.xml")
         jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-        (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.GetResultFiles()
+        (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files()
 
         # sanity check
         fin = open(resultFile, "r")
@@ -698,7 +698,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                               "\n==Previous status info==" + self.status_info + "\n" + \
                               traceback.format_exc()
             self.status = "Cannot process final XML file"
-            self.WriteErrorXML(resultFile, bCDATA=True)
+            self.write_error_xml(resultFile, bCDATA=True)
 
         instance_id = task_id
         collected = None
@@ -986,14 +986,14 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                          taskexeclogFileContent))
         # (instance_id,akrrcfg.clean_unicode(appstdoutFileContent),akrrcfg.clean_unicode(stderrFileContent),akrrcfg.clean_unicode(stdoutFileContent)))
 
-    def IamDone(self):
+    def task_is_complete(self):
         print("Done", self.taskDir)
         self.status = "Done"
         self.status_info = "Done"
-        self.ToDoNextString = "IamDone"
+        self.ToDoNextString = "task_is_complete"
         return None
 
-    def Terminate(self):
+    def terminate(self):
         #
         CanBeSafelyRemoved = False
         if not hasattr(self, "RemoteJobID"):
@@ -1001,7 +1001,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             CanBeSafelyRemoved = True
         else:
             #
-            if self.RemoveTaskFromRemoteQueue() == None:
+            if self.remove_task_from_remote_queue() == None:
                 # i.e. "Task is probably removed from remote queue.":
                 CanBeSafelyRemoved = True
         if CanBeSafelyRemoved:
@@ -1009,7 +1009,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             pass
         return CanBeSafelyRemoved
 
-    def RemoveTaskFromRemoteQueue(self):
+    def remove_task_from_remote_queue(self):
         sh = None
         try:
             from string import Template
@@ -1019,7 +1019,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             print(msg)
             self.status = "Task is probably removed from remote queue."
             self.status_info = copy.deepcopy(msg)
-            self.ToDoNextString = "IamDone"
+            self.ToDoNextString = "task_is_complete"
             return None
         except:
             if sh != None:
