@@ -56,7 +56,7 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
     rsh = None
     try:
         rsh = pexpect.spawn(cmd, encoding='utf-8')
-
+        rsh.remote_machine_name = remote_machine
         rsh.logfile_read = logfile
 
         expect = [
@@ -298,3 +298,20 @@ def ssh_command(sh, cmd):
     msg = msg[(msg.find('\n', msg.rfind(ssh_command_start_echo) + 5) + len("\n") + 0):msg.rfind(ssh_command_end_echo)]
     regex = re.compile(r'\x1b[^m]*m')
     return regex.sub("", msg)
+
+
+def ssh_check_and_create_dir(sh, dir_name):
+    """
+    Create remote directories if needed
+    """
+    if hasattr(sh, "remote_machine_name"):
+        resource_name = sh.remote_machine_name
+    else:
+        resource_name = "local"
+
+    cmd = "if [ ! -d  \"%s\" ]\n then mkdir \"%s\"\n fi" % (dir_name, dir_name)
+    ssh_command(sh, cmd)
+    cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOES_NOT_EXIST\n fi" % dir_name
+    msg = ssh_command(sh, cmd)
+    if msg.find("DOES_NOT_EXIST") >= 0:
+        raise AkrrError("Can not create directory %s on %s.(%s)" % (dir_name, resource_name, msg))

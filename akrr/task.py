@@ -96,7 +96,7 @@ def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
     if dry_run:
         task_handler.generate_batch_job_script()
     else:
-        task_handler.create_batch_job_script_and_submit_it(doNotSubmitToQueue=True)
+        task_handler.create_batch_job_script_and_submit_it(do_not_submit_to_queue=True)
     sys.stdout = sys.__stdout__
     sys.stderr = sys.__stderr__
 

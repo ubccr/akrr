@@ -420,7 +420,7 @@ class AkrrDaemon:
                 th = akrr_task.get_task_handler(resource, app, datetime_stamp)
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
                 th.ReportFormat = "Error"
-                th.proccess_results()
+                th.process_results()
                 if th.push_to_db() is not None:
                     log.error("Can not push to DB")
                 akrr_task.dump_task_handler(th)
@@ -841,7 +841,7 @@ class AkrrDaemon:
                 th.set_dir_names(cfg.completed_tasks_dir)
 
                 ths.append(th)
-            ths[-1].proccess_results(verbose)
+            ths[-1].process_results(verbose)
             ths[-1].push_to_db_raw(cur, task_id, time_finished, verbose)
 
             if re.match("ERROR:", ths[-1].status, re.M):

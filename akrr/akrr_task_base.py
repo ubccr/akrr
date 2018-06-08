@@ -204,12 +204,6 @@ class AkrrTaskHandlerBase:
         self.set_method_to_run_next("task_is_complete", "first_step", "first_step")
         return datetime.timedelta(days=0, hours=0, minutes=3)
 
-    def copy_output_files_from_remote_machine(self):
-        """
-        Copying output files from remote machine
-        """
-        raise NotImplementedError()
-
     def process_output(self):
         self.status = "Processing output files"
         self.status = "Output files were processed"

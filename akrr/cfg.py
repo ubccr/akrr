@@ -72,6 +72,9 @@ def verify_resource_params(resource: dict) -> dict:
         # ('appKerDir', 'appkernel_dir'),
         # ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_tTemplate'),
         # ('akrrData', 'akrr_data')
+        ('autoWalltimeLimit', 'auto_walltime_limit'),
+        ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
+        ('appkernelOnResource', 'appkernel_on_resource'),
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -263,11 +266,11 @@ def load_app(app_name):
                 resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
                                                                   app_name + ".app.conf")
                 if os.path.isfile(resource_specific_app_cfg_filename):
-                    app['appkernelOnResource'][resource_name] = exec_files_to_dict(
-                        resource_specific_app_cfg_filename, var_in=app['appkernelOnResource']['default'])
-                    app['appkernelOnResource'][resource_name][
+                    app['appkernel_on_resource'][resource_name] = exec_files_to_dict(
+                        resource_specific_app_cfg_filename, var_in=app['appkernel_on_resource']['default'])
+                    app['appkernel_on_resource'][resource_name][
                         'resource_specific_app_cfg_filename'] = resource_specific_app_cfg_filename
-                    app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] = \
+                    app['appkernel_on_resource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] = \
                         os.path.getmtime(resource_specific_app_cfg_filename)
 
         # mapped options in app input file to those used in AKRR
@@ -335,14 +338,14 @@ def find_app_by_name(app_name):
             resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
                                                               app_name + ".app.conf")
             if os.path.isfile(resource_specific_app_cfg_filename):
-                if resource_name not in app['appkernelOnResource']:
+                if resource_name not in app['appkernel_on_resource']:
                     reload_app_cfg = True
                 else:
-                    if app['appkernelOnResource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] != \
+                    if app['appkernel_on_resource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] != \
                             os.path.getmtime(resource_specific_app_cfg_filename):
                         reload_app_cfg = True
     # check if new resources were removed
-    for resource_name in app['appkernelOnResource']:
+    for resource_name in app['appkernel_on_resource']:
         if resource_name not in ['default']:
             resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
                                                               app_name + ".app.conf")

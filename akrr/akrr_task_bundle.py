@@ -455,14 +455,14 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
         if len(subTaskInfo) == 0:
             self.status = "Subtasks are done with proccessing results"
             self.status_info = "Subtasks are done with proccessing results"
-            self.ToDoNextString = "proccess_results"
+            self.ToDoNextString = "process_results"
             return datetime.timedelta(seconds=3)
         else:
             self.status = "Waiting for subtasks to proccess results"
             self.status_info = "Waiting for subtasks to proccess results"
             return datetime.timedelta(minutes=5)
 
-    def proccess_results(self, Verbose=True):
+    def process_results(self, Verbose=True):
         if Verbose: print("Processing the output")
         try:
             jobfilesDir = os.path.join(self.taskDir, "jobfiles")
