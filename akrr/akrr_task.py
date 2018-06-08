@@ -3,9 +3,11 @@ import os
 import sys
 import datetime
 import re
+from typing import Union
 
 from .util import log
 from . import cfg
+from .akrr_task_base import AkrrTaskHandlerBase
 from .akrr_task_appker import AkrrTaskHandlerAppKer
 from .akrr_task_bundle import akrrTaskHandlerBundle
 
@@ -125,19 +127,24 @@ def get_task_handler_from_job_dir(job_dir):
     return get_task_handler_from_task_proc_dir(task_proc_dir)
 
 
-def get_task_handler_from_pkl(pickle_filename):
+def get_task_handler_from_pkl(pickle_filename: str) -> AkrrTaskHandlerBase:
     """
     Load task handle from pkl file
     """
-    import pickle
-    fin = open(pickle_filename, "rb")
-    th = pickle.load(fin)
-    fin.close()
-    import copy
 
+    def _unpickle_task_handler(filename: str) -> AkrrTaskHandlerBase:
+        import pickle
+        fin = open(filename, "rb")
+        m_task_handler = pickle.load(fin)
+        fin.close()
+        return m_task_handler
+
+    th = _unpickle_task_handler(pickle_filename)
+
+    # import copy
     # renew and update some variables
-    th.oldstatus = copy.deepcopy(th.status)
-    th.oldToDoNextString = copy.deepcopy(th.ToDoNextString)
+    # th.old_status = copy.deepcopy(th.status)
+    # th._old_method_to_run_next = copy.deepcopy(th._method_to_run_next)
 
     th.resource = cfg.find_resource_by_name(th.resourceName)
     th.app = cfg.find_app_by_name(th.appName)
@@ -145,7 +152,7 @@ def get_task_handler_from_pkl(pickle_filename):
     return th
 
 
-def dump_task_handler(th):
+def dump_task_handler(th: AkrrTaskHandlerBase):
     """
     Save task handler state
     """

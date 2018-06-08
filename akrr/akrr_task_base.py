@@ -6,7 +6,6 @@ import re
 
 import akrr.util.ssh
 from . import cfg
-from .akrrerror import AkrrError
 from .util import log
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
@@ -85,20 +84,24 @@ class AkrrTaskHandlerBase:
         self.set_dir_names(cfg.data_dir)
         self.remoteTaskDir = self.get_remote_task_dir(self.resource['akrr_data'], self.appName, self.timeStamp)
 
-        self.oldstatus = "Does not exist"
-        self.status = "Activated"
-        self.status_info = "Activated"
+        self.JobScriptName = None
+
         self.LastPickledState = -1
         self.fatal_errors_count = 0
-        self.ToDoNextString = "first_step"
-        self.oldToDoNextString = "Does not exist"
+
+        self._method_to_run_next = "first_step"
+        self.status = "Activated"
+        self.status_info = "Activated"
+        self._old_method_to_run_next = "Does not exist"
+        self._old_status = "Does not exist"
 
     def set_dir_names(self, akrr_data_dir):
         self.resourceDir = os.path.join(akrr_data_dir, self.resourceName)
         self.appDir = os.path.join(self.resourceDir, self.appName)
         self.taskDir = os.path.join(self.appDir, self.timeStamp)
 
-    def get_remote_task_dir(self, akrr_data_dir, app_name, time_stamp):
+    @staticmethod
+    def get_remote_task_dir(akrr_data_dir, app_name, time_stamp):
         return os.path.join(akrr_data_dir, app_name, time_stamp)
 
     def get_job_script_name(self, app_name=None):
@@ -106,8 +109,25 @@ class AkrrTaskHandlerBase:
             return app_name + ".job"
         return self.appName + ".job"
 
+    def set_method_to_run_next(self, method_to_run_next=None, status=None, status_info=None):
+        """
+        update method_to_run_next, status and status_info if they are not None
+        """
+        if method_to_run_next is not None:
+            self._old_method_to_run_next = self._method_to_run_next
+            self._method_to_run_next = method_to_run_next
+
+        if status is not None:
+            self._old_status = self.status
+            self.status = status
+
+        if status_info is not None:
+            self.status_info = status_info
+        elif status is not None:
+            self.status_info = status
+
     def state_changed(self):
-        if self.oldstatus == self.status and self.ToDoNextString == self.oldToDoNextString:
+        if self._old_status == self.status and self._method_to_run_next == self._old_method_to_run_next:
             return False
         else:
             return True
@@ -116,9 +136,12 @@ class AkrrTaskHandlerBase:
         """
         Returns method which should be executed next
         """
-        method_to_run = getattr(self, self.ToDoNextString)
+        if self._method_to_run_next is None:
+            raise ValueError("Can not find _method_to_run_next it is None!")
+
+        method_to_run = getattr(self, self._method_to_run_next)
         if method_to_run is None:
-            raise IOError("to_do_next is None!")
+            raise ValueError("Can not find _method_to_run_next!")
         return method_to_run()
 
     def terminate(self):
@@ -160,7 +183,7 @@ class AkrrTaskHandlerBase:
             log.debug2(os.path.exists(task_dir))
             time_stamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
             task_dir = os.path.join(app_dir, time_stamp)
-        log.info("Creating task directory: %s" % (task_dir))
+        log.info("Creating task directory: %s" % task_dir)
         os.mkdir(task_dir)
         log.info("Creating task directories: \n\t%s\n\t%s" % (os.path.join(task_dir, "jobfiles"),
                                                               os.path.join(task_dir, "proc")))
@@ -169,25 +192,23 @@ class AkrrTaskHandlerBase:
         return time_stamp
 
     def task_is_complete(self):
-        print("task_is_complete", self.taskDir)
+        log.info("task_is_complete, task_dir: %s", self.taskDir)
         time.sleep(1)
         self.status = "Done"
         self.status_info = "task_is_complete"
         return None
 
     def first_step(self):
-        print("task_is_complete", self.taskDir)
+        log.info("first_step, task_dir: %s", self.taskDir)
         time.sleep(1)
-        self.status = "first_step"
-        self.status_info = "first_step"
-        self.ToDoNextString = "task_is_complete"
+        self.set_method_to_run_next("task_is_complete", "first_step", "first_step")
         return datetime.timedelta(days=0, hours=0, minutes=3)
 
     def copy_output_files_from_remote_machine(self):
-        self.status = "Copying output files from remote machine"
-        print(self.status)
-        exit(0)
-        self.status = "Output files was copied from remote machine"
+        """
+        Copying output files from remote machine
+        """
+        raise NotImplementedError()
 
     def process_output(self):
         self.status = "Processing output files"
@@ -196,39 +217,6 @@ class AkrrTaskHandlerBase:
     def archiving(self):
         self.status = "archiving results"
         self.status = "Done"
-
-    def create_batch_job_script_on_srv(self):
-        import subprocess
-        import sys
-        self.JobScriptName = self.appName + ".job"
-
-        # switch working directory to taskDir
-        wd = os.getcwd()
-        os.chdir(self.taskDir)
-
-        print("Writing JobScript to:", os.path.join(self.taskDir, self.JobScriptName))
-        fout = open(os.path.join(self.taskDir, self.JobScriptName), 'w')
-
-        # arg_bin_path=self.app['arg_bin_path']
-        execstr = "%s -bin_path=\"%s\" -help=%s -log=%d -verbose=%d -version=%s" % (self.app['name'],
-                                                                                    self.resource['bin_path'],
-                                                                                    self.app.get('arg_help', 'no'),
-                                                                                    self.app.get('arg_log', 0),
-                                                                                    self.app.get('arg_verbose', 1),
-                                                                                    self.app.get('arg_version', 'no'),
-                                                                                    )
-
-        args = """     export PERL5LIB=/home/mikola/xdtas/incaReporterManager-edge/lib/perl:\
-/home/mikola/xdtas/incaReporterManager-edge/var/reporter-packages/lib/perl   
-~/xdtas/incaReporterManager-edge/var/reporter-packages/bin/xdmod.batch.wrapper \
--scheduler="sge" -queue="normal" -submitparam="-V" -nodes=:8:8 -type="16way" \
--walllimit=13 -exec="%s"
-        """ % (execstr)
-        subprocess.call(args, stdout=fout, stderr=sys.stdout, shell=True)
-        fout.close()
-
-        # switch working directory back
-        os.chdir(wd)
 
     def delete_local_folder(self):
         if os.path.isdir(self.taskDir):
@@ -253,52 +241,48 @@ class AkrrTaskHandlerBase:
         msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % self.remoteTaskDir)
         log.info(msg)
 
-    def write_error_xml(self, filename, bCDATA=False):
-        content = """<body>
- <xdtas>
-  <batchJob>
-   <status>Error</status>
-   <errorCause>%s</errorCause>
-   <reporter>%s</reporter>
-   <errorMsg>%s</errorMsg>
-  </batchJob>
- </xdtas>
-</body> 
-""" % (self.status, self.appName, self.status_info)
-        if bCDATA:
-            content = """<body>
- <xdtas>
-  <batchJob>
-   <status>Error</status>
-   <errorCause>%s</errorCause>
-   <reporter>%s</reporter>
-   <errorMsg><![CDATA[%s]]></errorMsg>
-  </batchJob>
- </xdtas>
-</body> 
-""" % (self.status, self.appName, self.status_info)
+    def write_error_xml(self, filename, cdata=False):
+        content = ("<body>\n"
+                   "<xdtas>\n"
+                   "  <batchJob>\n"
+                   "   <status>Error</status>\n"
+                   "   <errorCause>%s</errorCause>\n"
+                   "   <reporter>%s</reporter>\n"
+                   "   <errorMsg>%s</errorMsg>\n"
+                   "  </batchJob>\n"
+                   " </xdtas>\n"
+                   "</body> \n") % (self.status, self.appName, self.status_info)
+        if cdata:
+            content = ("<body>\n"
+                       " <xdtas>\n"
+                       "  <batchJob>\n"
+                       "   <status>Error</status>\n"
+                       "   <errorCause>%s</errorCause>\n"
+                       "   <reporter>%s</reporter>\n"
+                       "   <errorMsg><![CDATA[%s]]></errorMsg>\n"
+                       "  </batchJob>\n"
+                       " </xdtas>\n"
+                       "</body>\n") % (self.status, self.appName, self.status_info)
         # now lets try to read to parce it
-        import xml.etree.ElementTree as ET
+        import xml.etree.ElementTree
         try:
-            tree = ET.fromstring(content)
-        except:
-            print("Cannot write readable XML file, will try CDATA declaration")
-            content = """<body>
- <xdtas>
-  <batchJob>
-   <status>Error</status>
-   <errorCause>%s</errorCause>
-   <reporter>%s</reporter>
-   <errorMsg><![CDATA[%s]]></errorMsg>
-  </batchJob>
- </xdtas>
-</body> 
-""" % (self.status, self.appName, self.status_info)
+            xml.etree.ElementTree.fromstring(content)
+        except Exception as e:
+            log.error("Cannot write readable XML file (%s), will try CDATA declaration" % str(e))
+            content = ("<body>\n"
+                       " <xdtas>\n"
+                       "  <batchJob>\n"
+                       "   <status>Error</status>\n"
+                       "   <errorCause>%s</errorCause>\n"
+                       "   <reporter>%s</reporter>\n"
+                       "   <errorMsg><![CDATA[%s]]></errorMsg>\n"
+                       "  </batchJob>\n"
+                       " </xdtas>\n"
+                       "</body>\n") % (self.status, self.appName, self.status_info)
             try:
-                tree = ET.fromstring(content)
-            except:
-                print("Cannot write readable XML file!!!")
-                # raise
+                xml.etree.ElementTree.fromstring(content)
+            except Exception as e2:
+                log.error("Cannot write readable XML file!!! %s" % str(e2))
 
         fout = open(filename, "w")
         fout.write(content)

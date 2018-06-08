@@ -28,12 +28,6 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
         self.subTasksId = []
 
     def first_step(self):
-        #
-        self.subTasksId = []
-        # self.status="FirstStep2"
-        # self.status_info="FirstStep2"
-        # self.ToDoNextString="FirstStep2"
-        # return datetime.timedelta(days=0, hours=0, minutes=1)
         return self.check_if_subtasks_created_job_scripts()
 
     def get_sub_task_info(self):
@@ -76,15 +70,13 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             self.subTasksId.append(task_id)
 
         if subTasksHaveCreatedJobScripts:
-            self.status = "Subtasks have created job scripts."
-            # self.status_info="Waiting for subtasks to create job scripts"
-            self.ToDoNextString = "create_batch_job_script_and_submit_it"
+            self.set_method_to_run_next(
+                "create_batch_job_script_and_submit_it", "Subtasks have created job scripts.", "")
             # check  in 1 minute
             return datetime.timedelta(days=0, hours=0, minutes=1)
         else:
-            self.status = "Waiting for subtasks to create job scripts"
-            # self.status_info="Waiting for subtasks to create job scripts"
-            self.ToDoNextString = "check_if_subtasks_created_job_scripts"
+            self.set_method_to_run_next(
+                "check_if_subtasks_created_job_scripts", "Waiting for subtasks to create job scripts", "")
             # check  in 1 minute
             return datetime.timedelta(days=0, hours=0, minutes=1)
 
@@ -274,9 +266,10 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             cur.close()
             del db
 
-            self.status = "Created batch job script and have submitted it to remote queue."
-            self.status_info = "Remote job ID is %d" % (self.RemoteJobID)
-            self.ToDoNextString = "check_the_job_on_remote_machine"
+            self.set_method_to_run_next(
+                "check_the_job_on_remote_machine",
+                "Created batch job script and have submitted it to remote queue.",
+                "Remote job ID is %d" % self.RemoteJobID)
 
             # check first time in 1 minute
             return datetime.timedelta(days=0, hours=0, minutes=1)
@@ -285,14 +278,14 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 sh.sendline("exit")
                 sh.close(force=True)
                 del sh
-            self.status = "ERROR Can not created batch job script and submit it to remote queue"
-            self.status_info = traceback.format_exc()
+            self.set_method_to_run_next(None, "ERROR Can not created batch job script and submit it to remote queue",
+                                        traceback.format_exc())
             if cfg.max_fails_to_submit_to_the_queue >= 0:
                 if hasattr(self, "fails_to_submit_to_the_queue"):
                     self.fails_to_submit_to_the_queue += 1
                     if self.fails_to_submit_to_the_queue > cfg.max_fails_to_submit_to_the_queue:
                         # Stop execution of the task and submit results to db
-                        self.ToDoNextString = "push_to_db"
+                        self.set_method_to_run_next("push_to_db")
                         resultFile = os.path.join(self.taskDir, "result.xml")
                         self.write_error_xml(resultFile)
                         return datetime.timedelta(seconds=3)
@@ -595,7 +588,7 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                               "\n==Previous status info==" + self.status_info + "\n" + \
                               traceback.format_exc()
             self.status = "Cannot process final XML file"
-            self.write_error_xml(resultFile, bCDATA=True)
+            self.write_error_xml(resultFile, cdata=True)
 
         instance_id = task_id
         collected = None
