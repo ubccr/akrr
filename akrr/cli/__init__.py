@@ -337,7 +337,8 @@ def list_parsed(args):
         results = retrieve_tasks(resource, application)
         if results:
             log.info('Retrieved the following: ')
-            [log.info("[{:<8}] Resource: {:<15} App:{:<24}".format(r['task_id'],  r['resource'], r['app'])) for r in results]
+            data = results.json().get('data', [])
+            [log.info("[{:<8}] Resource: {:<15} App:{:<24}".format(r['task_id'],  r['resource'], r['app'])) for r in data]
         else:
             log.warning('No records returned.')
 
