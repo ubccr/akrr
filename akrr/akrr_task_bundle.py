@@ -4,10 +4,7 @@ import akrr.util.log
 import akrr.util.ssh
 from . import cfg
 import os
-import sys
-# namdSizes
 import datetime
-import time
 import traceback
 import re
 import copy

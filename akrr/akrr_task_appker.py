@@ -31,9 +31,12 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         self.ReportFormat = None  # type: Optional[str]
         self.nodesList = None
         self.RemoteJobID = None  # type: Optional[int]
+
         self.TimeJobSubmetedToRemoteQueue = None  # type: Optional[datetime.datetime]
-        self.fails_to_submit_to_the_queue = 0  # type: int
         self.TimeJobPossiblyCompleted = None  # type: Optional[datetime.datetime]
+
+        self.fails_to_submit_to_the_queue = 0  # type: int
+        self.PushToDBAttemps = 0  # type: Optional[int]
 
     def first_step(self):
         return self.create_batch_job_script_and_submit_it()
@@ -537,26 +540,26 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
     def process_results_old(self):
         log.info("Processing the output")
-        resultFile = None
+        result_file = None
         try:
-            jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-            resultFile = os.path.join(self.taskDir, "result.xml")
+            result_file = os.path.join(self.taskDir, "result.xml")
 
             if self.ReportFormat == "Error":
                 # i.e. fatal error and the last one is already in status/status_info
                 self.set_method_to_run_next("PushToDB")
-                self.write_error_xml(resultFile)
+                self.write_error_xml(result_file)
                 return datetime.timedelta(seconds=3)
 
-            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files(raise_error=True)
+            (batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file) = \
+                self.get_result_files(raise_error=True)
 
             # now check if stdoutFile is empty or not
-            fin = open(stdoutFile, "r")
+            fin = open(stdout_file, "r")
             remstdout = fin.read()
             fin.close()
 
             if len(remstdout) < 5:
-                fin = open(stderrFile, "r")
+                fin = open(stderr_file, "r")
                 remstderr = fin.readlines()
                 fin.close()
                 for l in remstderr:
@@ -564,7 +567,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                         self.status = "ERROR: Job was killed on remote resource due to walltime exceeded limit"
                         self.status_info = l
                         self.set_method_to_run_next("PushToDB")
-                        self.write_error_xml(resultFile)
+                        self.write_error_xml(result_file)
                         return datetime.timedelta(seconds=3)
 
                 log.info("stdout is too short meaning that application kernel exit prematurely")
@@ -572,18 +575,18 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     "PushToDB",
                     "ERROR: stdout is too short meaning that application kernel exit prematurely",
                     "stdout is too short meaning that application kernel exit prematurely")
-                self.write_error_xml(resultFile)
+                self.write_error_xml(result_file)
                 return datetime.timedelta(seconds=3)
             # here we need to check file
             if remstdout.count("<rep:report") == 0:
                 self.set_method_to_run_next("PushToDB", "ERROR: unknown error", "stdout:\n" + remstdout)
-                if appstdoutFile is not None:
-                    fin = open(appstdoutFile, "r")
+                if appstdout_file is not None:
+                    fin = open(appstdout_file, "r")
                     remappstdout = fin.read()
                     fin.close()
                     self.status_info += "\nappstdout:\n" + remappstdout
 
-                self.write_error_xml(resultFile)
+                self.write_error_xml(result_file)
                 return datetime.timedelta(seconds=3)
 
             self.set_method_to_run_next(
@@ -592,9 +595,9 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 "Done")
             import shutil
 
-            shutil.copy2(stdoutFile, resultFile)
+            shutil.copy2(stdout_file, result_file)
             # need to extract xml part file, some resource put servise information above and below
-            fin = open(resultFile, "r")
+            fin = open(result_file, "r")
             content = fin.read()
             fin.close()
             if content[0] != '<' or content[-2] != '>':
@@ -602,7 +605,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 i0 = content.find("<rep:report")
                 i1 = content.find("</rep:report>")
 
-                fout = open(resultFile, "w")
+                fout = open(result_file, "w")
                 fout.write("<?xml version='1.0'?>\n" + content[i0:i1 + len("</rep:report>")] + "\n")
                 fout.close()
             return datetime.timedelta(seconds=3)
@@ -612,41 +615,36 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             self.fatal_errors_count += 1
             log.log_traceback(self.status)
             log.exception("Got exception in process_results_old: %s", e)
-            if resultFile is not None:
-                self.write_error_xml(resultFile)
+            if result_file is not None:
+                self.write_error_xml(result_file)
             return datetime.timedelta(seconds=3)
 
-    def push_to_db(self, Verbose=True):
+    def push_to_db(self):
 
         db, cur = akrr.db.get_akrr_db()
         try:
-
-            time_finished = None
-            if hasattr(self, 'TimeJobPossiblyCompleted'):
+            if self.TimeJobPossiblyCompleted is not None:
                 time_finished = self.TimeJobPossiblyCompleted
             else:
                 time_finished = datetime.datetime.today()
-            self.push_to_db_raw(cur, self.task_id, time_finished, Verbose)
+            self.push_to_db_raw(cur, self.task_id, time_finished)
             db.commit()
             cur.close()
             del db
             self.set_method_to_run_next("task_is_complete")
             return None
-        except:
-            print(traceback.format_exc())
+        except Exception as e:
+            log.exception("Got exception in process_results_old: %s\n%s\n", e, traceback.format_exc())
             db.rollback()
             db.commit()
             cur.close()
             del db
-            if hasattr(self, 'PushToDBAttemps'):
-                self.PushToDBAttemps += 1
-            else:
-                self.PushToDBAttemps = 1
+            self.PushToDBAttemps += 1
 
             if self.PushToDBAttemps <= cfg.export_db_max_repeat_attempts:
                 akrr.util.log.log_traceback("AKRR server was not able to push to external DB.")
-                self.status = "ERROR: Can not push to external DB, will try again"
-                self.status_info = traceback.format_exc()
+                self.set_method_to_run_next(
+                    None, "ERROR: Can not push to external DB, will try again", traceback.format_exc())
                 return cfg.export_db_repeat_attempt_in
             else:
                 akrr.util.log.log_traceback("AKRR server was not able to push to external DB will only update local.")
@@ -654,15 +652,16 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     "task_is_complete", "ERROR: Can not push to external DB, will try again", traceback.format_exc())
                 return None
 
-    def push_to_db_raw(self, cur, task_id, time_finished, Verbose=True):
-        print("Pushing to DB")
+    def push_to_db_raw(self, cur, task_id, time_finished):
+        import xml.etree.ElementTree
+        log.info("Pushing to DB")
 
-        resultFile = os.path.join(self.taskDir, "result.xml")
-        jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-        (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files()
+        result_file = os.path.join(self.taskDir, "result.xml")
+        jobfiles_dir = os.path.join(self.taskDir, "jobfiles")
+        (batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file) = self.get_result_files()
 
         # sanity check
-        fin = open(resultFile, "r")
+        fin = open(result_file, "r")
         content = fin.read()
         fin.close()
         if content[0] != '<':
@@ -670,16 +669,17 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             i0 = content.find("<rep:report")
             i1 = content.find("</rep:report>")
 
-            fout = open(resultFile, "w")
+            fout = open(result_file, "w")
             content = fout.write("<?xml version='1.0'?>\n" + content[i0:i1 + len("</rep:report>")] + "\n")
             fout.close()
 
-        import xml.etree.ElementTree as ET
         try:
 
-            tree = ET.parse(resultFile)
-            root = tree.getroot()
-        except:
+            tree = xml.etree.ElementTree.parse(result_file)
+            tree.getroot()
+        except Exception as e:
+            log.exception("Got exception in push_to_db_raw, during xml read: %s", e)
+
             self.set_method_to_run_next(
                 None,
                 "Cannot process final XML file",
@@ -687,34 +687,23 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 "\n==Previous status==" + self.status +
                 "\n==Previous status info==" + self.status_info + "\n" +
                 traceback.format_exc())
-            self.write_error_xml(resultFile, cdata=True)
+            self.write_error_xml(result_file, cdata=True)
 
         instance_id = task_id
-        collected = None
-        committed = None
-        resource = None
-        executionhost = None
-        reporter = None
-        reporternickname = None
         status = None
         message = None
         stderr = None
-        body = None
-        memory = None
-        cputime = None
-        walltime = None
-        memory = 0.0
-        cputime = 0.0
-        walltime = 0.0
         job_id = None
 
-        cur.execute("""SELECT instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id
+        cur.execute("""SELECT instance_id,collected,committed,resource,executionhost,reporter,
+            reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id
             FROM akrr_xdmod_instanceinfo WHERE instance_id=%s""", (task_id,))
         raw = cur.fetchone()
-        if raw != None:  # .i.e. not new entry
+        if raw is not None:  # .i.e. not new entry
             (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status, message,
              stderr, body, memory, cputime, walltime, job_id) = raw
-            if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
+            if hasattr(self, "RemoteJobID"):
+                job_id = self.RemoteJobID
         else:
             collected = time_finished
             committed = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
@@ -725,19 +714,18 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
                                                            [self.resource, self.app, self.resourceParam, self.appParam])
 
-            if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
+            if hasattr(self, "RemoteJobID"):
+                job_id = self.RemoteJobID
 
         # Process XML file
-        import xml.etree.ElementTree as ET
-        root = None
         try:
-
-            tree = ET.parse(resultFile)
+            tree = xml.etree.ElementTree.parse(result_file)
             root = tree.getroot()
-        except:
+        except Exception as e:
+            log.exception("Got exception in push_to_db_raw, during xml read: %s", e)
             self.status_info = "(2)==Resulting XML file content==\n" + content + \
-                              "\n==Previous status==" + self.status + \
-                              "\n==Previous status info==" + self.status_info
+                               "\n==Previous status==" + self.status + \
+                               "\n==Previous status info==" + self.status_info
             self.status = "Cannot process final XML file"
             root = None
 
@@ -745,14 +733,15 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         cputime = 0.0
         walltime = 0.0
 
-        print("TTTTTTTT ", root, status)
+        completed = None
+
+        log.debug("%s %s", root, status)
 
         if root is not None:
-            completed = None
             try:
                 t = root.find('exitStatus').find('completed').text
 
-                print('exitStatus:completed', t)
+                log.debug('exitStatus:completed %s', t)
 
                 if t.strip().upper() == "TRUE":
                     completed = True
@@ -762,10 +751,10 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 if completed:
                     root.find('body').find('performance').find('benchmark').find('statistics')
                 self.set_method_to_run_next(None, "Task was completed successfully.", "Done")
-            except:
-                pass
+            except Exception as e:
+                log.exception("Got exception in push_to_db_raw: %s", e)
 
-            print("TTTTTTTT completedstatus", completed, status)
+            log.debug("completedstatus %s %s", completed, status)
             error = None
             try:
 
@@ -774,27 +763,27 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     error = True
                 else:
                     error = False
-            except:
-                pass
+            except Exception as e:
+                log.exception("Got exception in push_to_db_raw: %s", e)
 
             status = 0
             if completed is not None:
                 if completed:
                     status = 1
 
-            print("TTTTTTTT completedstatus", completed, status)
+            log.debug("completedstatus %s %s", completed, status)
 
             if completed is not None:
                 if completed:
-                    bodyET = root.find('body').find('performance')
-                    body = ET.tostring(bodyET)
+                    body_et = root.find('body').find('performance')
+                    body = xml.etree.ElementTree.tostring(body_et)
                     import xml.dom.minidom
                     xml = xml.dom.minidom.parseString(body)
                     body = xml.toprettyxml()
                     body = body.replace("""<?xml version="1.0" ?>\n""", "")
 
-                    statisticsET = root.find('body').find('performance').find('benchmark').find('statistics')
-                    for e in statisticsET:
+                    statistics_et = root.find('body').find('performance').find('benchmark').find('statistics')
+                    for e in statistics_et:
                         if e.find('ID').text == 'Memory':
                             memory = float(e.find('value').text)
                         if e.find('ID').text == 'Wall Clock Time':
@@ -813,7 +802,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """ % (reporter, stderr)
-                    except:
+                    except Exception as e:
+                        log.exception("Got exception in push_to_db_raw: %s", e)
                         message = "ERROR: error caught by parser"
                         stderr = None
                         body = """<xdtas>
@@ -824,7 +814,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
        <errorMsg></errorMsg>
       </batchJob>
      </xdtas>
-    """ % (reporter)
+    """ % reporter
             elif completed is None:
                 if error is not None:  # i.e. xml with error generated afterwards
                     if error:
@@ -834,8 +824,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                         message = root.find('xdtas').find('batchJob').find('errorCause').text
                         stderr = root.find('xdtas').find('batchJob').find('errorMsg').text
 
-                        bodyET = root.find('xdtas')
-                        body = ET.tostring(bodyET)
+                        body_et = root.find('xdtas')
+                        body = xml.etree.ElementTree.tostring(body_et)
                     else:
                         raise IOError("This condition should not happens")
                 else:
@@ -864,71 +854,72 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
         # Get Nodes
         nodes = None
-        nodesFileName = os.path.join(jobfilesDir, "gen.info")
+        nodes_filename = os.path.join(jobfiles_dir, "gen.info")
 
-        if os.path.isfile(nodesFileName):
+        if os.path.isfile(nodes_filename):
             parser = AppKerOutputParser()
-            parser.parseCommonParsAndStats(geninfo=nodesFileName)
+            parser.parseCommonParsAndStats(geninfo=nodes_filename)
             if hasattr(parser, 'geninfo') and 'nodeList' in parser.geninfo:
-                nodesList = parser.geninfo['nodeList'].split()
+                nodes_list = parser.geninfo['nodeList'].split()
                 nodes = ";"
-                for line in nodesList:
+                for line in nodes_list:
                     line = line.strip()
-                    nodes += "%s;" % (line)
+                    nodes += "%s;" % line
                 if len(nodes.strip().strip(';')) == 0:
                     nodes = None
 
         internal_failure_code = 0
-        if 'masterTaskID' in self.taskParam and appstdoutFile == None:
+        if 'masterTaskID' in self.taskParam and appstdout_file is None:
             internal_failure_code = 10004
         log.debug("completedstatus", completed, status)
         if raw is not None:  # .i.e. new entry
             print("Updating")
             cur.execute("""UPDATE akrr_xdmod_instanceinfo
 SET instance_id=%s,collected=%s,committed=%s,resource=%s,executionhost=%s,reporter=%s,
-reporternickname=%s,status=%s,message=%s,stderr=%s,body=%s,memory=%s,cputime=%s,walltime=%s,job_id=%s,nodes=%s,internal_failure=%s
+reporternickname=%s,status=%s,message=%s,stderr=%s,body=%s,memory=%s,cputime=%s,walltime=%s,job_id=%s,nodes=%s,
+internal_failure=%s
 WHERE instance_id=%s""",
                         (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status,
                          message, stderr, body, memory, cputime, walltime, job_id, nodes, internal_failure_code,
                          instance_id))
-            # (instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime)=raw
         else:
             cur.execute("""INSERT INTO akrr_xdmod_instanceinfo
-(instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id,nodes,internal_failure)
+(instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,
+cputime,walltime,job_id,nodes,internal_failure)
 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                         (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status,
                          message, stderr, body, memory, cputime, walltime, job_id, nodes, internal_failure_code))
 
-        # print appstdoutFile,stdoutFile,stderrFile
-        appstdoutFileContent = None
-        stdoutFileContent = None
-        stderrFileContent = None
-        taskexeclogFileContent = None
-        if appstdoutFile != None:
-            fin = open(appstdoutFile, "r")
-            appstdoutFileContent = fin.read()
+        if appstdout_file is not None:
+            fin = open(appstdout_file, "r")
+            appstdout_file_content = fin.read()
             fin.close()
         else:
-            appstdoutFileContent = "Does Not Present"
-        if stdoutFile != None:
-            fin = open(stdoutFile, "r")
-            stdoutFileContent = fin.read()
+            appstdout_file_content = "Does Not Present"
+        if stdout_file is not None:
+            fin = open(stdout_file, "r")
+            stdout_file_content = fin.read()
             fin.close()
         else:
-            stdoutFileContent = "Does Not Present"
-        if stderrFile != None:
-            fin = open(stderrFile, "r")
-            stderrFileContent = fin.read()
+            stdout_file_content = "Does Not Present"
+        if stderr_file is not None:
+            fin = open(stderr_file, "r")
+            stderr_file_content = fin.read()
             fin.close()
         else:
-            stderrFileContent = "Does Not Present"
+            stderr_file_content = "Does Not Present"
 
-        if taskexeclogFile != None:
-            fin = open(taskexeclogFile, "r")
-            taskexeclogFileContent = fin.read()
+        if taskexeclog_file is not None:
+            fin = open(taskexeclog_file, "r")
+            taskexeclog_file_content = fin.read()
             fin.close()
         else:
-            taskexeclogFileContent = "Does Not Present"
+            taskexeclog_file_content = "Does Not Present"
+
+        assert isinstance(appstdout_file_content, str)
+        assert isinstance(stdout_file_content, str)
+        assert isinstance(stderr_file_content, str)
+        assert isinstance(taskexeclog_file_content, str)
 
         cur.execute("""SELECT task_id
             FROM akrr_errmsg WHERE task_id=%s""", (task_id,))
@@ -937,76 +928,81 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         cur.execute("""SELECT @@max_allowed_packet""")
         max_allowed_packet = cur.fetchall()[0][0]
 
-        if (len(appstdoutFileContent) + len(stderrFileContent) + len(stdoutFileContent) + len(
-                taskexeclogFileContent)) > 0.9 * max_allowed_packet:
+        if (len(appstdout_file_content) + len(stderr_file_content) + len(stdout_file_content) + len(
+                taskexeclog_file_content)) > 0.9 * max_allowed_packet:
             print("WARNING: length of files exceed max_allowed_packet will trancate files")
 
-            if len(appstdoutFileContent) > 0.2 * max_allowed_packet:
-                appstdoutFileContent = appstdoutFileContent[:int(0.2 * max_allowed_packet)]
-                appstdoutFileContent += "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
-            if len(stderrFileContent) > 0.2 * max_allowed_packet:
-                stderrFileContent = stderrFileContent[:int(0.2 * max_allowed_packet)]
-                stderrFileContent += "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
-            if len(stdoutFileContent) > 0.2 * max_allowed_packet:
-                stdoutFileContent = stdoutFileContent[:int(0.2 * max_allowed_packet)]
-                stdoutFileContent += "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
-            if len(taskexeclogFileContent) > 0.2 * max_allowed_packet:
-                taskexeclogFileContent = taskexeclogFileContent[:int(0.2 * max_allowed_packet)]
-                taskexeclogFileContent += "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
+            if len(appstdout_file_content) > 0.2 * max_allowed_packet:
+                appstdout_file_content = appstdout_file_content[:int(0.2 * max_allowed_packet)]
+                appstdout_file_content += \
+                    "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
+            if len(stderr_file_content) > 0.2 * max_allowed_packet:
+                stderr_file_content = stderr_file_content[:int(0.2 * max_allowed_packet)]
+                stderr_file_content += \
+                    "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
+            if len(stdout_file_content) > 0.2 * max_allowed_packet:
+                stdout_file_content = stdout_file_content[:int(0.2 * max_allowed_packet)]
+                stdout_file_content += \
+                    "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
+            if len(taskexeclog_file_content) > 0.2 * max_allowed_packet:
+                taskexeclog_file_content = taskexeclog_file_content[:int(0.2 * max_allowed_packet)]
+                taskexeclog_file_content += \
+                    "\nWARNING: File was trancated because it length of files exceed max_allowed_packet\n"
 
-        appstdoutFileContent = akrr.util.clean_unicode(appstdoutFileContent)
-        stderrFileContent = akrr.util.clean_unicode(stderrFileContent)
-        stdoutFileContent = akrr.util.clean_unicode(stdoutFileContent)
-        taskexeclogFileContent = akrr.util.clean_unicode(taskexeclogFileContent)
+        appstdout_file_content = akrr.util.clean_unicode(appstdout_file_content)
+        stderr_file_content = akrr.util.clean_unicode(stderr_file_content)
+        stdout_file_content = akrr.util.clean_unicode(stdout_file_content)
+        taskexeclog_file_content = akrr.util.clean_unicode(taskexeclog_file_content)
 
         if len(raw) > 0:  # .i.e. updating existing entry
             print("Updating", raw)
             cur.execute("""UPDATE akrr_errmsg
                 SET appstdout=%s,stderr=%s,stdout=%s,taskexeclog=%s
                 WHERE task_id=%s""",
-                        ((appstdoutFileContent), (stderrFileContent), (stdoutFileContent), taskexeclogFileContent,
-                         instance_id))
+                        (appstdout_file_content, stderr_file_content, stdout_file_content,
+                         taskexeclog_file_content, instance_id))
         else:
             cur.execute("""INSERT INTO akrr_errmsg
                 (task_id,appstdout,stderr,stdout,taskexeclog)
                 VALUES (%s,%s,%s,%s,%s)""",
-                        (instance_id, (appstdoutFileContent), (stderrFileContent), (stdoutFileContent),
-                         taskexeclogFileContent))
-        # (instance_id,akrrcfg.clean_unicode(appstdoutFileContent),akrrcfg.clean_unicode(stderrFileContent),akrrcfg.clean_unicode(stdoutFileContent)))
+                        (instance_id, appstdout_file_content, stderr_file_content, stdout_file_content,
+                         taskexeclog_file_content))
 
     def task_is_complete(self):
-        print("Done", self.taskDir)
+        log.info("Done", self.taskDir)
         self.set_method_to_run_next("task_is_complete", "Done", "Done")
         return None
 
     def terminate(self):
         #
-        CanBeSafelyRemoved = False
-        if not hasattr(self, "RemoteJobID"):
+        can_be_safely_removed = False
+        if self.RemoteJobID is None:
             # i.e. not running remotely and everything is on local disk
-            CanBeSafelyRemoved = True
+            can_be_safely_removed = True
         else:
             #
-            if self.remove_task_from_remote_queue() == None:
+            if self.remove_task_from_remote_queue() is None:
                 # i.e. "Task is probably removed from remote queue.":
-                CanBeSafelyRemoved = True
-        if CanBeSafelyRemoved:
+                can_be_safely_removed = True
+        if can_be_safely_removed:
             # remove remote directory
             pass
-        return CanBeSafelyRemoved
+        return can_be_safely_removed
 
     def remove_task_from_remote_queue(self):
         sh = None
         try:
             from string import Template
-            kE = kill_expressions[self.resource['batchScheduler']]
-            cmd = Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
+            m_kill_expression = kill_expressions[self.resource['batchScheduler']]
+            cmd = Template(m_kill_expression[0]).substitute(jobId=str(self.RemoteJobID))
             msg = ssh.ssh_resource(self.resource, cmd)
-            print(msg)
+            log.debug(msg)
             self.set_method_to_run_next(
                 "task_is_complete", "Task is probably removed from remote queue.", copy.deepcopy(msg))
             return None
-        except:
+        except Exception as e:
+            log.exception("Got exception in process_results_old: %s\n%s\n", e, traceback.format_exc())
+
             if sh is not None:
                 sh.sendline("exit")
                 sh.close(force=True)
@@ -1014,5 +1010,4 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             self.set_method_to_run_next(
                 None, "ERROR Can not remove job from queue on remote resource", traceback.format_exc())
             self.fatal_errors_count += 1
-            print(traceback.format_exc())
             return active_task_default_attempt_repeat
