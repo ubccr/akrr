@@ -5,14 +5,43 @@ if __name__ == '__main__':
     import os
     import sys
     
-    #determin is it global or local installation
-    curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(curdir),"akrr"))
+    # Determine is it global or local installation
+    cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(cur_dir), "akrr"))
     
     if os.path.isdir(akrr_mod_dir):
-        #i.e. local run add to sys.path
-        sys.path.insert(0,os.path.abspath(os.path.dirname(akrr_mod_dir)))
-    
-    
+        # i.e. local run add to sys.path
+        sys.path.insert(0, os.path.abspath(os.path.dirname(akrr_mod_dir)))
+
+    # Check that some modules are installed
+    # Check presence of MySQLdb
+    try:
+        import MySQLdb
+        import MySQLdb.cursors
+
+    except ImportError:
+        print("""python module MySQLdb is not available. Install it!
+            For example by running on
+                RedHat or CentOS from EPEL:
+                    #instale EPEL repo information
+                    sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+                    #install mysqlclient-python
+                    sudo yum install python34-mysql
+                    """)
+        exit(1)
+    # Check presence of typing
+    try:
+        from typing import Union, List
+    except ImportError:
+        print("""python module typing is not available. Install it!
+            For example by running on
+                RedHat or CentOS from EPEL:
+                    #instale EPEL repo information
+                    sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+                    #install python34-typing
+                    sudo yum install python34-typing
+                    """)
+        exit(1)
+
     import akrr.cli
     akrr.cli.CLI().run()
