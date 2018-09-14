@@ -99,6 +99,9 @@ class CLI:
         from .commands import add_command_setup
         add_command_setup(self.subparsers)
 
+        from .commands import add_command_update
+        add_command_update(self.subparsers)
+
         from .commands import add_command_resource
         add_command_resource(self.subparsers)
 

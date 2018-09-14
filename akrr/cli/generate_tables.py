@@ -25,6 +25,7 @@ def create_and_populate_tables(
         starting_comment, ending_comment,
         connection_function,
         host=None, user=None, password=None, db=None,
+        drop_if_needed=True,
         dry_run=False
         ):
     """
@@ -47,6 +48,8 @@ def create_and_populate_tables(
 
             with connection:
                 for (table_name, table_script) in default_tables:
+                    if not drop_if_needed and table_script[:4].upper()=="DROP":
+                        continue
                     log.info("CREATING: %s" % table_name)
                     try:
                         result = cursor.execute(table_script)
@@ -74,7 +77,8 @@ def create_and_populate_tables(
         log.critical("Error %d: %s" % (e.args[0], e.args[1]))
         sys.exit(1)
 
-def create_and_populate_mod_akrr_tables(dry_run=False):
+
+def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
     """
     Create / Populate the tables required in the mod_akrr database.
     """
@@ -331,22 +335,23 @@ INSERT INTO `akrr_err_regexp` VALUES
         """)
     )
 
-    connection_function=None
+    connection_function = None
     if not dry_run:
         from akrr import cfg
-        connection_function= akrr.db.get_akrr_db
+        connection_function = akrr.db.get_akrr_db
         
     create_and_populate_tables(
         default_tables,
-        population_statements,
+        population_statements if populate else tuple(),
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",
         connection_function,
+        drop_if_needed=False,
         dry_run=dry_run
     )
 
 
-def create_and_populate_mod_appkernel_tables(dry_run=False):
+def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
     """
     Create / Populate the required tables / views in the mod_appkernel database.
     """
@@ -771,10 +776,149 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     
     create_and_populate_tables(
         default_tables,
-        population_statements,
+        population_statements if populate else tuple(),
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",
         connection_function,
         dry_run=dry_run
     )
 
+
+def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, orderby=None, table2=None, cols2=None, at_once=True):
+    log.debug("Copying: "+table)
+
+    if table2 is None:
+        table2 = table
+
+    if cols2 is None:
+        cols2 = cols
+
+    sql1 = "select " + cols + " from " + table
+    if orderby is not None:
+        sql1 += "ORDER BY " + orderby
+
+    v = ",".join(["%s"]*(cols2.count(",")+1))
+    sql2 = "insert into " + table2 + " ("+cols2+") values ("+v+")"
+
+    if at_once:
+        cur_akrr.execute(sql1)
+        rows = cur_akrr.fetchall()
+        for row in rows:
+            cur_akrr2.execute(sql2, row)
+    else:
+        cur_akrr.execute("SELECT count(*) FROM "+table)
+        count = cur_akrr.fetchall()[0][0]
+        batch_size = 1000
+
+        for offset in range(0, count, batch_size):
+            cur_akrr.execute(sql1+" LIMIT "+str(batch_size)+" OFFSET "+str(offset))
+            for row in cur_akrr:
+                cur_akrr2.execute(sql2, row)
+
+
+def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
+    from akrr.util.sql import get_con_to_db2
+    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+    db_akrr2, cur_akrr2 = get_con_to_db2(mod_akrr2, dict_cursor=False)
+
+    # active_tasks - should be empty
+    # ak_on_nodes - not used
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_default_walllimit",
+        "id,resource,app,walllimit,resource_param,app_param,last_update,comments")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_err_regexp",
+        "id,active,resource,app,reg_exp,reg_exp_opt,source,err_msg,description")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_internal_failure_codes",
+        "id,description")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_resource_maintenance",
+        "id,resource,start,end,comment")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_taks_errors",
+        "task_id,err_reg_exp_id")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "nodes",
+        "node_id,resource_id,name")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "resources",
+        "id,xdmod_resource_id,name,enabled")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "app_kernels",
+        "id,name,enabled,nodes_list")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "resource_app_kernels",
+        "id,resource_id,app_kernel_id,enabled")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "SCHEDULEDTASKS",
+        "task_id,time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id",
+        table2="scheduled_tasks")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "COMPLETEDTASKS",
+        "task_id,time_finished,status,statusinfo,time_to_start,datetimestamp,time_activated,"
+        "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+        "FatalErrorsCount,FailsToSubmitToTheQueue,parent_task_id",
+        table2="completed_tasks",
+        cols2="task_id,time_finished,status,status_info,time_to_start,datetime_stamp,time_activated,"
+              "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+              "fatal_errors_count,fails_to_submit_to_the_queue,parent_task_id",
+        at_once=False)
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_xdmod_instanceinfo",
+        "instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,"
+        "message,stderr,body,memory,cputime,walltime,job_id,internal_failure,nodes,ncores,nnodes",
+        at_once=False)
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_errmsg",
+        "task_id,err_regexp_id,appstdout,stderr,stdout,taskexeclog",
+        at_once=False)
+    return
+
+
+def copy_mod_akrr_tables(mod_akrr):
+    from akrr.util.sql import get_con_to_db2
+    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr,
+        "SCHEDULEDTASKS",
+        "task_id,time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id",
+        table2="scheduled_tasks")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr,
+        "COMPLETEDTASKS",
+        "task_id,time_finished,status,statusinfo,time_to_start,datetimestamp,time_activated,"
+        "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+        "FatalErrorsCount,FailsToSubmitToTheQueue,parent_task_id",
+        table2="completed_tasks",
+        cols2="task_id,time_finished,status,status_info,time_to_start,datetime_stamp,time_activated,"
+              "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+              "fatal_errors_count,fails_to_submit_to_the_queue,parent_task_id",
+        at_once=False)
+
+    return

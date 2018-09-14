@@ -190,17 +190,14 @@ def add_command_setup(parent_parser):
 
     parser.add_argument(
         "--akrr-db",
-        default="localhost:3306",
-        help="mod_akrr database location in [user[:password]@]host[:port] format, "
+        help="mod_akrr2 database location in [user[:password]@]host[:port] format, "
              "missing values willbe asked. Default: localhost:3306")
     parser.add_argument(
         "--ak-db",
-        default="localhost:3306",
-        help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: localhost:3306")
+        help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: same as akrr")
     parser.add_argument(
         "--xd-db",
-        default="localhost:3306",
-        help="XDMoD modw database location. It is XDMoD's databases host. Default: localhost:3306")
+        help="XDMoD modw database location. It is XDMoD's databases host. Default: same as akrr")
 
     def setup_handler(args):
         """call routine for initial AKRR setup"""
@@ -214,6 +211,48 @@ def add_command_setup(parent_parser):
         ).run()
 
     parser.set_defaults(func=setup_handler)
+
+
+def add_command_update(parent_parser):
+        """Update AKRR"""
+        parser = parent_parser.add_parser('update', description=add_command_setup.__doc__)
+        parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
+
+        parser.add_argument(
+            "--old-akrr-conf-dir",
+            required=True,
+            help="location of old AKRR configuration directory")
+        parser.add_argument(
+            "--akrr-db",
+            help="mod_akrr database location in [user[:password]@]host[:port] format, "
+                 "missing values will be asked. Default: localhost:3306")
+        parser.add_argument(
+            "--ak-db",
+            help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: same as akrr")
+        parser.add_argument(
+            "--xd-db",
+            help="XDMoD modw database location. It is XDMoD's databases host. Default: same as akrr")
+        parser.add_argument(
+            '--generate-db-only', action='store_true', help="only generate db")
+        parser.add_argument(
+            '--stand-alone', action='store_true', help="install only mod_akrr db")
+
+        def update_handler(args):
+            """call routine for initial AKRR setup"""
+            global dry_run
+            dry_run = args.dry_run
+            from .setup import AKRRSetup
+            return AKRRSetup(
+                akrr_db=args.akrr_db,
+                ak_db=args.akrr_db,
+                xd_db=args.akrr_db,
+                update=True,
+                stand_alone=args.stand_alone,
+                generate_db_only=args.generate_db_only,
+                old_akrr_conf_dir=args.old_akrr_conf_dir
+            ).run()
+
+        parser.set_defaults(func=update_handler)
 
 
 def add_command_resource(parent_parser):

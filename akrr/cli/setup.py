@@ -9,6 +9,8 @@ import string
 
 from akrr.util import log
 
+import pprint
+
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.
 
@@ -16,19 +18,24 @@ from akrr.util import log
 try:
     import MySQLdb
     import MySQLdb.cursors
-except Exception as _e:
+
+except ModuleNotFoundError:
     log.critical("""python module MySQLdb is not available. Install it!
-    For example by running on
-        RedHat or CentOS from EPEL:
-            #instale EPEL repo information
-            sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-            #install mysqlclient-python
-            sudo yum install python34-mysql
-            """)
+        For example by running on
+            RedHat or CentOS from EPEL:
+                #instale EPEL repo information
+                sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+                #install mysqlclient-python
+                sudo yum install python34-mysql
+                """)
+    exit(1)
+except Exception as _e:
+    log.critical("""Can not import module MySQLdb!""")
     raise _e
 
 from akrr.util.sql import get_con_to_db
-from akrr.util.sql import get_user_password_host_port
+from akrr.util.sql import get_user_password_host_port_db
+from akrr.util.sql import set_user_password_host_port_db
 from akrr.util.sql import db_exist
 from akrr.util.sql import cv
 from akrr.util.sql import db_check_priv
@@ -51,7 +58,6 @@ except Exception as _e:
     on Ubuntu:
         sudo apt-get install openssl""")
     raise _e
-
 
 # AKRR configuration can be in three places
 # 1) AKRR_CONF if AKRR_CONF environment variable is defined
@@ -93,8 +99,11 @@ def _cursor_execute(cur, query, args=None):
     from akrr.util.sql import cursor_execute
     cursor_execute(cur, query, args=args, dry_run=dry_run)
 
+
 def _create_user_if_not_exists(cur, query, args=None):
     """"""
+    pass
+
 
 def _make_dirs(path):
     """Recursively create directories if not in dry run mode"""
@@ -111,7 +120,8 @@ def _read_username_password(
         password=None,
         default_username="user",
         password_on_default_user=None):
-    log.log_input(prompt)
+    if username is None:
+        log.log_input(prompt)
 
     if username is None:
         username = input('[{0}] '.format(default_username))
@@ -161,36 +171,84 @@ class AKRRSetup:
 
     def __init__(
             self,
-            akrr_db="localhost:3306",
-            ak_db="localhost:3306",
-            xd_db="localhost:3306",
-            install_cron_scripts=True, stand_alone=False):
+            akrr_db=None,
+            ak_db=None,
+            xd_db=None,
+            install_cron_scripts=True,
+            stand_alone=False,
+            update=False,
+            old_akrr_conf_dir=None,
+            generate_db_only=False):
+        """
+        Setup or update AKRR
 
+        Parameters
+        ----------
+        akrr_db - if none will use localhost:3306
+        ak_db - if none will use ak_db
+        xd_db - if none will use xd_db
+        install_cron_scripts
+        stand_alone
+        update - update current akrr installation
+        old_akrr_conf_dir
+        db_update_only
+        """
+
+        self.old_akrr_conf = None
+        if update:
+            self.read_old_akrr_conf_dir(old_akrr_conf_dir)
+
+        # Set initial db conf
+        if not update:
+            if akrr_db is None:
+                # i.e. not set, use default
+                akrr_db = "localhost:3306"
+            if ak_db is None:
+                ak_db = akrr_db
+            if xd_db is None:
+                xd_db = akrr_db
+        else:
+            if akrr_db is None:
+                # i.e. not set, use default
+                akrr_db = set_user_password_host_port_db(
+                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
+                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
+                    None)
+            if ak_db is None:
+                ak_db = set_user_password_host_port_db(
+                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
+                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
+                    self.old_akrr_conf['akrr_db_name'])
+            if xd_db is None:
+                xd_db =  set_user_password_host_port_db(
+                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
+                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
+                    self.old_akrr_conf['akrr_db_name'])
+
+        # Get db details
         self.akrr_db_user_name, \
             self.akrr_db_user_password, \
             self.akrr_db_host, \
-            self.akrr_db_port = get_user_password_host_port(akrr_db)
-        self.akrr_db_name = "mod_akrr"
-
-        # su will remain None if akrr user and db already exists and user has proper rights
-        self.akrr_db_su_user_name = None
-        self.akrr_db_su_user_password = None
+            self.akrr_db_port, \
+            self.akrr_db_name = get_user_password_host_port_db(akrr_db, default_database="mod_akrr")
 
         self.ak_db_user_name, \
             self.ak_db_user_password, \
             self.ak_db_host, \
-            self.ak_db_port = get_user_password_host_port(ak_db)
-        self.ak_db_name = "mod_appkernel"
-
-        self.ak_db_su_user_name = None
-        self.ak_db_su_user_password = None
+            self.ak_db_port, \
+            self.ak_db_name = get_user_password_host_port_db(ak_db, default_database="mod_appkernel")
 
         self.xd_db_user_name, \
             self.xd_db_user_password, \
             self.xd_db_host, \
-            self.xd_db_port = get_user_password_host_port(xd_db)
-        self.xd_db_name = "modw"
+            self.xd_db_port, \
+            self.xd_db_name = get_user_password_host_port_db(xd_db, default_database="modw")
 
+        # su will remain None if akrr user and db already exists and user has proper rights
+        self.ak_db_su_user_name = None
+        self.ak_db_su_user_password = None
+        self.akrr_db_su_user_name = None
+        self.akrr_db_su_user_password = None
         self.xd_db_su_user_name = None
         self.xd_db_su_user_password = None
 
@@ -198,18 +256,36 @@ class AKRRSetup:
         self.stand_alone = stand_alone
         self.install_cron_scripts_flag = install_cron_scripts
 
-    @staticmethod
-    def check_previous_installation():
-        if os.path.exists(akrr_cfg):
-            msg = "This is a fresh installation script. " + akrr_home + \
-                  " contains previous AKRR installation. Either uninstall it or see documentation on updates.\n\n"
-            msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
-            msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
-            msg += "\t\tDROP DATABASE mod_appkernel;\n"
-            msg += "\t\tDROP DATABASE mod_akrr;\n\n"
+        self.update = update
 
-            log.error(msg)
-            exit(1)
+        self.old_akrr_conf_dir = old_akrr_conf_dir
+        self.generate_db_only = generate_db_only
+
+    def check_previous_installation(self):
+        if os.path.exists(akrr_cfg):
+            if self.update:
+                msg = "This update script needs separate new AKRR configuration directory " + \
+                      "which should not be same as previous one.\n" + \
+                      "New AKRR configuration directory will be" + akrr_home + "\n" + \
+                      "It exists now indication presence of previous AKRR installation there.\n" + \
+                      "Uninstall it.\n\n"
+                msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
+                msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
+                msg += "\t\tDROP DATABASE mod_appkernel;\n"
+                msg += "\t\tDROP DATABASE mod_akrr2;\n\n"
+
+                log.error(msg)
+                exit(1)
+            else:
+                msg = "This is a fresh installation script. " + akrr_home + \
+                      " contains previous AKRR installation. Either uninstall it or see documentation on updates.\n\n"
+                msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
+                msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
+                msg += "\t\tDROP DATABASE mod_appkernel;\n"
+                msg += "\t\tDROP DATABASE mod_akrr2;\n\n"
+
+                log.error(msg)
+                exit(1)
 
     @staticmethod
     def check_utils():
@@ -518,9 +594,18 @@ class AKRRSetup:
         log.info("Creating tables and populating them with initial values.")
 
         from .generate_tables import create_and_populate_mod_akrr_tables, create_and_populate_mod_appkernel_tables
+        from .generate_tables import copy_mod_akrr_tables
 
-        create_and_populate_mod_akrr_tables(dry_run)
-        create_and_populate_mod_appkernel_tables(dry_run)
+        create_and_populate_mod_akrr_tables(dry_run, not self.update)
+        if self.update:
+            mod_akrr = set_user_password_host_port_db(
+                self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_host,
+                self.akrr_db_port, self.akrr_db_name)
+
+            copy_mod_akrr_tables(mod_akrr)
+
+        if not self.stand_alone:
+            create_and_populate_mod_appkernel_tables(dry_run, not self.update)
 
     def start_daemon(self):
         """Start the daemon"""
@@ -625,6 +710,22 @@ class AKRRSetup:
         os.remove(".crontmp")
         log.info("Cron Scripts Processed!")
 
+    def read_old_akrr_conf_dir(self, old_akrr_conf_dir):
+        """Read old AKRR configuration file"""
+
+        if not os.path.isdir(old_akrr_conf_dir):
+            log.error("Directory with old AKRR configuration do not exist: " + old_akrr_conf_dir)
+            exit(1)
+
+        old_akrr_conf_file = os.path.join(old_akrr_conf_dir, "akrr.conf")
+        if not os.path.isfile(old_akrr_conf_file):
+            log.error("File with old AKRR configuration do not exist: " + old_akrr_conf_file)
+            exit(1)
+
+        from akrr.util import exec_files_to_dict
+        log.info("Reading old AKRR configuration from: " + old_akrr_conf_file)
+        self.old_akrr_conf = exec_files_to_dict(old_akrr_conf_file)
+
     def update_bashrc(self):
         """Add AKRR enviroment variables to .bashrc"""
         log.info("Updating .bashrc")
@@ -661,13 +762,14 @@ class AKRRSetup:
         # ask info
         self.read_db_user_credentials()
 
-        if self.install_cron_scripts_flag:
+        if self.install_cron_scripts_flag and not self.generate_db_only:
             self.ask_cron_email()
 
         # if it is dry_run
         # all question are asked, this is dry run, so nothing else to do")
 
         self.init_mysql_dbs()
+
         self.init_dir()
         self.generate_self_signed_certificate()
         self.generate_settings_file()
@@ -675,6 +777,10 @@ class AKRRSetup:
         self.db_check()
 
         self.generate_tables()
+
+        if self.generate_db_only:
+            log.info("AKRR DB Generated")
+            return
 
         self.start_daemon()
         self.check_daemon()
