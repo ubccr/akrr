@@ -42,6 +42,74 @@ def get_user_password_host_port(user_password_host_port, default_port=3306, retu
     return user, password, host, port
 
 
+def get_user_password_host_port_db(user_password_host_port_db, default_port=3306,
+                                   default_database=None, return_dict=False):
+    """
+    return user,password,host,port,db tuple from [user[:password]@]host[:port][:/database] format.
+    user and host can not contain @ or : symbols, password can.
+    port should be integer.
+    """
+    if user_password_host_port_db.count("@"):
+        user_password = user_password_host_port_db[:user_password_host_port_db.rfind("@")]
+        host_port_db = user_password_host_port_db[user_password_host_port_db.rfind("@") + 1:]
+    else:
+        user_password = None
+        host_port_db = user_password_host_port_db
+
+    if user_password is not None:
+        if user_password.count(":") > 0:
+            user = user_password[:user_password.find(":")]
+            password = user_password[user_password.find(":") + 1:]
+        else:
+            user = user_password
+            password = None
+
+        if user == "":
+            user = None
+    else:
+        user = None
+        password = None
+
+    if host_port_db.count(":/") > 0:
+        host_port = host_port_db[:host_port_db.rfind(":/")]
+        db = host_port_db[host_port_db.rfind(":/") + 2:]
+    else:
+        host_port = host_port_db
+        db = default_database
+
+    if host_port.count(":") > 0:
+        host, port = host_port.split(":")
+        port = int(port)
+    else:
+        host = host_port
+        port = default_port
+
+    if return_dict:
+        return {
+            "user": user, "password": password, "host": host, "port": port, "database": db
+        }
+
+    return user, password, host, port, db
+
+
+def set_user_password_host_port_db(user, password, host, port, db):
+    """
+        return [user[:password]@]host[:port][:/database] format.
+    """
+    user_password_host_port_db = host
+    if port is not None:
+        user_password_host_port_db += ":"+str(port)
+    if db is not None:
+        user_password_host_port_db += ":/" + str(db)
+    if user is not None or password is not None:
+        user_password_host_port_db = "@" + user_password_host_port_db
+        if password is not None:
+            user_password_host_port_db = ":" + str(password) + user_password_host_port_db
+        if user is not None:
+            user_password_host_port_db = str(user) + user_password_host_port_db
+    return user_password_host_port_db
+
+
 def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dict_cursor=True, raise_exception=True):
     import MySQLdb.cursors
 
@@ -66,6 +134,12 @@ def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dic
             return None, None
 
     return con, cur
+
+
+def get_con_to_db2(user_password_host_port_db, dict_cursor=True, raise_exception=True):
+    user, password, host, port, db_name = get_user_password_host_port_db(user_password_host_port_db)
+    return get_con_to_db(user, password, host=host, port=port, db_name=db_name, dict_cursor=dict_cursor,
+                         raise_exception=raise_exception)
 
 
 def db_exist(cur, name):

@@ -20,6 +20,63 @@ def test_get_user_password_host_port(user_password_host_port, kwargs, expected):
     assert get_user_password_host_port(user_password_host_port, **kwargs) == expected
 
 
+@pytest.mark.parametrize("user_password_host_port_db, kwargs, expected", [
+    ("localhost", {}, (None, None, "localhost", 3306, None)),
+    ("localhost:1238", {}, (None, None, "localhost", 1238, None)),
+    ("localhost", {"default_port": 1238}, (None, None, "localhost", 1238, None)),
+    ("bob:secret@mysql.somewhere.org:1238", {}, ("bob", "secret", "mysql.somewhere.org", 1238, None)),
+    ("bob:sec@r:et2#@mysql.somewhere.org:1238", {}, ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238, None)),
+    ("bob:@mysql.somewhere.org:1238", {}, ("bob", "", "mysql.somewhere.org", 1238, None)),
+    ("bob@mysql.somewhere.org:1238", {}, ("bob", None, "mysql.somewhere.org", 1238, None)),
+    ("bob:sec@r:et2#@mysql.somewhere.org", {}, ("bob", "sec@r:et2#", "mysql.somewhere.org", 3306, None)),
+    ("@mysql.somewhere.org:1238", {}, (None, None, "mysql.somewhere.org", 1238, None)),
+    ("bob:sec@r:et2#@mysql.somewhere.org", {"return_dict": True},
+        {"user": "bob", "password": "sec@r:et2#", "host": "mysql.somewhere.org", "port": 3306, "database": None}),
+    ("localhost:1238", {"default_database": "mod_akrr2"}, (None, None, "localhost", 1238, "mod_akrr2")),
+    ("localhost:/mod_akrr", {}, (None, None, "localhost", 3306, "mod_akrr")),
+    ("localhost:1238:/mod_akrr", {}, (None, None, "localhost", 1238, "mod_akrr")),
+    ("localhost:/mod_akrr", {"default_port": 1238}, (None, None, "localhost", 1238, "mod_akrr")),
+    ("bob:secret@mysql.somewhere.org:1238:/mod_akrr", {}, ("bob", "secret", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:sec@r:et2#@mysql.somewhere.org:1238:/mod_akrr", {},
+        ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:@mysql.somewhere.org:1238:/mod_akrr", {}, ("bob", "", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob@mysql.somewhere.org:1238:/mod_akrr", {}, ("bob", None, "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:sec@r:et2#@mysql.somewhere.org:/mod_akrr", {},
+        ("bob", "sec@r:et2#", "mysql.somewhere.org", 3306, "mod_akrr")),
+    ("@mysql.somewhere.org:1238:/mod_akrr", {}, (None, None, "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:sec@r:et2#@mysql.somewhere.org:/mod_akrr", {"return_dict": True},
+        {"user": "bob", "password": "sec@r:et2#", "host": "mysql.somewhere.org", "port": 3306, "database": "mod_akrr"})
+])
+def test_get_user_password_host_port_db(user_password_host_port_db, kwargs, expected):
+    from akrr.util.sql import get_user_password_host_port_db
+    assert get_user_password_host_port_db(user_password_host_port_db, **kwargs) == expected
+
+
+@pytest.mark.parametrize("expected, args", [
+    ("localhost", (None, None, "localhost", None, None)),
+    ("localhost:1238", (None, None, "localhost", 1238, None)),
+    ("bob:secret@mysql.somewhere.org:1238", ("bob", "secret", "mysql.somewhere.org", 1238, None)),
+    ("bob:sec@r:et2#@mysql.somewhere.org:1238", ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238, None)),
+    ("bob:@mysql.somewhere.org:1238", ("bob", "", "mysql.somewhere.org", 1238, None)),
+    ("bob@mysql.somewhere.org:1238", ("bob", None, "mysql.somewhere.org", 1238, None)),
+    ("bob:sec@r:et2#@mysql.somewhere.org", ("bob", "sec@r:et2#", "mysql.somewhere.org", None, None)),
+    ("mysql.somewhere.org:1238", (None, None, "mysql.somewhere.org", 1238, None)),
+    ("localhost:1238", (None, None, "localhost", 1238, None)),
+    ("localhost:/mod_akrr", (None, None, "localhost", None, "mod_akrr")),
+    ("localhost:1238:/mod_akrr", (None, None, "localhost", 1238, "mod_akrr")),
+    ("localhost:/mod_akrr", (None, None, "localhost", None, "mod_akrr")),
+    ("bob:secret@mysql.somewhere.org:1238:/mod_akrr", ("bob", "secret", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:sec@r:et2#@mysql.somewhere.org:1238:/mod_akrr", ("bob", "sec@r:et2#", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:@mysql.somewhere.org:1238:/mod_akrr", ("bob", "", "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob@mysql.somewhere.org:1238:/mod_akrr", ("bob", None, "mysql.somewhere.org", 1238, "mod_akrr")),
+    ("bob:sec@r:et2#@mysql.somewhere.org:/mod_akrr", ("bob", "sec@r:et2#", "mysql.somewhere.org", None, "mod_akrr")),
+    ("mysql.somewhere.org:1238:/mod_akrr", (None, None, "mysql.somewhere.org", 1238, "mod_akrr"))
+])
+def test_set_user_password_host_port_db(expected, args):
+    from akrr.util.sql import set_user_password_host_port_db
+    assert set_user_password_host_port_db(*args) == expected
+
+
 test_data_show_grant_example = [
     ["GRANT USAGE ON *.* TO 'testuser1'@'localhost'"],
     [
