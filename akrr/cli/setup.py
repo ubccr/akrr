@@ -264,18 +264,7 @@ class AKRRSetup:
     def check_previous_installation(self):
         if os.path.exists(akrr_cfg):
             if self.update:
-                msg = "This update script needs separate new AKRR configuration directory " + \
-                      "which should not be same as previous one.\n" + \
-                      "New AKRR configuration directory will be" + akrr_home + "\n" + \
-                      "It exists now indication presence of previous AKRR installation there.\n" + \
-                      "Uninstall it.\n\n"
-                msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
-                msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
-                msg += "\t\tDROP DATABASE mod_appkernel;\n"
-                msg += "\t\tDROP DATABASE mod_akrr2;\n\n"
-
-                log.error(msg)
-                exit(1)
+                return
             else:
                 msg = "This is a fresh installation script. " + akrr_home + \
                       " contains previous AKRR installation. Either uninstall it or see documentation on updates.\n\n"
@@ -772,7 +761,8 @@ class AKRRSetup:
 
         self.init_dir()
         self.generate_self_signed_certificate()
-        self.generate_settings_file()
+        if not self.update:
+            self.generate_settings_file()
         self.set_permission_on_files()
         self.db_check()
 
