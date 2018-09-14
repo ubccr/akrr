@@ -503,12 +503,13 @@ class AKRRSetup:
             if self.akrr_db_su_user_name is not None:
                 _create_db_user_gran_priv_if_needed(
                     self.get_akrr_db, self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_name, "ALL")
-            if self.ak_db_su_user_name is not None:
-                _create_db_user_gran_priv_if_needed(
-                    self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name, "ALL")
-            if self.xd_db_su_user_name is not None:
-                _create_db_user_gran_priv_if_needed(
-                    self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name, "SELECT")
+            if not self.stand_alone:
+                if self.ak_db_su_user_name is not None:
+                    _create_db_user_gran_priv_if_needed(
+                        self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name, "ALL")
+                if self.xd_db_su_user_name is not None:
+                    _create_db_user_gran_priv_if_needed(
+                        self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name, "SELECT")
 
         except Exception as e:
             import traceback
