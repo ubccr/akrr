@@ -7,30 +7,27 @@
 import re
 import os
 import sys
-#import akrr
 
-#Set proper path for stand alone test runs
+# Set proper path for stand alone test runs
 if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../../src'))
+    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
 
-import akrrappkeroutputparser
-from akrrappkeroutputparser import AppKerOutputParser,total_seconds
+from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 
-#graph500/run input$numCores
 
-def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appKerNResVars=None):
-    #set App Kernel Description
-    parser=AppKerOutputParser(
-        name             = 'HPCG',
-        version          = 1,
-        description      = "HPCG Benchmark",
-        url              = 'http://www.hpcg-benchmark.org/index.html',
-        measurement_name = 'xdmod.benchmark.hpcg'
+def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, appKerNResVars=None):
+    # set App Kernel Description
+    parser = AppKerOutputParser(
+        name='HPCG',
+        version=1,
+        description="HPCG Benchmark",
+        url='http://www.hpcg-benchmark.org/index.html',
+        measurement_name='xdmod.benchmark.hpcg'
     )
-    #set obligatory parameters and statistics
-    #set common parameters and statistics
+    # set obligatory parameters and statistics
+    # set common parameters and statistics
     parser.setCommonMustHaveParsAndStats()
-    #set app kernel custom sets  
+    # set app kernel custom sets
     parser.setMustHaveParameter('App:Version')
     parser.setMustHaveParameter('Input:HPCG Local Domain Dimensions nx')
     parser.setMustHaveParameter('Input:HPCG Local Domain Dimensions ny')
@@ -42,20 +39,20 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     parser.setMustHaveStatistic('MFLOPS rating')
     parser.setMustHaveStatistic('Wall Clock Time')
-    #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    # parse common parameters and statistics
+    parser.parseCommonParsAndStats(appstdout, stdout, stderr, geninfo)
     
-    if hasattr(parser,'appKerWallClockTime'):
+    if hasattr(parser, 'appKerWallClockTime'):
         parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     # The parameters mapping table
     Params = {
-    "App:Version" : [ "^.*version$", "", "", True ],
-    "Input:HPCG Local Domain Dimensions nx" : [ 'nx', "", "", False ],
-    "Input:HPCG Local Domain Dimensions ny" : [ 'ny', "", "", False ],
-    "Input:HPCG Local Domain Dimensions nz" : [ 'nz', "", "", False ],
-    "Input:Distributed Processes": [ "Distributed Processes", "", "", False ],
-    "Input:Threads per processes": [ "Threads per processes", "", "", False ],
+        "App:Version": ["^.*version$", "", "", True],
+        "Input:HPCG Local Domain Dimensions nx": ['nx', "", "", False],
+        "Input:HPCG Local Domain Dimensions ny": ['ny', "", "", False],
+        "Input:HPCG Local Domain Dimensions nz": ['nz', "", "", False],
+        "Input:Distributed Processes": ["Distributed Processes", "", "", False],
+        "Input:Threads per processes": ["Threads per processes", "", "", False],
     }
     
     # The result mapping table
@@ -67,7 +64,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     jobdir = os.path.dirname(appstdout)
     yamlfile = os.path.join(jobdir,"HPCG-Benchmark.yaml")
 
-    #read data
+    # read data
     # Parse YAML lines because YAML is often malformed
     lines = {}
     with open(yamlfile, 'r') as f:
@@ -78,66 +75,62 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             value = m.group(4)
             lines[key] = value
     
-    #process the data
-    for k,v in Params.iteritems():
+    # process the data
+    for k, v in Params:
         val = lines.get(v[0], None)
         if v[3]:
             for line in lines:
                 if re.match(v[0], line):
                     val = lines[line]
                     break
-        if v[2].find('val')>=0:
-            val=float(val)
-            val=eval(v[2])
-        if v[1]=="":
-            v[1]=None
+        if v[2].find('val') >= 0:
+            val = eval(v[2])
+        if v[1] == "":
+            v[1] = None
         if val is None:
             continue
         parser.setParameter(k, val, v[1])
     
-    for k,v in Metrics.iteritems():
+    for k, v in Metrics:
         val = lines.get(v[0], None)
         if v[3]:
             for line in lines:
                 if re.match(v[0], line):
                     val = lines[line]
                     break
-        if v[2].find('val')>=0:
-            val=float(val)
-            val=eval(v[2])
-        if v[1]=="":
-            v[1]=None
+        if v[2].find('val') >= 0:
+            val = eval(v[2])
+        if v[1] == "":
+            v[1] = None
         if val is None:
             continue
-        parser.setStatistic(k ,val, v[1])
+        parser.setStatistic(k, val, v[1])
     
     if "cpuSpeed" in parser.geninfo:
-        ll=parser.geninfo["cpuSpeed"].splitlines()
-        cpuSpeedMax=0.0
+        ll = parser.geninfo["cpuSpeed"].splitlines()
+        cpuSpeedMax = 0.0
         for l in ll:
-            m=re.search(r'([\d\.]+)$',l)
+            m = re.search(r'([\d\.]+)$', l)
             if m:
-                v=float(m.group(1).strip())
-                if v>cpuSpeedMax:cpuSpeedMax=v
-        if cpuSpeedMax>0.0:
-            parser.setParameter("RunEnv:CPU Speed",cpuSpeedMax, "MHz" )
-            MHz=cpuSpeedMax
+                v = float(m.group(1).strip())
+                if v > cpuSpeedMax:
+                    cpuSpeedMax = v
+        if cpuSpeedMax > 0.0:
+            parser.setParameter("RunEnv:CPU Speed", cpuSpeedMax, "MHz")
+            MHz = cpuSpeedMax
     
     if __name__ == "__main__":
-        #output for testing purpose
-        print "parsing complete:",parser.parsingComplete(Verbose=True)
+        # output for testing purpose
+        print("parsing complete:", parser.parsingComplete(Verbose=True))
         parser.printParsNStatsAsMustHave()
-        print parser.getXML()
+        print(parser.getXML())
     
-    #return complete XML overwize return None
+    # return complete XML otherwise return None
     return parser.getXML()
     
     
 if __name__ == "__main__":
     """stand alone testing"""
-    jobdir=sys.argv[1]
-    print "Proccessing Output From",jobdir
-    processAppKerOutput(appstdout=os.path.join(jobdir,"appstdout"), geninfo=os.path.join(jobdir,"gen.info"))
-    
-    
-
+    job_dir = sys.argv[1]
+    print("Processing Output From", job_dir)
+    processAppKerOutput(appstdout=os.path.join(job_dir, "appstdout"), geninfo=os.path.join(job_dir, "gen.info"))
