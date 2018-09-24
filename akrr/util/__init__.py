@@ -1,14 +1,19 @@
-from .functional import __or
-from .generators import generateChars, generateNumber
+from typing import Union, List
 
 
-def which(program):
+def which(program: str) -> Union[str, None]:
+    """
+    return full path of executable.
+    If program is full path return it
+    otherwise look in PATH. If still executable is not found return None.
+    """
     import os
-    def is_exe(fpath):
-        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
 
-    fpath, fname = os.path.split(program)
-    if fpath:
+    def is_exe(file_path):
+        return os.path.isfile(file_path) and os.access(file_path, os.X_OK)
+
+    file_dir, _ = os.path.split(program)
+    if file_dir:
         if is_exe(program):
             return program
     else:
@@ -20,107 +25,104 @@ def which(program):
 
     return None
 
-import re
-import datetime
 
-def getFormatedRepeatIn(repeat_in):
-    repeatInFin = None
-    if repeat_in == None:
-        return None
+def clear_from_build_in_var(dict_in: dict) -> dict:
+    """
+    Return dict without  build-in variable and modules emerged in dict_in from exec function call
+    """
+    import inspect
 
-    repeat_in = repeat_in.strip()
-    if repeatInFin == None or repeatInFin == '':
-        match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2, 3, 4, 5, 6)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (
-                int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), int(g[5]))
-    if repeatInFin == None:
-        match = re.match(r'(\d+)-(\d+)-(\d+) (\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2, 3, 4, 5)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (int(g[0]), int(g[1]), int(g[2]), int(g[3]), int(g[4]), 0)
-    if repeatInFin == None:
-        match = re.match(r'(\d+) (\d+):(\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2, 3, 4)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, int(g[0]), int(g[1]), int(g[2]), int(g[3]))
-    if repeatInFin == None:
-        match = re.match(r'(\d+) (\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2, 3)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, int(g[0]), int(g[1]), int(g[2]), 0)
-    if repeatInFin == None:
-        match = re.match(r'(\d+):(\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2, 3)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, 0, int(g[0]), int(g[1]), int(g[2]))
-    if repeatInFin == None:
-        match = re.match(r'(\d+):(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1, 2)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, 0, int(g[0]), int(g[1]), 0)
-    if repeatInFin == None:
-        match = re.match(r'(\d+)', repeat_in, 0)
-        if match != None:
-            g = match.group(1)
-            repeatInFin = "%01d-%02d-%03d %02d:%02d:%02d" % (0, 0, int(g[0]), 0, 0, 0)
-    #if repeatInFin==None:
-    #    raise IOError("Incorrect data-time format for repeating period")
-    #print 'repeatInFin',repeat_in,repeatInFin
-    return repeatInFin
+    tmp = {}
+    exec('wrong_fields_dict="wrong_fields_dict"', tmp)
+    tmp.pop('wrong_fields_dict')
+    wrong_fields = list(tmp.keys())
 
-def getTimeDeltaRepeatIn(repeat_in):
-    repeatInFin=None
-    if repeat_in==None:
-        raise IOError("There is no repeating period")
-    repeatInFin=getFormatedRepeatIn(repeat_in)
-    if repeatInFin==None:
-        raise IOError("Incorrect data-time format for repeating period")
-    
-    #check the repeat values
-    match = re.match( r'(\d+)-(\d+)-(\d+) (\d+):(\d+):(\d+)', repeatInFin, 0)
-    g=match.group(1,2,3,4,5,6)
-    tao=(int(g[0]),int(g[1]),int(g[2]),int(g[3]),int(g[4]),int(g[5]))
-    td=datetime.timedelta(tao[2],tao[3],tao[4],tao[5])
-    if tao[0]!=0 or tao[1]!=0:
-        if tao[2]!=0 or tao[3]!=0 or tao[4]!=0 or tao[5]!=0:
-            raise IOError("If repeating period is calendar months or years then increment in day/hours/mins/secs should be zero.")
-    return td
+    dict_out = {}
+    for key, val in dict_in.items():
+        if inspect.ismodule(val):
+            continue
+        if wrong_fields.count(key) > 0:
+            continue
+        dict_out[key] = val
 
-def getFormatedTimeToStart(time_to_start):
-    #determine timeToStart
-    timeToStart = None
-    if time_to_start == None or time_to_start == "":  #i.e. start now
-        timeToStart = datetime.datetime.today()
+    return dict_out
 
-    if timeToStart == None:
-        iform = 0
-        datetimeformats = ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M:%S", "%y-%m-%d %H:%M"]
-        while not (timeToStart != None or iform >= len(datetimeformats)):
-            try:
-                timeToStart = datetime.datetime.strptime(time_to_start, datetimeformats[iform])
-            except:
-                iform += 1
-    if timeToStart == None:
-        iform = 0
-        datetimeformats = ["%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S"]
-        while not (timeToStart != None or iform >= len(datetimeformats)):
-            try:
-                timeToStart = datetime.datetime.strptime(
-                    datetime.datetime.today().strftime("%Y-%m-%d ") + time_to_start, datetimeformats[iform])
-            except:
-                iform += 1
-    #if timeToStart==None:
-    #    raise IOError("Incorrect data-time format")
-    if timeToStart == None:
-        return None
+
+def exec_files_to_dict(*files: str, var_in: dict=None) -> dict:
+    """
+    execute python from files and return dict with variables from that files.
+    If var_in is specified initiate variables dictionary with it.
+    """
+    if var_in is None:
+        tmp = {}
     else:
-        return timeToStart.strftime("%Y-%m-%d %H:%M:%S")
+        import copy
+        tmp = copy.deepcopy(var_in)
 
-def getDatatimeTimeToStart(time_to_start):
-    timeToStart=getFormatedTimeToStart(time_to_start)
-    if timeToStart==None:
-        raise IOError("Incorrect data-time format for time_to_start")
-    timeToStart=datetime.datetime.strptime(timeToStart,"%Y-%m-%d %H:%M:%S")
-    return timeToStart
+    for f in files:
+        with open(f, "r") as file_in:
+            exec(file_in.read(), tmp)
+    return clear_from_build_in_var(tmp)
+
+
+def clean_unicode(s):
+    if s is None:
+        return None
+
+    if type(s) is bytes:
+        s = s.decode("utf-8")
+
+    replacements = {
+        '\u2018': "'",
+        '\u2019': "'",
+    }
+    for src, dest in replacements.items():
+        s = s.replace(src, dest)
+    return s
+
+
+def format_recursively(s: str, d: dict, keep_double_brackets: bool=False) -> str:
+    """
+    Recursively format sting `s` using dictionary `d` until where are no more substitution.
+    Return resulting string.
+
+    Double curly brackets are escaped, for example "{{variable}}" would be NOT substituted.
+
+    If `keep_double_brackets` set to try at the end all double curly brackets are replaced
+    by single brackets. This is done for creation of batch bash scripts, with bracked used
+    for variables.
+    """
+    s = s.replace('{{', 'LeFtyCurlyBrackets')
+    s = s.replace('}}', 'RiGhTyCurlyBrackets')
+    s0 = s.format(**d)
+    while s0 != s:
+        s = s0
+        s = s.replace('{{', 'LeFtyCurlyBrackets')
+        s = s.replace('}}', 'RiGhTyCurlyBrackets')
+        s0 = s.format(**d)
+    if keep_double_brackets:
+        s0 = s0.replace('LeFtyCurlyBrackets', '{{')
+        s0 = s0.replace('RiGhTyCurlyBrackets', '}}')
+    else:
+        s0 = s0.replace('LeFtyCurlyBrackets', '{')
+        s0 = s0.replace('RiGhTyCurlyBrackets', '}')
+    return s0
+
+
+def replace_at_var_at(s: str, ds: List[dict]):
+    """
+    Replaces @variable@ in string `s` by ds[furthest]['variable'].
+    `ds` is list of dictionaries
+    """
+    d = {}
+    # print "#"*80
+    for di in ds:
+        d.update(di)
+    while s.find("@") >= 0:
+        # print s
+        at1 = s.find("@")
+        at2 = s.find("@", at1 + 1)
+        var_name = s[at1 + 1:at2]
+        var_value = d[var_name]
+        s = s.replace("@" + var_name + "@", str(var_value))
+    return s

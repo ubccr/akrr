@@ -1,50 +1,53 @@
 """
 Responsible for serving the RESTful AKRR API.
 """
-from . import cfg
 
-apiroot = cfg.restapi_apiroot
 import os
 import random
 import string
 import time
-import re
 import traceback
 import datetime
 
 import logging as log
 
 import bottle
+from bottle import response, request
+
+import akrr.db
 from . import bottle_api_json_formatting
-from bottle import Bottle, run, redirect, response, request, get, post, put, delete, error, HTTPError
-
-from json import dumps
-from .models.task import Task
-from .util.generators import generateNumber, generateChars
-from urllib.parse import quote
-
-from . import akrrscheduler
 
 import MySQLdb
 import MySQLdb.cursors
 
-import logging
 
-logger = logging.getLogger('rest-api')
-logger.setLevel(logging.INFO)
+from . import cfg
+from . import daemon
+from .util import log
 
-fh = logging.FileHandler(os.path.join(cfg.data_dir, 'srv', 'rest.log'))
-fh.setLevel(logging.INFO)
 
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-fh.setFormatter(formatter)
-
-logger.addHandler(fh)
+apiroot = cfg.restapi_apiroot
 
 app = bottle.Bottle()
 app.install(bottle_api_json_formatting.JsonFormatting())
-# queue to exchanche the orders with main akrr process
+
+# Add global exception handling, all non-bottle exception will be placed in bottle.HTTPError and return to client
+
+
+def error_translation(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except bottle.BottleException as e:
+            raise e
+        except Exception as e:
+            raise bottle.HTTPError(400, str(e))
+    return wrapper
+
+
+app.install(error_translation)
+
+# queue to exchange the orders with main akrr process
 proc_queue_to_master = None
 proc_queue_from_master = None
 
@@ -66,7 +69,7 @@ class SSLWSGIRefServer(bottle.ServerAdapter):
 
         if self.quiet:
             class QuietHandler(WSGIRequestHandler):
-                def log_request(self,*args, **kw):
+                def log_request(self, *args, **kw):
                     pass
 
             self.options['handler_class'] = QuietHandler
@@ -82,32 +85,15 @@ DEFAULT_PAGE = 0
 DEFAULT_PAGE_SIZE = 10
 
 
-def generateFakeTask():
-    """
-    Generate a Task object with randomly generated data.
-    """
-    return Task(
-        generateNumber(1, 1000),
-        generateChars(16),
-        generateChars(16),
-        generateChars(8),
-        generateChars(8),
-        '{}',
-        '{}',
-        '{}',
-        generateNumber(1, 1000),
-        generateNumber(1, 1000)
-    )
-
-
 def validateTaskVariableValue(k, v):
     """validate value of task variable, reformat if needed/possible
     raise error if value is incorrect
     return value or reformated value"""
-    try:
-        return akrrscheduler.akrrValidateTaskVariableValue(k, v)
-    except Exception as e:
-        raise bottle.HTTPError(400, str(e))
+    #try:
+    return daemon.validate_task_parameters(k, v)
+    #except Exception as e:
+    #    raise e
+
 
 ###############################################################################
 # Authentication
@@ -228,7 +214,7 @@ def create_scheduled_tasks():
               'group_id': ''}
 
     for k in list(bottle.request.forms.keys()):
-        print("Received: %r=>%r" % (k, bottle.request.forms[k]))
+        log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
@@ -237,13 +223,13 @@ def create_scheduled_tasks():
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    from . import akrrscheduler
+    from . import daemon
 
-    sch = akrrscheduler.akrrScheduler(AddingNewTasks=True)
+    sch = daemon.AkrrDaemon(adding_new_tasks=True)
     try:
-        task_id = sch.addTask(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
-                              params['resource_param'], params['app_param'], params['task_param'],
-                              params['group_id'], None)
+        task_id = sch.add_task(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
+                               params['resource_param'], params['app_param'], params['task_param'],
+                               params['group_id'], None)
     except Exception as e:
         raise bottle.HTTPError(400, 'Can not submit task to scheduled_tasks queue:' + traceback.format_exc())
     del sch
@@ -268,10 +254,34 @@ def get_scheduled_tasks():
     raises a 403 if the user is not authorized to perform this action.
     raises a 500 if an internal server error occurs ( ie. a database falls down etc. )
     """
-    db, cur = cfg.getDB(True)
+    # default values for some parameters
+    params = {'app': None,
+              'resource': None}
 
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
-            ORDER BY time_to_start ASC''')
+    for k in list(bottle.request.forms.keys()):
+        log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
+        if k not in params:
+            raise ValueError('Unknown parameter %s' % (k,))
+        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+
+    query = "SELECT * FROM scheduled_tasks"
+
+    if params['app'] is not None or params['resource'] is not None:
+        query = query + " WHERE"
+
+        if params['app']:
+            query = query + " app='%s'" % params['app']
+
+        if params['app'] is not None and params['resource'] is not None:
+            query = query + " AND"
+
+        if params['resource']:
+            query = query + " resource='%s'" % params['resource']
+
+    query = query + " ORDER BY time_to_start ASC"
+
+    db, cur = akrr.db.get_akrr_db(True)
+    cur.execute(query)
     tasks = cur.fetchall()
 
     cur.close()
@@ -286,9 +296,9 @@ def get_scheduled_task(task_id):
     """
     Retrieve scheduled tasks.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -312,8 +322,8 @@ def update_scheduled_tasks(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    db, cur = akrr.db.get_akrr_db(True)
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -330,7 +340,7 @@ def update_scheduled_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to update it
             try:
-                akrrscheduler.akrrUpdateTaskParameters(task_id, update_values, updateDerivedTask=True)
+                daemon.update_task_parameters(task_id, update_values, update_derived_task=True)
 
                 return {
                     "success": True,
@@ -340,20 +350,20 @@ def update_scheduled_tasks(task_id):
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
-    request = {
-        'fun': 'akrrUpdateTaskParameters',
+    m_request = {
+        'fun': 'update_task_parameters',
         'args': (task_id, update_values),
-        'kargs': {'updateDerivedTask': True}
+        'kargs': {'update_derived_task': True}
     }
-    proc_queue_to_master.put(request)
+    proc_queue_to_master.put(m_request)
     while not proc_queue_from_master.empty():
         pass
-    response = proc_queue_from_master.get()
+    m_response = proc_queue_from_master.get()
 
-    if ("success" in response) and (response["success"] == True):
-        response["message"] = "Task successfully updated!"
+    if ("success" in m_response) and (m_response["success"] == True):
+        m_response["message"] = "Task successfully updated!"
 
-    return response
+    return m_response
 
 
 # DELETE =======================================================================
@@ -369,8 +379,8 @@ def delete_scheduled_task_by_id(task_id):
     """
 
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
-    cur.execute('''SELECT * FROM SCHEDULEDTASKS
+    db, cur = akrr.db.get_akrr_db(True)
+    cur.execute('''SELECT * FROM scheduled_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -382,8 +392,8 @@ def delete_scheduled_task_by_id(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                akrrscheduler.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
-                                             removeDerivedTask=True)
+                daemon.delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_queue=True,
+                                   remove_derived_task=True)
 
                 return {
                     "success": True,
@@ -393,20 +403,21 @@ def delete_scheduled_task_by_id(task_id):
                 raise bottle.HTTPError(400, str(e))
 
     # still here, ask master to do the job
-    request = {
-        'fun': 'akrrDeleteTask',
+    m_request = {
+        'fun': 'delete_task',
         'args': (task_id,),
-        'kargs': {'removeFromScheduledQueue': True, 'removeFromActiveQueue': True, 'removeDerivedTask': True}
+        'kargs': {'remove_from_scheduled_queue': True, 'remove_from_active_queue': True, 'remove_derived_task': True}
     }
-    proc_queue_to_master.put(request)
+    proc_queue_to_master.put(m_request)
     while not proc_queue_from_master.empty():
         pass
-    response = proc_queue_from_master.get()
+    m_response = proc_queue_from_master.get()
 
-    if ("success" in response) and (response["success"] == True):
-        response["message"] = "Task successfully deleted!"
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Task successfully deleted!"
 
-    return response
+    return m_response
+
 
 # Active task queue
 @app.get(apiroot + '/active_tasks')
@@ -415,15 +426,16 @@ def get_all_active_tasks():
     """
     Retrieve tasks from active_tasks queue.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS''')
+    cur.execute('''SELECT * FROM active_tasks''')
     task = cur.fetchall()
 
     cur.close()
     db.close()
     return task
-    
+
+
 # Active task queue
 @app.get(apiroot + '/active_tasks/<task_id:int>')
 @bottle.auth_basic(auth_by_token_for_read)
@@ -431,28 +443,27 @@ def get_active_tasks(task_id):
     """
     Retrieve task from active_tasks queue.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
     cur.close()
     db.close()
     if len(task) == 1:
-        task=task[0]
+        task = task[0]
         try:
-            from . import akrrtask
-            taskDir=akrrtask.GetLocalTaskDir(task['resource'],task['app'],task['datetimestamp'])
-            logFile=os.path.join(taskDir,'proc','log')
-            with open(logFile,"r") as fin:
-                logFileContent=fin.read()
-           
-            task['log']=logFileContent
+            from . import akrr_task
+            taskDir = akrr_task.get_local_task_dir(task['resource'], task['app'], task['datetime_stamp'])
+            logFile = os.path.join(taskDir, 'proc', 'log')
+            with open(logFile, "r") as fin:
+                logFileContent = fin.read()
+
+            task['log'] = logFileContent
         except Exception as e:
             raise e
-            task['log']='Log file can not be found'
-
+            task['log'] = 'Log file can not be found'
 
         return task
     else:
@@ -470,21 +481,21 @@ def update_active_tasks(task_id):
         raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
     if len(list(bottle.request.forms.keys())) > 1 and 'next_check_time' in list(bottle.request.forms.keys()):
         raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
-        #raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
+        # raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
     update_values = {}
     for k in list(bottle.request.forms.keys()):
         update_values[k] = validateTaskVariableValue(k, bottle.request.forms[k])
     if 'next_check_time' not in list(bottle.request.forms.keys()):
-        update_values['next_check_time']=validateTaskVariableValue('next_check_time',datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        update_values['next_check_time'] = validateTaskVariableValue('next_check_time',
+                                                                     datetime.datetime.now().strftime(
+                                                                         "%Y-%m-%d %H:%M:%S"))
 
     # get task
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
-
-
 
     # loop to ensure that nobody working on this task right now
     while True:
@@ -496,11 +507,11 @@ def update_active_tasks(task_id):
 
         time.sleep(cfg.scheduled_tasks_loop_sleep_time * 0.45)
 
-        cur.execute('''SELECT * FROM ACTIVETASKS
+        cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
         task = cur.fetchall()
     #
-    cur.execute('''UPDATE ACTIVETASKS
+    cur.execute('''UPDATE active_tasks
             SET next_check_time=%s
             WHERE task_id=%s''', (update_values['next_check_time'], task_id))
     cur.close()
@@ -510,6 +521,7 @@ def update_active_tasks(task_id):
         "message": "Task successfully updated!"
     }
 
+
 @app.delete(apiroot + '/active_tasks/<task_id:int>')
 @bottle.auth_basic(auth_by_token_for_read)
 def delete_active_tasks(task_id):
@@ -517,8 +529,8 @@ def delete_active_tasks(task_id):
     delete task from active_tasks queue.
     """
     # is the task still in scheduled queue and what time left till it execution
-    db, cur = cfg.getDB(True)
-    cur.execute('''SELECT * FROM ACTIVETASKS
+    db, cur = akrr.db.get_akrr_db(True)
+    cur.execute('''SELECT * FROM active_tasks
             WHERE task_id=%s''', (task_id,))
     possible_task = cur.fetchall()
     cur.close()
@@ -530,8 +542,8 @@ def delete_active_tasks(task_id):
         if task['time_to_start'] > datetime.datetime.now() + datetime.timedelta(minutes=2):
             # have time to delete it
             try:
-                akrrscheduler.akrrDeleteTask(task_id, removeFromScheduledQueue=True, removeFromActiveQueue=True,
-                                             removeDerivedTask=True)
+                daemon.delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_queue=True,
+                                   remove_derived_task=True)
 
                 return {
                     "success": True,
@@ -541,12 +553,12 @@ def delete_active_tasks(task_id):
                 raise bottle.HTTPError(400, str(e))
     else:
         return {
-                    "success": False,
-                    "message": "Task is not in active queue",
-                }
+            "success": False,
+            "message": "Task is not in active queue",
+        }
     # still here, ask master to do the job
     request = {
-        'fun': 'akrrDeleteTask',
+        'fun': 'delete_task',
         'args': (task_id,),
         'kargs': {'removeFromScheduledQueue': False, 'removeFromActiveQueue': True, 'removeDerivedTask': False}
     }
@@ -560,6 +572,7 @@ def delete_active_tasks(task_id):
 
     return response
 
+
 # Completed tasks
 @app.get(apiroot + '/completed_tasks/<task_id:int>')
 @bottle.auth_basic(auth_by_token_for_read)
@@ -567,9 +580,9 @@ def get_completed_tasks(task_id):
     """
     Retrieve task from completed_tasks.
     """
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM COMPLETEDTASKS
+    cur.execute('''SELECT * FROM completed_tasks
             WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
@@ -645,7 +658,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE R.name LIKE %s
@@ -657,7 +670,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE ST.app LIKE %s
@@ -667,7 +680,7 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     WHERE R.name LIKE %s
@@ -677,18 +690,18 @@ def _get_resource_apps(resource, application):
         ST.resource,
         ST.app
     FROM
-        mod_akrr.SCHEDULEDTASKS AS ST
+        mod_akrr.scheduled_tasks AS ST
     LEFT JOIN mod_akrr.resources AS R
         ON R.name = ST.resource
     ORDER BY resource, app
     """
 
     parameters = ("%{0}%".format(resource), "%{0}%".format(application)) if resource and application else \
-        ("%{0}%".format(application), ) if application else ("%{0}%".format(resource), ) if resource else ()
+        ("%{0}%".format(application),) if application else ("%{0}%".format(resource),) if resource else ()
     print(query, parameters)
     rows = None
     try:
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -718,7 +731,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -738,7 +751,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -757,7 +770,7 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     WHERE
@@ -776,19 +789,19 @@ def _get_resource_app_status(resource, application):
          ON R.id = RA.resource_id
     JOIN mod_akrr.app_kernels AS AKD
          ON AKD.id = RA.app_kernel_id
-    JOIN mod_akrr.SCHEDULEDTASKS ST
+    JOIN mod_akrr.scheduled_tasks ST
          ON R.name = ST.resource
          AND AKD.name = ST.app
     ORDER BY R.name, AKD.name
     """
 
     parameters = ("%{0}%".format(resource), "%{0}%".format(application)) if resource and application \
-        else ("%{0}%".format(application), ) if application \
-        else ("%{0}%".format(resource), ) if resource \
+        else ("%{0}%".format(application),) if application \
+        else ("%{0}%".format(resource),) if resource \
         else ()
     rows = None
     try:
-        connection, cursor = cfg.getAKDB(True)
+        connection, cursor = akrr.db.get_ak_db(True)
         with connection:
             cursor.execute(query, parameters)
             rows = cursor.fetchall()
@@ -811,7 +824,7 @@ def get_unique_tasks():
     Retrieve the list of currently scheduled tasks ( resource / application pairings ) from
     mod_akrr.
 
-    :return: a JSON encoded representation of the mod_akrr.SCHEDULEDTASKS table (resource, app) .
+    :return: a JSON encoded representation of the mod_akrr.scheduled_tasks table (resource, app) .
     """
 
     # RETRIEVE: the query parameters that were provided, if any. x
@@ -859,7 +872,7 @@ def get_resources():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -947,7 +960,7 @@ def get_kernels():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
@@ -1031,13 +1044,13 @@ def _turn_resource_on(resource, application):
         if has_resource and not resource_exists:
             raise bottle.HTTPError(
                 400,
-                'Unable to find the provided resource [%r]' % (resource, )
+                'Unable to find the provided resource [%r]' % (resource,)
             )
 
         if has_application and not app_kernel_exists:
             raise bottle.HTTPError(
                 400,
-                'Unable to find the provided app kernel [%r]' % (application, )
+                'Unable to find the provided app kernel [%r]' % (application,)
 
             )
 
@@ -1066,7 +1079,7 @@ def _turn_resource_on(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = cfg.getDB()
+        connection, cursor = akrr.db.get_akrr_db()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1093,7 +1106,7 @@ def _does_resource_app_kernel_exist(resource, app_kernel):
     :return: true if there is a record relating them, false if not
     """
 
-    db, cur = cfg.getDB(True)
+    db, cur = akrr.db.get_akrr_db(True)
     with db:
         cur.execute("""
         SELECT 1
@@ -1117,11 +1130,11 @@ def _resource_exists(resource):
     :param resource:   the resource to check.
     :return: true if it exists, false if it doesn't
     """
-    connection, cursor = cfg.getDB(True)
+    connection, cursor = akrr.db.get_akrr_db(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.resources R WHERE R.name = %s
-        """, (resource, ))
+        """, (resource,))
         rows = cursor.fetchall()
         return len(rows) > 0
 
@@ -1133,11 +1146,11 @@ def _app_kernel_exists(app_kernel):
     :param app_kernel:
     :return: True if it exists, false if it doesn't
     """
-    connection, cursor = cfg.getDB(True)
+    connection, cursor = akrr.db.get_akrr_db(True)
     with connection:
         cursor.execute("""
         SELECT 1 FROM mod_akrr.app_kernels AK WHERE AK.name = %s
-        """, (app_kernel, ))
+        """, (app_kernel,))
         rows = cursor.fetchall()
         return len(rows) > 0
 
@@ -1202,13 +1215,13 @@ def _turn_resource_off(resource, application):
         if has_resource and not resource_exists:
             raise bottle.HTTPError(
                 400,
-                'Unable to find the provided resource [%r]' % (resource, )
+                'Unable to find the provided resource [%r]' % (resource,)
             )
 
         if has_application and not app_kernel_exists:
             raise bottle.HTTPError(
                 400,
-                'Unable to find the provided app kernel [%r]' % (application, )
+                'Unable to find the provided app kernel [%r]' % (application,)
 
             )
 
@@ -1237,7 +1250,7 @@ def _turn_resource_off(resource, application):
 
     queries_and_parameters = list(zip(queries, parameters))
     try:
-        connection, cursor = cfg.getDB()
+        connection, cursor = akrr.db.get_akrr_db()
         result = 0
         with connection:
             for (query, parameter) in queries_and_parameters:
@@ -1293,6 +1306,7 @@ def turn_resource_off(resource):
 
     return {'updated': _turn_resource_off(resource, application_filter)}
 
+
 @app.get(apiroot + '/walltime')
 @bottle.auth_basic(auth_by_token_for_read)
 def get_walltime_all():
@@ -1302,12 +1316,13 @@ def get_walltime_all():
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
-            cursor.execute('''SELECT id,resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit''')
+            cursor.execute(
+                '''SELECT id,resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit''')
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
@@ -1322,6 +1337,7 @@ def get_walltime_all():
 
     return results
 
+
 @app.get(apiroot + '/walltime/<walltime_id:int>')
 @bottle.auth_basic(auth_by_token_for_read)
 def get_walltime(walltime_id):
@@ -1331,18 +1347,20 @@ def get_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
-            cursor.execute('''SELECT resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit WHERE id=%s''',(walltime_id,))
+            cursor.execute(
+                '''SELECT resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit WHERE id=%s''',
+                (walltime_id,))
             results = cursor.fetchall()
-            if len(results)>0:
+            if len(results) > 0:
                 return results[0]
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
-            
+
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1357,7 +1375,7 @@ def get_walltime(walltime_id):
 
 @app.post(apiroot + '/walltime/<resource>/<app>')
 @bottle.auth_basic(auth_by_token_for_write)
-def upsert_walltime(resource,app):
+def upsert_walltime(resource, app):
     """
     add/update new default walltime
     """
@@ -1369,49 +1387,52 @@ def upsert_walltime(resource,app):
                    'walltime',
                    'comments']
     # default parameters
-    params = {'resource':resource,
-              'app':app,
+    params = {'resource': resource,
+              'app': app,
               'app_param': '{}',
               'resource_param': '{}',
-              'comments':""
-    }
+              'comments': ""
+              }
 
     for k in list(bottle.request.forms.keys()):
         print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
-        
+
     for k in must_params:
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
-    
+
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',(resource,app,params['resource_param'],params['app_param']))
+            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
+                           (resource, app, params['resource_param'], params['app_param']))
             results = cursor.fetchall()
-            if len(results)>0:
+            if len(results) > 0:
                 cursor.execute('''UPDATE akrr_default_walllimit 
                     SET walllimit=%s,
                         last_update=NOW(),
                         comments=%s
                     WHERE
                      resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                     (params['walltime'],params['comments'],resource,app,params['resource_param'],params['app_param']))
+                               (params['walltime'], params['comments'], resource, app, params['resource_param'],
+                                params['app_param']))
                 return {'updated': True}
             else:
                 cursor.execute('''INSERT INTO akrr_default_walllimit (resource,app,walllimit,resource_param,app_param,last_update,comments)
-                    VALUES(%s,%s,%s,%s,%s,NOW(),%s)''',(resource,app,params['walltime'],params['resource_param'],params['app_param'],params['comments']))
+                    VALUES(%s,%s,%s,%s,%s,NOW(),%s)''', (
+                resource, app, params['walltime'], params['resource_param'], params['app_param'], params['comments']))
                 return {'created': True}
 
             # RETRIEVE: the results and save them for returning.
-            #results = cursor.fetchall()
+            # results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1422,9 +1443,10 @@ def upsert_walltime(resource,app):
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
 
+
 @app.get(apiroot + '/walltime/<resource>/<app>')
 @bottle.auth_basic(auth_by_token_for_read)
-def get_walltime_by_resource_app(resource,app):
+def get_walltime_by_resource_app(resource, app):
     """
     get default walltime
     """
@@ -1436,40 +1458,41 @@ def get_walltime_by_resource_app(resource,app):
                    'walltime',
                    'comments']
     # default parameters
-    params = {'resource':resource,
-              'app':app,
+    params = {'resource': resource,
+              'app': app,
               'app_param': '{}',
               'resource_param': '{}',
-              'comments':""
-    }
+              'comments': ""
+              }
 
     for k in list(bottle.request.forms.keys()):
         print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
-        
+
     for k in must_params:
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
-    
+
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',(resource,app,params['resource_param'],params['app_param']))
+            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
+                           (resource, app, params['resource_param'], params['app_param']))
             results = cursor.fetchall()
-            if len(results)>0:
+            if len(results) > 0:
                 return results[0]
             else:
                 raise bottle.HTTPError(400, 'There is no default walltime for this configuration')
 
             # RETRIEVE: the results and save them for returning.
-            #results = cursor.fetchall()
+            # results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1479,6 +1502,7 @@ def get_walltime_by_resource_app(resource,app):
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
+
 
 @app.post(apiroot + '/walltime/<walltime_id:int>')
 @bottle.auth_basic(auth_by_token_for_write)
@@ -1491,7 +1515,7 @@ def update_walltime_by_id(walltime_id):
                    'comments']
     # default parameters
     params = {
-              'comments':""
+        'comments': ""
     }
 
     for k in list(bottle.request.forms.keys()):
@@ -1499,33 +1523,33 @@ def update_walltime_by_id(walltime_id):
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
         params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
-        
+
     for k in must_params:
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
-    
+
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE id = %s''',(walltime_id,))
+            WHERE id = %s''', (walltime_id,))
             results = cursor.fetchall()
-            if len(results)>0:
+            if len(results) > 0:
                 cursor.execute('''UPDATE akrr_default_walllimit 
                     SET walllimit=%s,
                         last_update=NOW(),
                         comments=%s
                     WHERE id = %s''',
-                     (params['walltime'],params['comments'],walltime_id))
+                               (params['walltime'], params['comments'], walltime_id))
                 return {'updated': True}
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
             # RETRIEVE: the results and save them for returning.
-            #results = cursor.fetchall()
+            # results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1536,6 +1560,7 @@ def update_walltime_by_id(walltime_id):
                   e.args[1] if len(e.args) >= 2 else "")
     return {'updated': False}
 
+
 @app.delete(apiroot + '/walltime/<walltime_id:int>')
 @bottle.auth_basic(auth_by_token_for_write)
 def delete_walltime(walltime_id):
@@ -1545,16 +1570,16 @@ def delete_walltime(walltime_id):
     results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
-        connection, cursor = cfg.getDB(True)
+        connection, cursor = akrr.db.get_akrr_db(True)
 
         # UTILIZE: automatic resource clean-up.
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE id = %s''',(walltime_id,))
+            WHERE id = %s''', (walltime_id,))
             results = cursor.fetchall()
-            if len(results)>0:
+            if len(results) > 0:
                 cursor.execute('''DELETE FROM akrr_default_walllimit
-                    WHERE id = %s''',(walltime_id,))
+                    WHERE id = %s''', (walltime_id,))
             else:
                 raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
     except MySQLdb.Error as e:
@@ -1566,6 +1591,7 @@ def delete_walltime(walltime_id):
                   e.args[0] if len(e.args) >= 1 else "",
                   e.args[1] if len(e.args) >= 2 else "")
     return {'deleted': False}
+
 
 def start_rest_api(m_proc_queue_to_master=None, m_proc_queue_from_master=None):
     print("Starting REST-API Service")

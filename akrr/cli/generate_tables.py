@@ -12,7 +12,9 @@ This script will perform the following steps:
 import sys
 import MySQLdb
 
-from akrr import log
+import akrr.db
+from akrr.util import log
+
 
 ###############################################################################
 # UTILITY FUNCTIONS
@@ -23,6 +25,7 @@ def create_and_populate_tables(
         starting_comment, ending_comment,
         connection_function,
         host=None, user=None, password=None, db=None,
+        drop_if_needed=True,
         dry_run=False
         ):
     """
@@ -45,6 +48,8 @@ def create_and_populate_tables(
 
             with connection:
                 for (table_name, table_script) in default_tables:
+                    if not drop_if_needed and table_script[:4].upper()=="DROP":
+                        continue
                     log.info("CREATING: %s" % table_name)
                     try:
                         result = cursor.execute(table_script)
@@ -72,21 +77,22 @@ def create_and_populate_tables(
         log.critical("Error %d: %s" % (e.args[0], e.args[1]))
         sys.exit(1)
 
-def create_and_populate_mod_akrr_tables(dry_run=False):
+
+def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
     """
     Create / Populate the tables required in the mod_akrr database.
     """
 
     # DEFINE: the default tables to be created.
     default_tables = (
-        ('ACTIVETASKS', '''
-        CREATE TABLE IF NOT EXISTS `ACTIVETASKS` (
+        ('active_tasks', '''
+        CREATE TABLE IF NOT EXISTS `active_tasks` (
         `task_id` INT(11) DEFAULT NULL,
         `next_check_time` DATETIME NOT NULL,
         `status` TEXT,
-        `statusinfo` TEXT,
-        `statusupdatetime` DATETIME DEFAULT NULL,
-        `datetimestamp` TEXT,
+        `status_info` TEXT,
+        `status_update_time` DATETIME DEFAULT NULL,
+        `datetime_stamp` TEXT,
         `time_activated` DATETIME DEFAULT NULL,
         `time_submitted_to_queue` DATETIME DEFAULT NULL,
         `task_lock` INT(11) DEFAULT NULL,
@@ -98,8 +104,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         `app_param` TEXT,
         `task_param` TEXT,
         `group_id` TEXT,
-        `FatalErrorsCount` INT(4) DEFAULT '0',
-        `FailsToSubmitToTheQueue` INT(4) DEFAULT '0',
+        `fatal_errors_count` INT(4) DEFAULT '0',
+        `fails_to_submit_to_the_queue` INT(4) DEFAULT '0',
         `taskexeclog` LONGTEXT,
         `master_task_id` INT(4) NOT NULL DEFAULT '0' COMMENT '0 - independent task, otherwise task_id of master task ',
         `parent_task_id` INT(11) DEFAULT NULL,
@@ -209,14 +215,14 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         UNIQUE KEY `instance_id` (`instance_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
-        ('COMPLETEDTASKS', '''
-        CREATE TABLE IF NOT EXISTS `COMPLETEDTASKS` (
+        ('completed_tasks', '''
+        CREATE TABLE IF NOT EXISTS `completed_tasks` (
         `task_id` INT(11) DEFAULT NULL,
         `time_finished` DATETIME DEFAULT NULL,
         `status` TEXT,
-        `statusinfo` TEXT,
+        `status_info` TEXT,
         `time_to_start` DATETIME DEFAULT NULL,
-        `datetimestamp` TEXT,
+        `datetime_stamp` TEXT,
         `time_activated` DATETIME DEFAULT NULL,
         `time_submitted_to_queue` DATETIME DEFAULT NULL,
         `repeat_in` CHAR(20) DEFAULT NULL,
@@ -226,8 +232,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         `app_param` TEXT,
         `task_param` TEXT,
         `group_id` TEXT,
-        `FatalErrorsCount` INT(11) DEFAULT '0',
-        `FailsToSubmitToTheQueue` INT(11) DEFAULT '0',
+        `fatal_errors_count` INT(11) DEFAULT '0',
+        `fails_to_submit_to_the_queue` INT(11) DEFAULT '0',
         `parent_task_id` INT(11) DEFAULT NULL,
         UNIQUE KEY `task_id` (`task_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
@@ -240,8 +246,8 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         PRIMARY KEY (`node_id`)
         ) ENGINE=MyISAM AUTO_INCREMENT=1704 DEFAULT CHARSET=latin1;
         '''),
-        ('SCHEDULEDTASKS', '''
-        CREATE TABLE IF NOT EXISTS `SCHEDULEDTASKS` (
+        ('scheduled_tasks', '''
+        CREATE TABLE IF NOT EXISTS `scheduled_tasks` (
         `task_id` INT(11) NOT NULL AUTO_INCREMENT,
         `time_to_start` DATETIME DEFAULT NULL,
         `repeat_in` CHAR(20) DEFAULT NULL,
@@ -288,10 +294,10 @@ def create_and_populate_mod_akrr_tables(dry_run=False):
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
         ('akrr_erran', '''
-        CREATE OR REPLACE VIEW `akrr_erran` AS select `c`.`task_id` AS `task_id`,`c`.`time_finished` AS `time_finished`,`c`.`resource` AS `resource`,`c`.`app` AS `app`,`c`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`ii`.`walltime` AS `walltime`,`ii`.`body` AS `body`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout` from ((`COMPLETEDTASKS` `c` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) where ((`c`.`task_id` = `ii`.`instance_id`) and (`c`.`task_id` = `em`.`task_id`));
+        CREATE OR REPLACE VIEW `akrr_erran` AS select `c`.`task_id` AS `task_id`,`c`.`time_finished` AS `time_finished`,`c`.`resource` AS `resource`,`c`.`app` AS `app`,`c`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`ii`.`walltime` AS `walltime`,`ii`.`body` AS `body`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout` from ((`completed_tasks` `c` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) where ((`c`.`task_id` = `ii`.`instance_id`) and (`c`.`task_id` = `em`.`task_id`));
         '''),
         ('akrr_erran2', '''
-        CREATE OR REPLACE VIEW `akrr_erran2` AS select `ct`.`task_id` AS `task_id`,`ct`.`time_finished` AS `time_finished`,`ct`.`resource` AS `resource`,`ct`.`app` AS `app`,`ct`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`em`.`err_regexp_id` AS `err_regexp_id`,`re`.`err_msg` AS `err_msg`,`ii`.`walltime` AS `walltime`,`ct`.`status` AS `akrr_status`,`ct`.`status` AS `akrr_statusinfo`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout`,`ii`.`body` AS `ii_body`,`ii`.`message` AS `ii_msg` from (((`COMPLETEDTASKS` `ct` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) join `akrr_err_regexp` `re`) where ((`ct`.`task_id` = `ii`.`instance_id`) and (`ct`.`task_id` = `em`.`task_id`) and (`re`.`id` = `em`.`err_regexp_id`));
+        CREATE OR REPLACE VIEW `akrr_erran2` AS select `ct`.`task_id` AS `task_id`,`ct`.`time_finished` AS `time_finished`,`ct`.`resource` AS `resource`,`ct`.`app` AS `app`,`ct`.`resource_param` AS `resource_param`,`ii`.`status` AS `status`,`em`.`err_regexp_id` AS `err_regexp_id`,`re`.`err_msg` AS `err_msg`,`ii`.`walltime` AS `walltime`,`ct`.`status` AS `akrr_status`,`ct`.`status` AS `akrr_status_info`,`em`.`appstdout` AS `appstdout`,`em`.`stderr` AS `stderr`,`em`.`stdout` AS `stdout`,`ii`.`body` AS `ii_body`,`ii`.`message` AS `ii_msg` from (((`completed_tasks` `ct` join `akrr_xdmod_instanceinfo` `ii`) join `akrr_errmsg` `em`) join `akrr_err_regexp` `re`) where ((`ct`.`task_id` = `ii`.`instance_id`) and (`ct`.`task_id` = `em`.`task_id`) and (`re`.`id` = `em`.`err_regexp_id`));
         '''),
         ('akrr_err_distribution_alltime', '''
         CREATE OR REPLACE VIEW `akrr_err_distribution_alltime` AS select count(0) AS `Rows`,`akrr_erran2`.`err_regexp_id` AS `err_regexp_id`,`akrr_erran2`.`err_msg` AS `err_msg` from `akrr_erran2` group by `akrr_erran2`.`err_regexp_id` order by `akrr_erran2`.`err_regexp_id`;
@@ -308,8 +314,8 @@ INSERT INTO `akrr_err_regexp` VALUES
 (1,    0, '',  '',  '',                                                                       '','*','Completed Successfully','Holder for no errors, i.e. successful runs'),
 (1004, 1, '*', '*', 'ERROR: Job was killed on remote resource due to walltime exceeded limit','0','akrr_status','Job was killed on remote resource due to walltime exceeded limit','walltime exceeded limit,\r\nprocessing from akrr_status'),
 (1000, 0, '',  '',  '',                                                                       '','*','Unknown Error','Holder for unknown errors'),
-(1003, 0, '*', '*', '',                                                                       '','*','','On Ranger sometimes can not read from $WORK even if the quota is ok\r\n\r\nTraceback (most recent call last):\r\n  File \"/home/xdtas/akrrpack/akrr/akrrtaskinca.py\", line 173, in CreateBatchJobScriptAndSubmitIt\r\n    raise akrr.akrrError(akrr.ERROR_REMOTE_JOB,\"Can''t get job id. \"+msg)\r\nakrrError: Can''t run job.Can''t get job id. -------------------------------------------------------------------\r\n------- Welcome to TACC''s Ranger System, an NSF XD Resource -------\r\n-------------------------------------------------------------------\r\n--> Checking that you specified -V...\r\n--> Checking that you specified a time limit...\r\n--> Checking that you specified a queue...\r\n--> Setting project...\r\n--> Checking that you specified a parallel environment...\r\n--> Checking that you specified a valid parallel environment name...\r\n--> Checking that the minimum and maximum PE counts are the same...\r\n--> Checking that the number of PEs requested is valid...\r\n--> Ensuring absence of dubious h_vmem,h_data,s_vmem,s_data limits...\r\n--> Requesting valid memory configuration (31.3G)...\r\n--> Verifying WORK file-system availability...\r\n-------------------> Rejecting job <-------------------\r\nUnable to read from your WORK file system.\r\nPlease verify that you are not over disk quota before\r\nsubmitting subsequent jobs.\r\n\r\n\r\nPlease contact TACC Consulting if you believe you have\r\nreceived this message in error.\r\n-------------------------------------------------------\r\nUnable to run job: JSV rejected job.\r\nExiting.\r\n'),
-(1001, 1, '*', '*', 'WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED.*IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY','re.DOTALL|re.I','akrr_statusinfo,akrr_task_log','ssh connection refused because remote host identification has changed','Error message is :\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\n\r\n@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @\r\n\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\n\r\nIT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!\r\n\r\nSomeone could be eavesdropping on you right now (man-in-the-middle attack)!\r\n\r\nIt is also possible that the RSA host key has just been changed.'),
+(1003, 0, '*', '*', '',                                                                       '','*','','On Ranger sometimes can not read from $WORK even if the quota is ok\r\n\r\nTraceback (most recent call last):\r\n  File \"/home/xdtas/akrrpack/akrr/akrrtaskinca.py\", line 173, in create_batch_job_script_and_submit_it\r\n    raise akrr.AkrrError(akrr.ERROR_REMOTE_JOB,\"Can''t get job id. \"+msg)\r\nAkrrError: Can''t run job.Can''t get job id. -------------------------------------------------------------------\r\n------- Welcome to TACC''s Ranger System, an NSF XD Resource -------\r\n-------------------------------------------------------------------\r\n--> Checking that you specified -V...\r\n--> Checking that you specified a time limit...\r\n--> Checking that you specified a queue...\r\n--> Setting project...\r\n--> Checking that you specified a parallel environment...\r\n--> Checking that you specified a valid parallel environment name...\r\n--> Checking that the minimum and maximum PE counts are the same...\r\n--> Checking that the number of PEs requested is valid...\r\n--> Ensuring absence of dubious h_vmem,h_data,s_vmem,s_data limits...\r\n--> Requesting valid memory configuration (31.3G)...\r\n--> Verifying WORK file-system availability...\r\n-------------------> Rejecting job <-------------------\r\nUnable to read from your WORK file system.\r\nPlease verify that you are not over disk quota before\r\nsubmitting subsequent jobs.\r\n\r\n\r\nPlease contact TACC Consulting if you believe you have\r\nreceived this message in error.\r\n-------------------------------------------------------\r\nUnable to run job: JSV rejected job.\r\nExiting.\r\n'),
+(1001, 1, '*', '*', 'WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED.*IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY','re.DOTALL|re.I','akrr_status_info,akrr_task_log','ssh connection refused because remote host identification has changed','Error message is :\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\n\r\n@    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @\r\n\r\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\r\n\r\nIT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!\r\n\r\nSomeone could be eavesdropping on you right now (man-in-the-middle attack)!\r\n\r\nIt is also possible that the RSA host key has just been changed.'),
 (1002, 1, '*', '*', 'cannot connect to local mpd \\(.*\\); possible causes:.*no mpd is running on this host.*an mpd is running but was started without a \"console\" \\(-n option\\)','re.DOTALL|re.I','appstdout,stderr,stdout','Can not start MPI job (can not locate MPI daemon)','Probably problems with starting MPI job\r\n\r\noriginal error message:\r\n\r\non edge:\r\nmpiexec_d07n29b.ccr.buffalo.edu: cannot connect to local mpd (/tmp/mpd2.console_xdtas_$$); possible causes:\r\n  1. no mpd is running on this host\r\n  2. an mpd is running but was started without a \"console\" (-n option)\r\n\r\non tresles?:\r\n\r\nmpdallexit: cannot connect to local mpd (*?); possible causes:\r\n  1. no mpd is running on this host\r\n  2. an mpd is running but was started without a \"console\" (-n option)\r\nIn case 1, you can start an mpd on this host with:\r\n    mpd &\r\nand you will be able to run jobs just on this host.\r\nFor more details on starting mpds on a set of hosts, see\r\nthe MVAPICH2 User Guide.'),
 (1005, 1, '*', '*', 'forrtl: severe \\(174\\): SIGSEGV, segmentation fault occurred',         're.I','appstdout,stderr,stdout','SIGSEGV in Fortran code, try to increase stacksize ','Error Message:\r\nforrtl: severe (174): SIGSEGV, segmentation fault occurred\r\n\r\nCaught on edge xdmod.benchmark.npb'),(1000001,0,'*','*','SIGSEGV','re.I','appstdout,stderr,stdout','segmentation fault occurred during remote execution',''),
 (1006, 1, '*', '*', 'rank.*in job.*caused collective abort of all ranks.*exit status of rank.*killed by signal 9','re.DOTALL|re.I','appstdout,stderr,stdout','Terminated by SIGKILL. Probably \"out of memory\"','caught on edge (xdmod.benchmark.io.ior):\r\npossible related message is:\r\nrank 0 in job 4  d09n39a_37781   caused collective abort of all ranks\r\n  exit status of rank 0: killed by signal 9 \r\n\r\nhttp://www.quantumwise.com/support/faq/104-killed-by-signal-9?catid=24%3Aerror-messages\r\nsuggests:\r\n\r\nWhen running in parallel, sometimes you may see an error like\r\n\r\nrank 1 in job 34  n7_3767\r\n caused collective abort of all ranks  \r\nexit status of rank 1: killed by signal 9\r\n\r\nIn most situations this is a case of \"out of memory\". Be careful not to run many MPI processes on the same node!');
@@ -323,27 +329,29 @@ INSERT INTO `akrr_err_regexp` VALUES
             (25,'xdmod.benchmark.hpcc','1;2;4;8;16'),
             (27,'xdmod.benchmark.io.ior','1;2;4;8'),
             (28,'xdmod.benchmark.graph.graph500','1;2;4;8'),
-            (29,'xdmod.app.astro.enzo','1;2;4;8')
+            (29,'xdmod.app.astro.enzo','1;2;4;8'),
+            (30,'xdmod.app.md.gromacs.micro','1')
         ON DUPLICATE KEY UPDATE id=VALUES(id);
         """)
     )
 
-    connection_function=None
+    connection_function = None
     if not dry_run:
         from akrr import cfg
-        connection_function=cfg.getDB
+        connection_function = akrr.db.get_akrr_db
         
     create_and_populate_tables(
         default_tables,
-        population_statements,
+        population_statements if populate else tuple(),
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",
         connection_function,
+        drop_if_needed=False,
         dry_run=dry_run
     )
 
 
-def create_and_populate_mod_appkernel_tables(dry_run=False):
+def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
     """
     Create / Populate the required tables / views in the mod_appkernel database.
     """
@@ -755,7 +763,8 @@ INSERT INTO `app_kernel_def` VALUES
 (27, 'IOR', 'xdmod.benchmark.io.ior', 'node', 0, 'IOR (Interleaved-Or-Random) measures the performance of a storage system under simple access patterns. It uses four different I/O interfaces: POSIX, MPI IO, HDF (Hierarchical Data Format), and Parallel NetCDF (Network Common Data Form) to read and write contiguous chunks of data against either a single file (N-to-1 mode) or N files (N-to-N mode), and it reports the aggregate I/O throughput.', 0,NULL),
 (28, 'Graph500', 'xdmod.benchmark.graph.graph500', 'node', 0, '<a href="http://www.graph500.org" target="_blank" alt="graph500">Graph 500</a> is a benchmark designed to measure the performance of graph algorithms, an increasingly important workload in the data-intensive analytics applications.\r\n<p>\r\nCurrently Graph 500 benchmark contains one computational kernel: the breadth-first search. The input is a pre-generated graph created with the following parameters:  SCALE=16 and edgefactor=16. These translate to, on a per MPI process basis,  2^SCALE=65536 vertices and 65536*edgefactor=1.04 million edges.', 0,NULL),
 (29, 'Enzo', 'xdmod.app.astro.enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>', 0,NULL),
-(30, 'HPCG', 'xdmod.benchmark.hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort to create a new metric for ranking HPC systems.', 0,NULL)
+(30, 'HPCG', 'xdmod.benchmark.hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort to create a new metric for ranking HPC systems.', 0,NULL),
+(31, 'GROMACS-micro', 'xdmod.app.md.gromacs.micro', 'node', 0, '<a href="http://www.gromacs.org/" target="_blank" alt="GROMACS">GROMACS:</a> based micro-benchmark for testing purposes\r\n<p>', 0,NULL)
 ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
         """),
     )
@@ -764,14 +773,153 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     connection_function=None
     if not dry_run:
         from akrr import cfg
-        connection_function=cfg.getAKDB
+        connection_function= akrr.db.get_ak_db
     
     create_and_populate_tables(
         default_tables,
-        population_statements,
+        population_statements if populate else tuple(),
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",
         connection_function,
         dry_run=dry_run
     )
 
+
+def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, orderby=None, table2=None, cols2=None, at_once=True):
+    log.debug("Copying: "+table)
+
+    if table2 is None:
+        table2 = table
+
+    if cols2 is None:
+        cols2 = cols
+
+    sql1 = "select " + cols + " from " + table
+    if orderby is not None:
+        sql1 += "ORDER BY " + orderby
+
+    v = ",".join(["%s"]*(cols2.count(",")+1))
+    sql2 = "insert into " + table2 + " ("+cols2+") values ("+v+")"
+
+    if at_once:
+        cur_akrr.execute(sql1)
+        rows = cur_akrr.fetchall()
+        for row in rows:
+            cur_akrr2.execute(sql2, row)
+    else:
+        cur_akrr.execute("SELECT count(*) FROM "+table)
+        count = cur_akrr.fetchall()[0][0]
+        batch_size = 1000
+
+        for offset in range(0, count, batch_size):
+            cur_akrr.execute(sql1+" LIMIT "+str(batch_size)+" OFFSET "+str(offset))
+            for row in cur_akrr:
+                cur_akrr2.execute(sql2, row)
+
+
+def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
+    from akrr.util.sql import get_con_to_db2
+    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+    db_akrr2, cur_akrr2 = get_con_to_db2(mod_akrr2, dict_cursor=False)
+
+    # active_tasks - should be empty
+    # ak_on_nodes - not used
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_default_walllimit",
+        "id,resource,app,walllimit,resource_param,app_param,last_update,comments")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_err_regexp",
+        "id,active,resource,app,reg_exp,reg_exp_opt,source,err_msg,description")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_internal_failure_codes",
+        "id,description")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_resource_maintenance",
+        "id,resource,start,end,comment")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_taks_errors",
+        "task_id,err_reg_exp_id")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "nodes",
+        "node_id,resource_id,name")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "resources",
+        "id,xdmod_resource_id,name,enabled")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "app_kernels",
+        "id,name,enabled,nodes_list")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "resource_app_kernels",
+        "id,resource_id,app_kernel_id,enabled")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "SCHEDULEDTASKS",
+        "task_id,time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id",
+        table2="scheduled_tasks")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "COMPLETEDTASKS",
+        "task_id,time_finished,status,statusinfo,time_to_start,datetimestamp,time_activated,"
+        "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+        "FatalErrorsCount,FailsToSubmitToTheQueue,parent_task_id",
+        table2="completed_tasks",
+        cols2="task_id,time_finished,status,status_info,time_to_start,datetime_stamp,time_activated,"
+              "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+              "fatal_errors_count,fails_to_submit_to_the_queue,parent_task_id",
+        at_once=False)
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_xdmod_instanceinfo",
+        "instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,"
+        "message,stderr,body,memory,cputime,walltime,job_id,internal_failure,nodes,ncores,nnodes",
+        at_once=False)
+    copy_table_with_rename(
+        cur_akrr, cur_akrr2,
+        "akrr_errmsg",
+        "task_id,err_regexp_id,appstdout,stderr,stdout,taskexeclog",
+        at_once=False)
+    return
+
+
+def copy_mod_akrr_tables(mod_akrr):
+    from akrr.util.sql import get_con_to_db2
+    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr,
+        "SCHEDULEDTASKS",
+        "task_id,time_to_start,repeat_in,resource,app,resource_param,app_param,task_param,group_id,parent_task_id",
+        table2="scheduled_tasks")
+
+    copy_table_with_rename(
+        cur_akrr, cur_akrr,
+        "COMPLETEDTASKS",
+        "task_id,time_finished,status,statusinfo,time_to_start,datetimestamp,time_activated,"
+        "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+        "FatalErrorsCount,FailsToSubmitToTheQueue,parent_task_id",
+        table2="completed_tasks",
+        cols2="task_id,time_finished,status,status_info,time_to_start,datetime_stamp,time_activated,"
+              "time_submitted_to_queue,repeat_in,resource,app,resource_param,app_param,task_param,group_id,"
+              "fatal_errors_count,fails_to_submit_to_the_queue,parent_task_id",
+        at_once=False)
+
+    return

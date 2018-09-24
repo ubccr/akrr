@@ -27,7 +27,7 @@ Good side code can be modified on host and can be run on uncommitted code.
 Bad side root user can affect files. So on strange errors run
  
 ```bash
-sudo chown-R $USER:$USER *
+sudo chown -R $USER:$USER ./
 ```
 
 
@@ -39,13 +39,17 @@ docker run -v `pwd`:/root/src/github.com/ubccr/akrr -it --rm \
 ```
 
 ### Start tests
+
+Here some useful tips
 ```bash
 export REPO_FULL_NAME=ubccr/akrr
+rm -rf src/github.com/$REPO_FULL_NAME/etc
+
 # Here is tests, which is in ci portion of shippable.yml
 # Start all daemons
 cmd_start self_contained_slurm_wlm
 # Run tests
-export PATH=/root/src/github.com/$REPO_FULL_NAME/bin:/root/src/github.com/$REPO_FULL_NAME/test/bin:$PATH
-/root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh setup
+export PATH=/root/src/github.com/$REPO_FULL_NAME/bin:/root/src/github.com/$REPO_FULL_NAME/tests/bin:$PATH
+/root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test.sh
 
 ```

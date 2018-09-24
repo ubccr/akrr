@@ -4,17 +4,12 @@
 # authors: Nikolay Simakov, Charng-Da Lu
 #
 
-import re
 import os
 import sys
 import traceback
 
-#Set proper path for stand alone test runs
-if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)),'../..'))
-
-
 import akrr
+import akrr.db
 import akrr.cfg
 import akrr.appkernelsparsers.akrrappkeroutputparser
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser,total_seconds
@@ -52,7 +47,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     totalSubtasks=0
     successfulSubtasks=0
     try:
-        db,cur=akrr.cfg.getExportDB()
+        db,cur= akrr.db.get_akrr_db()
         
         for subTaskId in appKerNResVars['subTasksId']:
             cur.execute('''SELECT instance_id,status FROM akrr_xdmod_instanceinfo

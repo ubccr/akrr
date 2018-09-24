@@ -102,6 +102,12 @@ do
     -loop)
         loop=1
         ;;
+    -set-no-exit-on-fail)
+        set +e
+        ;;
+    -set-exit-on-fail)
+        set -e
+        ;;
     *)
         echo "Executing ${var}"
         ${var}

@@ -1,4 +1,4 @@
-from akrr import log
+from akrr.util import log
 
 
 def build():

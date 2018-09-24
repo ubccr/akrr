@@ -38,12 +38,79 @@ def get_user_password_host_port(user_password_host_port, default_port=3306, retu
         return {
             "user": user, "password": password, "host": host, "port": port
         }
+
+    return user, password, host, port
+
+
+def get_user_password_host_port_db(user_password_host_port_db, default_port=3306,
+                                   default_database=None, return_dict=False):
+    """
+    return user,password,host,port,db tuple from [user[:password]@]host[:port][:/database] format.
+    user and host can not contain @ or : symbols, password can.
+    port should be integer.
+    """
+    if user_password_host_port_db.count("@"):
+        user_password = user_password_host_port_db[:user_password_host_port_db.rfind("@")]
+        host_port_db = user_password_host_port_db[user_password_host_port_db.rfind("@") + 1:]
     else:
-        return user, password, host, port
+        user_password = None
+        host_port_db = user_password_host_port_db
+
+    if user_password is not None:
+        if user_password.count(":") > 0:
+            user = user_password[:user_password.find(":")]
+            password = user_password[user_password.find(":") + 1:]
+        else:
+            user = user_password
+            password = None
+
+        if user == "":
+            user = None
+    else:
+        user = None
+        password = None
+
+    if host_port_db.count(":/") > 0:
+        host_port = host_port_db[:host_port_db.rfind(":/")]
+        db = host_port_db[host_port_db.rfind(":/") + 2:]
+    else:
+        host_port = host_port_db
+        db = default_database
+
+    if host_port.count(":") > 0:
+        host, port = host_port.split(":")
+        port = int(port)
+    else:
+        host = host_port
+        port = default_port
+
+    if return_dict:
+        return {
+            "user": user, "password": password, "host": host, "port": port, "database": db
+        }
+
+    return user, password, host, port, db
+
+
+def set_user_password_host_port_db(user, password, host, port, db):
+    """
+        return [user[:password]@]host[:port][:/database] format.
+    """
+    user_password_host_port_db = host
+    if port is not None:
+        user_password_host_port_db += ":"+str(port)
+    if db is not None:
+        user_password_host_port_db += ":/" + str(db)
+    if user is not None or password is not None:
+        user_password_host_port_db = "@" + user_password_host_port_db
+        if password is not None:
+            user_password_host_port_db = ":" + str(password) + user_password_host_port_db
+        if user is not None:
+            user_password_host_port_db = str(user) + user_password_host_port_db
+    return user_password_host_port_db
 
 
 def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dict_cursor=True, raise_exception=True):
-    import MySQLdb
     import MySQLdb.cursors
 
     kwarg = {
@@ -69,6 +136,12 @@ def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dic
     return con, cur
 
 
+def get_con_to_db2(user_password_host_port_db, dict_cursor=True, raise_exception=True):
+    user, password, host, port, db_name = get_user_password_host_port_db(user_password_host_port_db)
+    return get_con_to_db(user, password, host=host, port=port, db_name=db_name, dict_cursor=dict_cursor,
+                         raise_exception=raise_exception)
+
+
 def db_exist(cur, name):
     """return True if db exists"""
     cur.execute("SHOW databases LIKE %s", (name,))
@@ -77,9 +150,14 @@ def db_exist(cur, name):
 
 
 def _db_check_priv__identify_priv(db_to_check, priv_to_check, priv_list):
+    """
+    internal function for db_check_priv,
+    check that priv_to_check (ALL or SELECT) are set for db_to_check database in priv_list
+    returned by SHOW GRANTS query
+    """
     import re
     for priv_entry in priv_list:
-        m = re.match("GRANT (.+) ON (\S+) TO ", priv_entry)
+        m = re.match(r"GRANT (.+) ON (\S+) TO ", priv_entry)
         if m:
             priv = m.group(1)
             db_table = m.group(2)
@@ -128,14 +206,14 @@ def db_check_priv(cur, db_to_check, priv_to_check, user=None, host=None):
     if priv_to_check == "SELECT":
         if db_exists:
             return priv_correct
-        else:
-            return False
+
+        return False
 
     if priv_to_check[:3] == "ALL":
         if db_exists:
             return priv_correct
-        else:
-            return _db_check_priv__identify_priv("*", priv_to_check, priv_list)
+
+        return _db_check_priv__identify_priv("*", priv_to_check, priv_list)
 
     raise Exception("Can not handle this type of previlege:{}".format(priv_to_check))
 
@@ -152,7 +230,7 @@ def cursor_execute(cur, query, args=None, dry_run=False):
     if not dry_run:
         cur.execute(query, args)
     else:
-        from akrr import log
+        from akrr.util import log
         if args is not None:
             if isinstance(args, dict):
                 args = dict((key, cur.connection.literal(item)) for key, item in args.items())
@@ -161,3 +239,25 @@ def cursor_execute(cur, query, args=None, dry_run=False):
             query = query % args
 
         log.dry_run("SQL: " + query)
+
+
+def create_user_if_not_exists(cur, user, password, client_host, dry_run=False):
+    """Older mysql servers don't support create user if not exists directly"""
+    cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
+    if len(cur.fetchall()) == 0:
+        # Older version of MySQL do not support CREATE USER IF NOT EXISTS
+        # so need to do checking
+        if password == "":
+            cursor_execute(
+                cur, "CREATE USER %s@%s", (user, client_host), dry_run=dry_run)
+        else:
+            cursor_execute(
+                cur, "CREATE USER %s@%s IDENTIFIED BY %s", (user, client_host, password), dry_run=dry_run)
+
+
+def drop_user_if_exists(cur, user, client_host, dry_run=False):
+    """Older mysql servers don't support drop user if exists directly"""
+    cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
+    if len(cur.fetchall()) > 0:
+        cursor_execute(
+            cur, "DROP USER %s@%s", (user, client_host), dry_run=dry_run)

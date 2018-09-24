@@ -3,11 +3,13 @@ import sys
 import inspect
 
 #modify python_path so that we can get /src on the path
+import akrr.db
+
 cur_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 if (cur_dir+"/../../src") not in sys.path:
     sys.path.append(cur_dir+"/../../src")
 
-from akrr import log
+from akrr.util import log
 import MySQLdb
 
 def check_rw_db(connection_func, pre_msg, post_msg):
@@ -101,28 +103,22 @@ def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
     
     overall_success = True
 
-    # CHECK: the akrr db
-    akrr_ok = check_rw_db(cfg.getDB,
-                      "Checking 'mod_akrr' Database / User privileges...",
-                      "'mod_akrr' Database check complete - Status: %s")
-
     if mod_akrr:
+        akrr_ok = check_rw_db(akrr.db.get_akrr_db,
+                              "Checking 'mod_akrr' Database / User privileges...",
+                              "'mod_akrr' Database check complete - Status: %s")
         overall_success = overall_success and akrr_ok
 
-    # Check: the app_kernel db
-    app_kernel_ok = check_rw_db(cfg.getAKDB,
-                             "Checking 'mod_appkernel' Database / User privileges...",
-                             "'mod_appkernel' Database check complete - Status: %s")
-
     if mod_appkernel:
+        app_kernel_ok = check_rw_db(akrr.db.get_ak_db,
+                                    "Checking 'mod_appkernel' Database / User privileges...",
+                                    "'mod_appkernel' Database check complete - Status: %s")
         overall_success = overall_success and app_kernel_ok
-        
-    # CHECK: the XDMoD db
-    xdmod_ok = check_r_db(cfg.getXDDB,
-                          "Checking 'modw' Database / User privileges...",
-                          "'modw' Database check complete - Status: %s")
     
     if modw:
+        xdmod_ok = check_r_db(akrr.db.get_xd_db,
+                              "Checking 'modw' Database / User privileges...",
+                              "'modw' Database check complete - Status: %s")
         overall_success = overall_success and xdmod_ok
 
     # DETERMINE: whether or not everything passed.

@@ -3,7 +3,7 @@ import sys
 import subprocess
 import shutil
 
-from akrr import log
+from akrr.util import log
 
 from . import cfg
 
@@ -90,7 +90,7 @@ def _remove_user():
             log.info("Removing %s@%s from %s ", rec["User"], rec["Host"], str(db))
             msg = "DRY RUN:\n" if dry_run else ""
             msg = msg + "SQL(%s): " % (str(db),)
-            msg = msg + "DROP USER IF EXISTS %s@%s" % (rec["User"], rec["Host"])
+            msg = msg + "DROP USER %s@%s" % (rec["User"], rec["Host"])
 
             if dry_run:
                 log.info(msg)
@@ -101,7 +101,7 @@ def _remove_user():
                 continue
 
             # remove user
-            cur.execute("DROP USER IF EXISTS %s@%s", (rec["User"], rec["Host"]))
+            cur.execute("DROP USER %s@%s", (rec["User"], rec["Host"]))
             db.commit()
         if len(records) == 0:
             log.info("There is no user with name %s on %s ", user, str(db))
