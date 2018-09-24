@@ -11,10 +11,12 @@ import pprint
 import MySQLdb
 import requests
 
+import akrr.db
+import akrr.util.ssh
 from akrr import cfg
 from akrr import akrrrestclient
-from akrr.akrrerror import akrrError
-import akrr.log as log
+from akrr.akrrerror import AkrrError
+import akrr.util.log as log
 
 dry_run = False
 
@@ -32,33 +34,33 @@ def check_dir_simple(sh, d):
     """
     dir(sh)
     cmd = "if [ -d \"%s\" ]\n then \n echo EXIST\n else echo DOES_NOT_EXIST\n fi" % (d,)
-    msg = cfg.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     if msg.find("DOES_NOT_EXIST") >= 0:
-        return None, "Directory %s:%s does not exists!" % (sh.remotemachine, d)
+        return None, "Directory %s:%s does not exists!" % (sh.remote_machine, d)
 
     cmd = "echo test > " + os.path.join(d, 'akrr_test_write')
     # print cmd
-    cfg.sshCommand(sh, cmd)
+    akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     cmd = "cat " + os.path.join(d, 'akrr_test_write')
     # print cmd
-    msg = cfg.sshCommand(sh, cmd)
+    msg = akrr.util.ssh.ssh_command(sh, cmd)
     # print msg
     if msg.strip() == "test":
         cmd = "rm " + os.path.join(d, 'akrr_test_write')
-        cfg.sshCommand(sh, cmd)
+        akrr.util.ssh.ssh_command(sh, cmd)
         return True, "Directory exist and accessible for read/write"
     else:
-        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remotemachine, d)
+        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d)
 
 
 def check_dir(sh, d, exit_on_fail=True, try_to_create=True):
     status, msg = check_dir_simple(sh, d)
     if try_to_create is True and status is None:
-        log.info("Directory %s:%s does not exists, will try to create it", sh.remotemachine, d)
+        log.info("Directory %s:%s does not exists, will try to create it", sh.remote_machine, d)
         if not dry_run:
             cmd = "mkdir -p \"%s\"" % (d,)
-            cfg.sshCommand(sh, cmd)
+            akrr.util.ssh.ssh_command(sh, cmd)
             status, msg = check_dir_simple(sh, d)
         else:
             status, msg = (True, "Directory exist and accessible for read/write")
@@ -66,33 +68,41 @@ def check_dir(sh, d, exit_on_fail=True, try_to_create=True):
         return status, msg
 
     if status is None:
-        log.error("Directory %s:%s does not exists!", sh.remotemachine, d)
+        log.error("Directory %s:%s does not exists!", sh.remote_machine, d)
         exit()
     elif status is True:
         return True, msg
     else:
-        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remotemachine, d)
+        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remote_machine, d)
         exit()
 
 
-def make_results_summary(resource_name, app_name, completed_tasks, akrr_xdmod_instanceinfo, akrr_errmsg):
+def make_results_summary(resource_name, app_name, completed_tasks,
+                         akrr_xdmod_instanceinfo, akrr_errmsg, mega_verbose=False):
     def add_file_ref(comment, filename):
         if os.path.exists(filename):
             return comment + ": " + filename + "\n"
         else:
             return comment + ": " + "Not Present" + "\n"
 
-    task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, completed_tasks['datetimestamp'])
+    task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, completed_tasks['datetime_stamp'])
 
     msg = ""
     msg += "status: " + str(akrr_xdmod_instanceinfo['status']) + "\n"
     if akrr_xdmod_instanceinfo['status'] == 0:
         msg += "\tstatus2: " + completed_tasks['status'] + "\n"
-    msg += "statusinfo: " + completed_tasks['statusinfo'] + "\n"
+    msg += "status_info: " + completed_tasks['status_info'] + "\n"
     msg += 'processing message:\n'
     msg += str(akrr_xdmod_instanceinfo['message']) + "\n"
-    msg += 'error message:\n'
-    msg += str(akrr_errmsg) + "\n"
+    if mega_verbose:
+        msg += 'error message:\n'
+        if isinstance(akrr_errmsg, dict):
+            for v in ("task_id", "appstdout", "stdout", "stderr", "taskexeclog", "err_regexp_id"):
+                if v in akrr_errmsg:
+                    msg += v+": "+str(akrr_errmsg[v]) + "\n"
+
+        else:
+            msg += str(akrr_errmsg) + "\n"
     msg += add_file_ref("Local working directory for this task", task_dir)
     msg += 'Location of some important generated files:\n'
     msg += "\t" + add_file_ref("Batch job script", os.path.join(task_dir, 'jobfiles', app_name + ".job"))
@@ -107,6 +117,7 @@ def make_results_summary(resource_name, app_name, completed_tasks, akrr_xdmod_in
 
 def validate_resource_parameter_file(resource_name):
     """validate resource parameter file and return dictionary with resource configuration"""
+    # @todo reuse  cfg.verify_resource_params
     default_resource_param_filename = os.path.join(cfg.akrr_mod_dir, "default_conf", "default.resource.conf")
     resource_param_filename = os.path.join(cfg.cfg_dir, "resources", resource_name, "resource.conf")
 
@@ -126,13 +137,13 @@ def validate_resource_parameter_file(resource_name):
         raise e
 
     # now we can load akrr
-    resource = cfg.FindResourceByName(resource_name)
+    resource = cfg.find_resource_by_name(resource_name)
 
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types = [
         ['info', str, False, False],
-        ['localScratch', str, False, True],
+        ['local_scratch', str, False, True],
         ['batchJobTemplate', str, False, True],
         ['remoteAccessNode', str, False, True],
         ['name', str, False, False],
@@ -140,17 +151,17 @@ def validate_resource_parameter_file(resource_name):
         ['networkScratch', str, False, True],
         ['ppn', int, False, True],
         # ['akrrStartAppKerTemplate',      types.StringType,       False,True],
-        ['remoteCopyMethod', str, False, True],
-        ['sshUserName', str, False, True],
-        ['sshPassword', str, True, False],
-        ['sshPrivateKeyFile', str, True, False],
-        ['sshPrivateKeyPassword', str, True, False],
+        ['remote_copy_method', str, False, True],
+        ['ssh_username', str, False, True],
+        ['ssh_password', str, True, False],
+        ['ssh_private_key_file', str, True, False],
+        ['ssh_private_key_password', str, True, False],
         ['batchScheduler', str, False, True],
-        ['remoteAccessMethod', str, False, True],
+        ['remote_access_method', str, False, True],
         ['appKerDir', str, False, True],
         ['akrrCommonCleanupTemplate', str, False, True],
         # ['nodeListSetterTemplate',      types.StringType,       False,True],
-        ['akrrData', str, False, True]
+        ['akrr_data', str, False, True]
     ]
 
     for variable, m_type, can_be_none, must in parameters_types:
@@ -176,14 +187,14 @@ def validate_resource_parameter_file(resource_name):
 def connect_to_resource(resource):
     """connect to resource defined in resource dictionary"""
     log.info("Validating resource accessibility. Connecting to %s.", resource['name'])
-    if resource['sshPrivateKeyFile'] is not None and os.path.isfile(resource['sshPrivateKeyFile']) is False:
-        log.error("Can not access ssh private key (%s)""", resource['sshPrivateKeyFile'])
+    if resource['ssh_private_key_file'] is not None and os.path.isfile(resource['ssh_private_key_file']) is False:
+        log.error("Can not access ssh private key (%s)""", resource['ssh_private_key_file'])
         exit(1)
 
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = cfg.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
@@ -192,7 +203,7 @@ def connect_to_resource(resource):
         log.empty_line()
 
         return rsh
-    except akrrError:
+    except AkrrError:
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
 
@@ -202,7 +213,7 @@ def connect_to_resource(resource):
 
 def check_shell(rsh, resource):
     log.info("Checking if shell is BASH\n")
-    msg = cfg.sshCommand(rsh, "echo $BASH")
+    msg = akrr.util.ssh.ssh_command(rsh, "echo $BASH")
     if msg.count("bash") > 0:
         log.info("Shell is BASH\n")
     else:
@@ -213,7 +224,7 @@ def check_shell(rsh, resource):
 def check_create_dirs(rsh, resource):
     log.info("Checking directory locations\n")
 
-    d = resource['akrrData']
+    d = resource['akrr_data']
     log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
@@ -237,7 +248,7 @@ def check_create_dirs(rsh, resource):
             "so if it is by design it is ok",
             log.warning_count)
 
-    d = resource['localScratch']
+    d = resource['local_scratch']
     log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status is True:
@@ -261,21 +272,21 @@ def copy_exec_sources_and_inputs(rsh, resource):
         "    HPCC, IMB, IOR and Graph500 source code to remote resource\n")
 
     try:
-        cfg.sshCommand(rsh, "cd %s" % resource['appKerDir'])
-        out = cfg.sshCommand(rsh, "ls " + resource['appKerDir'])
+        akrr.util.ssh.ssh_command(rsh, "cd %s" % resource['appKerDir'])
+        out = akrr.util.ssh.ssh_command(rsh, "ls " + resource['appKerDir'])
         files_in_appker_dir = out.strip().split()
 
         if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
             log.info("Copying app. kernel input tarball to %s", resource['appKerDir'])
             if not dry_run:
-                cfg.scpToResource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
 
             log.info("Unpacking app. kernel input files to %s/inputs", resource['appKerDir'])
             if not dry_run:
-                out = cfg.sshCommand(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
-                out = cfg.sshCommand(rsh, "du -h %s/inputs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "du -h %s/inputs" % resource['appKerDir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
@@ -292,14 +303,14 @@ def copy_exec_sources_and_inputs(rsh, resource):
                 "Copying app. kernel execs tarball to %s\n" % (resource['appKerDir']) +
                 "It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
             if not dry_run:
-                cfg.scpToResource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
             log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs",
                      resource['appKerDir'])
             if not dry_run:
-                out = cfg.sshCommand(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
-                out = cfg.sshCommand(rsh, "df -h %s/execs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "df -h %s/execs" % resource['appKerDir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
@@ -313,7 +324,7 @@ def copy_exec_sources_and_inputs(rsh, resource):
                         log.warning_count, resource['appKerDir'])
             log.warning("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
 
-        cfg.sshCommand(rsh, "rm execs.tar.gz  inputs.tar.gz")
+        akrr.util.ssh.ssh_command(rsh, "rm execs.tar.gz  inputs.tar.gz")
     except Exception as e:
         log.critical("Can not copy files to %s", resource['name'])
         raise e
@@ -321,7 +332,7 @@ def copy_exec_sources_and_inputs(rsh, resource):
 
 def check_appsig(rsh, resource):
     log.info("Testing app.signature calculator on headnode\n")
-    out = cfg.sshCommand(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appKerDir'],))
+    out = akrr.util.ssh.ssh_command(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appKerDir'],))
     if out.count("===ExeBinSignature===") > 0 and out.count("MD5:") > 0:
         log.info("App.signature calculator is working on headnode\n")
     else:
@@ -440,7 +451,7 @@ def monitor_test_job(task_id):
             elif response_json["data"]["queue"] == "active_tasks":
                 msg_body += "Task is in active_tasks queue.\n"
                 msg_body += "Status: " + str(response_json["data"]["data"]['status']) + "\n"
-                msg_body += "Status info:\n" + str(response_json["data"]["data"]['statusinfo']) + "\n"
+                msg_body += "Status info:\n" + str(response_json["data"]["data"]['status_info']) + "\n"
             elif response_json["data"]["queue"] == "completed_tasks":
                 msg_body += "Task is completed!\n"
                 completed_tasks = r.json()['data']['data']['completed_tasks']
@@ -454,7 +465,7 @@ def monitor_test_job(task_id):
                     msg_body += "\tstatus: " + str(akrr_xdmod_instance_info['status']) + "\n"
                     if akrr_xdmod_instance_info['status'] == 0:
                         msg_body += "\tstatus2: " + completed_tasks['status'] + "\n"
-                    msg_body += "\tstatusinfo: " + completed_tasks['statusinfo'] + "\n"
+                    msg_body += "\tstatus_info: " + completed_tasks['status_info'] + "\n"
             else:
                 msg_body += r.text + "\n"
 
@@ -619,12 +630,12 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = cfg.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
 
         number_of_unknown_hosts = 0
         for node in set(nodes):
             log.debug2(node)
-            out = cfg.sshCommand(rsh, "ping -c 1 %s" % node)
+            out = akrr.util.ssh.ssh_command(rsh, "ping -c 1 %s" % node)
             if out.count("unknown host") > 0:
                 number_of_unknown_hosts += 1
 
@@ -690,10 +701,10 @@ def append_to_bashrc(resource):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        rsh = cfg.sshResource(resource)
+        rsh = akrr.util.ssh.ssh_resource(resource)
         akrr_header = 'AKRR Remote Resource Environment Variables'
 
-        out = cfg.sshCommand(rsh, '''if [ -e $HOME/.bashrc ]
+        out = akrr.util.ssh.ssh_command(rsh, '''if [ -e $HOME/.bashrc ]
 then
    if [[ `grep "\#''' + akrr_header + ''' \[Start\]" $HOME/.bashrc` == *"''' + akrr_header + ''' [Start]"* ]]
    then
@@ -704,13 +715,13 @@ then
    fi
 fi''')
         log.debug2(out)
-        out = cfg.sshCommand(rsh, '''
+        out = akrr.util.ssh.ssh_command(rsh, '''
 echo "Appending AKRR records to $HOME/.bashrc"
 echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
 echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['networkScratch'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['localScratch'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_APPKER_DIR=\\"''' + resource['appKerDir'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_AKRR_DIR=\\"''' + resource['akrrData'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc
 echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
 ''')
         log.debug2(out)
@@ -733,7 +744,7 @@ def enable_resource_for_execution(resource):
         return
     resource_name = resource['name']
     try:
-        con_ak, cur_ak = cfg.getAKDB(True)
+        con_ak, cur_ak = akrr.db.get_ak_db(True)
 
         cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (resource_name,))
         resource_in_ak_db = cur_ak.fetchall()

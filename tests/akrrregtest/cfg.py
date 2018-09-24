@@ -20,7 +20,7 @@ akrr_log_dir = None
 which_akrr = "akrr"
 
 # top level configuration largely same as AKRR
-from akrr.akrrcfgdefault import *
+from akrr.cfg_default import *
 
 xd_db_user = "akrruser"
 xd_db_passwd = ""
@@ -50,7 +50,7 @@ def set_default_value_for_unset_vars():
     """post process settings"""
     import os
     from .util import run_cmd_getoutput
-    from akrr import log
+    from akrr.util import log
 
     global which_akrr
     global akrr_conf

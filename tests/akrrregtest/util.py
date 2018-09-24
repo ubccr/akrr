@@ -2,7 +2,7 @@ import os
 import sys
 import re
 import subprocess
-from akrr import log
+from akrr.util import log
 
 import akrr.pexpect as pexpect
 
@@ -44,6 +44,10 @@ def clear_output_text(s):
         s = s.replace(src, dest)
     s = regex_remove_color.sub('', s)
     return s
+
+
+class ExpectTimeout(Exception):
+    pass
 
 
 class ShellSpawn(pexpect.spawn):
@@ -122,7 +126,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         if type(pattern) is list:
             return imatch - 2
@@ -151,7 +155,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         if type(pattern) is list:
             return imatch - 2
@@ -178,7 +182,7 @@ class ShellSpawn(pexpect.spawn):
             msg = timeoutMessage
             if hasattr(self, 'timeoutMessage') and timeoutMessage == "EOF or TIMEOUT":
                 msg = self.timeoutMessage
-            raise Exception(msg)
+            raise ExpectTimeout(msg)
 
         self.lastcmd = cmd + "\n"
         self.sendline(cmd)

@@ -59,6 +59,9 @@ class JsonFormatting(object):
             return callback
         def wrapper(*a, **ka):
             ''' Encapsulate the result in json '''
+            print("====")
+            print(callback,a,ka)
+            print("====")
             output = callback(*a, **ka)
             if self.in_supported_types(request.headers.get('Accept', '')):
                 response_object = self.get_response_object(0)

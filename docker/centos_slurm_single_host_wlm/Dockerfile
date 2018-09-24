@@ -4,7 +4,7 @@ LABEL description="slurm with single host WLM for various testing purposes"
 
 # install dependencies
 RUN \
-    yum update && \
+    yum -y update && \
     yum -y install --setopt=tsflags=nodocs epel-release && \
     yum -y install --setopt=tsflags=nodocs \
         vim perl-Switch\
@@ -53,8 +53,8 @@ RUN \
     ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
     ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
 # if there is a need for root access through ssh following should be added
-#    echo 'root:root' |chpasswd && \
-#    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+    echo 'root:root' |chpasswd && \
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
 
 EXPOSE 22
 
@@ -77,6 +77,7 @@ EXPOSE 3306
 COPY slurm.conf slurmdbd.conf /etc/slurm/
 RUN \
     mkdir /var/log/slurm && \
+    chmod a+r /etc/slurm/slurm.conf  /etc/slurm/slurmdbd.conf && \
     cmd_start munged && \
     cmd_start mysqld && \
     cmd_start slurmdbd && \

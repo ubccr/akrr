@@ -1,0 +1,69 @@
+global: |
+    #This is python code
+    #which_akrr="/home/mikola/xdmod_wsp/akrr/bin/akrr"
+    #top level settings
+    xd_db_user = "akrruser"
+    xd_db_passwd = ""
+
+    akrr_db_user = xd_db_user
+    akrr_db_passwd = xd_db_passwd
+
+    ak_db_user = xd_db_user
+    ak_db_passwd = xd_db_passwd
+
+    #administrative database user under which the installation sql script should
+    sql_root_name="root"
+    sql_root_password=""
+
+
+setup:
+    akrr_db_su_user_name: "root"
+    akrr_db_su_user_password: ""
+    cron_email: ""
+    
+    add_fake_modw: True
+    testMissmatchingPassword: True
+    testInvalidAdministrativeDatabaseUser: True
+
+resource:
+    - 
+        #single node self contained Slurm WLM
+        resource_id: 0
+        resource_name: localhost
+        queuing_system: slurm
+        headnode: ""
+        user: batchuser
+        authentication_method: 1
+        password: batchuser
+        private_key_name: ""
+        private_key_passphrase: ""
+        ppn: 2
+        local_scratch: ""
+        network_scratch: /tmp
+        appker_dir: /tmp/appker/localhost
+        akrr_wd_dir: ""
+        ping_resource: True
+        test_nodes: 1
+        deploy_timeout: 120
+    -
+        #single node self contained Slurm WLM
+        resource_id: 0
+        resource_name: localhost2
+        queuing_system: slurm
+        headnode: localhost
+        user: batchuser
+        # Use existing private and public key
+        authentication_method: 1
+        # use .ssh/id_rsa_localhost
+        private_keys_number: 0
+        #password: batchuser
+        #private_key_name: ""
+        #private_key_passphrase: ""
+        ppn: 2
+        local_scratch: ""
+        network_scratch: /tmp
+        appker_dir: /tmp/appker/localhost2
+        akrr_wd_dir: ""
+        ping_resource: True
+        test_nodes: 1
+        deploy_timeout: 120

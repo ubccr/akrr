@@ -1,5 +1,5 @@
 import os
-from akrr import log
+from akrr.util import log
 import argparse
 
 
@@ -13,8 +13,8 @@ class CLI:
         self.root_parser = argparse.ArgumentParser(description="command line interface to AKRR regression tests")
         self.root_parser.add_argument("-v", "--verbose", action="store_true", help="turn on verbose logging")
         self.root_parser.add_argument("-vv", "--very-verbose", action="store_true", help="turn on very verbose logging")
-        self.root_parser.add_argument("-cfg", "--cfg", default="akrrregtest.conf",
-                                      help="configuration for the test, default: akrrregtest.conf")
+        self.root_parser.add_argument("-cfg", "--cfg", default="akrrregtest.yml",
+                                      help="configuration for the test, default: akrrregtest.yml")
         self.root_parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
         self.root_parser.add_argument("--which-akrr", help="Path to akrr to use, default is akrr, i.e. find from PATH")
 

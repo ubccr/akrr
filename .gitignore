@@ -24,4 +24,8 @@
 /prev_root
 /.idea
 /docker/centos_slurm_single_host_wlm/RPMS
+/.coverage
+/.pytest_cache
+/shippable
+
 
