@@ -42,6 +42,20 @@ if __name__ == '__main__':
                     sudo yum install python34-typing
                     """)
         exit(1)
+    # Check presence of MySQLdb
+    try:
+        import bottle
+
+    except ImportError:
+        print("""python module bottle is not available. Install it!
+            For example by running on
+                RedHat or CentOS from EPEL:
+                    #instale EPEL repo information
+                    sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+                    #install mysqlclient-python
+                    sudo yum install python34-bottle
+                    """)
+        exit(1)
 
     import akrr.cli
     akrr.cli.CLI().run()
