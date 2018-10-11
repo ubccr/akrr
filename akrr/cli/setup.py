@@ -9,7 +9,7 @@ import string
 
 from akrr.util import log
 
-import pprint
+from pprint import pprint
 
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.
@@ -547,13 +547,60 @@ class AKRRSetup:
         restapi_rw_password = self.get_random_password()
         restapi_ro_password = self.get_random_password()
         var = {
-            'akrr_db_user_name': self.akrr_db_user_name,
-            'akrr_db_user_password': self.akrr_db_user_password,
-            'xd_db_user_name': self.xd_db_user_name,
-            'xd_db_user_password': self.xd_db_user_password,
+            'akrr_db_host': '"%s"' % self.akrr_db_host,
+            'akrr_db_port': '%s' % str(self.akrr_db_port),
+            'akrr_db_user_name': '"%s"' % self.akrr_db_user_name,
+            'akrr_db_user_password': '"%s"' % self.akrr_db_user_password,
+            'akrr_db_name': '"%s"' % self.akrr_db_name,
+            'ak_db_name': '"%s"' % self.ak_db_name,
+            'xd_db_name': '"%s"' % self.xd_db_name,
             'restapi_rw_password': restapi_rw_password,
             'restapi_ro_password': restapi_ro_password
         }
+        if self.akrr_db_host == self.ak_db_host and self.akrr_db_port == self.ak_db_port and \
+                self.akrr_db_user_name == self.ak_db_user_name and \
+                self.akrr_db_user_password == self.ak_db_user_password:
+            var.update({
+                'ak_db_host': 'akrr_db_host',
+                'ak_db_port': 'akrr_db_port',
+                'ak_db_user_name': 'akrr_db_user',
+                'ak_db_user_password': 'akrr_db_passwd'
+            })
+        else:
+            var.update({
+                'ak_db_host': '"%s"' % self.ak_db_host,
+                'ak_db_port': '%s' % str(self.ak_db_port),
+                'ak_db_user_name': '"%s"' % self.ak_db_user_name,
+                'ak_db_user_password': '"%s"' % self.ak_db_user_password
+            })
+
+        if self.xd_db_host == self.akrr_db_host and self.xd_db_port == self.akrr_db_port and \
+                self.xd_db_user_name == self.akrr_db_user_name and \
+                self.xd_db_user_password == self.akrr_db_user_password:
+            var.update({
+                'xd_db_host': 'akrr_db_host',
+                'xd_db_port': 'akrr_db_port',
+                'xd_db_user_name': 'akrr_db_user',
+                'xd_db_user_password': 'akrr_db_passwd',
+
+            })
+        elif self.xd_db_host == self.ak_db_host and self.xd_db_port == self.ak_db_port and \
+                self.xd_db_user_name == self.ak_db_user_name and \
+                self.xd_db_user_password == self.ak_db_user_password:
+            var.update({
+                'xd_db_host': 'ak_db_host',
+                'xd_db_port': 'ak_db_port',
+                'xd_db_user_name': 'ak_db_user',
+                'xd_db_user_password': 'ak_db_passwd',
+            })
+        else:
+            var.update({
+                'xd_db_host': '"%s"' % self.xd_db_host,
+                'xd_db_port': '%s' % str(self.xd_db_port),
+                'xd_db_user_name': '"%s"' % self.xd_db_user_name,
+                'xd_db_user_password': '"%s"' % self.xd_db_user_password,
+            })
+
         akrr_inp = akrr_inp_template.format(**var)
         if not dry_run:
             with open(akrr_cfg, 'w') as f:
