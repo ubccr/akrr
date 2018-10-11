@@ -57,3 +57,10 @@ def test_log():
     exception("test exception")
     warning("test warning")
     info("test info")
+
+
+def set_verbose():
+    global verbose
+    verbose = True
+    basicConfig(level=DEBUG)
+    getLogger().setLevel(DEBUG)
