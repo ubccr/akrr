@@ -27,6 +27,8 @@ if __name__ == '__main__':
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
                     sudo yum install python34-mysql
+                Anaconda
+                    conda install mysqlclient
                     """)
         exit(1)
     # Check presence of typing
@@ -54,6 +56,8 @@ if __name__ == '__main__':
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
                     sudo yum install python34-bottle
+                Anaconda
+                    conda install bottle
                     """)
         exit(1)
 
