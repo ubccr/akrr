@@ -26,6 +26,9 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
     if ssh.find('scp') >= 0:
         mode = 'scp'
 
+    if logfile is None:
+        logfile = sys.stdout
+
     cmd_arg = []
     # Add identity file if needed
     if private_key_file is not None:
@@ -196,6 +199,27 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
     return rsh
 
 
+def ssh_access_multytry(remote_machine, ssh='ssh', username=None, password=None,
+                        private_key_file=None, private_key_password=None,
+                        logfile=None, number_of_attempts=1, sleep_time=5,
+                        command=None, pwd1=None, pwd2=None):
+    """
+    same as ssh_access but will try several times.
+    """
+    attempt = 0
+    while True:
+        try:
+            rsh = ssh_access(remote_machine, ssh=ssh, username=username, password=password,
+                             private_key_file=private_key_file, private_key_password=private_key_password,
+                             logfile=logfile, command=command, pwd1=pwd1, pwd2=pwd2)
+            return rsh
+        except AkrrError as e:
+            attempt += 1
+            if attempt >= number_of_attempts:
+                raise e
+            time.sleep(sleep_time)
+
+
 def ssh_resource(resource, command=None):
     name = resource['name']
     headnode = resource.get('remoteAccessNode', name)
@@ -210,8 +234,7 @@ def ssh_resource(resource, command=None):
 
     rsh = ssh_access(headnode, ssh=remote_access_method, username=username, password=ssh_password,
                      private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
-                     logfile=logfile,
-                     command=command)
+                     logfile=logfile, command=command)
     return rsh
 
 

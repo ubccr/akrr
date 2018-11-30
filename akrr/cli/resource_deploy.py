@@ -9,6 +9,7 @@ import json
 import xml.etree.ElementTree
 import pprint
 import MySQLdb
+import traceback
 import requests
 
 import akrr.db
@@ -17,6 +18,7 @@ from akrr import cfg
 from akrr import akrrrestclient
 from akrr.akrrerror import AkrrError
 import akrr.util.log as log
+import akrr.util.openstack
 
 dry_run = False
 
@@ -136,47 +138,14 @@ def validate_resource_parameter_file(resource_name):
         log.critical("Can not load resource from %s.\nProbably invalid syntax.", resource_param_filename)
         raise e
 
-    # now we can load akrr
-    resource = cfg.find_resource_by_name(resource_name)
-
-    # check that parameters for presents and type
-    # format: key,type,can be None,must have parameter
-    parameters_types = [
-        ['info', str, False, False],
-        ['local_scratch', str, False, True],
-        ['batchJobTemplate', str, False, True],
-        ['remoteAccessNode', str, False, True],
-        ['name', str, False, False],
-        ['akrrCommonCommandsTemplate', str, False, True],
-        ['networkScratch', str, False, True],
-        ['ppn', int, False, True],
-        # ['akrrStartAppKerTemplate',      types.StringType,       False,True],
-        ['remote_copy_method', str, False, True],
-        ['ssh_username', str, False, True],
-        ['ssh_password', str, True, False],
-        ['ssh_private_key_file', str, True, False],
-        ['ssh_private_key_password', str, True, False],
-        ['batchScheduler', str, False, True],
-        ['remote_access_method', str, False, True],
-        ['appKerDir', str, False, True],
-        ['akrrCommonCleanupTemplate', str, False, True],
-        # ['nodeListSetterTemplate',      types.StringType,       False,True],
-        ['akrr_data', str, False, True]
-    ]
-
-    for variable, m_type, can_be_none, must in parameters_types:
-        if (must is True) and (variable not in resource):
-            log.error("Syntax error in %s\nVariable %s is not set", resource_param_filename, variable)
-            exit(1)
-        if variable not in resource:
-            continue
-        if resource[variable] is None and can_be_none is False:
-            log.error("Syntax error in %s\nVariable %s can not be None", resource_param_filename, variable)
-            exit(1)
-        if not isinstance(resource[variable], m_type) and not (resource[variable] is None and can_be_none):
+    resource = None
+    try:
+        # now we can load akrr, parameters checking did h
+        resource = cfg.find_resource_by_name(resource_name)
+    except Exception as e:
             log.error(
-                "Syntax error in %s\nVariable %s should be %s, but it is %s !",
-                resource_param_filename, variable, str(m_type), type(resource[variable]))
+                "Can not load resource config from %s!\n%s\n%s",
+                resource_param_filename, str(e), traceback.format_exc())
             exit(1)
 
     log.info("Syntax of %s is correct and all necessary parameters are present.", resource_param_filename)
@@ -816,6 +785,12 @@ def resource_deploy(args):
     resource = validate_resource_parameter_file(resource_name)
 
     # connect to resource
+    if resource['batchScheduler'].lower() == "openstack":
+        # Start instance if it is cloud
+        openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
+        resource['openstack_server'] = openstack_server
+        openstack_server.create()
+        resource['remoteAccessNode'] = openstack_server.ip
     rsh = connect_to_resource(resource)
 
     # do tests
@@ -831,6 +806,11 @@ def resource_deploy(args):
     # close connection we don't need it any more
     rsh.close(force=True)
     del rsh
+    if resource['batchScheduler'].lower() == "openstack":
+        # delete instance if it is cloud
+        openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
+        resource['openstack_server'].delete()
+        resource['remoteAccessNode'] = None
 
     # run test job to queue
     run_test_job(resource, app_name, nodes)

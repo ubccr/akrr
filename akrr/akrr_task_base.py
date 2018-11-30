@@ -16,7 +16,8 @@ submit_commands = {
     'pbs': "qsub $scriptPath",
     'sge': "qsub $scriptPath",
     # 'shell': "/bin/sh $scriptPath",
-    'slurm': "sbatch $scriptPath"
+    'slurm': "sbatch $scriptPath",
+    'OpenStack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
 }
 
 # Regular expression for extracting job id of submitted batch script
@@ -25,7 +26,8 @@ job_id_extract_patterns = {
     'pbs': r'^(\d+)',
     'sge': r'job (\d+)',
     # 'shell': r'',  # N/A,
-    'slurm': r'^Submitted batch job (\d+)'
+    'slurm': r'^Submitted batch job (\d+)',
+    'OpenStack': r'^PID of last background process is (\d+)'
 }
 
 # Command and regular expression to detect that the job is still queued or running
@@ -34,6 +36,7 @@ wait_expressions = {
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
     'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
+    'OpenStack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
     # 'shell'       : ["kill(0, $jobId)"]
 }
 
@@ -42,6 +45,7 @@ kill_expressions = {
     'pbs': ["qdel $jobId"],
     'sge': ["qdel $jobId"],
     'slurm': ["scancel $jobId"],
+    'OpenStack': ["kill -9  $jobId"]
     # shell       => "kill(9, $jobId)"
 }
 
@@ -190,13 +194,6 @@ class AkrrTaskHandlerBase:
         os.mkdir(os.path.join(task_dir, "jobfiles"))
         os.mkdir(os.path.join(task_dir, "proc"))
         return time_stamp
-
-    def task_is_complete(self):
-        log.info("task_is_complete, task_dir: %s", self.taskDir)
-        time.sleep(1)
-        self.status = "Done"
-        self.status_info = "task_is_complete"
-        return None
 
     def first_step(self):
         log.info("first_step, task_dir: %s", self.taskDir)

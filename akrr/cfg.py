@@ -86,28 +86,45 @@ def verify_resource_params(resource: dict) -> dict:
     
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
-    parameters_types = [
-        ['info', str, False, False],
-        ['local_scratch', str, False, True],
-        ['batchJobTemplate', str, False, True],
-        ['remoteAccessNode', str, False, True],
-        ['name', str, False, False],
-        ['akrrCommonCommandsTemplate', str, False, True],
-        ['networkScratch', str, False, True],
-        ['ppn', int, False, True],
-        ['remote_copy_method', str, False, True],
-        ['ssh_username', str, False, True],
-        ['ssh_password', str, True, False],
-        ['ssh_private_key_file', str, True, False],
-        ['ssh_private_key_password', str, True, False],
-        ['batchScheduler', str, False, True],
-        ['remote_access_method', str, False, True],
-        ['appKerDir', str, False, True],
-        ['akrrCommonCleanupTemplate', str, False, True],
-        ['akrr_data', str, False, True]
-    ]
+    parameters_types = {
+        'info': [str, False, False],
+        'local_scratch': [str, False, True],
+        'batchJobTemplate': [str, False, True],
+        'name': [str, False, False],
+        'akrrCommonCommandsTemplate': [str, False, True],
+        'networkScratch': [str, False, True],
+        'ppn': [int, False, True],
+        'remote_copy_method': [str, False, True],
+        'ssh_username': [str, False, True],
+        'ssh_password': [str, True, False],
+        'ssh_private_key_file': [str, True, False],
+        'ssh_private_key_password': [str, True, False],
+        'batchScheduler': [str, False, True],
+        'remote_access_method': [str, False, True],
+        'appKerDir': [str, False, True],
+        'akrrCommonCleanupTemplate': [str, False, True],
+        'akrr_data': [str, False, True]
+    }
 
-    for variable, m_type, nullable, must in parameters_types:
+    for variable, (m_type, nullable, must) in parameters_types.items():
+        if (must is True) and (variable not in resource):
+            raise NameError("Syntax error in " + resource['name'] + "\nVariable %s is not set" % (variable,))
+        if variable not in resource:
+            continue
+        if resource[variable] is None and not nullable:
+            raise TypeError("Syntax error in " + resource['name'] + "\nVariable %s can not be None" % (variable,))
+        if not isinstance(resource[variable], m_type) and not (resource[variable] is None and nullable):
+            raise TypeError("Syntax error in " + resource['name'] +
+                            "\nVariable %s should be %s" % (variable, str(m_type)) +
+                            ". But it is " + str(type(resource[variable])))
+    # level 2 parameters
+    # check that parameters for presents and type
+    # format: key,type,can be None,must have parameter
+    parameters_types_2 = {
+        'remoteAccessNode': [str, True if resource['batchScheduler'].lower() == "openstack" else False, True]
+    }
+
+    for variable, (m_type, nullable, must) in parameters_types_2.items():
         if (must is True) and (variable not in resource):
             raise NameError("Syntax error in " + resource['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in resource:
