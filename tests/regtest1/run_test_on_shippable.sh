@@ -33,6 +33,7 @@ mkdir -p shippable/testresults
 mkdir -p shippable/codecoverage
 pytest --junitxml=shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
+       -m "not openstack" \
        ./tests/unit_tests
 
 # Run this regression test
@@ -50,5 +51,6 @@ rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
 cd tests
 pytest -v --junitxml=../shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:../shippable/codecoverage/coverage.xml \
+       -m "not openstack" \
        ./unit_tests ./sys_tests
 cd ..
