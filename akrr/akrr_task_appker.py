@@ -10,6 +10,7 @@ import akrr.db
 import akrr.util
 import akrr.util.log
 import akrr.util.ssh as ssh
+import akrr.util.openstack
 
 from . import cfg
 from .util import log
@@ -38,8 +39,29 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         self.fails_to_submit_to_the_queue = 0  # type: int
         self.PushToDBAttemps = 0  # type: Optional[int]
 
+        self.openstack_server_ip = None  # type: Optional[str]
+
     def first_step(self):
-        return self.create_batch_job_script_and_submit_it()
+        if self.resource['batchScheduler'].lower() == "openstack":
+            return self.start_openstack_server()
+        else:
+            return self.create_batch_job_script_and_submit_it()
+
+    def start_openstack_server(self):
+        if self.resource['batchScheduler'].lower() == "openstack":
+            # Start instance if it is cloud
+            openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
+            openstack_server.create()
+            self.openstack_server_ip = openstack_server.ip
+            self.resource['remoteAccessNode'] = openstack_server.ip
+
+        self.set_method_to_run_next(
+            "create_batch_job_script_and_submit_it",
+            "start_openstack_server ... Done",
+            "start_openstack_server ... Done")
+
+        # check first time in 1 minute
+        return datetime.timedelta(days=0, hours=0, minutes=1)
 
     def generate_batch_job_script(self):
         if self.JobScriptName is None:
@@ -632,7 +654,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             cur.close()
             del db
             self.set_method_to_run_next("task_is_complete")
-            return None
+            return datetime.timedelta(seconds=3)
         except Exception as e:
             log.exception("Got exception in process_results_old: %s\n%s\n", e, traceback.format_exc())
             db.rollback()
@@ -969,6 +991,9 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                          taskexeclog_file_content))
 
     def task_is_complete(self):
+        if self.resource['batchScheduler'].lower() == "openstack":
+            openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
+            openstack_server.delete()
         log.info("Done", self.taskDir)
         self.set_method_to_run_next("task_is_complete", "Done", "Done")
         return None
@@ -987,6 +1012,9 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         if can_be_safely_removed:
             # remove remote directory
             pass
+        if self.resource['batchScheduler'].lower() == "openstack":
+            openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
+            openstack_server.delete()
         return can_be_safely_removed
 
     def remove_task_from_remote_queue(self):
