@@ -39,8 +39,7 @@ docker build -t nsimakov/centos_slurm_single_host_wlm:1 .
 
 #run
 docker run --name centos_slurm_single_host_wlm -h centos_slurm_single_host_wlm \
-       --rm
-       -it nsimakov/centos_slurm_single_host_wlm:1 
+       --rm -it nsimakov/centos_slurm_single_host_wlm:1 
 
 #push to docker cloud
 docker push nsimakov/centos_slurm_single_host_wlm:1
