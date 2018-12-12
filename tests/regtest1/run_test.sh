@@ -27,18 +27,20 @@ if [ ! -x "${which_akrrregtest}" ] ; then
     exit 1
 fi
 
-echo "akrr to use: ${which_akrr}"
-echo "akrrregtest to use: ${which_akrrregtest}"
-echo "current work directory: $(pwd)"
+highlight='-e "\e[32,1m[AKRR_Reg_Test:1]\e[0m"'
+
+echo $highlight "akrr to use: ${which_akrr}"
+echo $highlight "akrrregtest to use: ${which_akrrregtest}"
+echo $highlight "current work directory: $(pwd)"
 #exit if any command fails
 set -e
 
-echo "Testing AKRR setup"
+echo $highlight "Testing AKRR setup"
 ${which_akrrregtest} -v setup
 
 ${which_akrr} daemon status
 
-echo "Testing AKRR resource adding "
+echo $highlight "Testing AKRR resource adding "
 ${which_akrrregtest} -v resource add -r localhost
 
 ${which_akrr} daemon status
@@ -47,11 +49,11 @@ ${which_akrr} daemon status
 AKRR_CONF_DIR=$(dirname $(dirname ${which_akrr}))/etc
 RES_CONF=$AKRR_CONF_DIR/resources/localhost/resource.conf
 
-echo "Testing AKRR resource deployment "
+echo $highlight "Testing AKRR resource deployment "
 #${which_akrrregtest} -v resource deploy -r localhost -n 1
 ${which_akrr} -v resource deploy -r localhost -n 1
 
 ${which_akrr} daemon status
 
-echo "Adding second resource without deployment"
+echo $highlight "Adding second resource without deployment"
 ${which_akrrregtest} -v resource add -r localhost2
