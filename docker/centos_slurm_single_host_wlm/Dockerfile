@@ -7,7 +7,7 @@ RUN \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs epel-release && \
     yum -y install --setopt=tsflags=nodocs \
-        vim perl-Switch\
+        vim tmux mc perl-Switch\
         openssl openssh-server openssh-clients \
         mariadb-server \
         munge && \
@@ -20,10 +20,10 @@ COPY /RPMS/x86_64/slurm*.rpm /root/
 
 #install Slurm
 RUN rpm --install \
-        slurm-17.11.5-1.el7.centos.x86_64.rpm \
-        slurm-slurmctld-17.11.5-1.el7.centos.x86_64.rpm \
-        slurm-slurmd-17.11.5-1.el7.centos.x86_64.rpm \
-        slurm-slurmdbd-17.11.5-1.el7.centos.x86_64.rpm  && \
+        slurm-18.08.4-1.el7.x86_64.rpm \
+        slurm-slurmctld-18.08.4-1.el7.x86_64.rpm \
+        slurm-slurmd-18.08.4-1.el7.x86_64.rpm \
+        slurm-slurmdbd-18.08.4-1.el7.x86_64.rpm  && \
     rm slurm*.rpm
 
 # copy daemons starters
@@ -51,10 +51,10 @@ RUN \
     mkdir /var/run/sshd && \
     ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
     ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
-    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ''
-# if there is a need for root access through ssh following should be added
+    ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' \
     echo 'root:root' |chpasswd && \
     echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+# uncomment two previous line if there is a need for root access through ssh
 
 EXPOSE 22
 
