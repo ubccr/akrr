@@ -5,6 +5,7 @@ from .util import get_bash, ExpectTimeout
 
 from . import cfg
 
+medium_timeout = 10
 super_fast_timeout = 1
 
 
@@ -88,17 +89,17 @@ def resource_add(
         if password is not None:
             bash.expectSendline(
                 r'.*INPUT.* Enter password for.*\n',
-                password, timeout=super_fast_timeout)
+                password, timeout=medium_timeout)
 
         if private_key_name is not None:
             bash.expectSendline(
                 r'.*INPUT.* Enter private key name.*\n',
-                private_key_name, timeout=super_fast_timeout)
+                private_key_name, timeout=medium_timeout)
 
         if private_key_name is not None:
             bash.expectSendline(
                 r'.*INPUT.* Enter passphrase for new key.*\n',
-                private_key_passphrase, timeout=super_fast_timeout)
+                private_key_passphrase, timeout=medium_timeout)
 
     # now system tries to access remote node
     bash.justExpect("Connecting to", timeout=30)
