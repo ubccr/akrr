@@ -8,6 +8,7 @@ import getpass
 import io
 import re
 
+import akrr
 import akrr.db
 import akrr.util.check
 import akrr.util.ssh
@@ -27,7 +28,6 @@ resources_dir = os.path.join(config_dir, 'resources')
 
 resource_name = None
 verbose = False
-dry_run = False
 minimalistic = False
 no_ping = False
 
@@ -112,7 +112,7 @@ def create_resource_config(file_path, queuing_system):
         template = update_template(template, v)
     template += "\n\n"
 
-    if not dry_run:
+    if not akrr.dry_run:
         with open(file_path, 'w') as fout:
             fout.write(template)
         fout.close()
@@ -126,7 +126,7 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
     from akrr.util.sql import cursor_execute
     log.info("Initiating %s at AKRR" % (m_resource_name,))
 
-    if not dry_run:
+    if not akrr.dry_run:
         os.mkdir(os.path.join(resources_dir, m_resource_name), 0o700)
 
     file_path = os.path.abspath(os.path.join(resources_dir, m_resource_name, 'resource.conf'))
@@ -145,10 +145,10 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
             cur_ak,
             "INSERT INTO resource (resource,nickname,description,enabled,visible,xdmod_resource_id)"
             "VALUES(%s,%s,%s,0,0,%s);",
-            (m_resource_name, m_resource_name, m_resource_name, resource_id), dry_run)
+            (m_resource_name, m_resource_name, m_resource_name, resource_id), akrr.dry_run)
         con_ak.commit()
     cur_ak.execute('''SELECT * FROM resource WHERE nickname=%s''', (m_resource_name,))
-    if not dry_run:
+    if not akrr.dry_run:
         resource_in_ak_db = cur_ak.fetchall()
         resource_id_in_ak_db = resource_in_ak_db[0]['resource_id']
     else:
@@ -162,7 +162,7 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
         cursor_execute(
             cur, '''INSERT INTO resources (id,xdmod_resource_id,name,enabled)
             VALUES(%s,%s,%s,%s);''',
-            (resource_id_in_ak_db, resource_id, m_resource_name, 0), dry_run)
+            (resource_id_in_ak_db, resource_id, m_resource_name, 0), akrr.dry_run)
         db.commit()
 
         log.info("Resource configuration is in " + file_path)
@@ -479,7 +479,7 @@ def get_remote_access_method():
                 log.log_input("Enter passphrase for new key (leave empty for passwordless access):")
                 ssh_private_key_password = getpass.getpass("")
 
-                if dry_run:
+                if akrr.dry_run:
                     successfully_connected = True
                 else:
                     ssh_password = None
@@ -638,7 +638,6 @@ def resource_add(config):
         verbose
     """
     global verbose
-    global dry_run
     global no_ping
     global minimalistic
     global resource_name
@@ -661,8 +660,7 @@ def resource_add(config):
 
     log.info("Beginning Initiation of New Resource...")
     verbose = config.verbose
-    dry_run = config.dry_run
-    resource_deploy.dry_run = config.dry_run
+    akrr.dry_run = config.dry_run
     no_ping = config.no_ping
     minimalistic = config.minimalistic
 

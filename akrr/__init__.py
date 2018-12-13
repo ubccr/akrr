@@ -5,6 +5,8 @@ debug = False
 debug_max_task_handlers = None
 # If not None overwrite redirect_task_processing_to_log_file
 debug_redirect_task_processing_to_log_file = None
+# Dry run option for certain operations
+dry_run = False
 
 
 def get_akrr_dirs():
