@@ -9,9 +9,11 @@ import io
 import re
 
 import akrr.db
+import akrr.util.check
 import akrr.util.ssh
 from akrr import cfg
 from akrr.util import log
+from akrr.util.check import check_dir, check_dir_simple
 
 from . import resource_deploy
 
@@ -248,9 +250,10 @@ def check_connection_to_resource():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            akrr.util.ssh.ssh_access(remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
-                                     private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=str_io,
-                                     command='ls')
+            akrr.util.ssh.ssh_access(
+                remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=str_io,
+                command='ls')
 
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
@@ -297,10 +300,11 @@ def check_connection_to_resource():
                         log.empty_line()
                         str_io = io.StringIO()
                         sys.stdout = sys.stderr = str_io
-                        akrr.util.ssh.ssh_access(remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
-                                                 password=ssh_password4thisSession,
-                                                 private_key_file=ssh_private_key_file, private_key_password=None, logfile=str_io,
-                                                 command='')
+                        akrr.util.ssh.ssh_access(
+                            remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
+                            password=ssh_password4thisSession,
+                            private_key_file=ssh_private_key_file, private_key_password=None, logfile=str_io,
+                            command='')
 
                         sys.stdout = sys.__stdout__
                         sys.stderr = sys.__stderr__
@@ -435,7 +439,8 @@ def get_remote_access_method():
                 ask_for_user_name = not ask_for_user_name
                 continue
             if action_list[action][0] == "UseExistingPrivateKey":
-                log.info("Available private keys:" + "\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
+                log.info(
+                    "Available private keys:" + "\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
                 while True:
                     log.log_input("Select key number from list above:")
                     try:
@@ -483,10 +488,10 @@ def get_remote_access_method():
                     if ssh_private_key_password.strip() == "":
                         ssh_private_key_password = None
                     # copy keys
-                    akrr.util.ssh.ssh_access(remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
-                                             password=ssh_password4thisSession,
-                                             private_key_file=ssh_private_key_file, private_key_password=None, logfile=sys.stdout,
-                                             command='')
+                    akrr.util.ssh.ssh_access(
+                        remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,password=ssh_password4thisSession,
+                        private_key_file=ssh_private_key_file, private_key_password=None, logfile=sys.stdout,
+                        command='')
                     ask_for_user_name = not ask_for_user_name
                     continue
 
@@ -502,10 +507,11 @@ def get_remote_access_method():
         str_io = io.StringIO()
         try:
             sys.stdout = sys.stderr = str_io
-            rsh = akrr.util.ssh.ssh_access(remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
-                                           private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
-                                           logfile=sys.stdout,
-                                           command=None)
+            rsh = akrr.util.ssh.ssh_access(
+                remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
+                logfile=sys.stdout,
+                command=None)
             sys.stdout = sys.__stdout__
             sys.stderr = sys.__stderr__
         except Exception as e:
@@ -548,7 +554,7 @@ def get_file_system_access_points():
         local_scratch = input("[%s]" % local_scratch_default)
         if local_scratch.strip() == "":
             local_scratch = local_scratch_default
-        status, msg = resource_deploy.check_dir_simple(rsh, local_scratch)
+        status, msg = check_dir_simple(rsh, local_scratch)
         if status:
             log.info(msg)
             log.empty_line()
@@ -579,7 +585,7 @@ def get_file_system_access_points():
             log.error("Incorrect value for networkScratch, try again")
             continue
 
-        status, msg = resource_deploy.check_dir(rsh, networkScratch, exit_on_fail=False, try_to_create=True)
+        status, msg = check_dir(rsh, networkScratch, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
             network_scratch_visible = True
@@ -596,7 +602,7 @@ def get_file_system_access_points():
         appKerDir = input("[%s]" % appker_dir_default)
         if appKerDir.strip() == "":
             appKerDir = appker_dir_default
-        status, msg = resource_deploy.check_dir(rsh, appKerDir, exit_on_fail=False, try_to_create=True)
+        status, msg = check_dir(rsh, appKerDir, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
             log.empty_line()
@@ -614,7 +620,7 @@ def get_file_system_access_points():
         akrr_data = input("[%s]" % akrr_data_default)
         if akrr_data.strip() == "":
             akrr_data = akrr_data_default
-        status, msg = resource_deploy.check_dir(rsh, akrr_data, exit_on_fail=False, try_to_create=True)
+        status, msg = check_dir(rsh, akrr_data, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
             log.empty_line()
