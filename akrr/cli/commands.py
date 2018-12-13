@@ -443,7 +443,7 @@ def cli_task_new(parent_parser):
 
     def handler(args):
         kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
-        from akrr.task import task_new
+        from akrr.task_api import task_new
         task_new(**kwargs)
 
     parser.set_defaults(func=handler)
@@ -463,7 +463,7 @@ def cli_task_list(parent_parser):
         '-active', '--active', action='store_true', help="show only currently running tasks")
 
     def handler(args):
-        from akrr.task import task_list
+        from akrr.task_api import task_list
         kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
         if kwargs["active"] is False and kwargs["scheduled"] is False:
             # by default show both
@@ -482,7 +482,7 @@ def cli_task_delete(parent_parser):
         '-t', '--task-id', required=True, type=int, help="task id")
 
     def handler(args):
-        from akrr.task import task_delete
+        from akrr.task_api import task_delete
         task_delete(args.task_id)
 
     parser.set_defaults(func=handler)

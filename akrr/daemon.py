@@ -737,7 +737,7 @@ class AkrrDaemon:
         else:
             log.info("AKRR Server is up and it's PID is %d" % pid)
 
-        from .task import task_list
+        from .task_api import task_list
 
         task_list()
 
