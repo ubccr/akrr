@@ -5,8 +5,8 @@ import copy
 import re
 
 import akrr.util.ssh
-from . import cfg
-from .util import log
+from .. import cfg
+from ..util import log
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 

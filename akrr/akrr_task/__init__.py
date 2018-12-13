@@ -3,10 +3,9 @@ import os
 import sys
 import datetime
 import re
-from typing import Union
 
-from .util import log
-from . import cfg
+from ..util import log
+from .. import cfg
 from .akrr_task_base import AkrrTaskHandlerBase
 from .akrr_task_appker import AkrrTaskHandlerAppKer
 from .akrr_task_bundle import akrrTaskHandlerBundle

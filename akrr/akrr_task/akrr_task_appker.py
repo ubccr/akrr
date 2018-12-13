@@ -12,15 +12,15 @@ import akrr.util.log
 import akrr.util.ssh as ssh
 import akrr.util.openstack
 
-from . import cfg
-from .util import log
+from .. import cfg
+from ..util import log
 
 from .akrr_task_base import AkrrTaskHandlerBase, submit_commands, job_id_extract_patterns, wait_expressions, \
     active_task_default_attempt_repeat, kill_expressions
 
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
-from .akrrerror import AkrrError
+from ..akrrerror import AkrrError
 
 
 class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
