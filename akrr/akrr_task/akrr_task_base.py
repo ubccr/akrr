@@ -201,6 +201,12 @@ class AkrrTaskHandlerBase:
         self.set_method_to_run_next("task_is_complete", "first_step", "first_step")
         return datetime.timedelta(days=0, hours=0, minutes=3)
 
+    def process_results(self):
+        pass
+
+    def push_to_db_raw(self, cur, task_id, time_finished):
+        pass
+
     def process_output(self):
         self.status = "Processing output files"
         self.status = "Output files were processed"

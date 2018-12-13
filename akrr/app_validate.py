@@ -9,64 +9,15 @@ import time
 import copy
 import pprint
 import json
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as XMLElementTree
 
 import akrr.db
 import akrr.util.ssh
 from akrr.util import log
 
+from akrr.util.check import check_dir
+
 pp = pprint.PrettyPrinter(indent=4)
-
-
-def CheckDirSimple(sh, d):
-    """
-    check directory existance and verify accessability
-    return None,message if does not exists
-    return True,message if can write there
-    return False,message if can not write there
-    """
-    from . import cfg
-    dir(sh)
-    cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
-    msg = akrr.util.ssh.ssh_command(sh, cmd)
-    if msg.find("DOESNOTEXIST") >= 0:
-        return None, "Directory %s:%s does not exists!" % (sh.remote_machine, d)
-
-    cmd = "echo test > " + os.path.join(d, 'akrrtestwrite')
-    # print cmd
-    msg = akrr.util.ssh.ssh_command(sh, cmd)
-    # print msg
-    cmd = "cat " + os.path.join(d, 'akrrtestwrite')
-    # print cmd
-    msg = akrr.util.ssh.ssh_command(sh, cmd)
-    # print msg
-    if msg.strip() == "test":
-        cmd = "rm " + os.path.join(d, 'akrrtestwrite')
-        akrr.util.ssh.ssh_command(sh, cmd)
-        return True, "Directory exist and accessible for read/write"
-    else:
-        return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d)
-
-
-def CheckDir(sh, d, exitOnFail=True, tryToCreate=True):
-    from . import cfg
-    status, msg = CheckDirSimple(sh, d)
-    if tryToCreate == True and status == None:
-        log.info("Directory %s:%s does not exists, will try to create it" % (sh.remote_machine, d))
-        cmd = "mkdir \"%s\"" % (d)
-        akrr.util.ssh.ssh_command(sh, cmd)
-        status, msg = CheckDirSimple(sh, d)
-    if exitOnFail is False:
-        return status, msg
-
-    if status is None:
-        log.error("Directory %s:%s does not exists!", sh.remote_machine, d)
-        exit(1)
-    elif status is True:
-        return True, msg
-    else:
-        log.error("Directory %s:%s is NOT accessible for read/write!", sh.remote_machine, d)
-        exit(1)
 
 
 def app_validate(resource, appkernel, nnodes):
@@ -74,8 +25,8 @@ def app_validate(resource, appkernel, nnodes):
     resource_name = resource
     app_name = appkernel
 
-    errorCount = 0
-    warningCount = 0
+    error_count = 0
+    warning_count = 0
 
     log.info("Validating " + app_name + " application kernel installation on " + resource_name)
 
@@ -126,7 +77,7 @@ def app_validate(resource, appkernel, nnodes):
     resource = cfg.find_resource_by_name(resource_name)
     log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
 
-    app = cfg.find_app_by_name(app_name)
+    cfg.find_app_by_name(app_name)
     # check the presence of runScript[resource]
     # if resource_name not in app['runScript'] and 'default' not in app['runScript']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
@@ -190,38 +141,38 @@ def app_validate(resource, appkernel, nnodes):
 
     d = resource['akrr_data']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
-    status, msg = CheckDir(rsh, d, exitOnFail=True, tryToCreate=True)
+    status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")
 
     d = resource['appKerDir']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
-    status, msg = CheckDir(rsh, d, exitOnFail=True, tryToCreate=True)
+    status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")
 
     d = resource['networkScratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
-    status, msg = CheckDir(rsh, d, exitOnFail=False, tryToCreate=False)
+    status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status == True:
         log.info(msg)
     else:
         log.warning(msg)
         log.warning(
             "WARNING %d: network scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warningCount + 1))
-        warningCount += 1
+                        warning_count + 1))
+        warning_count += 1
     log.info("")
 
     d = resource['local_scratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
-    status, msg = CheckDir(rsh, d, exitOnFail=False, tryToCreate=False)
+    status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status == True:
         log.info(msg)
     else:
         log.warning(msg)
         log.warning(
             "WARNING %d: local scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warningCount + 1))
-        warningCount += 1
+                        warning_count + 1))
+        warning_count += 1
     log.info("")
 
     # close connection we don't need it any more
@@ -260,9 +211,9 @@ def app_validate(resource, appkernel, nnodes):
             task_id = None
         else:
             log.warning("\nWARNING %d: Seems this is rerun of this script, will monitor task with task_id = " % (
-                        warningCount + 1) + str(task_id))
+                        warning_count + 1) + str(task_id))
             log.warning("To submit new task delete " + test_job_lock_filename + "\n")
-            warningCount += 1
+            warning_count += 1
         # check how old is it
     # submit test job
     if task_id == None:
@@ -389,7 +340,7 @@ def app_validate(resource, appkernel, nnodes):
         os.remove(test_job_lock_filename)
         exit(1)
     # see what is in report
-    elm_perf = ET.fromstring(akrr_xdmod_instanceinfo['body'])
+    elm_perf = XMLElementTree.fromstring(akrr_xdmod_instanceinfo['body'])
     elm_parameters = elm_perf.find('benchmark').find('parameters')
     elm_statistics = elm_perf.find('benchmark').find('statistics')
 
@@ -397,7 +348,7 @@ def app_validate(resource, appkernel, nnodes):
     print(results_summary)
     print()
     # log.info("\nThe output looks good.\n")
-    if (errorCount == 0):
+    if (error_count == 0):
         # enabling resource for execution
         log.info("\nEnabling %s on %s for execution\n" % (app_name, resource_name))
         try:
@@ -441,12 +392,12 @@ def app_validate(resource, appkernel, nnodes):
             log.exception("Can not turn-on %s on %s", app_name, resource_name)
             exit(1)
 
-    if (errorCount > 0):
-        log.error("There are %d errors, fix them.", errorCount)
-    if (warningCount > 0):
+    if (error_count > 0):
+        log.error("There are %d errors, fix them.", error_count)
+    if (warning_count > 0):
         log.warning(
             "\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n" %
-            warningCount)
-    if errorCount == 0 and warningCount == 0:
+            warning_count)
+    if error_count == 0 and warning_count == 0:
         log.info("\nDONE, you can move to next step!\n")
     os.remove(test_job_lock_filename)

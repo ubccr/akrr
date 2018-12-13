@@ -267,8 +267,8 @@ class AppKerOutputParser:
             else:
                 completed.text = "false"
         return xml.dom.minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        # return xml.dom.minidom.parseString(ET.tostring(root)).toprettyxml().replace("rep12345report","rep:report")#.replace("""<?xml version="1.0" ?>\n""","")
-        # return "<?xml version='1.0'?>\n"+ET.tostring(root)+"\n"
+        # return xml.dom.minidom.parseString(XMLElementTree.tostring(root)).toprettyxml().replace("rep12345report","rep:report")#.replace("""<?xml version="1.0" ?>\n""","")
+        # return "<?xml version='1.0'?>\n"+XMLElementTree.tostring(root)+"\n"
 
     def printParsNStatsAsMustHave(self):
         """print set parameters and statistics as part of code to set them as must have"""

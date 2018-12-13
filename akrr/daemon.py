@@ -535,14 +535,14 @@ class AkrrDaemon:
             self.bRunActiveTasks_CheckTheStep = True
             self.LastOpSignal = "SEGTERM"
 
-        def no_new_tasks(*_):
+        def no_new_tasks(_signum, _):
             log.info("Activation of new tasks is postponed.")
             self.bRunScheduledTasks = False
             self.bRunActiveTasks_StartTheStep = False
             self.bRunActiveTasks_CheckTheStep = True
             self.LastOpSignal = "Run"
 
-        def new_tasks_on(*_):
+        def new_tasks_on(_signum, _):
             log.info("Activation of new tasks is allowed.")
             self.bRunScheduledTasks = True
             self.bRunActiveTasks_StartTheStep = True
@@ -841,8 +841,9 @@ class AkrrDaemon:
                 th.set_dir_names(cfg.completed_tasks_dir)
 
                 ths.append(th)
-            ths[-1].process_results(verbose)
-            ths[-1].push_to_db_raw(cur, task_id, time_finished, verbose)
+
+            ths[-1].process_results()
+            ths[-1].push_to_db_raw(cur, task_id, time_finished)
 
             if re.match("ERROR:", ths[-1].status, re.M):
                 log.info("Done with errors:", task_dir, ths[-1].status)
