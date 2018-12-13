@@ -12,6 +12,7 @@ import MySQLdb
 import traceback
 import requests
 
+import akrr
 import akrr.db
 import akrr.util.ssh
 from akrr import cfg
@@ -20,8 +21,6 @@ from akrr.akrrerror import AkrrError
 import akrr.util.log as log
 import akrr.util.openstack
 from akrr.util.check import check_dir
-
-dry_run = False
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -196,11 +195,11 @@ def copy_exec_sources_and_inputs(rsh, resource):
 
         if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
             log.info("Copying app. kernel input tarball to %s", resource['appKerDir'])
-            if not dry_run:
+            if not akrr.dry_run:
                 akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
 
             log.info("Unpacking app. kernel input files to %s/inputs", resource['appKerDir'])
-            if not dry_run:
+            if not akrr.dry_run:
                 out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
@@ -220,11 +219,11 @@ def copy_exec_sources_and_inputs(rsh, resource):
             log.info(
                 "Copying app. kernel execs tarball to %s\n" % (resource['appKerDir']) +
                 "It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
-            if not dry_run:
+            if not akrr.dry_run:
                 akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
             log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs",
                      resource['appKerDir'])
-            if not dry_run:
+            if not akrr.dry_run:
                 out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
                 log.debug(out)
 
@@ -254,7 +253,7 @@ def check_appsig(rsh, resource):
     if out.count("===ExeBinSignature===") > 0 and out.count("MD5:") > 0:
         log.info("App.signature calculator is working on headnode\n")
     else:
-        if dry_run:
+        if akrr.dry_run:
             log.dry_run("App.signature calculator is not working\n")
             return
         log.error("App.signature calculator is not working\n" +
@@ -596,7 +595,7 @@ def run_test_job(resource, app_name="test", nodes=2):
 
     check_connection_to_rest_api()
 
-    if dry_run:
+    if akrr.dry_run:
         return
 
     task_id = check_if_test_job_already_submitted(resource, app_name)
@@ -613,7 +612,7 @@ def run_test_job(resource, app_name="test", nodes=2):
 def append_to_bashrc(resource):
     # append environment variables to .bashrc
     log.info("\nAdding AKRR enviroment variables to resource's .bashrc!\n")
-    if dry_run:
+    if akrr.dry_run:
         return
 
     str_io = io.StringIO()
@@ -658,7 +657,7 @@ echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
 
 def enable_resource_for_execution(resource):
     """populate mod_appkernel database and allow execution of jobs on this resource"""
-    if dry_run:
+    if akrr.dry_run:
         return
     resource_name = resource['name']
     try:
@@ -706,13 +705,14 @@ def enable_resource_for_execution(resource):
 
 
 def resource_deploy(args):
-    global dry_run
     global checking_frequency
 
     resource_name = args.resource
 
     if 'dry_run' in args:
-        dry_run = args.dry_run
+        akrr.dry_run = args.dry_run
+    else:
+        akrr.dry_run = False
 
     if "checking_frequency" in args:
         checking_frequency = args.checking_frequency
