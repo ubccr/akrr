@@ -2,6 +2,7 @@
 import MySQLdb
 import MySQLdb.cursors
 
+
 def get_akrr_db(dict_cursor=False):
     """
     Get connector and cursor to mod_akrr database

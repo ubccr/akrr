@@ -2,7 +2,7 @@ import akrr.db
 import akrr.util
 import akrr.util.log
 import akrr.util.ssh
-from . import cfg
+from .. import cfg
 import os
 import datetime
 import traceback
@@ -10,7 +10,7 @@ import re
 import copy
 import random
 
-from .akrrerror import AkrrError
+from ..akrrerror import AkrrError
 
 from .akrr_task_base import AkrrTaskHandlerBase, submit_commands, job_id_extract_patterns, wait_expressions, \
     active_task_default_attempt_repeat, kill_expressions
