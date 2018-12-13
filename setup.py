@@ -21,6 +21,7 @@ setup(
     packages=[
         'akrr',
         'akrr/appkernelsparsers',
+        'akrr/akrr_task',
         'akrr/cli',
         'akrr/pexpect',
         'akrr/pexpect/ptyprocess',
