@@ -15,6 +15,7 @@ import bottle
 from bottle import response, request
 
 import akrr.db
+from akrr.akrrerror import AkrrError
 from . import bottle_api_json_formatting
 
 import MySQLdb
@@ -831,15 +832,16 @@ def get_unique_tasks():
         resource = request.query.resource
         application = request.query.app
         status = request.query.status
-    except UnicodeError as e:
-        log.error("There was a problem while trying to extract the query parameters from the request. %s: %s",
-                  e.args[0] if len(e.args) >= 1 else "",
-                  e.args[1] if len(e.args) >= 2 else "")
 
-    if status:
-        return _get_resource_app_status(resource, application)
-    else:
-        return _get_resource_apps(resource, application)
+        if status:
+            return _get_resource_app_status(resource, application)
+        else:
+            return _get_resource_apps(resource, application)
+    except UnicodeError as e:
+        s = "There was a problem while trying to extract the query parameters from the request. %s: %s" % \
+            (e.args[0] if len(e.args) >= 1 else "", e.args[1] if len(e.args) >= 2 else "")
+        log.error(s)
+        raise AkrrError(s)
 
 
 @app.route(apiroot + '/resources', method='options')
@@ -858,6 +860,7 @@ def get_resources():
         exact_flag = request.query.exact
     except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
+        raise AkrrError("Unable to retrieve query parameters for GET:resources. %s: %s" % (e.args[0], e.args[1]))
 
     # DETERMINE: which query we need to run based on the parameters supplied.
     query = """
@@ -917,6 +920,7 @@ def get_kernels():
         disabled = str_to_bool(request.query.disabled)
     except UnicodeError as e:
         log.error("Unable to retrieve query parameters for GET:kernels. %s: %s", e.args[0], e.args[1])
+        raise AkrrError("Unable to retrieve query parameters for GET:kernels. %s: %s" % (e.args[0], e.args[1]))
 
     query = """
     SELECT AK.id,
@@ -1071,9 +1075,9 @@ def _turn_resource_on(resource, application):
         UPDATE mod_akrr.resource_app_kernels AK
         SET AK.enabled = TRUE
         WHERE AK.resource_id = ( SELECT R.id FROM mod_akrr.resources R WHERE R.name = %s)
-        """,)
+        """)
         parameters = ((resource, application),) if has_resource and has_application \
-                                                   and resource_exists and app_kernel_exists else \
+            and resource_exists and app_kernel_exists else \
             ((resource,), (resource,))
 
     queries_and_parameters = list(zip(queries, parameters))
@@ -1244,7 +1248,7 @@ def _turn_resource_off(resource, application):
         WHERE AK.resource_id = ( SELECT R.id FROM mod_akrr.resources R WHERE R.name = %s)
         """)
         parameters = (resource, application) if has_resource and has_application \
-                                                and resource_exists and app_kernel_exists else \
+            and resource_exists and app_kernel_exists else \
             ((resource,), (resource,))
 
     queries_and_parameters = list(zip(queries, parameters))
@@ -1281,7 +1285,9 @@ def turn_resource_on(resource):
     try:
         application_filter = request.forms.application
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
+        s = "Unable to retrieve query parameters for GET:resources. %s: %s" % (e.args[0], e.args[1])
+        log.error(s)
+        raise AkrrError(s)
 
     return {'updated': _turn_resource_on(resource, application_filter)}
 
@@ -1301,7 +1307,9 @@ def turn_resource_off(resource):
     try:
         application_filter = request.forms.application
     except UnicodeError as e:
-        log.error("Unable to retrieve query parameters for GET:resources. %s: %s", e.args[0], e.args[1])
+        s = "Unable to retrieve query parameters for GET:resources. %s: %s" % (e.args[0], e.args[1])
+        log.error(s)
+        raise AkrrError(s)
 
     return {'updated': _turn_resource_off(resource, application_filter)}
 
@@ -1321,7 +1329,8 @@ def get_walltime_all():
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
             cursor.execute(
-                '''SELECT id,resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit''')
+                "SELECT id,resource,app,walllimit,resource_param,app_param,"
+                "last_update,comments FROM akrr_default_walllimit")
 
             # RETRIEVE: the results and save them for returning.
             results = cursor.fetchall()
@@ -1352,7 +1361,8 @@ def get_walltime(walltime_id):
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
             cursor.execute(
-                '''SELECT resource,app,walllimit,resource_param,app_param,last_update,comments FROM akrr_default_walllimit WHERE id=%s''',
+                "SELECT resource,app,walllimit,resource_param,app_param,"
+                "last_update,comments FROM akrr_default_walllimit WHERE id=%s",
                 (walltime_id,))
             results = cursor.fetchall()
             if len(results) > 0:
@@ -1374,7 +1384,7 @@ def get_walltime(walltime_id):
 
 @app.post(apiroot + '/walltime/<resource>/<app>')
 @bottle.auth_basic(auth_by_token_for_write)
-def upsert_walltime(resource, app):
+def upsert_walltime(resource, m_app):
     """
     add/update new default walltime
     """
@@ -1387,7 +1397,7 @@ def upsert_walltime(resource, app):
                    'comments']
     # default parameters
     params = {'resource': resource,
-              'app': app,
+              'app': m_app,
               'app_param': '{}',
               'resource_param': '{}',
               'comments': ""
@@ -1403,7 +1413,6 @@ def upsert_walltime(resource, app):
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
@@ -1412,7 +1421,7 @@ def upsert_walltime(resource, app):
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
             WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                           (resource, app, params['resource_param'], params['app_param']))
+                           (resource, m_app, params['resource_param'], params['app_param']))
             results = cursor.fetchall()
             if len(results) > 0:
                 cursor.execute('''UPDATE akrr_default_walllimit 
@@ -1425,9 +1434,12 @@ def upsert_walltime(resource, app):
                                 params['app_param']))
                 return {'updated': True}
             else:
-                cursor.execute('''INSERT INTO akrr_default_walllimit (resource,app,walllimit,resource_param,app_param,last_update,comments)
-                    VALUES(%s,%s,%s,%s,%s,NOW(),%s)''', (
-                resource, app, params['walltime'], params['resource_param'], params['app_param'], params['comments']))
+                cursor.execute(
+                    "INSERT INTO akrr_default_walllimit (resource,app,walllimit,"
+                    "resource_param,app_param,last_update,comments)"
+                    "VALUES(%s,%s,%s,%s,%s,NOW(),%s)", (
+                        resource, m_app, params['walltime'], params['resource_param'],
+                        params['app_param'], params['comments']))
                 return {'created': True}
 
             # RETRIEVE: the results and save them for returning.
@@ -1445,7 +1457,7 @@ def upsert_walltime(resource, app):
 
 @app.get(apiroot + '/walltime/<resource>/<app>')
 @bottle.auth_basic(auth_by_token_for_read)
-def get_walltime_by_resource_app(resource, app):
+def get_walltime_by_resource_app(resource, m_app):
     """
     get default walltime
     """
@@ -1458,7 +1470,7 @@ def get_walltime_by_resource_app(resource, app):
                    'comments']
     # default parameters
     params = {'resource': resource,
-              'app': app,
+              'app': m_app,
               'app_param': '{}',
               'resource_param': '{}',
               'comments': ""
@@ -1474,7 +1486,6 @@ def get_walltime_by_resource_app(resource, app):
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
@@ -1483,7 +1494,7 @@ def get_walltime_by_resource_app(resource, app):
         with connection:
             cursor.execute('''SELECT * FROM akrr_default_walllimit
             WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                           (resource, app, params['resource_param'], params['app_param']))
+                           (resource, m_app, params['resource_param'], params['app_param']))
             results = cursor.fetchall()
             if len(results) > 0:
                 return results[0]
@@ -1527,7 +1538,6 @@ def update_walltime_by_id(walltime_id):
         if k not in params:
             raise bottle.HTTPError(400, 'Parameter %s is not set' % (k,))
 
-    results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
@@ -1566,7 +1576,6 @@ def delete_walltime(walltime_id):
     """
     delete default walltime
     """
-    results = None
     try:
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
