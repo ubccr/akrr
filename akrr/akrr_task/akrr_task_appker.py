@@ -228,12 +228,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             sh = ssh.ssh_resource(self.resource)
 
             # akrr_data
-            ssh.ssh_check_and_create_dir(sh, self.resource['akrr_data'])
+            ssh.check_dir(sh, self.resource['akrr_data'], try_to_create=True)
             # dir for app
-            ssh.ssh_check_and_create_dir(sh, os.path.join(self.resource['akrr_data'], self.appName))
+            ssh.check_dir(sh, os.path.join(self.resource['akrr_data'], self.appName), try_to_create=True)
             # dir for task
-            ssh.ssh_check_and_create_dir(sh, self.remoteTaskDir)
-
+            ssh.check_dir(sh, self.remoteTaskDir, try_to_create=True)
             # cd to remoteTaskDir
             ssh.ssh_command(sh, "cd %s" % self.remoteTaskDir)
 

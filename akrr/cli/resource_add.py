@@ -10,13 +10,10 @@ import re
 
 import akrr
 import akrr.db
-import akrr.util.check
 import akrr.util.ssh
 from akrr import cfg
 from akrr.util import log
-from akrr.util.check import check_dir, check_dir_simple
-
-from . import resource_deploy
+from akrr.util.ssh import check_dir_simple, check_dir
 
 ###############################################################################
 # VARIABLES
@@ -489,7 +486,7 @@ def get_remote_access_method():
                         ssh_private_key_password = None
                     # copy keys
                     akrr.util.ssh.ssh_access(
-                        remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,password=ssh_password4thisSession,
+                        remoteAccessNode, ssh='ssh-copy-id', username=ssh_username, password=ssh_password4thisSession,
                         private_key_file=ssh_private_key_file, private_key_password=None, logfile=sys.stdout,
                         command='')
                     ask_for_user_name = not ask_for_user_name
