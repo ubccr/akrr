@@ -353,7 +353,7 @@ def check_dir_simple(sh, d):
         return False, "Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d)
 
 
-def check_dir(sh, d, exit_on_fail=False, try_to_create=True):
+def check_dir(sh, d, exit_on_fail=False, try_to_create=True, raise_on_fail=False):
     """
     check that directory exists and verify its accessibility
     return None,message if does not exists
@@ -374,9 +374,15 @@ def check_dir(sh, d, exit_on_fail=False, try_to_create=True):
 
     if status is None:
         log.error("Directory %s:%s does not exists!", sh.remote_machine, d)
-        exit()
+        if raise_on_fail:
+            raise AkrrError("Directory %s:%s does not exists!" % (sh.remote_machine, d))
+        else:
+            exit()
     elif status is True:
         return True, msg
     else:
         log.error("Directory %s:%s is NOT accessible for read/write!", sh.remote_machine, d)
-        exit()
+        if raise_on_fail:
+            raise AkrrError("Directory %s:%s is NOT accessible for read/write!" % (sh.remote_machine, d))
+        else:
+            exit()

@@ -1,7 +1,7 @@
 import akrr.db
 import akrr.util
-import akrr.util.log
-import akrr.util.ssh
+import akrr.util.log as log
+from akrr.util.ssh import check_dir, ssh_resource, scp_from_resource, ssh_command, scp_to_resource
 from .. import cfg
 import os
 import datetime
@@ -10,19 +10,35 @@ import re
 import copy
 import random
 
+from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+
 from ..akrrerror import AkrrError
 
 from .akrr_task_base import AkrrTaskHandlerBase, submit_commands, job_id_extract_patterns, wait_expressions, \
     active_task_default_attempt_repeat, kill_expressions
 
 
-class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
+from MySQLdb import MySQLError
+
+
+class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
     """Task Handler for Bundled tasks"""
 
     def __init__(self, task_id, resource_name, app_name, resource_param, app_param, task_param):
         super().__init__(task_id, resource_name, app_name, resource_param, app_param, task_param)
 
         self.subTasksId = []
+
+        self.RemoteJobID = None
+        self.TimeJobSubmetedToRemoteQueue = None
+        self.fails_to_submit_to_the_queue = 0
+        self.ReportFormat = None
+        self.TimeJobPossiblyCompleted = None
+        self.ToDoNextString = None
+
+        self.PushToDBAttemps = 0
+
+        self.RemoteJobID = None
 
     def first_step(self):
         return self.check_if_subtasks_created_job_scripts()
@@ -35,38 +51,38 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                     ORDER BY  task_id ASC 
                     ''', ("%%%d%%" % (self.task_id,),))
         raws = cur.fetchall()
-        subTaskInfo = []
+        sub_task_info = []
         for task_id, status, datetime_stamp, resource, app, task_param in raws:
             task_param = eval(task_param)
             if task_param['masterTaskID'] == self.task_id:
-                subTaskInfo.append([task_id, status, datetime_stamp, resource, app, task_param])
+                sub_task_info.append([task_id, status, datetime_stamp, resource, app, task_param])
 
         cur.close()
         del db
-        return subTaskInfo
+        return sub_task_info
 
     def check_if_subtasks_created_job_scripts(self):
         print("check_if_subtasks_created_job_scripts")
         # Get current status of subtasks
-        subTaskInfo = self.get_sub_task_info()
+        sub_task_info = self.get_sub_task_info()
 
-        subTasksHaveCreatedJobScripts = True
+        sub_tasks_have_created_job_scripts = True
 
         self.status_info = ""
-        for task_id, status, datetime_stamp, resource, app, task_param in subTaskInfo:
+        for task_id, status, datetime_stamp, resource, app, task_param in sub_task_info:
             self.status_info += "%d:%s\n" % (task_id, status)
-            if status != None:
+            if status is not None:
                 if status.count("Created batch job script") == 0:
-                    subTasksHaveCreatedJobScripts = False
+                    sub_tasks_have_created_job_scripts = False
             else:
-                subTasksHaveCreatedJobScripts = False
+                sub_tasks_have_created_job_scripts = False
 
-        # Save subtasksid
+        # Save subtasks id
         self.subTasksId = []
-        for task_id, status, datetime_stamp, resource, app, task_param in subTaskInfo:
+        for task_id, status, datetime_stamp, resource, app, task_param in sub_task_info:
             self.subTasksId.append(task_id)
 
-        if subTasksHaveCreatedJobScripts:
+        if sub_tasks_have_created_job_scripts:
             self.set_method_to_run_next(
                 "create_batch_job_script_and_submit_it", "Subtasks have created job scripts.", "")
             # check  in 1 minute
@@ -86,27 +102,19 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
 
         sh = None
         try:
-            sh = akrr.util.ssh.ssh_resource(self.resource)
+            sh = ssh_resource(self.resource)
 
             # Create remote directories if needed
-            def CheckAndCreateDir(self, sh, d):
-                cmd = "if [ ! -d  \"%s\" ]\n then mkdir \"%s\"\n fi" % (d, d)
-                akrr.util.ssh.ssh_command(sh, cmd)
-                cmd = "if [ -d \"%s\" ]\n then \necho EXIST\n else echo DOESNOTEXIST\n fi" % (d)
-                msg = akrr.util.ssh.ssh_command(sh, cmd)
-                if msg.find("DOESNOTEXIST") >= 0:
-                    raise AkrrError("Can not create directory %s on %s." % (d, self.resource['name']))
-
             # akrr_data
-            CheckAndCreateDir(self, sh, self.resource['akrr_data'])
+            check_dir(sh, self.resource['akrr_data'], raise_on_fail=True)
             # dir for app
-            CheckAndCreateDir(self, sh, os.path.join(self.resource['akrr_data'], self.appName))
+            check_dir(sh, os.path.join(self.resource['akrr_data'], self.appName), raise_on_fail=True)
             # dir for task
-            CheckAndCreateDir(self, sh, self.remoteTaskDir)
+            check_dir(sh, self.remoteTaskDir, raise_on_fail=True)
             # CheckAndCreateDir(self,sh,os.path.join(self.remoteTaskDir,"batchJob_pl"))
 
             # cd to remoteTaskDir
-            akrr.util.ssh.ssh_command(sh, "cd %s" % (self.remoteTaskDir))
+            ssh_command(sh, "cd %s" % self.remoteTaskDir)
 
             # get walltime from DB
             dbdefaults = {}
@@ -130,7 +138,7 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 # db.commit()
                 cur.close()
                 del db
-            except Exception as e:
+            except MySQLError:
                 pass
 
             # create job-script
@@ -141,46 +149,46 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 batchvars.update(di)
 
             # stack the subtasks
-            subTaskInfo = self.get_sub_task_info()
+            sub_task_info = self.get_sub_task_info()
             if batchvars['shuffleSubtasks']:
-                random.shuffle(subTaskInfo)
-            subTasksExecution = ""
-            for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.get_remote_task_dir(self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
-                SubTaskJobScriptName = self.get_job_script_name(subtask_app)
-                SubTaskJobScriptPath = os.path.join(remoteSubTaskDir, SubTaskJobScriptName)
+                random.shuffle(sub_task_info)
+            sub_tasks_execution = ""
+            for subtask_id, subtask_status, subtask_datetime_stamp, \
+                    subtask_resource, subtask_app, subtask_task_param in sub_task_info:
+                remote_sub_task_dir = self.get_remote_task_dir(
+                    self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
+                sub_task_job_script_name = self.get_job_script_name(subtask_app)
+                sub_task_job_script_path = os.path.join(remote_sub_task_dir, sub_task_job_script_name)
 
-                subTasksExecution += "cd " + remoteSubTaskDir + "\n"
+                sub_tasks_execution += "cd " + remote_sub_task_dir + "\n"
                 # subTasksExecution+="cp "+os.path.join(self.remoteTaskDir,"job.id ")+"./\n"
-                subTasksExecution += "echo Starting " + subtask_app + "\n"
-                subTasksExecution += self.resource['shell'] + " " + SubTaskJobScriptPath + " > stdout 2> stderr\n"
-                subTasksExecution += "echo Done with " + subtask_app + "\n" + "\n"
+                sub_tasks_execution += "echo Starting " + subtask_app + "\n"
+                sub_tasks_execution += self.resource['shell'] + " " + sub_task_job_script_path + " > stdout 2> stderr\n"
+                sub_tasks_execution += "echo Done with " + subtask_app + "\n" + "\n"
 
-            batchvars['subTasksExecution'] = subTasksExecution
+            batchvars['subTasksExecution'] = sub_tasks_execution
 
             # calculate NNodes and NCores
-            tmpNNodes = None
-            tmpNCores = None
             if 'nnodes' in batchvars:
-                tmpNNodes = batchvars['nnodes']
-                tmpNCores = tmpNNodes * batchvars['ppn']
+                tmp_num_nodes = batchvars['nnodes']
+                tmp_num_cores = tmp_num_nodes * batchvars['ppn']
             else:
-                tmpNCores = batchvars['ncores']
-                if tmpNCores % batchvars['ppn'] == 0:
-                    tmpNNodes = tmpNCores / batchvars['ppn']
+                tmp_num_cores = batchvars['ncores']
+                if tmp_num_cores % batchvars['ppn'] == 0:
+                    tmp_num_nodes = tmp_num_cores / batchvars['ppn']
                 else:
-                    tmpNNodes = (tmpNCores / batchvars['ppn']) + 1
+                    tmp_num_nodes = (tmp_num_cores / batchvars['ppn']) + 1
 
-            batchvars['akrrNCores'] = tmpNCores
-            batchvars['akrrNNodes'] = tmpNNodes
+            batchvars['akrrNCores'] = tmp_num_cores
+            batchvars['akrrNNodes'] = tmp_num_nodes
 
             # Set batchvars remaps
             batchvars['akrrPPN'] = batchvars['ppn']
             batchvars['akrrNCoresToBorder'] = batchvars['akrrPPN'] * batchvars['akrrNNodes']
             batchvars['akrrTaskWorkingDir'] = self.remoteTaskDir
             batchvars['akrrWallTimeLimit'] = "%02d:%02d:00" % (
-            int(batchvars['walllimit']) / 60, int(batchvars['walllimit']) % 60)
-            batchvars['localPATH'] = akrr.util.ssh.ssh_command(sh, "echo $PATH").strip()
+                int(batchvars['walllimit']) / 60, int(batchvars['walllimit']) % 60)
+            batchvars['localPATH'] = ssh_command(sh, "echo $PATH").strip()
             batchvars['akrrAppKerName'] = self.app['name']
             batchvars['akrrResourceName'] = self.resource['name']
             batchvars['akrrTimeStamp'] = self.timeStamp
@@ -190,58 +198,52 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrrPPN']
             if 'nodeListSetterTemplate' not in batchvars:
                 batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batchScheduler']]
-            # set AppKerLauncher
-            # if self.resource['name'] in batchvars['runScript']:
-            #    batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript'][self.resource['name']],batchvars,keepDoubleBrakets=True)
-            # else:
-            #    batchvars['akrrStartAppKer']=akrrcfg.format_recursively(batchvars['runScript']['default'],batchvars,keepDoubleBrakets=True)
 
             # process templates
-            batchvars['akrrCommonCommands'] = akrr.util.format_recursively(batchvars['akrrCommonCommandsTemplate'], batchvars,
-                                                                           keep_double_brackets=True)
-            # batchvars['akrrCommonTests']=akrrcfg.format_recursively(batchvars['akrrCommonTestsTemplate'],batchvars,keepDoubleBrakets=True)
-            # batchvars['akrrStartAppKer']=batchvars['akrrStartAppKerTemplate'].format(**batchvars)
-            batchvars['akrrCommonCleanup'] = akrr.util.format_recursively(batchvars['akrrCommonCleanupTemplate'], batchvars,
-                                                                          keep_double_brackets=True)
+            batchvars['akrrCommonCommands'] = akrr.util.format_recursively(
+                batchvars['akrrCommonCommandsTemplate'], batchvars, keep_double_brackets=True)
+            batchvars['akrrCommonCleanup'] = akrr.util.format_recursively(
+                batchvars['akrrCommonCleanupTemplate'], batchvars, keep_double_brackets=True)
 
             # do parameters adjustment
             if 'process_params' in batchvars:
                 batchvars['process_params'](batchvars)
             # generate job script
-            jobScript = akrr.util.format_recursively(self.resource["batchJobTemplate"], batchvars)
+            job_script = akrr.util.format_recursively(self.resource["batchJobTemplate"], batchvars)
             fout = open(os.path.join(self.taskDir, "jobfiles", self.JobScriptName), "w")
-            fout.write(jobScript)
+            fout.write(job_script)
             fout.close()
-            msg = akrr.util.ssh.scp_to_resource(self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName),
-                                                os.path.join(self.remoteTaskDir))
+            scp_to_resource(
+                self.resource, os.path.join(self.taskDir, "jobfiles", self.JobScriptName),
+                os.path.join(self.remoteTaskDir))
 
-            ##akrrcfg.ssh_command_no_return(sh,"cat > %s << EOF1234567\n%s\nEOF1234567\n"%(self.JobScriptName,jobScript))
-            akrr.util.ssh.ssh_command(sh, "cat %s " % (self.JobScriptName))
+            ssh_command(sh, "cat %s " % self.JobScriptName)
 
             # send to queue
             from string import Template
-            sendToQueue = Template(submit_commands[self.resource['batchScheduler']]).substitute(
+            send_to_queue = Template(submit_commands[self.resource['batchScheduler']]).substitute(
                 scriptPath=self.JobScriptName)
-            msg = akrr.util.ssh.ssh_command(sh, sendToQueue)
-            matchObj = re.search(job_id_extract_patterns[self.resource['batchScheduler']], msg, re.M | re.S)
+            msg = ssh_command(sh, send_to_queue)
+            match_obj = re.search(job_id_extract_patterns[self.resource['batchScheduler']], msg, re.M | re.S)
 
-            JobID = None
-            if matchObj:
+            if match_obj:
                 try:
-                    JobID = int(matchObj.group(1))
-                except:
+                    job_id = int(match_obj.group(1))
+                except (ValueError, IndexError):
                     raise AkrrError("Can't get job id. " + msg)
             else:
                 raise AkrrError("Can't get job id. " + msg)
 
-            akrr.util.ssh.ssh_command(sh, "echo %d > job.id" % (JobID))
+            ssh_command(sh, "echo %d > job.id" % job_id)
 
             # cp job id to subtasks
-            for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
-                remoteSubTaskDir = self.get_remote_task_dir(self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
-                akrr.util.ssh.ssh_command(sh, "cp job.id %s" % (remoteSubTaskDir))
+            for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, \
+                    subtask_app, subtask_task_param in sub_task_info:
+                remote_sub_task_dir = self.get_remote_task_dir(
+                    self.resource['akrr_data'], subtask_app, subtask_datetime_stamp)
+                ssh_command(sh, "cp job.id %s" % remote_sub_task_dir)
 
-            self.RemoteJobID = JobID
+            self.RemoteJobID = job_id
             self.TimeJobSubmetedToRemoteQueue = datetime.datetime.today()
 
             sh.sendline("exit")
@@ -250,8 +252,8 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             sh = None
             print("\nRemoteJobID=", self.RemoteJobID)
             print("copying files from remote machine")
-            msg = akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                  os.path.join(self.taskDir, "jobfiles"), "-r")
+            scp_from_resource(
+                self.resource, os.path.join(self.remoteTaskDir, "*"), os.path.join(self.taskDir, "jobfiles"), "-r")
 
             # update DB time_submitted_to_queue
             db, cur = akrr.db.get_akrr_db()
@@ -270,8 +272,8 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
 
             # check first time in 1 minute
             return datetime.timedelta(days=0, hours=0, minutes=1)
-        except Exception as e:
-            if sh != None:
+        except Exception:
+            if sh is not None:
                 sh.sendline("exit")
                 sh.close(force=True)
                 del sh
@@ -283,8 +285,8 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                     if self.fails_to_submit_to_the_queue > cfg.max_fails_to_submit_to_the_queue:
                         # Stop execution of the task and submit results to db
                         self.set_method_to_run_next("push_to_db")
-                        resultFile = os.path.join(self.taskDir, "result.xml")
-                        self.write_error_xml(resultFile)
+                        result_file = os.path.join(self.taskDir, "result.xml")
+                        self.write_error_xml(result_file)
                         return datetime.timedelta(seconds=3)
                 else:
                     self.fails_to_submit_to_the_queue = 1
@@ -292,16 +294,17 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 self.fatal_errors_count += 1
 
             akrr.util.log.log_traceback(self.status)
-            return cfg.RepeateAfterfails_to_submit_to_the_queue
+            return cfg.repeat_after_fails_to_submit_to_the_queue
 
     def update_sub_tasks(self):
         # force to check SubTasks
         # stack the subtasks
-        subTaskInfo = self.get_sub_task_info()
+        sub_task_info = self.get_sub_task_info()
 
         db, cur = akrr.db.get_akrr_db()
 
-        for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, subtask_app, subtask_task_param in subTaskInfo:
+        for subtask_id, subtask_status, subtask_datetime_stamp, subtask_resource, \
+                subtask_app, subtask_task_param in sub_task_info:
             cur.execute('''UPDATE active_tasks
                             SET next_check_time=%s
                             WHERE task_id=%s ;''', (datetime.datetime.today(), subtask_id))
@@ -315,30 +318,30 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
         try:
             print("### Checking the job status on remote machine")
             from string import Template
-            wE = wait_expressions[self.resource['batchScheduler']]
-            cmd = Template(wE[0]).substitute(jobId=str(self.RemoteJobID))
-            rege = Template(wE[2]).substitute(jobId=str(self.RemoteJobID))
+            m_wait_expr = wait_expressions[self.resource['batchScheduler']]
+            cmd = Template(m_wait_expr[0]).substitute(jobId=str(self.RemoteJobID))
+            rege = Template(m_wait_expr[2]).substitute(jobId=str(self.RemoteJobID))
 
-            sh = akrr.util.ssh.ssh_resource(self.resource)
-            msg = akrr.util.ssh.ssh_command(sh, cmd)
+            sh = ssh_resource(self.resource)
+            msg = ssh_command(sh, cmd)
             sh.sendline("exit")
             sh.close(force=True)
             del sh
             sh = None
 
-            matchObj = wE[1](rege, msg, wE[3])
-            if matchObj:
+            match_obj = m_wait_expr[1](rege, msg, m_wait_expr[3])
+            if match_obj:
                 print("Still in queue. Either waiting or running")
                 if datetime.datetime.today() - self.TimeJobSubmetedToRemoteQueue > self.taskParam.get('MaxTimeInQueue',
-                                                                                                      cfg.max_time_in_queue):
+                        cfg.max_time_in_queue):
                     print("ERROR:")
                     print("Job exceeds the maximal time in queue (%s). And will be terminated." % (
                         str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue))))
                     print("Removing job from remote queue.")
                     self.terminate()
                     print("copying files from remote machine")
-                    akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                    os.path.join(self.taskDir, "jobfiles"), "-r")
+                    scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                                      os.path.join(self.taskDir, "jobfiles"), "-r")
                     # print msg
                     print("Deleting all files from remote machine")
                     self.delete_remote_folder()
@@ -358,13 +361,15 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             else:
                 print("Not in queue. Either exited with error or executed successfully.")
                 print("copying files from remote machine")
-                msg = akrr.util.ssh.scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
-                                                      os.path.join(self.taskDir, "jobfiles"), "-r")
+                msg = scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                                        os.path.join(self.taskDir, "jobfiles"), "-r")
                 # print msg
                 print("Deleting all files from remote machine")
                 self.delete_remote_folder()
-                self.status = "Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
-                self.status_info = "Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine"
+                self.status = "Not in queue. Either exited with error or executed successfully. " \
+                    "Copied all files to local machine. Deleted all files from remote machine"
+                self.status_info = "Not in queue. Either exited with error or executed successfully. " \
+                    "Copied all files to local machine. Deleted all files from remote machine"
                 self.ToDoNextString = "check_if_subtasks_done_proccessing_results"
                 self.update_sub_tasks()
                 # del self.RemoteJobID
@@ -372,7 +377,7 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 return datetime.timedelta(seconds=3)
             # print msg
         except:
-            if sh != None:
+            if sh is not None:
                 sh.sendline("exit")
                 sh.close(force=True)
                 del sh
@@ -382,74 +387,70 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             akrr.util.log.log_traceback(self.status)
             self.ToDoNextString = "check_the_job_on_remote_machine"
             return active_task_default_attempt_repeat
-        self.status = "check_the_job_on_remote_machine"
-        self.status_info = "check_the_job_on_remote_machine"
-        self.ToDoNextString = "check_the_job_on_remote_machine"
-        return datetime.timedelta(days=0, hours=0, minutes=2)
 
-    def get_result_files(self, raiseError=False):
-        jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-        batchJobDir = None
-        stdoutFile = None
-        stderrFile = None
-        appstdoutFile = None
-        taskexeclogFile = None
+    def get_result_files(self, raise_error=False):
+        jobfiles_dir = os.path.join(self.taskDir, "jobfiles")
+        batch_job_dir = None
+        stdout_file = None
+        stderr_file = None
+        appstdout_file = None
+        taskexeclog_file = None
 
-        for d in os.listdir(jobfilesDir):
+        for d in os.listdir(jobfiles_dir):
             if re.match("batchJob", d):
-                if batchJobDir == None:
-                    batchJobDir = os.path.join(jobfilesDir, d)
+                if batch_job_dir is None:
+                    batch_job_dir = os.path.join(jobfiles_dir, d)
                 else:
-                    if raiseError:
+                    if raise_error:
                         raise IOError("Error: found multiple batchJob* Directories although it should be one")
                     else:
-                        return (batchJobDir, stdoutFile, stderrFile, appstdoutFile)
+                        return batch_job_dir, stdout_file, stderr_file, appstdout_file
 
-        if batchJobDir != None:
-            for f in os.listdir(batchJobDir):
+        if batch_job_dir is not None:
+            for f in os.listdir(batch_job_dir):
                 if re.match("sub.*\.stdout", f):
-                    if stdoutFile == None:
-                        stdoutFile = os.path.join(batchJobDir, f)
-                    elif raiseError:
+                    if stdout_file is None:
+                        stdout_file = os.path.join(batch_job_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.stdout files although it should be one")
                 if re.match("sub.*\.stderr", f):
-                    if stderrFile == None:
-                        stderrFile = os.path.join(batchJobDir, f)
-                    elif raiseError:
+                    if stderr_file is None:
+                        stderr_file = os.path.join(batch_job_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.stderr files although it should be one")
                 if re.match("sub.*\.appstdout", f):
-                    if appstdoutFile == None:
-                        appstdoutFile = os.path.join(batchJobDir, f)
-                    elif raiseError:
+                    if appstdout_file is None:
+                        appstdout_file = os.path.join(batch_job_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.appstdout files although it should be one")
         else:
-            batchJobDir = jobfilesDir
-            for f in os.listdir(jobfilesDir):
+            batch_job_dir = jobfiles_dir
+            for f in os.listdir(jobfiles_dir):
                 if re.match("stdout", f):
-                    if stdoutFile == None:
-                        stdoutFile = os.path.join(jobfilesDir, f)
-                    elif raiseError:
+                    if stdout_file is None:
+                        stdout_file = os.path.join(jobfiles_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.stdout files although it should be one")
                 if re.match("stderr", f):
-                    if stderrFile == None:
-                        stderrFile = os.path.join(jobfilesDir, f)
-                    elif raiseError:
+                    if stderr_file is None:
+                        stderr_file = os.path.join(jobfiles_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.stderr files although it should be one")
                 if re.match("appstdout", f):
-                    if appstdoutFile == None:
-                        appstdoutFile = os.path.join(jobfilesDir, f)
-                    elif raiseError:
+                    if appstdout_file is None:
+                        appstdout_file = os.path.join(jobfiles_dir, f)
+                    elif raise_error:
                         raise IOError("Error: found multiple sub*.appstdout files although it should be one")
             if os.path.isfile(os.path.join(self.taskDir, "proc", "log")):
-                taskexeclogFile = os.path.join(self.taskDir, "proc", "log")
-        if batchJobDir == None or stdoutFile == None or stderrFile == None:
-            if raiseError: raise IOError(
+                taskexeclog_file = os.path.join(self.taskDir, "proc", "log")
+        if batch_job_dir is None or stdout_file is None or stderr_file is None:
+            if raise_error: raise IOError(
                 "Error: standard files is not present among job-files copied from remote resource.")
-        return (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile)
+        return batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file
 
     def check_if_subtasks_done_proccessing_results(self):
-        subTaskInfo = self.get_sub_task_info()
-        if len(subTaskInfo) == 0:
+        sub_task_info = self.get_sub_task_info()
+        if len(sub_task_info) == 0:
             self.status = "Subtasks are done with proccessing results"
             self.status_info = "Subtasks are done with proccessing results"
             self.ToDoNextString = "process_results"
@@ -459,50 +460,55 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             self.status_info = "Waiting for subtasks to proccess results"
             return datetime.timedelta(minutes=5)
 
-    def process_results(self, Verbose=True):
-        if Verbose: print("Processing the output")
+    def process_results(self):
+        if log.verbose:
+            print("Processing the output")
+
+        result_file = None
+
         try:
-            jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-            resultFile = os.path.join(self.taskDir, "result.xml")
+            result_file = os.path.join(self.taskDir, "result.xml")
 
             if hasattr(self, 'ReportFormat'):  # i.e. fatal error and the last one is already in status/status_info
                 if self.ReportFormat == "Error":
                     self.ToDoNextString = "push_to_db"
-                    self.write_error_xml(resultFile)
+                    self.write_error_xml(result_file)
                     return datetime.timedelta(seconds=3)
 
-            (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files(raiseError=True)
+            (batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file) = \
+                self.get_result_files(raise_error=True)
 
             # get the performance data
-            parserfilename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
-            import imp
-            with open(parserfilename, 'rb') as fp:
-                thisAppKerParser = imp.load_module(
-                    'thisAppKerParser', fp, parserfilename,
-                    ('.py', 'rb', imp.PY_SOURCE)
-                )
+            parser_filename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
 
-            appKerNResVars = {}
-            appKerNResVars['resource'] = self.resource
-            appKerNResVars['resource'].update(self.resourceParam)
-            appKerNResVars['app'] = self.app
-            appKerNResVars['app'].update(self.appParam)
-            appKerNResVars['taskId'] = self.task_id
-            appKerNResVars['subTasksId'] = self.subTasksId
+            import importlib.machinery
+            this_app_ker_parser = importlib.machinery.SourceFileLoader(
+                'this_app_ker_parser', parser_filename).load_module()
 
-            performance = thisAppKerParser.processAppKerOutput(appstdout=appstdoutFile,
-                                                               geninfo=os.path.join(batchJobDir, "gen.info"),
-                                                               appKerNResVars=appKerNResVars)
-            if performance == None:
+            app_ker_n_res_vars = {
+                'resource': self.resource,
+                'app': self.app,
+                'taskId': self.task_id,
+                'subTasksId': self.subTasksId
+            }
+            app_ker_n_res_vars['resource'].update(self.resourceParam)
+            app_ker_n_res_vars['app'].update(self.appParam)
+
+            performance = this_app_ker_parser.processAppKerOutput(
+                appstdout=appstdout_file, geninfo=os.path.join(batch_job_dir, "gen.info"),
+                appKerNResVars=app_ker_n_res_vars)
+
+            if performance is None:
                 self.status = "ERROR: Job have not finished successfully"
                 self.status_info = ""
                 self.ToDoNextString = "push_to_db"
-                self.write_error_xml(resultFile)
+                self.write_error_xml(result_file)
             else:
-                fout = open(resultFile, "w")
-                content = fout.write(performance)
+                fout = open(result_file, "w")
+                fout.write(performance)
                 fout.close()
-                self.status = "Output was processed and found that kernel either exited with error or executed successfully."
+                self.status = "Output was processed and found that kernel either " \
+                    "exited with error or executed successfully."
                 self.status_info = "Done"
                 self.ToDoNextString = "push_to_db"
             return datetime.timedelta(seconds=3)
@@ -513,20 +519,18 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             self.fatal_errors_count += 1
             akrr.util.log.log_traceback(self.status)
             self.ToDoNextString = "push_to_db"
-            self.write_error_xml(resultFile)
+            if result_file is not None:
+                self.write_error_xml(result_file)
             return datetime.timedelta(seconds=3)
 
-    def push_to_db(self, Verbose=True):
-
+    def push_to_db(self):
         db, cur = akrr.db.get_akrr_db()
         try:
-
-            time_finished = None
             if hasattr(self, 'TimeJobPossiblyCompleted'):
                 time_finished = self.TimeJobPossiblyCompleted
             else:
                 time_finished = datetime.datetime.today()
-            self.push_to_db_raw(cur, self.task_id, time_finished, Verbose)
+            self.push_to_db_raw(cur, self.task_id, time_finished)
             db.commit()
             cur.close()
             del db
@@ -537,10 +541,7 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             db.commit()
             cur.close()
             del db
-            if hasattr(self, 'PushToDBAttemps'):
-                self.PushToDBAttemps += 1
-            else:
-                self.PushToDBAttemps = 1
+            self.PushToDBAttemps += 1
 
             if self.PushToDBAttemps <= cfg.export_db_max_repeat_attempts:
                 akrr.util.log.log_traceback("AKRR server was not able to push to external DB.")
@@ -554,15 +555,17 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 self.ToDoNextString = "task_is_complete"
                 return None
 
-    def push_to_db_raw(self, cur, task_id, time_finished, Verbose=True):
+    def push_to_db_raw(self, cur, task_id, time_finished):
         print("Pushing to DB")
+        import xml.etree.ElementTree as ElementTree
+        import xml.dom.minidom
 
-        resultFile = os.path.join(self.taskDir, "result.xml")
-        jobfilesDir = os.path.join(self.taskDir, "jobfiles")
-        (batchJobDir, stdoutFile, stderrFile, appstdoutFile, taskexeclogFile) = self.get_result_files()
+        result_file = os.path.join(self.taskDir, "result.xml")
+        jobfiles_dir = os.path.join(self.taskDir, "jobfiles")
+        (batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file) = self.get_result_files()
 
         # sanity check
-        fin = open(resultFile, "r")
+        fin = open(result_file, "r")
         content = fin.read()
         fin.close()
         if content[0] != '<':
@@ -570,67 +573,51 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             i0 = content.find("<rep:report")
             i1 = content.find("</rep:report>")
 
-            fout = open(resultFile, "w")
+            fout = open(result_file, "w")
             content = fout.write("<?xml version='1.0'?>\n" + content[i0:i1 + len("</rep:report>")] + "\n")
             fout.close()
 
-        import xml.etree.ElementTree as ET
         try:
 
-            tree = ET.parse(resultFile)
-            root = tree.getroot()
+            tree = ElementTree.parse(result_file)
+            tree.getroot()
         except:
             self.status_info = "(1)==Resulting XML file content==\n" + content + \
                               "\n==Previous status==" + self.status + \
                               "\n==Previous status info==" + self.status_info + "\n" + \
                               traceback.format_exc()
             self.status = "Cannot process final XML file"
-            self.write_error_xml(resultFile, cdata=True)
+            self.write_error_xml(result_file, cdata=True)
 
         instance_id = task_id
-        collected = None
-        committed = None
-        resource = None
-        executionhost = None
-        reporter = None
-        reporternickname = None
-        status = None
         message = None
         stderr = None
-        body = None
-        memory = None
-        cputime = None
-        walltime = None
-        memory = 0.0
-        cputime = 0.0
-        walltime = 0.0
         job_id = None
 
-        cur.execute("""SELECT instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id
+        cur.execute("""SELECT instance_id,collected,committed,resource,executionhost,reporter,
+            reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id
             FROM akrr_xdmod_instanceinfo WHERE instance_id=%s""", (task_id,))
         raw = cur.fetchone()
-        if raw != None:  # .i.e. not new entry
+        if raw is not None:  # .i.e. not new entry
             (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status, message,
              stderr, body, memory, cputime, walltime, job_id) = raw
-            if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
+            if self.RemoteJobID is not None:
+                job_id = self.RemoteJobID
         else:
             collected = time_finished
             committed = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
             resource = self.resourceName
             executionhost = self.resource.get('__regexp__', self.resourceName)
             reporter = self.appName
-            # reporternickname="%s.%d"%(self.appName,self.resourceParam['ncpus'])
             reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
                                                            [self.resource, self.app, self.resourceParam, self.appParam])
 
             if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
 
         # Process XML file
-        import xml.etree.ElementTree as ET
-        root = None
         try:
 
-            tree = ET.parse(resultFile)
+            tree = ElementTree.parse(result_file)
             root = tree.getroot()
         except:
             self.status_info = "(2)==Resulting XML file content==\n" + content + \
@@ -643,8 +630,7 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
         cputime = 0.0
         walltime = 0.0
 
-        if root != None:
-            completed = None
+        if root is not None:
             try:
                 t = root.find('exitStatus').find('completed').text
 
@@ -660,7 +646,6 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
             except:
                 completed = None
 
-            error = None
             try:
 
                 t = root.find('xdtas').find('batchJob').find('status').text
@@ -672,21 +657,21 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 error = None
 
             status = 0
-            if completed != None:
+            if completed is not None:
                 if completed:
                     status = 1
 
-            if completed != None:
-                if completed == True:
-                    bodyET = root.find('body').find('performance')
-                    body = ET.tostring(bodyET)
-                    import xml.dom.minidom
+            if completed is not None:
+                if completed is True:
+                    body_et = root.find('body').find('performance')
+                    body = ElementTree.tostring(body_et)
+
                     xml = xml.dom.minidom.parseString(body)
                     body = xml.toprettyxml()
                     body = body.replace("""<?xml version="1.0" ?>\n""", "")
 
-                    statisticsET = root.find('body').find('performance').find('benchmark').find('statistics')
-                    for e in statisticsET:
+                    statistics_et = root.find('body').find('performance').find('benchmark').find('statistics')
+                    for e in statistics_et:
                         if e.find('ID').text == 'Memory':
                             memory = float(e.find('value').text)
                         if e.find('ID').text == 'Wall Clock Time':
@@ -716,18 +701,18 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
        <errorMsg></errorMsg>
       </batchJob>
      </xdtas>
-    """ % (reporter)
-            elif completed == None:
-                if error != None:  # i.e. xml with error generated afterwards
-                    if error == True:
+    """ % reporter
+            elif completed is None:
+                if error is not None:  # i.e. xml with error generated afterwards
+                    if error is True:
                         # fin=open(resultFile,"r")
                         # body=fin.read()
                         # fin.close
                         message = root.find('xdtas').find('batchJob').find('errorCause').text
                         stderr = root.find('xdtas').find('batchJob').find('errorMsg').text
 
-                        bodyET = root.find('xdtas')
-                        body = ET.tostring(bodyET)
+                        body_et = root.find('xdtas')
+                        body = ElementTree.tostring(body_et)
                     else:
                         raise IOError("This condition should not happens")
                 else:
@@ -756,24 +741,18 @@ class akrrTaskHandlerBundle(AkrrTaskHandlerBase):
 
         # Get Nodes
         nodes = None
-        nodesFileName = os.path.join(jobfilesDir, "nodes")
-        if (os.path.isfile(nodesFileName)):
+        nodes_file_name = os.path.join(jobfiles_dir, "nodes")
+        if os.path.isfile(nodes_file_name):
             parser = AppKerOutputParser()
-            parser.parseCommonParsAndStats(geninfo=geninfo)
+            parser.parseCommonParsAndStats(geninfo=os.path.join(batch_job_dir, "gen.info"))
             nodes = ";"
             for line in parser.nodesList:
                 line = line.strip()
-                nodes += "%s;" % (line)
+                nodes += "%s;" % line
             if len(nodes.strip().strip(';')) == 0:
                 nodes = None
 
-        import xml.dom.minidom
-        # print "#"*120
-        # print resultFile
-        # print instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,memory,cputime,walltime
-        # print body
-        # cur.execute("""SELECT * FROM akrr_xdmod_instanceinfo WHERE instance_id=%s""",(task_id,))
-        if raw != None:  # .i.e. new entry
+        if raw is not None:  # .i.e. new entry
             print("Updating")
             cur.execute("""UPDATE akrr_xdmod_instanceinfo
 SET instance_id=%s,collected=%s,committed=%s,resource=%s,executionhost=%s,reporter=%s,
@@ -782,51 +761,43 @@ WHERE instance_id=%s""",
                         (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status,
                          message, stderr, body, memory, cputime, walltime, job_id, nodes,
                          instance_id))
-            # (instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime)=raw
         else:
             cur.execute("""INSERT INTO akrr_xdmod_instanceinfo
 (instance_id,collected,committed,resource,executionhost,reporter,reporternickname,status,message,stderr,body,memory,cputime,walltime,job_id,nodes)
 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                         (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, status,
                          message, stderr, body, memory, cputime, walltime, job_id, nodes))
+        if appstdout_file is not None:
+            fin = open(appstdout_file, "r")
+            appstdout_file_content = fin.read()
+            fin.close()
+        else:
+            appstdout_file_content = "Does Not Present"
+        if stdout_file is not None:
+            fin = open(stdout_file, "r")
+            stdout_file_content = fin.read()
+            fin.close()
+        else:
+            stdout_file_content = "Does Not Present"
+        if stderr_file is not None:
+            fin = open(stderr_file, "r")
+            stderr_file_content = fin.read()
+            fin.close()
+        else:
+            stderr_file_content = "Does Not Present"
 
-        # print appstdoutFile,stdoutFile,stderrFile
-        appstdoutFileContent = None
-        stdoutFileContent = None
-        stderrFileContent = None
-        taskexeclogFileContent = None
-        if appstdoutFile != None:
-            fin = open(appstdoutFile, "r")
-            appstdoutFileContent = fin.read()
+        if taskexeclog_file is not None:
+            fin = open(taskexeclog_file, "r")
+            taskexeclog_file_content = fin.read()
             fin.close()
         else:
-            appstdoutFileContent = "Does Not Present"
-        if stdoutFile != None:
-            fin = open(stdoutFile, "r")
-            stdoutFileContent = fin.read()
-            fin.close()
-        else:
-            stdoutFileContent = "Does Not Present"
-        if stderrFile != None:
-            fin = open(stderrFile, "r")
-            stderrFileContent = fin.read()
-            fin.close()
-        else:
-            stderrFileContent = "Does Not Present"
-
-        if taskexeclogFile != None:
-            fin = open(taskexeclogFile, "r")
-            taskexeclogFileContent = fin.read()
-            fin.close()
-        else:
-            taskexeclogFileContent = "Does Not Present"
+            taskexeclog_file_content = "Does Not Present"
 
         cur.execute("""INSERT INTO akrr_errmsg
         (task_id,appstdout,stderr,stdout,taskexeclog)
         VALUES (%s,%s,%s,%s,%s)""",
-                    (instance_id, (appstdoutFileContent), (stderrFileContent), (stdoutFileContent),
-                     taskexeclogFileContent))
-        # (instance_id,akrrcfg.clean_unicode(appstdoutFileContent),akrrcfg.clean_unicode(stderrFileContent),akrrcfg.clean_unicode(stdoutFileContent)))
+                    (instance_id, appstdout_file_content, stderr_file_content, stdout_file_content,
+                     taskexeclog_file_content))
 
     def task_is_complete(self):
         print("Done", self.taskDir)
@@ -837,34 +808,34 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
 
     def terminate(self):
         #
-        CanBeSafelyRemoved = False
-        if not hasattr(self, "RemoteJobID"):
+        can_be_safely_removed = False
+        if self.RemoteJobID is None:
             # i.e. not running remotely and everything is on local disk
-            CanBeSafelyRemoved = True
+            can_be_safely_removed = True
         else:
             #
             if self.remove_task_from_remote_queue() is None:
                 # i.e. "Task is probably removed from remote queue.":
-                CanBeSafelyRemoved = True
-        if CanBeSafelyRemoved:
+                can_be_safely_removed = True
+        if can_be_safely_removed:
             # remove remote directory
             pass
-        return CanBeSafelyRemoved
+        return can_be_safely_removed
 
     def remove_task_from_remote_queue(self):
         sh = None
         try:
             from string import Template
-            kE = kill_expressions[self.resource['batchScheduler']]
-            cmd = Template(kE[0]).substitute(jobId=str(self.RemoteJobID))
-            msg = akrr.util.ssh.ssh_resource(self.resource, cmd)
+            kill_expr = kill_expressions[self.resource['batchScheduler']]
+            cmd = Template(kill_expr[0]).substitute(jobId=str(self.RemoteJobID))
+            msg = ssh_resource(self.resource, cmd)
             print(msg)
             self.status = "Task is probably removed from remote queue."
             self.status_info = copy.deepcopy(msg)
             self.ToDoNextString = "task_is_complete"
             return None
         except:
-            if sh != None:
+            if sh is not None:
                 sh.sendline("exit")
                 sh.close(force=True)
                 del sh

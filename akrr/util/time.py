@@ -214,8 +214,6 @@ def calculate_random_start_time(start_time, periodicity, time_start, time_end):
             the provided periodicity and time_start / time_end
     """
     import random
-    from akrr.util.time import to_datetime
-    from akrr.util.time import to_time
 
     time_to_start = get_datetime_time_to_start(start_time).replace(
         hour=0,

@@ -67,11 +67,9 @@ def create_and_populate_tables(
         else:
             for (table_name, table_script) in default_tables:
                 log.dry_run("CREATING: %s" % table_name)
-                #log.info("CREATED: %s SUCCESSFULLY!" % table_name)
 
             for (description, statement) in population_statements:
                 log.dry_run("EXECUTING: %s" % description)
-                #log.info("EXECUTED: %s SUCCESSFULLY!" % description)
         log.info(ending_comment)
     except MySQLdb.Error as e:
         log.critical("Error %d: %s" % (e.args[0], e.args[1]))

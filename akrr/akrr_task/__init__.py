@@ -8,7 +8,7 @@ from ..util import log
 from .. import cfg
 from .akrr_task_base import AkrrTaskHandlerBase
 from .akrr_task_appker import AkrrTaskHandlerAppKer
-from .akrr_task_bundle import akrrTaskHandlerBundle
+from .akrr_task_bundle import AkrrTaskHandlerBundle
 
 
 def get_local_task_dir(resource_name, app_name, time_stamp, task_is_active=True):
@@ -77,11 +77,11 @@ def redirect_stdout_back():
 def get_new_task_handler(task_id, resource_name, app_name, resource_param, app_param, task_param):
     """
     return new instance of TaskHandler.
-    if `app_name` is "*bundle*" it return akrrTaskHandlerBundle to handle bundled task
+    if `app_name` is "*bundle*" it return AkrrTaskHandlerBundle to handle bundled task
     otherwise it return AkrrTaskHandlerAppKer to handle single appkernel task.
     """
     if app_name.count("bundle") > 0:
-        return akrrTaskHandlerBundle(task_id, resource_name, app_name, resource_param, app_param, task_param)
+        return AkrrTaskHandlerBundle(task_id, resource_name, app_name, resource_param, app_param, task_param)
     else:
         return AkrrTaskHandlerAppKer(task_id, resource_name, app_name, resource_param, app_param, task_param)
 
