@@ -1,16 +1,7 @@
-import os
-import sys
-import inspect
-
-#modify python_path so that we can get /src on the path
 import akrr.db
-
-cur_dir=os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-if (cur_dir+"/../../src") not in sys.path:
-    sys.path.append(cur_dir+"/../../src")
-
 from akrr.util import log
 import MySQLdb
+
 
 def check_rw_db(connection_func, pre_msg, post_msg):
     """
@@ -98,9 +89,8 @@ def check_r_db(connection_func, pre_msg, post_msg):
 
     return success
 
-def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
-    from akrr import cfg
-    
+
+def db_check(mod_akrr=True, mod_appkernel=True, modw=True):
     overall_success = True
 
     if mod_akrr:
@@ -127,5 +117,6 @@ def db_check(mod_akrr=True,mod_appkernel=True,modw=True):
         log.info("All Databases / User privileges check out!")
         return True
     else:
-        log.error("One or more of the required databases and their required users ran into a problem. Please take note of the previous messages, correct the issue and re-run this script.")
+        log.error("One or more of the required databases and their required users ran into a problem. "
+                  "Please take note of the previous messages, correct the issue and re-run this script.")
         return False

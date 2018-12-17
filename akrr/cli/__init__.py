@@ -134,11 +134,6 @@ class CLI:
         log.error("There is no command specified!")
         return
 
-        parser = argparse.ArgumentParser(description='command line interface to AKRR')
-        parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
-
-        subparsers = parser.add_subparsers()
-
         query_parser = subparsers.add_parser('query',
                                              description='Query XDMoD for a list of available resource and update the AKRR database.')
         query_parser.add_argument('-d', '--dryrun', action='store_true',

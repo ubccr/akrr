@@ -421,7 +421,7 @@ class AkrrDaemon:
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
                 th.ReportFormat = "Error"
                 th.process_results()
-                if th.push_to_db() is not None:
+                if th.push_to_db is not None:
                     log.error("Can not push to DB")
                 akrr_task.dump_task_handler(th)
                 status = copy.deepcopy(th.status)

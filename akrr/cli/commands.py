@@ -101,12 +101,8 @@ def cli_daemon_checknrestart(parent_parser):
     """check if AKRR daemon is up if not it will restart it"""
     parser = parent_parser.add_parser('checknrestart', description=cli_daemon_checknrestart.__doc__)
 
-    def handler(args):
+    def handler(_):
         from akrr.daemon import daemon_check_and_start_if_needed
-        # if args.cron:
-        #    args.append = True
-        #    args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
-
         return daemon_check_and_start_if_needed()
 
     parser.set_defaults(func=handler)
@@ -116,7 +112,7 @@ def cli_daemon_monitor(parent_parser):
     """monitor the activity of Application Remote Runner"""
     parser = parent_parser.add_parser('monitor', description=cli_daemon_monitor.__doc__)
 
-    def handler(args):
+    def handler(_):
         from akrr.daemon import AkrrDaemon
         sch = AkrrDaemon()
         return sch.monitor()
@@ -128,7 +124,7 @@ def cli_daemon_status(parent_parser):
     """print current status of Application Remote Runner"""
     parser = parent_parser.add_parser('status', description=cli_daemon_status.__doc__)
 
-    def handler(args):
+    def handler(_):
         from akrr.daemon import AkrrDaemon
         sch = AkrrDaemon()
         return sch.check_status()
@@ -159,28 +155,6 @@ def cli_daemon_startdeb(parent_parser):
             redirect_task_processing_to_log_file=args.redirect_task_processing_to_log_file)
 
     parser.set_defaults(func=handler)
-
-
-def daemon_handler(args):
-    """AKRR daemon handler"""
-    log.debug(args)
-
-    from akrr import cfg
-
-
-
-    import akrr.daemon
-
-    if args.action == "startdeb":
-        akrr.debug = True
-
-        if args.max_task_handlers is not None:
-            cfg.max_task_handlers = args.max_task_handlers
-        if args.redirect_task_processing_to_log_file is not None:
-            cfg.redirect_task_processing_to_log_file = args.redirect_task_processing_to_log_file > 0
-
-    return akrr.daemon.akrrd_main2(args.action, args.append, args.output_file)
-
 
 
 def add_command_setup(parent_parser):
@@ -323,9 +297,10 @@ def cli_resource_remove(parent_parser):
     parser.add_argument(
         '-r', '--resource', required=True, help="name of resource for validation and deployment'")
 
-    def handler(args):
-        from .resource_remove import resource_remove
-        return resource_remove(vars(args))
+    def handler(_):
+        raise NotImplementedError()
+        # from .resource_remove import resource_remove
+        # return resource_remove(vars(args))
 
     parser.set_defaults(func=handler)
 

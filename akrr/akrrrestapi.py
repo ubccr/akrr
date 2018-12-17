@@ -85,14 +85,11 @@ DEFAULT_PAGE = 0
 DEFAULT_PAGE_SIZE = 10
 
 
-def validateTaskVariableValue(k, v):
+def validate_task_variable_value(k, v):
     """validate value of task variable, reformat if needed/possible
     raise error if value is incorrect
     return value or reformated value"""
-    #try:
     return daemon.validate_task_parameters(k, v)
-    #except Exception as e:
-    #    raise e
 
 
 ###############################################################################
@@ -105,17 +102,21 @@ issued_tokens = {}
 
 
 def generate_token():
-    "generate unique token id"
-    N = 32
+    """
+    generate unique token id
+    """
+    length = 32
     new_token = ''.join(
-        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(N))
+        random.choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length))
     while new_token in list(issued_tokens.keys()):
-        new_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(N))
+        new_token = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(length))
     return new_token
 
 
 def check_expired_tokens():
-    "check and delete expired tokens"
+    """
+    check and delete expired tokens
+    """
     tokens = list(issued_tokens.keys())
     epoch_time = int(time.time())
     for token in tokens:
@@ -132,13 +133,13 @@ def auth_by_passwd(user, passwd):
     raise bottle.HTTPError(401, "Incorrect username or password")
 
 
-def auth_by_token_for_read(token, passwd):
+def auth_by_token_for_read(token, _):
     if token in issued_tokens:
         if issued_tokens[token]['expiration'] < int(time.time()):
             check_expired_tokens()
             raise bottle.HTTPError(401, "Access denied. Token Expired")
         check_expired_tokens()
-        if issued_tokens[token]['read'] == True:
+        if issued_tokens[token]['read'] is True:
             return True
         else:
             raise bottle.HTTPError(403, "Access denied. Not enough rights for reads.")
@@ -146,13 +147,13 @@ def auth_by_token_for_read(token, passwd):
     raise bottle.HTTPError(401, "Access denied")
 
 
-def auth_by_token_for_write(token, passwd):
+def auth_by_token_for_write(token, _):
     if token in issued_tokens:
         if issued_tokens[token]['expiration'] < int(time.time()):
             check_expired_tokens()
             raise bottle.HTTPError(401, "Access denied. Token Expired")
         check_expired_tokens()
-        if issued_tokens[token]['write'] == True:
+        if issued_tokens[token]['write'] is True:
             return True
         else:
             raise bottle.HTTPError(403, "Access denied. Not enough rights for writes.")
@@ -217,7 +218,7 @@ def create_scheduled_tasks():
         log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
-        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        params[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     for k in must_params:
         if k not in params:
@@ -262,7 +263,7 @@ def get_scheduled_tasks():
         log.debug("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in params:
             raise ValueError('Unknown parameter %s' % (k,))
-        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        params[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     query = "SELECT * FROM scheduled_tasks"
 
@@ -332,7 +333,7 @@ def update_scheduled_tasks(task_id):
     update_values = {}
 
     for k in list(bottle.request.forms.keys()):
-        update_values[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        update_values[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     if len(possible_task) == 1:
         # task still in scheduled_tasks queue
@@ -360,7 +361,7 @@ def update_scheduled_tasks(task_id):
         pass
     m_response = proc_queue_from_master.get()
 
-    if ("success" in m_response) and (m_response["success"] == True):
+    if ("success" in m_response) and (m_response["success"] is True):
         m_response["message"] = "Task successfully updated!"
 
     return m_response
@@ -374,8 +375,8 @@ def delete_scheduled_task_by_id(task_id):
     Attempts to delete the scheduled task identified by the route parameter 'task_id'.
     If task makes to active queue will delete it and will delete new scheduled task (in case if task was periodic)
     
-    if task still in scheduled_tasks queue and its execution time is at lest in 5 minutes in the future, delete it by itself
-    otherwise ask master to delete it
+    if task still in scheduled_tasks queue and its execution time is at lest in 5 minutes in the future, delete it by
+    itself otherwise ask master to delete it
     """
 
     # is the task still in scheduled queue and what time left till it execution
@@ -445,8 +446,7 @@ def get_active_tasks(task_id):
     """
     db, cur = akrr.db.get_akrr_db(True)
 
-    cur.execute('''SELECT * FROM active_tasks
-            WHERE task_id=%s''', (task_id,))
+    cur.execute('''SELECT * FROM active_tasks WHERE task_id=%s''', (task_id,))
     task = cur.fetchall()
 
     cur.close()
@@ -455,15 +455,14 @@ def get_active_tasks(task_id):
         task = task[0]
         try:
             from . import akrr_task
-            taskDir = akrr_task.get_local_task_dir(task['resource'], task['app'], task['datetime_stamp'])
-            logFile = os.path.join(taskDir, 'proc', 'log')
-            with open(logFile, "r") as fin:
-                logFileContent = fin.read()
+            task_dir = akrr_task.get_local_task_dir(task['resource'], task['app'], task['datetime_stamp'])
+            log_file = os.path.join(task_dir, 'proc', 'log')
+            with open(log_file, "r") as fin:
+                log_file_content = fin.read()
 
-            task['log'] = logFileContent
+            task['log'] = log_file_content
         except Exception as e:
             raise e
-            task['log'] = 'Log file can not be found'
 
         return task
     else:
@@ -484,10 +483,10 @@ def update_active_tasks(task_id):
         # raise bottle.HTTPError(400, 'Only next_check_time can be updated in active tasks!')
     update_values = {}
     for k in list(bottle.request.forms.keys()):
-        update_values[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        update_values[k] = validate_task_variable_value(k, bottle.request.forms[k])
     if 'next_check_time' not in list(bottle.request.forms.keys()):
-        update_values['next_check_time'] = validateTaskVariableValue('next_check_time',
-                                                                     datetime.datetime.now().strftime(
+        update_values['next_check_time'] = validate_task_variable_value('next_check_time',
+                                                                        datetime.datetime.now().strftime(
                                                                          "%Y-%m-%d %H:%M:%S"))
 
     # get task
@@ -557,20 +556,20 @@ def delete_active_tasks(task_id):
             "message": "Task is not in active queue",
         }
     # still here, ask master to do the job
-    request = {
+    m_request = {
         'fun': 'delete_task',
         'args': (task_id,),
         'kargs': {'removeFromScheduledQueue': False, 'removeFromActiveQueue': True, 'removeDerivedTask': False}
     }
-    proc_queue_to_master.put(request)
+    proc_queue_to_master.put(m_request)
     while not proc_queue_from_master.empty():
         pass
-    response = proc_queue_from_master.get()
+    m_response = proc_queue_from_master.get()
 
-    if ("success" in response) and (response["success"] == True):
-        response["message"] = "Task successfully deleted!"
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Task successfully deleted!"
 
-    return response
+    return m_response
 
 
 # Completed tasks
@@ -1398,7 +1397,7 @@ def upsert_walltime(resource, app):
         print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
-        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        params[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     for k in must_params:
         if k not in params:
@@ -1469,7 +1468,7 @@ def get_walltime_by_resource_app(resource, app):
         print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
-        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        params[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     for k in must_params:
         if k not in params:
@@ -1522,7 +1521,7 @@ def update_walltime_by_id(walltime_id):
         print("Received: %r=>%r" % (k, bottle.request.forms[k]))
         if k not in must_params:
             raise bottle.HTTPError(400, 'Unknown parameter %s' % (k,))
-        params[k] = validateTaskVariableValue(k, bottle.request.forms[k])
+        params[k] = validate_task_variable_value(k, bottle.request.forms[k])
 
     for k in must_params:
         if k not in params:
