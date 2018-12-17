@@ -15,7 +15,7 @@ import akrr.db
 import akrr.util.ssh
 from akrr.util import log
 
-from akrr.util.check import check_dir
+from akrr.util.ssh import check_dir
 
 pp = pprint.PrettyPrinter(indent=4)
 

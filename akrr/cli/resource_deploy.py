@@ -20,7 +20,7 @@ from akrr import akrrrestclient
 from akrr.akrrerror import AkrrError
 import akrr.util.log as log
 import akrr.util.openstack
-from akrr.util.check import check_dir
+from akrr.util.ssh import check_dir
 
 pp = pprint.PrettyPrinter(indent=4)
 
