@@ -21,16 +21,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
+    parser.add_must_have_parameter('App:Version')
     
-    parser.setMustHaveStatistic('Wall Clock Time')
-    parser.setMustHaveStatistic('User Time')
-    parser.setMustHaveStatistic('Time Spent in MP2 Energy Calculation')
-    parser.setMustHaveStatistic('Time Spent in Restricted Hartree-Fock Calculation')
+    parser.add_must_have_statistic('Wall Clock Time')
+    parser.add_must_have_statistic('User Time')
+    parser.add_must_have_statistic('Time Spent in MP2 Energy Calculation')
+    parser.add_must_have_statistic('Time Spent in Restricted Hartree-Fock Calculation')
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -49,18 +49,18 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
        m=re.search(r'GAMESS VERSION = ([^*]+)',lines[j])
-       if m:parser.setParameter("App:Version",m.group(1).strip())
+       if m:parser.set_parameter("App:Version", m.group(1).strip())
        
        m=re.search(r'PARALLEL VERSION RUNNING ON\s*([\d\.]+) PROCESSORS IN\s*([\d\.]+) NODE',lines[j])
        if m:
-           parser.setParameter("App:NCores",m.group(1).strip())
-           parser.setParameter("App:NNodes",m.group(2).strip())
+           parser.set_parameter("App:NCores", m.group(1).strip())
+           parser.set_parameter("App:NNodes", m.group(2).strip())
        
        m=re.search(r'EXECUTION OF GAMESS BEGUN (.+)',lines[j])
-       if m:startTime=parser.getDateTimeLocal(m.group(1).strip())
+       if m:startTime=parser.get_datetime_local(m.group(1).strip())
        
        m=re.search(r'EXECUTION OF GAMESS TERMINATED NORMALLY (.+)',lines[j])
-       if m:endTime=parser.getDateTimeLocal(m.group(1).strip())
+       if m:endTime=parser.get_datetime_local(m.group(1).strip())
        
        if re.search(r'DONE WITH MP2 ENERGY',lines[j]):
            j+=1
@@ -80,26 +80,26 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     if startTime and endTime:
         wallTime=total_seconds(endTime-startTime)
         if wallTime >= 0.0:
-            parser.setStatistic('Wall Clock Time', str(wallTime), "Second" )
+            parser.set_statistic('Wall Clock Time', str(wallTime), "Second")
             if efficiency:
-                parser.setStatistic( "User Time", str((0.01 * efficiency * wallTime)), "Second" )
+                parser.set_statistic("User Time", str((0.01 * efficiency * wallTime)), "Second")
     
-    parser.setStatistic("Time Spent in MP2 Energy Calculation", str(MP2EnergyCalculationTime), "Second" )
-    parser.setStatistic("Time Spent in Restricted Hartree-Fock Calculation", str(RHFCalculationTime),"Second" )
+    parser.set_statistic("Time Spent in MP2 Energy Calculation", str(MP2EnergyCalculationTime), "Second")
+    parser.set_statistic("Time Spent in Restricted Hartree-Fock Calculation", str(RHFCalculationTime), "Second")
     
     if "attemptsToLaunch" in parser.geninfo:
-        parser.setStatistic("Attempts to Launch", parser.geninfo['attemptsToLaunch'] )
+        parser.set_statistic("Attempts to Launch", parser.geninfo['attemptsToLaunch'])
     else:
-        parser.setStatistic("Attempts to Launch", 1 )
+        parser.set_statistic("Attempts to Launch", 1)
     
     if __name__ == "__main__":
         #output for testing purpose
-        print(("parsing complete:",parser.parsingComplete()))
-        parser.printParsNStatsAsMustHave()
-        print((parser.getXML()))
+        print(("parsing complete:",parser.parsing_complete()))
+        parser.print_params_stats_as_must_have()
+        print((parser.get_xml()))
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

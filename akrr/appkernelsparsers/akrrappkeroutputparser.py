@@ -7,9 +7,10 @@
 import re
 import os
 import datetime
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ElementTree
 import xml.dom.minidom
 import traceback
+import akrr.util.log as log
 
 
 # add total_seconds function to datetime.timedelta if python is old
@@ -18,7 +19,7 @@ def total_seconds(d):
 
 
 class AppKerOutputParser:
-    def __init__(self, name='', version=1, description='', url='', measurement_name=''):
+    def __init__(self, name='', version=1, description='', url='', measurement_name='', resource_appker_vars=None):
         self.name = name
         self.version = version
         self.description = description
@@ -31,26 +32,43 @@ class AppKerOutputParser:
         self.statistics = []
         self.mustHaveParameters = []
         self.mustHaveStatistics = []
+        self.resource_appker_vars = resource_appker_vars
         # complete
+        self.successfulRun = None
         self.completeOnPartialMustHaveStatistics = False
 
-    def setParameter(self, name, val, units=None):
+        self.nodesList = None
+        self.startTime = None
+        self.endTime = None
+        self.wallClockTime = None
+        self.appKerWallClockTime = None
+        self.geninfo = None
+
+        self.filesExistance = {}
+        self.dirAccess = {}
+
+    def set_parameter(self, name, val, units=None, set_none_value=False):
+        if val is None and set_none_value is False:
+            return
+
         if not isinstance(val, str):
             val = str(val)
         self.parameters.append([name, val, units])
 
-    def setStatistic(self, name, val, units=None):
+    def set_statistic(self, name, val, units=None, set_none_value=False):
+        if val is None and set_none_value is False:
+            return
         if not isinstance(val, str):
             val = str(val)
         self.statistics.append([name, val, units])
 
-    def getParameter(self, name):
+    def get_parameter(self, name):
         for p in self.parameters:
             if p[0] == name:
                 return p[1]
         return None
 
-    def getStatistic(self, name):
+    def get_statistic(self, name):
         for p in self.statistics:
             if p[0] == name:
                 return p[1]
@@ -72,7 +90,7 @@ class AppKerOutputParser:
 
         return s
 
-    def getUniqueParameters(self):
+    def get_unique_parameters(self):
         r = []
         names = []
         for i in range(len(self.parameters) - 1, -1, -1):
@@ -82,7 +100,7 @@ class AppKerOutputParser:
         r.sort(key=lambda x: x[0])
         return r
 
-    def getUniqueStatistic(self):
+    def get_unique_statistic(self):
         r = []
         names = []
         for i in range(len(self.statistics) - 1, -1, -1):
@@ -92,25 +110,32 @@ class AppKerOutputParser:
         r.sort(key=lambda x: x[0])
         return r
 
-    def setMustHaveParameter(self, name):
+    def add_must_have_parameter(self, name: str) -> None:
+        """
+        Add must have parameter, this parameter must be present after processing of AK output
+        """
         self.mustHaveParameters.append(name)
 
-    def setMustHaveStatistic(self, name):
+    def add_must_have_statistic(self, name: str) -> None:
+        """
+        Add must have statistic, this parameter must be present after processing of AK output
+        """
         self.mustHaveStatistics.append(name)
 
-    def setCommonMustHaveParsAndStats(self):
-        self.setMustHaveParameter('App:ExeBinSignature')
-        self.setMustHaveParameter('RunEnv:Nodes')
+    def add_common_must_have_params_and_stats(self) -> None:
+        """
+        Add must have parameter and statistic used across all
+        """
+        self.add_must_have_parameter('App:ExeBinSignature')
+        self.add_must_have_parameter('RunEnv:Nodes')
 
-    def parseCommonParsAndStats(self, appstdout=None, stdout=None, stderr=None, geninfo=None):
-        # retreave node lists and set respective parameter
-        self.nodesList = ""
+    def parse_common_params_and_stats(self, appstdout=None, stdout=None, stderr=None, geninfo=None):
+        # retrieve node lists and set respective parameter
         try:
-            if geninfo != None:
+            if geninfo is not None:
                 if os.path.isfile(geninfo):
-                    fin = open(geninfo, "r")
-                    d = fin.read()
-                    fin.close()
+                    with open(geninfo, "r") as fin:
+                        d = fin.read()
                     # replace old names for compatibility
                     d = d.replace('NodeList', 'nodeList')
                     d = d.replace('StartTime', 'startTime')
@@ -122,22 +147,21 @@ class AppKerOutputParser:
                     if 'nodeList' in gi:
                         self.nodesList = os.popen('echo "%s"|gzip -9|base64 -w 0' % (gi['nodeList'])).read()
                     if 'startTime' in gi:
-                        self.startTime = self.getDateTimeLocal(gi['startTime'])
+                        self.startTime = self.get_datetime_local(gi['startTime'])
                     if 'endTime' in gi:
-                        self.endTime = self.getDateTimeLocal(gi['endTime'])
+                        self.endTime = self.get_datetime_local(gi['endTime'])
                     if 'startTime' in gi and 'endTime' in gi:
                         self.wallClockTime = self.endTime - self.startTime
                     if 'appKerStartTime' in gi and 'appKerEndTime' in gi:
-                        self.appKerWallClockTime = self.getDateTimeLocal(gi['appKerEndTime']) - self.getDateTimeLocal(
-                            gi['appKerStartTime'])
-
+                        self.appKerWallClockTime = AppKerOutputParser.get_datetime_local(gi['appKerEndTime']) - \
+                                                   AppKerOutputParser.get_datetime_local(gi['appKerStartTime'])
                     self.geninfo = gi
         except:
-            print("ERROR: Can not process gen.info file")
-            print((traceback.format_exc()))
-        self.setParameter("RunEnv:Nodes", self.nodesList)
+            log.exception("ERROR: Can not process gen.info file\n"+traceback.format_exc())
 
-        if appstdout != None:
+        self.set_parameter("RunEnv:Nodes", self.nodesList)
+
+        if appstdout is not None:
             # read output
             lines = []
             if os.path.isfile(appstdout):
@@ -146,159 +170,152 @@ class AppKerOutputParser:
                 fin.close()
 
             # process the output
-            ExeBinSignature = ''
+            exe_bin_signature = ''
 
             j = 0
             while j < len(lines):
                 m = re.search(r'===ExeBinSignature===(.+)', lines[j])
-                if m: ExeBinSignature += m.group(1).strip() + '\n'
+                if m:
+                    exe_bin_signature += m.group(1).strip() + '\n'
                 j += 1
+            if exe_bin_signature != '':
+                exe_bin_signature = os.popen('echo "%s"|gzip -9|base64 -w 0' % exe_bin_signature).read()
+            else:
+                exe_bin_signature = None
+            self.set_parameter("App:ExeBinSignature", exe_bin_signature)
 
-            ExeBinSignature = os.popen('echo "%s"|gzip -9|base64 -w 0' % (ExeBinSignature)).read()
-            self.setParameter("App:ExeBinSignature", ExeBinSignature)
-
-        if stdout != None:
+        if stdout is not None and os.path.isfile(stdout):
             # read output
             lines = ""
             if os.path.isfile(stdout):
-                fin = open(stdout, "rt")
-                lines = fin.read()
-                fin.close()
+                with open(stdout, "rt") as fin:
+                    lines = fin.read()
+            if stderr is not None and os.path.isfile(stderr):
+                with open(stdout, "rt") as fin:
+                    lines += fin.read()
 
             # process the output
-            self.filesExistance = {}
-            self.dirAccess = {}
-
-            filesDesc = ["App kernel executable",
-                         "App kernel input",
-                         "Task working directory",
+            files_desc = ["App kernel executable",
+                          "App kernel input",
+                          "Task working directory",
+                          "Network scratch directory",
+                          "local scratch directory"]
+            dirs_desc = ["Task working directory",
                          "Network scratch directory",
                          "local scratch directory"]
-            dirsDesc = ["Task working directory",
-                        "Network scratch directory",
-                        "local scratch directory"]
 
-            for dirDesc in dirsDesc:
-                m = re.search(r'AKRR:ERROR: ' + dirDesc + ' is not writable', lines)
+            for dir_desc in dirs_desc:
+                m = re.search(r'AKRR:ERROR: ' + dir_desc + ' is not writable', lines)
                 if m:
-                    self.dirAccess[dirDesc] = False
+                    self.dirAccess[dir_desc] = False
                 else:
-                    self.dirAccess[dirDesc] = True
+                    self.dirAccess[dir_desc] = True
 
-            for fileDesc in filesDesc:
-                m = re.search(r'AKRR:ERROR: ' + fileDesc + ' does not exists', lines)
+            for file_desc in files_desc:
+                m = re.search(r'AKRR:ERROR: ' + file_desc + ' does not exists', lines)
                 if m:
-                    self.filesExistance[fileDesc] = False
-                    if fileDesc in dirsDesc:
-                        self.dirAccess[dirDesc] = False
+                    self.filesExistance[file_desc] = False
+                    if file_desc in dirs_desc:
+                        self.dirAccess[file_desc] = False
                 else:
-                    self.filesExistance[fileDesc] = True
+                    self.filesExistance[file_desc] = True
 
-            print(lines)
-            print((self.filesExistance))
-            print((self.dirAccess))
+            for k, v in list(self.filesExistance.items()):
+                self.set_statistic(k + " exists", int(v))
+            for k, v in list(self.dirAccess.items()):
+                self.set_statistic(k + " accessible", int(v))
 
-    def parsingComplete(self, Verbose=False):
+    def parsing_complete(self, verbose=False):
         """i.e. app output was having all mandatory parameters and statistics"""
         complete = True
 
         p = []
-        for v in self.parameters: p.append(v[0])
+        for v in self.parameters:
+            p.append(v[0])
         for v in self.mustHaveParameters:
             if p.count(v) == 0:
-                if Verbose: print(("Must have parameter, %s, is not present" % (v,)))
+                if verbose:
+                    print(("Must have parameter, %s, is not present" % (v,)))
                 complete = False
         p = []
-        for v in self.statistics: p.append(v[0])
+        for v in self.statistics:
+            p.append(v[0])
         for v in self.mustHaveStatistics:
             if p.count(v) == 0:
-                if Verbose: print(("Must have statistic, %s, is not present" % (v,)))
+                if verbose:
+                    print(("Must have statistic, %s, is not present" % (v,)))
                 complete = False
-        if self.completeOnPartialMustHaveStatistics and complete == False:
+        if self.completeOnPartialMustHaveStatistics and complete is False:
 
-            if 'Number of Tests Passed' in self.mustHaveStatistics and 'Number of Tests Started' in self.mustHaveStatistics:
-                if self.getStatistic('Number of Tests Passed') == None or self.getStatistic(
-                        'Number of Tests Started') == None:
+            if 'Number of Tests Passed' in self.mustHaveStatistics and \
+                    'Number of Tests Started' in self.mustHaveStatistics:
+                if self.get_statistic('Number of Tests Passed') is None or \
+                        self.get_statistic('Number of Tests Started') is None:
                     complete = False
                 else:
-                    if self.getStatistic('Number of Tests Passed') > 0:
+                    if self.get_statistic('Number of Tests Passed') > 0:
                         complete = True
             else:
                 complete = True
 
         return complete
 
-    def getXML(self):
-        root = ET.Element('rep:report')
+    def get_xml(self):
+        root = ElementTree.Element('rep:report')
         root.attrib['xmlns:rep'] = 'report'
-        body = ET.SubElement(root, 'body')
-        performance = ET.SubElement(body, 'performance')
-        performanceID = ET.SubElement(performance, 'ID')
-        performanceID.text = self.measurement_name
-        benchmark = ET.SubElement(performance, 'benchmark')
-        benchmarkID = ET.SubElement(benchmark, 'ID')
-        benchmarkID.text = self.measurement_name
+        body = ElementTree.SubElement(root, 'body')
+        performance = ElementTree.SubElement(body, 'performance')
+        performance_id = ElementTree.SubElement(performance, 'ID')
+        performance_id.text = self.measurement_name
+        benchmark = ElementTree.SubElement(performance, 'benchmark')
+        benchmark_id = ElementTree.SubElement(benchmark, 'ID')
+        benchmark_id.text = self.measurement_name
 
-        parameters = ET.SubElement(benchmark, 'parameters')
-        pars = self.getUniqueParameters()
+        parameters = ElementTree.SubElement(benchmark, 'parameters')
+        pars = self.get_unique_parameters()
         for par in pars:
-            e = ET.SubElement(parameters, 'parameter')
-            ET.SubElement(e, 'ID').text = par[0]
-            ET.SubElement(e, 'value').text = par[1]
-            if par[2]: ET.SubElement(e, 'units').text = par[2]
+            e = ElementTree.SubElement(parameters, 'parameter')
+            ElementTree.SubElement(e, 'ID').text = par[0]
+            ElementTree.SubElement(e, 'value').text = par[1]
+            if par[2]:
+                ElementTree.SubElement(e, 'units').text = par[2]
 
-        statistics = ET.SubElement(benchmark, 'statistics')
-        pars = self.getUniqueStatistic()
+        statistics = ElementTree.SubElement(benchmark, 'statistics')
+        pars = self.get_unique_statistic()
         for par in pars:
-            e = ET.SubElement(statistics, 'statistic')
-            ET.SubElement(e, 'ID').text = par[0]
-            ET.SubElement(e, 'value').text = par[1]
-            if par[2]: ET.SubElement(e, 'units').text = par[2]
-        exitStatus = ET.SubElement(root, 'exitStatus')
-        completed = ET.SubElement(exitStatus, 'completed')
-        if hasattr(self, 'successfulRun'):
-            if self.parsingComplete(True) and self.successfulRun:
+            e = ElementTree.SubElement(statistics, 'statistic')
+            ElementTree.SubElement(e, 'ID').text = par[0]
+            ElementTree.SubElement(e, 'value').text = par[1]
+            if par[2]:
+                ElementTree.SubElement(e, 'units').text = par[2]
+        exit_status = ElementTree.SubElement(root, 'exitStatus')
+        completed = ElementTree.SubElement(exit_status, 'completed')
+        if self.successfulRun is not None:
+            if self.parsing_complete(True) and self.successfulRun:
                 completed.text = "true"
             else:
                 completed.text = "false"
         else:
-            if self.parsingComplete(True):
+            if self.parsing_complete(True):
                 completed.text = "true"
             else:
                 completed.text = "false"
-        return xml.dom.minidom.parseString(ET.tostring(root)).toprettyxml(indent="  ")
-        # return xml.dom.minidom.parseString(XMLElementTree.tostring(root)).toprettyxml().replace("rep12345report","rep:report")#.replace("""<?xml version="1.0" ?>\n""","")
-        # return "<?xml version='1.0'?>\n"+XMLElementTree.tostring(root)+"\n"
+        return xml.dom.minidom.parseString(ElementTree.tostring(root)).toprettyxml(indent="  ")
 
-    def printParsNStatsAsMustHave(self):
+    def print_params_stats_as_must_have(self):
         """print set parameters and statistics as part of code to set them as must have"""
-        pars = self.getUniqueParameters()
+        pars = self.get_unique_parameters()
         for par in pars:
-            print(("parser.setMustHaveParameter('%s')" % (par[0],)))
+            print(("parser.add_must_have_parameter('%s')" % (par[0],)))
         print()
-        pars = self.getUniqueStatistic()
+        pars = self.get_unique_statistic()
         for par in pars:
-            print(("parser.setMustHaveStatistic('%s')" % (par[0],)))
+            print(("parser.add_must_have_statistic('%s')" % (par[0],)))
 
-    def getDateTimeLocal(self, datestr):
+    @staticmethod
+    def get_datetime_local(datestr):
         """Return local datatime, will convert the other zones to local. If original datestr does not have
         zone information assuming it is already local"""
-        datestrLoc = os.popen('date -d "' + datestr + '" +"%a %b %d %H:%M:%S %Y"').read().strip()
-        r = datetime.datetime.strptime(datestrLoc, "%a %b %d %H:%M:%S %Y")
+        datestr_loc = os.popen('date -d "' + datestr + '" +"%a %b %d %H:%M:%S %Y"').read().strip()
+        r = datetime.datetime.strptime(datestr_loc, "%a %b %d %H:%M:%S %Y")
         return r
-
-
-def testParser(jobdir, processAppKerOutput):
-    import akrr.akrr_task
-    taskHandler = akrr.akrr_task.get_task_handler_from_job_dir(jobdir)
-    if taskHandler != None:
-        appKerNResVars = {}
-        appKerNResVars['resource'] = taskHandler.resource
-        appKerNResVars['resource'].update(taskHandler.resourceParam)
-        appKerNResVars['app'] = taskHandler.app
-        appKerNResVars['app'].update(taskHandler.appParam)
-    else:
-        appKerNResVars = None
-
-    processAppKerOutput(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"),
-                        appKerNResVars=appKerNResVars)

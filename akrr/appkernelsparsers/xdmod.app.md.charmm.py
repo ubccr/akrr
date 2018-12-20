@@ -20,28 +20,28 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:Number of Angles')
-    parser.setMustHaveParameter('Input:Number of Atoms')
-    parser.setMustHaveParameter('Input:Number of Bonds')
-    parser.setMustHaveParameter('Input:Number of Dihedrals')
-    parser.setMustHaveParameter('Input:Number of Steps')
-    parser.setMustHaveParameter('Input:Timestep')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:Number of Angles')
+    parser.add_must_have_parameter('Input:Number of Atoms')
+    parser.add_must_have_parameter('Input:Number of Bonds')
+    parser.add_must_have_parameter('Input:Number of Dihedrals')
+    parser.add_must_have_parameter('Input:Number of Steps')
+    parser.add_must_have_parameter('Input:Timestep')
 
-    parser.setMustHaveStatistic('Molecular Dynamics Simulation Performance')
-    parser.setMustHaveStatistic('Time Spent in External Energy Calculation')
-    parser.setMustHaveStatistic('Time Spent in Integration')
-    parser.setMustHaveStatistic('Time Spent in Internal Energy Calculation')
-    parser.setMustHaveStatistic('Time Spent in Non-Bond List Generation')
-    parser.setMustHaveStatistic('Time Spent in Waiting (Load Unbalance-ness)')
-    parser.setMustHaveStatistic('User Time')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Molecular Dynamics Simulation Performance')
+    parser.add_must_have_statistic('Time Spent in External Energy Calculation')
+    parser.add_must_have_statistic('Time Spent in Integration')
+    parser.add_must_have_statistic('Time Spent in Internal Energy Calculation')
+    parser.add_must_have_statistic('Time Spent in Non-Bond List Generation')
+    parser.add_must_have_statistic('Time Spent in Waiting (Load Unbalance-ness)')
+    parser.add_must_have_statistic('User Time')
+    parser.add_must_have_statistic('Wall Clock Time')
 
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -66,7 +66,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
        
         m0=re.search(r'\s+Chemistry at HARvard Macromolecular Mechanics',lines[j])
         m1=re.search(r'\sVersion\s+([\da-zA-Z]+)',lines[j+1])
-        if m0 and m1:parser.setParameter("App:Version",m1.group(1).strip())
+        if m0 and m1:parser.set_parameter("App:Version", m1.group(1).strip())
         
         if re.search(r'Summary of the structure file counters',lines[j]):
             j+=1
@@ -95,13 +95,13 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 m=re.search(r'NSTEP\s+=\s+(\d+)',lines[j])
                 if m:
                     numSteps=int(m.group(1).strip())
-                    parser.setParameter( "Input:Number of Steps", numSteps )
+                    parser.set_parameter("Input:Number of Steps", numSteps)
                 
                 if re.search(r'TIME STEP\s+=',lines[j]):
                     m=re.search(r'([\d\-Ee\.]+)\s+PS',lines[j])
                     if m:
                         stepSize = 1000.0*float(m.group(1).strip())
-                        parser.setParameter( "Input:Timestep", stepSize *1e-15, "Second per Step" )
+                        parser.set_parameter("Input:Timestep", stepSize * 1e-15, "Second per Step")
                 j+=1
         
         if re.search(r'NORMAL TERMINATION BY NORMAL STOP',lines[j]):
@@ -116,18 +116,18 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 m=re.search(r'ELAPSED TIME:\s*([\d\.]+)\s*MINUTES',lines[j])
                 if m:
                     wallClockTime=60.0 * float(m.group(1).strip())
-                    parser.setStatistic( "Wall Clock Time", wallClockTime, "Second" )
+                    parser.set_statistic("Wall Clock Time", wallClockTime, "Second")
                 
                 m=re.search(r'CPU TIME:\s*([\d\.]+)\s*MINUTES',lines[j])
-                if m:parser.setStatistic( "User Time", 60.0 * float(m.group(1).strip()), "Second" )
+                if m:parser.set_statistic("User Time", 60.0 * float(m.group(1).strip()), "Second")
                 
                 m=re.search(r'ELAPSED TIME:\s*([\d\.]+)\s*SECONDS',lines[j])
                 if m:
                     wallClockTime=float(m.group(1).strip())
-                    parser.setStatistic( "Wall Clock Time", wallClockTime, "Second" )
+                    parser.set_statistic("Wall Clock Time", wallClockTime, "Second")
                 
                 m=re.search(r'CPU TIME:\s*([\d\.]+)\s*SECONDS',lines[j])
-                if m:parser.setStatistic( "User Time", m.group(1).strip(), "Second" )
+                if m:parser.set_statistic("User Time", m.group(1).strip(), "Second")
                 
                 j+=1
             if j>len(lines)-1: break
@@ -150,35 +150,35 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             if len(timeBreakdownColumns)==len(timeBreakdown):
                 for k in range(len(timeBreakdown)):
                     if timeBreakdownColumns[k] == "Eext":
-                        parser.setStatistic( "Time Spent in External Energy Calculation",   timeBreakdown[k], "Second" )
+                        parser.set_statistic("Time Spent in External Energy Calculation", timeBreakdown[k], "Second")
                     if timeBreakdownColumns[k] == "Eint":
-                        parser.setStatistic( "Time Spent in Internal Energy Calculation",   timeBreakdown[k], "Second" ) 
+                        parser.set_statistic("Time Spent in Internal Energy Calculation", timeBreakdown[k], "Second")
                     if timeBreakdownColumns[k] == "Wait":
-                        parser.setStatistic( "Time Spent in Waiting (Load Unbalance-ness)", timeBreakdown[k], "Second" ) 
+                        parser.set_statistic("Time Spent in Waiting (Load Unbalance-ness)", timeBreakdown[k], "Second")
                     if timeBreakdownColumns[k] == "List":
-                        parser.setStatistic( "Time Spent in Non-Bond List Generation",      timeBreakdown[k], "Second" ) 
+                        parser.set_statistic("Time Spent in Non-Bond List Generation", timeBreakdown[k], "Second")
                     if timeBreakdownColumns[k] == "Integ":
-                        parser.setStatistic( "Time Spent in Integration",                   timeBreakdown[k], "Second" ) 
+                        parser.set_statistic("Time Spent in Integration", timeBreakdown[k], "Second")
             
         j+=1
-    if numAtoms>0:parser.setParameter( "Input:Number of Atoms",     numAtoms )
-    if numBonds>0:parser.setParameter( "Input:Number of Bonds",     numBonds )
-    if numAngles>0:parser.setParameter( "Input:Number of Angles",    numAngles )
-    if numDihedrals>0:parser.setParameter( "Input:Number of Dihedrals", numDihedrals )
+    if numAtoms>0:parser.set_parameter("Input:Number of Atoms", numAtoms)
+    if numBonds>0:parser.set_parameter("Input:Number of Bonds", numBonds)
+    if numAngles>0:parser.set_parameter("Input:Number of Angles", numAngles)
+    if numDihedrals>0:parser.set_parameter("Input:Number of Dihedrals", numDihedrals)
     
     if wallClockTime>0.0 and numSteps>0 and stepSize>0.0:
         # $stepSize is in femtoseconds
         # $wallClockTime is in seconds
-        parser.setStatistic( "Molecular Dynamics Simulation Performance", ( 1e-6 * stepSize * numSteps ) / ( wallClockTime / 86400.0 )*1e-9, "Second per Day" )
+        parser.set_statistic("Molecular Dynamics Simulation Performance", (1e-6 * stepSize * numSteps) / (wallClockTime / 86400.0) * 1e-9, "Second per Day")
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

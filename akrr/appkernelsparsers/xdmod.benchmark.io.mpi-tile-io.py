@@ -28,76 +28,76 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('2D Collective Read Test File System')
-    parser.setMustHaveParameter('2D Collective Write Test File System')
-    parser.setMustHaveParameter('2D HDF5 Collective Read Test File System')
-    parser.setMustHaveParameter('2D HDF5 Collective Write Test File System')
-    parser.setMustHaveParameter('2D Independent Read Test File System')
-    parser.setMustHaveParameter('2D Independent Write Test File System')
-    parser.setMustHaveParameter('2D Per-Process Data Topology')
-    parser.setMustHaveParameter('2D Per-Process Ghost Zone')
-    parser.setMustHaveParameter('2D Per-Process Memory')
-    parser.setMustHaveParameter('2D Process Topology')
-    parser.setMustHaveParameter('3D Collective Read Test File System')
-    parser.setMustHaveParameter('3D Collective Write Test File System')
-    parser.setMustHaveParameter('3D HDF5 Collective Read Test File System')
-    parser.setMustHaveParameter('3D HDF5 Collective Write Test File System')
-    parser.setMustHaveParameter('3D Independent Read Test File System')
-    parser.setMustHaveParameter('3D Independent Write Test File System')
-    parser.setMustHaveParameter('3D Per-Process Data Topology')
-    parser.setMustHaveParameter('3D Per-Process Ghost Zone')
-    parser.setMustHaveParameter('3D Per-Process Memory')
-    parser.setMustHaveParameter('3D Process Topology')
-    parser.setMustHaveParameter('App:ExeBinSignature')
-    parser.setMustHaveParameter('HDF Version')
-    #parser.setMustHaveParameter('MPI-IO Hints')
-    parser.setMustHaveParameter('RunEnv:Nodes')
+    parser.add_must_have_parameter('2D Collective Read Test File System')
+    parser.add_must_have_parameter('2D Collective Write Test File System')
+    parser.add_must_have_parameter('2D HDF5 Collective Read Test File System')
+    parser.add_must_have_parameter('2D HDF5 Collective Write Test File System')
+    parser.add_must_have_parameter('2D Independent Read Test File System')
+    parser.add_must_have_parameter('2D Independent Write Test File System')
+    parser.add_must_have_parameter('2D Per-Process Data Topology')
+    parser.add_must_have_parameter('2D Per-Process Ghost Zone')
+    parser.add_must_have_parameter('2D Per-Process Memory')
+    parser.add_must_have_parameter('2D Process Topology')
+    parser.add_must_have_parameter('3D Collective Read Test File System')
+    parser.add_must_have_parameter('3D Collective Write Test File System')
+    parser.add_must_have_parameter('3D HDF5 Collective Read Test File System')
+    parser.add_must_have_parameter('3D HDF5 Collective Write Test File System')
+    parser.add_must_have_parameter('3D Independent Read Test File System')
+    parser.add_must_have_parameter('3D Independent Write Test File System')
+    parser.add_must_have_parameter('3D Per-Process Data Topology')
+    parser.add_must_have_parameter('3D Per-Process Ghost Zone')
+    parser.add_must_have_parameter('3D Per-Process Memory')
+    parser.add_must_have_parameter('3D Process Topology')
+    parser.add_must_have_parameter('App:ExeBinSignature')
+    parser.add_must_have_parameter('HDF Version')
+    #parser.add_must_have_parameter('MPI-IO Hints')
+    parser.add_must_have_parameter('RunEnv:Nodes')
     
-    parser.setMustHaveStatistic('2D Array Collective Read Aggregate Throughput')
-    parser.setMustHaveStatistic('2D Array Collective Write Aggregate Throughput')
-    parser.setMustHaveStatistic('2D Array HDF5 Collective Read Aggregate Throughput')
-    parser.setMustHaveStatistic('2D Array HDF5 Collective Write Aggregate Throughput')
-    parser.setMustHaveStatistic('2D Array Independent Read Aggregate Throughput')
-    parser.setMustHaveStatistic('2D Array Independent Write Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array Collective Read Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array Collective Write Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array HDF5 Collective Read Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array HDF5 Collective Write Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array Independent Read Aggregate Throughput')
-    parser.setMustHaveStatistic('3D Array Independent Write Aggregate Throughput')
-    parser.setMustHaveStatistic('File Close Time (2D Data Collective Read)')
-    parser.setMustHaveStatistic('File Close Time (2D Data Collective Write)')
-    parser.setMustHaveStatistic('File Close Time (2D Data HDF5 Collective Read)')
-    parser.setMustHaveStatistic('File Close Time (2D Data HDF5 Collective Write)')
-    parser.setMustHaveStatistic('File Close Time (2D Data Independent Read)')
-    parser.setMustHaveStatistic('File Close Time (2D Data Independent Write)')
-    parser.setMustHaveStatistic('File Close Time (3D Data Collective Read)')
-    parser.setMustHaveStatistic('File Close Time (3D Data Collective Write)')
-    parser.setMustHaveStatistic('File Close Time (3D Data HDF5 Collective Read)')
-    parser.setMustHaveStatistic('File Close Time (3D Data HDF5 Collective Write)')
-    parser.setMustHaveStatistic('File Close Time (3D Data Independent Read)')
-    parser.setMustHaveStatistic('File Close Time (3D Data Independent Write)')
-    parser.setMustHaveStatistic('File Open Time (2D Data Collective Read)')
-    parser.setMustHaveStatistic('File Open Time (2D Data Collective Write)')
-    parser.setMustHaveStatistic('File Open Time (2D Data HDF5 Collective Read)')
-    parser.setMustHaveStatistic('File Open Time (2D Data HDF5 Collective Write)')
-    parser.setMustHaveStatistic('File Open Time (2D Data Independent Read)')
-    parser.setMustHaveStatistic('File Open Time (2D Data Independent Write)')
-    parser.setMustHaveStatistic('File Open Time (3D Data Collective Read)')
-    parser.setMustHaveStatistic('File Open Time (3D Data Collective Write)')
-    parser.setMustHaveStatistic('File Open Time (3D Data HDF5 Collective Read)')
-    parser.setMustHaveStatistic('File Open Time (3D Data HDF5 Collective Write)')
-    parser.setMustHaveStatistic('File Open Time (3D Data Independent Read)')
-    parser.setMustHaveStatistic('File Open Time (3D Data Independent Write)')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('2D Array Collective Read Aggregate Throughput')
+    parser.add_must_have_statistic('2D Array Collective Write Aggregate Throughput')
+    parser.add_must_have_statistic('2D Array HDF5 Collective Read Aggregate Throughput')
+    parser.add_must_have_statistic('2D Array HDF5 Collective Write Aggregate Throughput')
+    parser.add_must_have_statistic('2D Array Independent Read Aggregate Throughput')
+    parser.add_must_have_statistic('2D Array Independent Write Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array Collective Read Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array Collective Write Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array HDF5 Collective Read Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array HDF5 Collective Write Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array Independent Read Aggregate Throughput')
+    parser.add_must_have_statistic('3D Array Independent Write Aggregate Throughput')
+    parser.add_must_have_statistic('File Close Time (2D Data Collective Read)')
+    parser.add_must_have_statistic('File Close Time (2D Data Collective Write)')
+    parser.add_must_have_statistic('File Close Time (2D Data HDF5 Collective Read)')
+    parser.add_must_have_statistic('File Close Time (2D Data HDF5 Collective Write)')
+    parser.add_must_have_statistic('File Close Time (2D Data Independent Read)')
+    parser.add_must_have_statistic('File Close Time (2D Data Independent Write)')
+    parser.add_must_have_statistic('File Close Time (3D Data Collective Read)')
+    parser.add_must_have_statistic('File Close Time (3D Data Collective Write)')
+    parser.add_must_have_statistic('File Close Time (3D Data HDF5 Collective Read)')
+    parser.add_must_have_statistic('File Close Time (3D Data HDF5 Collective Write)')
+    parser.add_must_have_statistic('File Close Time (3D Data Independent Read)')
+    parser.add_must_have_statistic('File Close Time (3D Data Independent Write)')
+    parser.add_must_have_statistic('File Open Time (2D Data Collective Read)')
+    parser.add_must_have_statistic('File Open Time (2D Data Collective Write)')
+    parser.add_must_have_statistic('File Open Time (2D Data HDF5 Collective Read)')
+    parser.add_must_have_statistic('File Open Time (2D Data HDF5 Collective Write)')
+    parser.add_must_have_statistic('File Open Time (2D Data Independent Read)')
+    parser.add_must_have_statistic('File Open Time (2D Data Independent Write)')
+    parser.add_must_have_statistic('File Open Time (3D Data Collective Read)')
+    parser.add_must_have_statistic('File Open Time (3D Data Collective Write)')
+    parser.add_must_have_statistic('File Open Time (3D Data HDF5 Collective Read)')
+    parser.add_must_have_statistic('File Open Time (3D Data HDF5 Collective Write)')
+    parser.add_must_have_statistic('File Open Time (3D Data Independent Read)')
+    parser.add_must_have_statistic('File Open Time (3D Data Independent Write)')
+    parser.add_must_have_statistic('Wall Clock Time')
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", parser.appKerWallClockTime.total_seconds(), "Second")
+        parser.set_statistic("Wall Clock Time", parser.appKerWallClockTime.total_seconds(), "Second")
     
     #read output
     lines=[]
@@ -178,7 +178,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
                 if pm['hdf5Version']['val']:
                     label += 'HDF5 '
-                    parser.setParameter( "HDF Version", pm['hdf5Version']['val'] )
+                    parser.set_parameter("HDF Version", pm['hdf5Version']['val'])
                 
                 m=re.search(r'yes',pm['collectiveIO']['val'],re.I)
                 if m: label += 'Collective '
@@ -192,25 +192,25 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                     l=readOrWrite
                     label += l.uppercase()[0]+l[1:]
     
-                parser.setStatistic( "%s Array %s Aggregate Throughput"%(dim,label),
-                    "%.2f"%(float(IObandwidth) / 1024.0 / 1024.0 ), "MByte per Second" )
+                parser.set_statistic("%s Array %s Aggregate Throughput" % (dim, label),
+                    "%.2f" % (float(IObandwidth) / 1024.0 / 1024.0 ), "MByte per Second")
                 if pm["maxFileOpenTime"]['val']:
-                    parser.setStatistic( "File Open Time (%s Data %s)"%(dim,label),  pm["maxFileOpenTime"]['val'],  "Second" ) 
+                    parser.set_statistic("File Open Time (%s Data %s)" % (dim, label), pm["maxFileOpenTime"]['val'], "Second")
                 if pm["maxFileCloseTime"]['val']:
-                    parser.setStatistic( "File Close Time (%s Data %s)"%(dim,label), pm["maxFileCloseTime"]['val'], "Second" )
+                    parser.set_statistic("File Close Time (%s Data %s)" % (dim, label), pm["maxFileCloseTime"]['val'], "Second")
     
-                parser.setParameter( "%s Process Topology"%(dim,),          pm["processesTopology"]['val'] );
+                parser.set_parameter("%s Process Topology" % (dim,), pm["processesTopology"]['val']);
                 if pm["localMemoryUsage"]['val']:
-                    parser.setParameter( "%s Per-Process Memory"%(dim,),        float(pm["localMemoryUsage"]['val']) / 1024.0 / 1024.0, "MByte" )
+                    parser.set_parameter("%s Per-Process Memory" % (dim,), float(pm["localMemoryUsage"]['val']) / 1024.0 / 1024.0, "MByte")
                 if pm["localDatasetTopology"]['val']:
-                    parser.setParameter( "%s Per-Process Data Topology"%(dim,), pm["localDatasetTopology"]['val'], "Element" )
+                    parser.set_parameter("%s Per-Process Data Topology" % (dim,), pm["localDatasetTopology"]['val'], "Element")
                 if pm["datasetGhostZone"]['val']:
-                    parser.setParameter( "%s Per-Process Ghost Zone"%(dim,),    pm["datasetGhostZone"]['val'] )
+                    parser.set_parameter("%s Per-Process Ghost Zone" % (dim,), pm["datasetGhostZone"]['val'])
                 if pm["mpiIOhints"]['val']:
-                    parser.setParameter( "MPI-IO Hints",                     pm["mpiIOhints"]['val'] )      
-                #$benchmark->setParameter( "${dim} ${label} Test File",        $testFileName )     if ( defined($testFileName) );
+                    parser.set_parameter("MPI-IO Hints", pm["mpiIOhints"]['val'])
+                #$benchmark->set_parameter( "${dim} ${label} Test File",        $testFileName )     if ( defined($testFileName) );
                 if pm["fileSystem"]['val']:
-                    parser.setParameter( "%s %s Test File System"%(dim,label), pm["fileSystem"]['val'] )
+                    parser.set_parameter("%s %s Test File System" % (dim, label), pm["fileSystem"]['val'])
                 parser.successfulRun=True
         
                 pm["processesTopology"]['val']=None
@@ -230,13 +230,13 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     #Print out missing parameters for debug purpose
-    parser.parsingComplete(Verbose=True)
+    parser.parsing_complete(verbose=True)
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

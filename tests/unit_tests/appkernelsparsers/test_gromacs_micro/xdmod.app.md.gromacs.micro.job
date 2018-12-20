@@ -3,8 +3,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=2
 #SBATCH --time=00:10:00
-#SBATCH --output=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.05.11.18.11.51.785775/stdout
-#SBATCH --error=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.05.11.18.11.51.785775/stderr
+#SBATCH --output=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189/stdout
+#SBATCH --error=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189/stderr
 #SBATCH --exclusive
 
 
@@ -14,17 +14,17 @@ export AKRR_CORES=2
 export AKRR_CORES_PER_NODE=2
 export AKRR_NETWORK_SCRATCH="/tmp"
 export AKRR_LOCAL_SCRATCH="/tmp"
-export AKRR_TASK_WORKDIR="/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.05.11.18.11.51.785775"
-export AKRR_APPKER_DIR="/tmp/appker/huey"
+export AKRR_TASK_WORKDIR="/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189"
+export AKRR_APPKER_DIR="/tmp/appker/localhost"
 export AKRR_AKRR_DIR="/tmp/akrr_data/localhost"
 
 export AKRR_APPKER_NAME="xdmod.app.md.gromacs.micro"
 export AKRR_RESOURCE_NAME="localhost"
-export AKRR_TIMESTAMP="2018.05.11.18.11.51.785775"
+export AKRR_TIMESTAMP="2018.12.20.20.16.32.769189"
 export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
 
-export AKRR_APPKERNEL_INPUT="/tmp/appker/huey/inputs/gromacs/micro"
-export AKRR_APPKERNEL_EXECUTABLE="/tmp/appker/huey/execs"
+export AKRR_APPKERNEL_INPUT="/tmp/appker/localhost/inputs/gromacs/micro"
+export AKRR_APPKERNEL_EXECUTABLE="/tmp/appker/localhost/execs"
 
 source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
 
@@ -49,12 +49,12 @@ echo "Temporary working directory: $AKRR_TMP_WORKDIR"
 cd $AKRR_TMP_WORKDIR
 
 #Copy inputs
-cp /tmp/appker/huey/inputs/gromacs/micro/* ./
+cp /tmp/appker/localhost/inputs/gromacs/micro/* ./
 
 
 
 EXE=`which gmx`
-RUN_APPKERNEL=$EXE  mdrun -deffnm md_0_2
+RUN_APPKERNEL="$EXE  mdrun -deffnm md_0_2"
 
 # make tpr
 $EXE grompp -f md2.mdp -c md_0_1.gro -t md_0_1.cpt -p topol.top -o md_0_2.tpr

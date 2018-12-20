@@ -25,19 +25,19 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         url              = 'https://xdmod.ccr.buffalo.edu',
         measurement_name = 'BUNDLE'
     )
-    parser.setMustHaveParameter('RunEnv:Nodes')
-    parser.setMustHaveStatistic('Wall Clock Time')
-    parser.setMustHaveStatistic("Success Rate")
-    parser.setMustHaveStatistic("Successful Subtasks")
-    parser.setMustHaveStatistic("Total Number of Subtasks")
+    parser.add_must_have_parameter('RunEnv:Nodes')
+    parser.add_must_have_statistic('Wall Clock Time')
+    parser.add_must_have_statistic("Success Rate")
+    parser.add_must_have_statistic("Successful Subtasks")
+    parser.add_must_have_statistic("Total Number of Subtasks")
     
     #set obligatory parameters and statistics
     #set common parameters and statistics
     
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser,'wallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.wallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.wallClockTime), "Second")
     
     #check the status of subtasks
     
@@ -64,19 +64,19 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     except:
         print(traceback.format_exc())
     
-    parser.setStatistic("Success Rate", successRate)
-    parser.setStatistic("Successful Subtasks", successfulSubtasks)
-    parser.setStatistic("Total Number of Subtasks", totalSubtasks)
+    parser.set_statistic("Success Rate", successRate)
+    parser.set_statistic("Successful Subtasks", successfulSubtasks)
+    parser.set_statistic("Total Number of Subtasks", totalSubtasks)
     #if successfulSubtasks==totalSubtasks:
         
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

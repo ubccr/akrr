@@ -36,66 +36,66 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
+    parser.add_must_have_parameter('App:Version')
     if appKerNResVars==None or (appKerNResVars!=None and 'testHDF5' in appKerNResVars and appKerNResVars['testHDF5']==True):
-        parser.setMustHaveParameter('HDF Version')
-        parser.setMustHaveParameter('HDF5 Collective N-to-1 Test File System')
-        parser.setMustHaveParameter('HDF5 Independent N-to-1 Test File System')
-        parser.setMustHaveParameter('HDF5 N-to-N Test File System')
+        parser.add_must_have_parameter('HDF Version')
+        parser.add_must_have_parameter('HDF5 Collective N-to-1 Test File System')
+        parser.add_must_have_parameter('HDF5 Independent N-to-1 Test File System')
+        parser.add_must_have_parameter('HDF5 N-to-N Test File System')
     if appKerNResVars==None or (appKerNResVars!=None and 'testMPIIO' in appKerNResVars and appKerNResVars['testMPIIO']==True):
-        parser.setMustHaveParameter('MPIIO Collective N-to-1 Test File System')
-        parser.setMustHaveParameter('MPIIO Independent N-to-1 Test File System')
-        parser.setMustHaveParameter('MPIIO N-to-N Test File System')
+        parser.add_must_have_parameter('MPIIO Collective N-to-1 Test File System')
+        parser.add_must_have_parameter('MPIIO Independent N-to-1 Test File System')
+        parser.add_must_have_parameter('MPIIO N-to-N Test File System')
     if appKerNResVars==None or (appKerNResVars!=None and 'testPOSIX' in appKerNResVars and appKerNResVars['testPOSIX']==True):
-        parser.setMustHaveParameter('POSIX N-to-1 Test File System')
-        parser.setMustHaveParameter('POSIX N-to-N Test File System')
+        parser.add_must_have_parameter('POSIX N-to-1 Test File System')
+        parser.add_must_have_parameter('POSIX N-to-N Test File System')
     if appKerNResVars==None or (appKerNResVars!=None and 'testNetCDF' in appKerNResVars and appKerNResVars['testNetCDF']==True):
-        parser.setMustHaveParameter('Parallel NetCDF Collective N-to-1 Test File System')
-        parser.setMustHaveParameter('Parallel NetCDF Independent N-to-1 Test File System')
-    parser.setMustHaveParameter('Parallel NetCDF Version')
-    parser.setMustHaveParameter('Per-Process Data Size')
-    parser.setMustHaveParameter('Per-Process I/O Block Size')
-    parser.setMustHaveParameter('RunEnv:Nodes')
-    parser.setMustHaveParameter('Transfer Size Per I/O')
+        parser.add_must_have_parameter('Parallel NetCDF Collective N-to-1 Test File System')
+        parser.add_must_have_parameter('Parallel NetCDF Independent N-to-1 Test File System')
+    parser.add_must_have_parameter('Parallel NetCDF Version')
+    parser.add_must_have_parameter('Per-Process Data Size')
+    parser.add_must_have_parameter('Per-Process I/O Block Size')
+    parser.add_must_have_parameter('RunEnv:Nodes')
+    parser.add_must_have_parameter('Transfer Size Per I/O')
     
     if appKerNResVars==None or (appKerNResVars!=None and 'testHDF5' in appKerNResVars and appKerNResVars['testHDF5']==True):
-        parser.setMustHaveStatistic('HDF5 Collective N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('HDF5 Collective N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('HDF5 Independent N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('HDF5 Independent N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('HDF5 N-to-N Read Aggregate Throughput')
-        parser.setMustHaveStatistic('HDF5 N-to-N Write Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 Collective N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 Collective N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 Independent N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 Independent N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 N-to-N Read Aggregate Throughput')
+        parser.add_must_have_statistic('HDF5 N-to-N Write Aggregate Throughput')
     if appKerNResVars==None or (appKerNResVars!=None and 'testMPIIO' in appKerNResVars and appKerNResVars['testMPIIO']==True):
-        parser.setMustHaveStatistic('MPIIO Collective N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('MPIIO Collective N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('MPIIO Independent N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('MPIIO Independent N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('MPIIO N-to-N Read Aggregate Throughput')
-        parser.setMustHaveStatistic('MPIIO N-to-N Write Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO Collective N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO Collective N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO Independent N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO Independent N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO N-to-N Read Aggregate Throughput')
+        parser.add_must_have_statistic('MPIIO N-to-N Write Aggregate Throughput')
     if appKerNResVars==None or (appKerNResVars!=None and 'testPOSIX' in appKerNResVars and appKerNResVars['testPOSIX']==True):
-        parser.setMustHaveStatistic('POSIX N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('POSIX N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('POSIX N-to-N Read Aggregate Throughput')
-        parser.setMustHaveStatistic('POSIX N-to-N Write Aggregate Throughput')
+        parser.add_must_have_statistic('POSIX N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('POSIX N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('POSIX N-to-N Read Aggregate Throughput')
+        parser.add_must_have_statistic('POSIX N-to-N Write Aggregate Throughput')
     if appKerNResVars==None or (appKerNResVars!=None and 'testNetCDF' in appKerNResVars and appKerNResVars['testNetCDF']==True):
-        parser.setMustHaveStatistic('Parallel NetCDF Collective N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('Parallel NetCDF Collective N-to-1 Write Aggregate Throughput')
-        parser.setMustHaveStatistic('Parallel NetCDF Independent N-to-1 Read Aggregate Throughput')
-        parser.setMustHaveStatistic('Parallel NetCDF Independent N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('Parallel NetCDF Collective N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('Parallel NetCDF Collective N-to-1 Write Aggregate Throughput')
+        parser.add_must_have_statistic('Parallel NetCDF Independent N-to-1 Read Aggregate Throughput')
+        parser.add_must_have_statistic('Parallel NetCDF Independent N-to-1 Write Aggregate Throughput')
     
-    parser.setMustHaveStatistic('Number of Tests Passed')
-    parser.setMustHaveStatistic('Number of Tests Started')
+    parser.add_must_have_statistic('Number of Tests Passed')
+    parser.add_must_have_statistic('Number of Tests Started')
      
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Wall Clock Time')
     
     parser.completeOnPartialMustHaveStatistics=True
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     #read output
     lines=[]
@@ -139,36 +139,36 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             if m:totalNumberOfTests+=1
             
             if "IOR RELEASE" in METRICS:
-                parser.setParameter( "App:Version", METRICS["IOR RELEASE"])
+                parser.set_parameter("App:Version", METRICS["IOR RELEASE"])
         
             if "Compile-time HDF Version" in METRICS:
-                parser.setParameter( "HDF Version", METRICS["Compile-time HDF Version"])
+                parser.set_parameter("HDF Version", METRICS["Compile-time HDF Version"])
         
             if "Compile-time PNETCDF Version" in METRICS:
-                parser.setParameter( "Parallel NetCDF Version", METRICS["Compile-time PNETCDF Version"])
+                parser.set_parameter("Parallel NetCDF Version", METRICS["Compile-time PNETCDF Version"])
                 
             if "blockSize" in METRICS and "segmentCount" in METRICS:
                 #print METRICS["blockSize"],METRICS["segmentCount"]
-                parser.setParameter( "Per-Process Data Size", ( float(METRICS["blockSize"]) / 1024.0 / 1024.0 ) * int(METRICS["segmentCount"]), "MByte" )
-                parser.setParameter( "Per-Process I/O Block Size", ( float(METRICS["blockSize"]) / 1024.0 / 1024.0 ), "MByte" )
+                parser.set_parameter("Per-Process Data Size", (float(METRICS["blockSize"]) / 1024.0 / 1024.0) * int(METRICS["segmentCount"]), "MByte")
+                parser.set_parameter("Per-Process I/O Block Size", (float(METRICS["blockSize"]) / 1024.0 / 1024.0), "MByte")
     
         
             if "reorderTasks" in METRICS:
                 if int(METRICS["reorderTasks"])!=0:
-                    parser.setParameter( "Reorder Tasks for Read-back Tests", "Yes" )
+                    parser.set_parameter("Reorder Tasks for Read-back Tests", "Yes")
     
         
             if "repetitions" in METRICS:
                 if 1 < int(METRICS["repetitions"]):
-                    parser.setParameter( "Test Repetitions", METRICS["repetitions"])
+                    parser.set_parameter("Test Repetitions", METRICS["repetitions"])
     
         
             if "transferSize" in METRICS:
-                parser.setParameter( "Transfer Size Per I/O", ( float(METRICS["transferSize"]) / 1024.0 / 1024.0 ), "MByte" )
+                parser.set_parameter("Transfer Size Per I/O", (float(METRICS["transferSize"]) / 1024.0 / 1024.0), "MByte")
     
         
             if "mpiio hints passed to MPI_File_open" in METRICS:
-                parser.setParameter( "MPI-IO Hints", METRICS["mpiio hints passed to MPI_File_open"])
+                parser.set_parameter("MPI-IO Hints", METRICS["mpiio hints passed to MPI_File_open"])
             
             if "Write bandwidth" in METRICS and "Read bandwidth" in METRICS and \
                "api" in METRICS and "filePerProc" in METRICS and "collective" in METRICS and \
@@ -208,16 +208,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 if m:
                     if "useFileView" in METRICS:
                         if 0 != int(METRICS["useFileView"]):
-                            parser.setParameter( label + " Uses MPI_File_set_view",   "Yes" ) 
+                            parser.set_parameter(label + " Uses MPI_File_set_view", "Yes")
                     if "useSharedFilePointer" in METRICS:
                         if 0 != int(METRICS["useSharedFilePointer"]):
-                            parser.setParameter( label + " Uses Shared File Pointer", "Yes" )
+                            parser.set_parameter(label + " Uses Shared File Pointer", "Yes")
                 
                 m=re.search(r'POSIX',label,re.I)
                 if m:
                     if "fsyncPerWrite" in METRICS:
                         if 0 != int(METRICS["fsyncPerWrite"]):
-                            parser.setParameter( label + " Uses fsync per Write", "Yes" )
+                            parser.set_parameter(label + " Uses fsync per Write", "Yes")
                 
                 m=re.search(r'mean=(\S+)',METRICS["Write bandwidth"])
                 if m:
@@ -226,35 +226,35 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         
                     # writes are always sequential
                     writeLabel = writeLabel.replace(" Random","")
-                    parser.setStatistic( writeLabel+" Write Aggregate Throughput", "%.2f"%(float(metric) / 1024.0 / 1024.0, ), "MByte per Second" );
-                    #parser.setParameter( "${writeLabel} Test File",        METRICS["testFileName"} ) if ( exists METRICS["testFileName"} );
+                    parser.set_statistic(writeLabel + " Write Aggregate Throughput", "%.2f" % (float(metric) / 1024.0 / 1024.0,), "MByte per Second");
+                    #parser.set_parameter( "${writeLabel} Test File",        METRICS["testFileName"} ) if ( exists METRICS["testFileName"} );
                     if "fileSystem" in METRICS:
-                        parser.setParameter( writeLabel+" Test File System", METRICS["fileSystem"])
+                        parser.set_parameter(writeLabel + " Test File System", METRICS["fileSystem"])
                     parser.successfulRun=True
                     
                     if "File Open Time (Write)" in METRICS:
                         m2=re.search(r'mean=(\S+)',METRICS["File Open Time (Write)"])
                         if m2:
-                            parser.setStatistic( writeLabel+"  File Open Time (Write)", m2.group(1).strip(), "Second" );
+                            parser.set_statistic(writeLabel + "  File Open Time (Write)", m2.group(1).strip(), "Second");
                     if "File Close Time (Write)" in METRICS:
                         m2=re.search(r'mean=(\S+)',METRICS["File Close Time (Write)"])
                         if m2:                   
-                            parser.setStatistic( writeLabel+"  File Close Time (Write)", m2.group(1).strip(), "Second" );
+                            parser.set_statistic(writeLabel + "  File Close Time (Write)", m2.group(1).strip(), "Second");
                             
         
                 m=re.search(r'mean=(\S+)',METRICS["Read bandwidth"])
                 if m:
-                    parser.setStatistic( label+" Read Aggregate Throughput", "%.2f"%(float(m.group(1).strip()) / 1024.0 / 1024.0, ), "MByte per Second" );
+                    parser.set_statistic(label + " Read Aggregate Throughput", "%.2f" % (float(m.group(1).strip()) / 1024.0 / 1024.0,), "MByte per Second");
                     parser.successfulRun=True
                     
                     if "File Open Time (Read)" in METRICS:
                         m2=re.search(r'mean=(\S+)',METRICS["File Open Time (Read)"])
                         if m2:                   
-                            parser.setStatistic( writeLabel+"  File Open Time (Read)", m2.group(1).strip(), "Second" );
+                            parser.set_statistic(writeLabel + "  File Open Time (Read)", m2.group(1).strip(), "Second");
                     if "File Close Time (Read)" in METRICS:
                         m2=re.search(r'mean=(\S+)',METRICS["File Close Time (Read)"])
                         if m2:                   
-                            parser.setStatistic( writeLabel+"  File Close Time (Read)", m2.group(1).strip(), "Second" );
+                            parser.set_statistic(writeLabel + "  File Close Time (Read)", m2.group(1).strip(), "Second");
                 
                 METRICS={}
         
@@ -268,7 +268,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         filesystem=None
         while i<len(lines)-1:
             m=re.match(r'^IOR-([3-9]\.[0-9]+\.[0-9]+): MPI Coordinated Test of Parallel I/O',lines[i])
-            if m:parser.setParameter( "App:Version", m.group(1).strip())
+            if m:parser.set_parameter("App:Version", m.group(1).strip())
             
             m=re.match(r'^File System To Test:(.+)',lines[i])
             if m:filesystem=m.group(1).strip()
@@ -294,15 +294,15 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 if input_summary['api'].count("MPIIO")>0:
                     input_summary['API']="MPIIO"
                     input_summary['API_Version']=input_summary['api'].replace("MPIIO","").strip()
-                    parser.setParameter( "MPIIO Version", input_summary['API_Version'])
+                    parser.set_parameter("MPIIO Version", input_summary['API_Version'])
                 if input_summary['api'].count("HDF5")>0:
                     input_summary['API']="HDF5"
                     input_summary['API_Version']=input_summary['api'].replace("HDF5-","").replace("HDF5","").strip()
-                    parser.setParameter( "HDF Version", input_summary['API_Version'])
+                    parser.set_parameter("HDF Version", input_summary['API_Version'])
                 if input_summary['api'].count("NCMPI")>0:
                     input_summary['API']="Parallel NetCDF"
                     input_summary['API_Version']=input_summary['api'].replace("NCMPI","").strip()
-                    parser.setParameter( "Parallel NetCDF Version", input_summary['API_Version'])
+                    parser.set_parameter("Parallel NetCDF Version", input_summary['API_Version'])
                 
                 input_summary['fileAccessPattern']=""
                 input_summary['collectiveOrIndependent']=""
@@ -326,7 +326,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                                                       input_summary['fileAccessPattern']))
                 
                 if input_summary['filesystem']!=None:
-                    parser.setParameter(input_summary['method']+' Test File System',input_summary['filesystem'])
+                    parser.set_parameter(input_summary['method'] + ' Test File System', input_summary['filesystem'])
                     
                 if "pattern" in input_summary:
                     m1=re.match(r'^segmented \(([0-9]+) segment',input_summary["pattern"])
@@ -336,13 +336,13 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                     val,unit=input_summary["blocksize"].split()
                     blockSize=getMiB(float(val),unit)
                     segmentCount=input_summary["segmentCount"]
-                    parser.setParameter( "Per-Process Data Size", blockSize*segmentCount, "MByte" )
-                    parser.setParameter( "Per-Process I/O Block Size", blockSize, "MByte" )
+                    parser.set_parameter("Per-Process Data Size", blockSize * segmentCount, "MByte")
+                    parser.set_parameter("Per-Process I/O Block Size", blockSize, "MByte")
                 
                 if "xfersize" in input_summary:
                     val,unit=input_summary["xfersize"].split()
                     transferSize=getMiB(float(val),unit)
-                    parser.setParameter( "Transfer Size Per I/O", transferSize, "MByte" )
+                    parser.set_parameter("Transfer Size Per I/O", transferSize, "MByte")
             
             m0=re.match(r'^access\s+bw\(MiB/s\)\s+block\(KiB\)\s+xfer\(KiB\)\s+open\(s\)\s+wr/rd\(s\)\s+close\(s\)\s+total\(s\)\s+iter',lines[i])
             if m0:
@@ -360,9 +360,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                             testsPassed+=1
                             parser.successfulRun=True
                         
-                        parser.setStatistic( input_summary['method']+" %s Aggregate Throughput"%access, bw, "MByte per Second" );
-                        parser.setStatistic( input_summary['method']+"  File Open Time (%s)"%access, open_s, "Second" );
-                        parser.setStatistic( input_summary['method']+"  File Close Time (%s)"%access, close_s, "Second" );
+                        parser.set_statistic(input_summary['method'] + " %s Aggregate Throughput" % access, bw, "MByte per Second");
+                        parser.set_statistic(input_summary['method'] + "  File Open Time (%s)" % access, open_s, "Second");
+                        parser.set_statistic(input_summary['method'] + "  File Close Time (%s)" % access, close_s, "Second");
                     
                     m1=re.match(r'^Summary of all tests:',lines[i])
                     if m1:break
@@ -373,17 +373,17 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 rsl_r={}
                 #filesystem=None
             i+=1
-    parser.setStatistic('Number of Tests Passed',testsPassed )
-    parser.setStatistic('Number of Tests Started',totalNumberOfTests )
+    parser.set_statistic('Number of Tests Passed', testsPassed)
+    parser.set_statistic('Number of Tests Started', totalNumberOfTests)
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":
