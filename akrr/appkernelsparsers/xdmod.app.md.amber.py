@@ -20,27 +20,27 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:Coordinate File')
-    parser.setMustHaveParameter('Input:Number of Angles')
-    parser.setMustHaveParameter('Input:Number of Atoms')
-    parser.setMustHaveParameter('Input:Number of Bonds')
-    parser.setMustHaveParameter('Input:Number of Dihedrals')
-    parser.setMustHaveParameter('Input:Number of Steps')
-    parser.setMustHaveParameter('Input:Structure File')
-    parser.setMustHaveParameter('Input:Timestep')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:Coordinate File')
+    parser.add_must_have_parameter('Input:Number of Angles')
+    parser.add_must_have_parameter('Input:Number of Atoms')
+    parser.add_must_have_parameter('Input:Number of Bonds')
+    parser.add_must_have_parameter('Input:Number of Dihedrals')
+    parser.add_must_have_parameter('Input:Number of Steps')
+    parser.add_must_have_parameter('Input:Structure File')
+    parser.add_must_have_parameter('Input:Timestep')
 
-    parser.setMustHaveStatistic('Molecular Dynamics Simulation Performance')
-    parser.setMustHaveStatistic('Time Spent in Direct Force Calculation')
-    parser.setMustHaveStatistic('Time Spent in Non-Bond List Regeneration')
-    parser.setMustHaveStatistic('Time Spent in Reciprocal Force Calculation')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Molecular Dynamics Simulation Performance')
+    parser.add_must_have_statistic('Time Spent in Direct Force Calculation')
+    parser.add_must_have_statistic('Time Spent in Non-Bond List Regeneration')
+    parser.add_must_have_statistic('Time Spent in Reciprocal Force Calculation')
+    parser.add_must_have_statistic('Wall Clock Time')
 
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -57,16 +57,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
         m=re.search(r'Amber\s+([0-9a-zA-Z]+)\s+SANDER\s+20[0-9]+',lines[j])
-        if m:parser.setParameter("App:Version","SANDER "+m.group(1))
+        if m:parser.set_parameter("App:Version", "SANDER " + m.group(1))
         
         m=re.match(r'^\|\s+PMEMD implementation of SANDER, Release\s+([0-9\.]+)',lines[j])
-        if m:parser.setParameter("App:Version","PMEMD "+m.group(1))
+        if m:parser.set_parameter("App:Version", "PMEMD " + m.group(1))
        
         m=re.match(r'^\|\s+INPCRD:\s+(\S+)',lines[j])
-        if m:parser.setParameter("Input:Coordinate File",m.group(1))
+        if m:parser.set_parameter("Input:Coordinate File", m.group(1))
        
         m=re.match(r'^\|\s+PARM:\s+(\S+)',lines[j])
-        if m:parser.setParameter("Input:Structure File",m.group(1))
+        if m:parser.set_parameter("Input:Structure File", m.group(1))
         
         if re.search(r'CONTROL\s+DATA\s+FOR\s+THE\s+RUN',lines[j]):
             j+=2
@@ -76,12 +76,12 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 m=re.search(r'nstlim\s+=\s+([0-9]+)',lines[j])
                 if m:
                     numSteps = int(m.group(1).strip())
-                    parser.setParameter( "Input:Number of Steps", numSteps )
+                    parser.set_parameter("Input:Number of Steps", numSteps)
                 
                 m=re.search(r'dt\s+=\s+([0-9.]+)',lines[j])
                 if m:
                     stepSize = 1000.0 * float(m.group(1).strip())
-                    parser.setParameter( "Input:Timestep", stepSize*1e-15, "Second per Step" )
+                    parser.set_parameter("Input:Timestep", stepSize * 1e-15, "Second per Step")
                 
                 j+=1
        
@@ -94,7 +94,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 if re.match(r'^-----------------------------',lines[j]):break
              
                 m=re.search(r'NATOM\s+=\s+([0-9]+)',lines[j])
-                if m:parser.setParameter("Input:Number of Atoms",m.group(1).strip())
+                if m:parser.set_parameter("Input:Number of Atoms", m.group(1).strip())
              
                 m=re.search(r'NBONH\s+=\s+([0-9]+)',lines[j])
                 if m:numBonds+=int(m.group(1).strip())
@@ -116,16 +116,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
              
                 j+=1
        
-            if numBonds>0:parser.setParameter("Input:Number of Bonds",numBonds)
-            if numAngles>0:parser.setParameter("Input:Number of Angles",numAngles)
-            if numDihedrals>0:parser.setParameter("Input:Number of Dihedrals",numDihedrals)
+            if numBonds>0:parser.set_parameter("Input:Number of Bonds", numBonds)
+            if numAngles>0:parser.set_parameter("Input:Number of Angles", numAngles)
+            if numDihedrals>0:parser.set_parameter("Input:Number of Dihedrals", numDihedrals)
        
         if re.search(r'PME Nonbond Pairlist CPU Time',lines[j]):
             j+=2
             for k in range(20):
                 m=re.search(r'Total\s+([\d\.]+)',lines[j])
                 if m:
-                    parser.setStatistic("Time Spent in Non-Bond List Regeneration", m.group(1), "Second")
+                    parser.set_statistic("Time Spent in Non-Bond List Regeneration", m.group(1), "Second")
                     break
                 j+=1
         if re.search(r'PME Direct Force CPU Time',lines[j]):
@@ -133,7 +133,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             for k in range(20):
                 m=re.search(r'Total\s+([\d\.]+)',lines[j])
                 if m:
-                    parser.setStatistic("Time Spent in Direct Force Calculation", m.group(1), "Second")
+                    parser.set_statistic("Time Spent in Direct Force Calculation", m.group(1), "Second")
                     break
                 j+=1
         if re.search(r'PME Reciprocal Force CPU Time',lines[j]):
@@ -141,29 +141,29 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             for k in range(20):
                 m=re.search(r'Total\s+([\d\.]+)',lines[j])
                 if m:
-                    parser.setStatistic("Time Spent in Reciprocal Force Calculation", m.group(1), "Second")
+                    parser.set_statistic("Time Spent in Reciprocal Force Calculation", m.group(1), "Second")
                     break
                 j+=1
         m=re.match(r'^\|\s+Master Total wall time:\s+([0-9.]+)\s+seconds',lines[j])
         if m:
-            parser.setStatistic("Wall Clock Time", m.group(1), "Second")
+            parser.set_statistic("Wall Clock Time", m.group(1), "Second")
             parser.successfulRun=True
             
             # calculate the performance
             simulationTime = stepSize * numSteps * 0.000001 # measured in nanoseconds
             if simulationTime>0.0:
-                parser.setStatistic( "Molecular Dynamics Simulation Performance", 1.e-9*simulationTime / ( float(m.group(1)) / 86400.0 ), "Second per Day" )
+                parser.set_statistic("Molecular Dynamics Simulation Performance", 1.e-9 * simulationTime / (float(m.group(1)) / 86400.0), "Second per Day")
             
         j+=1
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

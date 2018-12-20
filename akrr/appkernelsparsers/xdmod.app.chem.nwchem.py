@@ -21,24 +21,24 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('App:Branch')
-    parser.setMustHaveParameter('Input:File')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('App:Branch')
+    parser.add_must_have_parameter('Input:File')
     
-    parser.setMustHaveStatistic('Wall Clock Time')
-    parser.setMustHaveStatistic('User Time')
-    parser.setMustHaveStatistic("Global Arrays 'Create' Calls")
-    parser.setMustHaveStatistic("Global Arrays 'Destroy' Calls")
-    parser.setMustHaveStatistic("Global Arrays 'Get' Calls")
-    parser.setMustHaveStatistic("Global Arrays 'Put' Calls")
-    parser.setMustHaveStatistic("Global Arrays 'Accumulate' Calls")
-    parser.setMustHaveStatistic("Global Arrays 'Get' Amount")
-    parser.setMustHaveStatistic("Global Arrays 'Put' Amount")
-    parser.setMustHaveStatistic("Global Arrays 'Accumulate' Amount")
+    parser.add_must_have_statistic('Wall Clock Time')
+    parser.add_must_have_statistic('User Time')
+    parser.add_must_have_statistic("Global Arrays 'Create' Calls")
+    parser.add_must_have_statistic("Global Arrays 'Destroy' Calls")
+    parser.add_must_have_statistic("Global Arrays 'Get' Calls")
+    parser.add_must_have_statistic("Global Arrays 'Put' Calls")
+    parser.add_must_have_statistic("Global Arrays 'Accumulate' Calls")
+    parser.add_must_have_statistic("Global Arrays 'Get' Amount")
+    parser.add_must_have_statistic("Global Arrays 'Put' Amount")
+    parser.add_must_have_statistic("Global Arrays 'Accumulate' Amount")
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -57,18 +57,18 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
         m=re.search(r'Northwest Computational Chemistry Package \(NWChem\) (.+)',lines[j])
-        if m:parser.setParameter("App:Version",m.group(1).strip())
+        if m:parser.set_parameter("App:Version", m.group(1).strip())
        
         m=re.search(r'nwchem branch *=(.+)',lines[j])
-        if m:parser.setParameter("App:Branch",m.group(1).strip())
+        if m:parser.set_parameter("App:Branch", m.group(1).strip())
        
         m=re.search(r'input\s+= (.+)',lines[j])
-        if m:parser.setParameter("Input:File",m.group(1).strip())
+        if m:parser.set_parameter("Input:File", m.group(1).strip())
        
         m=re.search(r'Total times\s+cpu:\s+([0-9.]+)s\s+wall:\s+([0-9.]+)s',lines[j])
         if m:
-            parser.setStatistic("Wall Clock Time", m.group(2).strip(), "Second" )
-            parser.setStatistic("User Time", m.group(1).strip(), "Second" )
+            parser.set_statistic("Wall Clock Time", m.group(2).strip(), "Second")
+            parser.set_statistic("User Time", m.group(1).strip(), "Second")
        
 #                          GA Statistics for process    0
 #                          ------------------------------
@@ -82,34 +82,34 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         if re.search(r'GA Statistics for process',lines[j]):
             if re.match(r'^calls',lines[j+4]):
                 v=lines[j+4].strip().split()
-                parser.setStatistic("Global Arrays 'Create' Calls",     "%.0f"%float(v[1]), "Number of Calls")
-                parser.setStatistic("Global Arrays 'Destroy' Calls",    "%.0f"%float(v[2]), "Number of Calls")
-                parser.setStatistic("Global Arrays 'Get' Calls",        "%.0f"%float(v[3]), "Number of Calls")
-                parser.setStatistic("Global Arrays 'Put' Calls",        "%.0f"%float(v[4]), "Number of Calls")
-                parser.setStatistic("Global Arrays 'Accumulate' Calls", "%.0f"%float(v[5]), "Number of Calls")
+                parser.set_statistic("Global Arrays 'Create' Calls", "%.0f" % float(v[1]), "Number of Calls")
+                parser.set_statistic("Global Arrays 'Destroy' Calls", "%.0f" % float(v[2]), "Number of Calls")
+                parser.set_statistic("Global Arrays 'Get' Calls", "%.0f" % float(v[3]), "Number of Calls")
+                parser.set_statistic("Global Arrays 'Put' Calls", "%.0f" % float(v[4]), "Number of Calls")
+                parser.set_statistic("Global Arrays 'Accumulate' Calls", "%.0f" % float(v[5]), "Number of Calls")
                 
                 v=lines[j+6].strip().split()
-                parser.setStatistic("Global Arrays 'Get' Amount",        ( float(v[2]) ) / 1048576.0, "MByte")
-                parser.setStatistic("Global Arrays 'Put' Amount",        ( float(v[3]) ) / 1048576.0, "MByte")
-                parser.setStatistic("Global Arrays 'Accumulate' Amount", ( float(v[4]) ) / 1048576.0, "MByte")
+                parser.set_statistic("Global Arrays 'Get' Amount", (float(v[2])) / 1048576.0, "MByte")
+                parser.set_statistic("Global Arrays 'Put' Amount", (float(v[3])) / 1048576.0, "MByte")
+                parser.set_statistic("Global Arrays 'Accumulate' Amount", (float(v[4])) / 1048576.0, "MByte")
         
         # NWChem can be optionally compiled with PAPI, and it will
         # report some GLOPS at the end
         # thus here it is optional 
         m=re.search(r'Aggregate GFLOPS \(Real_time\):\s+([0-9.]+)',lines[j])
-        if m:parser.setStatistic("Floating-Point Performance (Wall Clock Time)", 1000.0*float(m.group(1).strip()), "MFLOP per Second" );
+        if m:parser.set_statistic("Floating-Point Performance (Wall Clock Time)", 1000.0 * float(m.group(1).strip()), "MFLOP per Second");
         
         m=re.search(r'Aggregate GFLOPS \(Proc_time\):\s+([0-9.]+)',lines[j])
-        if m:parser.setStatistic("Floating-Point Performance (User Time)", 1000.0*float(m.group(1).strip()), "MFLOP per Second" );
+        if m:parser.set_statistic("Floating-Point Performance (User Time)", 1000.0 * float(m.group(1).strip()), "MFLOP per Second");
         j+=1
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

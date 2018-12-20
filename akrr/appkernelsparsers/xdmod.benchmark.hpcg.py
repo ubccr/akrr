@@ -26,24 +26,24 @@ def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, 
     )
     # set obligatory parameters and statistics
     # set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     # set app kernel custom sets
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:HPCG Local Domain Dimensions nx')
-    parser.setMustHaveParameter('Input:HPCG Local Domain Dimensions ny')
-    parser.setMustHaveParameter('Input:HPCG Local Domain Dimensions nz')
-    parser.setMustHaveParameter('Input:Distributed Processes')
-    parser.setMustHaveParameter('Input:Threads per processes')
-    parser.setMustHaveParameter('RunEnv:CPU Speed')
-    parser.setMustHaveParameter('RunEnv:Nodes')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:HPCG Local Domain Dimensions nx')
+    parser.add_must_have_parameter('Input:HPCG Local Domain Dimensions ny')
+    parser.add_must_have_parameter('Input:HPCG Local Domain Dimensions nz')
+    parser.add_must_have_parameter('Input:Distributed Processes')
+    parser.add_must_have_parameter('Input:Threads per processes')
+    parser.add_must_have_parameter('RunEnv:CPU Speed')
+    parser.add_must_have_parameter('RunEnv:Nodes')
     
-    parser.setMustHaveStatistic('MFLOPS rating')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('MFLOPS rating')
+    parser.add_must_have_statistic('Wall Clock Time')
     # parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout, stdout, stderr, geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser, 'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     # The parameters mapping table
     Params = {
@@ -89,7 +89,7 @@ def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, 
             v[1] = None
         if val is None:
             continue
-        parser.setParameter(k, val, v[1])
+        parser.set_parameter(k, val, v[1])
     
     for k, v in Metrics:
         val = lines.get(v[0], None)
@@ -104,7 +104,7 @@ def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, 
             v[1] = None
         if val is None:
             continue
-        parser.setStatistic(k, val, v[1])
+        parser.set_statistic(k, val, v[1])
     
     if "cpuSpeed" in parser.geninfo:
         ll = parser.geninfo["cpuSpeed"].splitlines()
@@ -116,17 +116,17 @@ def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, 
                 if v > cpuSpeedMax:
                     cpuSpeedMax = v
         if cpuSpeedMax > 0.0:
-            parser.setParameter("RunEnv:CPU Speed", cpuSpeedMax, "MHz")
+            parser.set_parameter("RunEnv:CPU Speed", cpuSpeedMax, "MHz")
             MHz = cpuSpeedMax
     
     if __name__ == "__main__":
         # output for testing purpose
-        print("parsing complete:", parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     # return complete XML otherwise return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

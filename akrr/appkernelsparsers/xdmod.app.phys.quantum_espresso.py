@@ -21,26 +21,26 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:Number of Atoms per Cell')
-    parser.setMustHaveParameter('Input:Number of Atomic Types')
-    parser.setMustHaveParameter('Input:Number of Electrons')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:Number of Atoms per Cell')
+    parser.add_must_have_parameter('Input:Number of Atomic Types')
+    parser.add_must_have_parameter('Input:Number of Electrons')
     
-    parser.setMustHaveStatistic('Wall Clock Time')
-    parser.setMustHaveStatistic('User Time')
-    parser.setMustHaveStatistic("Per-Process Dynamical Memory")
-    parser.setMustHaveStatistic("Time Spent in Program Initialization")
-    parser.setMustHaveStatistic("Time Spent in Electron Energy Calculation")
-    parser.setMustHaveStatistic("Time Spent in Force Calculation")
+    parser.add_must_have_statistic('Wall Clock Time')
+    parser.add_must_have_statistic('User Time')
+    parser.add_must_have_statistic("Per-Process Dynamical Memory")
+    parser.add_must_have_statistic("Time Spent in Program Initialization")
+    parser.add_must_have_statistic("Time Spent in Electron Energy Calculation")
+    parser.add_must_have_statistic("Time Spent in Force Calculation")
     #This statistic probably was working for a different set of inputs, optional now
-    #parser.setMustHaveStatistic("Time Spent in Stress Calculation")
+    #parser.add_must_have_statistic("Time Spent in Stress Calculation")
     #This statistic probably was working for a different set of inputs, optional now
-    #parser.setMustHaveStatistic("Time Spent in Potential Updates (Charge Density and Wavefunctions Extrapolations)")
+    #parser.add_must_have_statistic("Time Spent in Potential Updates (Charge Density and Wavefunctions Extrapolations)")
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -55,34 +55,34 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
         m=re.match(r'^\s+Program PWSCF\s+([\w\.]+)\s+starts',lines[j])
-        if m:parser.setParameter("App:Version",m.group(1).strip())
+        if m:parser.set_parameter("App:Version", m.group(1).strip())
        
         m=re.match(r'^\s+number of atoms\/cell\s*=\s*([\d\.]+)',lines[j])
-        if m:parser.setParameter("Input:Number of Atoms per Cell",m.group(1).strip())
+        if m:parser.set_parameter("Input:Number of Atoms per Cell", m.group(1).strip())
         
         m=re.match(r'^\s+number of atomic types\s*=\s*([\d\.]+)',lines[j])
-        if m:parser.setParameter("Input:Number of Atomic Types",m.group(1).strip())
+        if m:parser.set_parameter("Input:Number of Atomic Types", m.group(1).strip())
        
         m=re.match(r'^\s+number of electrons\s*=\s*([\d\.]+)',lines[j])
-        if m:parser.setParameter("Input:Number of Electrons",m.group(1).strip())
+        if m:parser.set_parameter("Input:Number of Electrons", m.group(1).strip())
         
         m=re.match(r'^\s+per-process dynamical memory:\s*([\d\.]+)\s*Mb',lines[j])
-        if m:parser.setStatistic("Per-Process Dynamical Memory", (m.group(1).strip()), "MByte" );
+        if m:parser.set_statistic("Per-Process Dynamical Memory", (m.group(1).strip()), "MByte");
         
         m=re.match(r'^\s+init_run\s+:\s*([\d\.]+)s CPU',lines[j])
-        if m:parser.setStatistic("Time Spent in Program Initialization", (m.group(1).strip()), "Second" );
+        if m:parser.set_statistic("Time Spent in Program Initialization", (m.group(1).strip()), "Second");
         
         m=re.match(r'^\s+electrons\s+:\s*([\d\.]+)s CPU',lines[j])
-        if m:parser.setStatistic("Time Spent in Electron Energy Calculation", (m.group(1).strip()), "Second" );
+        if m:parser.set_statistic("Time Spent in Electron Energy Calculation", (m.group(1).strip()), "Second");
         
         m=re.match(r'^\s+forces\s+:\s*([\d\.]+)s CPU',lines[j])
-        if m:parser.setStatistic("Time Spent in Force Calculation", (m.group(1).strip()), "Second" );
+        if m:parser.set_statistic("Time Spent in Force Calculation", (m.group(1).strip()), "Second");
         
         m=re.match(r'^\s+stress\s+:\s*([\d\.]+)s CPU',lines[j])
-        if m:parser.setStatistic("Time Spent in Stress Calculation", (m.group(1).strip()), "Second" );
+        if m:parser.set_statistic("Time Spent in Stress Calculation", (m.group(1).strip()), "Second");
         
         m=re.match(r'^\s+update_pot\s+:\s*([\d\.]+)s CPU',lines[j])
-        if m:parser.setStatistic("Time Spent in Potential Updates (Charge Density and Wavefunctions Extrapolations)", float(m.group(1).strip()), "Second" );
+        if m:parser.set_statistic("Time Spent in Potential Updates (Charge Density and Wavefunctions Extrapolations)", float(m.group(1).strip()), "Second");
         
         m=re.match(r'^\s+PWSCF\s+:(.+CPU.+)',lines[j])
         if m:
@@ -98,9 +98,9 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                         m=re.match(r'^([0-9.]+)s',v[0])
                         sec=float(m.group(1))                    
                     if v[1].upper().find("CPU")>=0:
-                        parser.setStatistic("User Time", sec, "Second" );
+                        parser.set_statistic("User Time", sec, "Second");
                     if v[1].upper().find("WALL")>=0:
-                        parser.setStatistic("Wall Clock Time", sec, "Second" );
+                        parser.set_statistic("Wall Clock Time", sec, "Second");
         
         
         if re.match(r'^\s+JOB DONE',lines[j]):
@@ -108,14 +108,14 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         j+=1
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(True))
+        print("parsing complete:", parser.parsing_complete(True))
         if hasattr(parser, 'successfulRun'):print("successfulRun",parser.successfulRun)
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
         
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

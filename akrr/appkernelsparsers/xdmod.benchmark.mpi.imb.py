@@ -28,48 +28,48 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:MPI Thread Environment')
-    parser.setMustHaveParameter('App:MPI Version')
-    parser.setMustHaveParameter('App:Max Message Size')
+    parser.add_must_have_parameter('App:MPI Thread Environment')
+    parser.add_must_have_parameter('App:MPI Version')
+    parser.add_must_have_parameter('App:Max Message Size')
     
-    parser.setMustHaveStatistic('Max Exchange Bandwidth')
-    parser.setMustHaveStatistic("Max MPI-2 Bidirectional 'Get' Bandwidth (aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Bidirectional 'Get' Bandwidth (non-aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Bidirectional 'Put' Bandwidth (aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Bidirectional 'Put' Bandwidth (non-aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Unidirectional 'Get' Bandwidth (aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Unidirectional 'Get' Bandwidth (non-aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Unidirectional 'Put' Bandwidth (aggregate)")
-    parser.setMustHaveStatistic("Max MPI-2 Unidirectional 'Put' Bandwidth (non-aggregate)")
-    parser.setMustHaveStatistic('Max PingPing Bandwidth')
-    parser.setMustHaveStatistic('Max PingPong Bandwidth')
-    parser.setMustHaveStatistic('Max SendRecv Bandwidth')
-    parser.setMustHaveStatistic('Min AllGather Latency')
-    parser.setMustHaveStatistic('Min AllGatherV Latency')
-    parser.setMustHaveStatistic('Min AllReduce Latency')
-    parser.setMustHaveStatistic('Min AllToAll Latency')
-    parser.setMustHaveStatistic('Min AllToAllV Latency')
-    parser.setMustHaveStatistic('Min Barrier Latency')
-    parser.setMustHaveStatistic('Min Broadcast Latency')
-    parser.setMustHaveStatistic('Min Gather Latency')
-    parser.setMustHaveStatistic('Min GatherV Latency')
-    #parser.setMustHaveStatistic("Min MPI-2 'Accumulate' Latency (aggregate)")
-    #parser.setMustHaveStatistic("Min MPI-2 'Accumulate' Latency (non-aggregate)")
-    parser.setMustHaveStatistic('Min MPI-2 Window Creation Latency')
-    parser.setMustHaveStatistic('Min Reduce Latency')
-    parser.setMustHaveStatistic('Min ReduceScatter Latency')
-    parser.setMustHaveStatistic('Min Scatter Latency')
-    parser.setMustHaveStatistic('Min ScatterV Latency')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Max Exchange Bandwidth')
+    parser.add_must_have_statistic("Max MPI-2 Bidirectional 'Get' Bandwidth (aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Bidirectional 'Get' Bandwidth (non-aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Bidirectional 'Put' Bandwidth (aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Bidirectional 'Put' Bandwidth (non-aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Unidirectional 'Get' Bandwidth (aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Unidirectional 'Get' Bandwidth (non-aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Unidirectional 'Put' Bandwidth (aggregate)")
+    parser.add_must_have_statistic("Max MPI-2 Unidirectional 'Put' Bandwidth (non-aggregate)")
+    parser.add_must_have_statistic('Max PingPing Bandwidth')
+    parser.add_must_have_statistic('Max PingPong Bandwidth')
+    parser.add_must_have_statistic('Max SendRecv Bandwidth')
+    parser.add_must_have_statistic('Min AllGather Latency')
+    parser.add_must_have_statistic('Min AllGatherV Latency')
+    parser.add_must_have_statistic('Min AllReduce Latency')
+    parser.add_must_have_statistic('Min AllToAll Latency')
+    parser.add_must_have_statistic('Min AllToAllV Latency')
+    parser.add_must_have_statistic('Min Barrier Latency')
+    parser.add_must_have_statistic('Min Broadcast Latency')
+    parser.add_must_have_statistic('Min Gather Latency')
+    parser.add_must_have_statistic('Min GatherV Latency')
+    #parser.add_must_have_statistic("Min MPI-2 'Accumulate' Latency (aggregate)")
+    #parser.add_must_have_statistic("Min MPI-2 'Accumulate' Latency (non-aggregate)")
+    parser.add_must_have_statistic('Min MPI-2 Window Creation Latency')
+    parser.add_must_have_statistic('Min Reduce Latency')
+    parser.add_must_have_statistic('Min ReduceScatter Latency')
+    parser.add_must_have_statistic('Min Scatter Latency')
+    parser.add_must_have_statistic('Min ScatterV Latency')
+    parser.add_must_have_statistic('Wall Clock Time')
 
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     # Intel MPI benchmark suite contains three classes of benchmarks:
     #
@@ -154,7 +154,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 if v.find('<val>')>=0:
                     val=float(val)
                     val=eval(v.replace('<val>','val'))
-                parser.setParameter( "App:" + Params[param][0], str(val) + " ", Params[param][1] )
+                parser.set_parameter("App:" + Params[param][0], str(val) + " ", Params[param][1])
             continue
         
         m=re.match(r'^\s+([1-9]\d*)\s+\d+',lines[j])
@@ -179,27 +179,27 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 if Metrics[metric][1]=='us':
                     statname=Metrics[metric][2][0].upper()+Metrics[metric][2][1:]+" "+metricName
                     statval=eval(Metrics[metric][2]+"(results)")
-                    parser.setStatistic(statname,statval*1e-6, "Second" )
+                    parser.set_statistic(statname, statval * 1e-6, "Second")
                 else:
                     statname=Metrics[metric][2][0].upper()+Metrics[metric][2][1:]+" "+metricName
                     statval=eval(Metrics[metric][2]+"(results)")
-                    parser.setStatistic(statname,statval, Metrics[metric][1])
+                    parser.set_statistic(statname, statval, Metrics[metric][1])
             
             aggregateMode=None
             metric=None
-    if parser.getParameter("App:MPI Thread Environment")==None:
-        parser.setParameter("App:MPI Thread Environment","")
+    if parser.get_parameter("App:MPI Thread Environment")==None:
+        parser.set_parameter("App:MPI Thread Environment", "")
            
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     #Print out missing parameters for debug purpose
-    parser.parsingComplete(Verbose=True)
+    parser.parsing_complete(verbose=True)
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

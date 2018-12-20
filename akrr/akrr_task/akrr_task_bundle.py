@@ -482,21 +482,21 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             parser_filename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
 
             import importlib.machinery
-            this_app_ker_parser = importlib.machinery.SourceFileLoader(
+            this_appker_parser = importlib.machinery.SourceFileLoader(
                 'this_app_ker_parser', parser_filename).load_module()
 
-            app_ker_n_res_vars = {
+            resource_appker_vars = {
                 'resource': self.resource,
                 'app': self.app,
                 'taskId': self.task_id,
                 'subTasksId': self.subTasksId
             }
-            app_ker_n_res_vars['resource'].update(self.resourceParam)
-            app_ker_n_res_vars['app'].update(self.appParam)
+            resource_appker_vars['resource'].update(self.resourceParam)
+            resource_appker_vars['app'].update(self.appParam)
 
-            performance = this_app_ker_parser.processAppKerOutput(
+            performance = this_appker_parser.process_appker_output(
                 appstdout=appstdout_file, geninfo=os.path.join(batch_job_dir, "gen.info"),
-                appKerNResVars=app_ker_n_res_vars)
+                resource_appker_vars=resource_appker_vars)
 
             if performance is None:
                 self.status = "ERROR: Job have not finished successfully"
@@ -744,7 +744,7 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
         nodes_file_name = os.path.join(jobfiles_dir, "nodes")
         if os.path.isfile(nodes_file_name):
             parser = AppKerOutputParser()
-            parser.parseCommonParsAndStats(geninfo=os.path.join(batch_job_dir, "gen.info"))
+            parser.parse_common_params_and_stats(geninfo=os.path.join(batch_job_dir, "gen.info"))
             nodes = ";"
             for line in parser.nodesList:
                 line = line.strip()

@@ -23,23 +23,23 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics (App:ExeBinSignature and RunEnv:Nodes)
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets
-    parser.setMustHaveParameter('App:ExeBinSignature')
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Number of Darts Throws')
-    parser.setMustHaveParameter('Number of Rounds')
-    parser.setMustHaveParameter('RunEnv:Nodes')
+    parser.add_must_have_parameter('App:ExeBinSignature')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Number of Darts Throws')
+    parser.add_must_have_parameter('Number of Rounds')
+    parser.add_must_have_parameter('RunEnv:Nodes')
     
-    parser.setMustHaveStatistic('Darts Throws per Second')
-    parser.setMustHaveStatistic('Time for PI Calculation')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Darts Throws per Second')
+    parser.add_must_have_statistic('Time for PI Calculation')
+    parser.add_must_have_statistic('Wall Clock Time')
 
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
 
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", parser.appKerWallClockTime.total_seconds(), "Second")
+        parser.set_statistic("Wall Clock Time", parser.appKerWallClockTime.total_seconds(), "Second")
     
     #Here can be custom output parsing
     #read output
@@ -54,19 +54,19 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     j=0
     while j<len(lines):
         m=re.search(r'version:\s+(.+)',lines[j])
-        if m:parser.setParameter('App:Version',m.group(1))
+        if m:parser.set_parameter('App:Version', m.group(1))
         
         m=re.search(r'number of throws at dartboard:\s+(\d+)',lines[j])
-        if m:parser.setParameter('Number of Darts Throws',m.group(1))
+        if m:parser.set_parameter('Number of Darts Throws', m.group(1))
         
         m=re.search(r'number of rounds for dartz throwing\s+(\d+)',lines[j])
-        if m:parser.setParameter('Number of Rounds',m.group(1))
+        if m:parser.set_parameter('Number of Rounds', m.group(1))
          
         m=re.search(r'Time for PI calculation:\s+([0-9\.]+)',lines[j])
-        if m:parser.setStatistic("Time for PI Calculation",m.group(1),"Seconds")
+        if m:parser.set_statistic("Time for PI Calculation", m.group(1), "Seconds")
         
         m=re.search(r'Giga Darts Throws per Second \(GDaPS\):\s+([0-9\.]+)',lines[j])
-        if m:parser.setStatistic("Darts Throws per Second",m.group(1),"GDaPS")
+        if m:parser.set_statistic("Darts Throws per Second", m.group(1), "GDaPS")
 
         m=re.search(r'Giga Darts Throws per Second',lines[j])
         if m:parser.successfulRun=True
@@ -76,14 +76,14 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print(("Parsing complete:",parser.parsingComplete(Verbose=True)))
+        print(("Parsing complete:",parser.parsing_complete(verbose=True)))
         print("Following statistics and parameter can be set as obligatory:")
-        parser.printParsNStatsAsMustHave()
+        parser.print_params_stats_as_must_have()
         print("\nResulting XML:")
-        print((parser.getXML()))
+        print((parser.get_xml()))
     
     #return complete XML otherwise return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

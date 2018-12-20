@@ -1,27 +1,81 @@
-===ExeBinSignature=== MD5: c5213ffc99004f8c7eb878a1174413a0 /usr/bin/gmx
-===ExeBinSignature=== MD5: 1b8ee556a9f3c15aaeb4516abc858e61 /lib64/libgromacs.so.2
-===ExeBinSignature=== MD5: fa3a3a1585cb481c7cb867ba7dfc3893 /lib64/libSM.so.6
-===ExeBinSignature=== MD5: 0cec99154ea9b61c1d55a076ea52ed74 /lib64/libICE.so.6
-===ExeBinSignature=== MD5: 16bf2fe8de4db1a0b0df8dd3ed09f2e1 /lib64/libX11.so.6
-===ExeBinSignature=== MD5: 7f09c2a75296b6a985a57b3821ef1f1f /lib64/libXext.so.6
-===ExeBinSignature=== MD5: 4b9b9a24ce583b660daf211a352cf65d /lib64/libhwloc.so.5
-===ExeBinSignature=== MD5: f379afb21d46e2d642fcadb95d7da37c /lib64/libdl.so.2
-===ExeBinSignature=== MD5: b6fafb6234cb418d25ad5b8d548a3e68 /lib64/librt.so.1
+===ExeBinSignature=== MD5: f2008fa6b47789ae8541b2bbad6bdd93 /usr/bin/gmx
+===ExeBinSignature=== MD5: 928df3ba0df731b00b34bdd7afd16223 /lib64/libgromacs.so.3
+===ExeBinSignature=== MD5: b06038960f153e36545ed9ea947f80f6 /lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: faac9271545933f26968b58e52eb83fd /lib64/libgomp.so.1
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
 ===ExeBinSignature=== MD5: 9043088f6c4dbab5008afd1f15cb85ce /lib64/libtng_io.so.1
+===ExeBinSignature=== MD5: 4b9b9a24ce583b660daf211a352cf65d /lib64/libhwloc.so.5
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
 ===ExeBinSignature=== MD5: 1ae7b47db6db40a689eabde926d14dcf /lib64/libfftw3f.so.3
-===ExeBinSignature=== MD5: 34680379d25059be9173d88ea703c97f /usr/lib64/atlas/libsatlas.so.3
+===ExeBinSignature=== MD5: ed95c3b5f93d435548df54a0d0117e0e /lib64/libopenblas.so.0
+===ExeBinSignature=== MD5: e33b22795e9b536ac132f0deb780f8bf /lib64/libOpenCL.so.1
 ===ExeBinSignature=== MD5: eabf1e325b472d872d5f8e6444f7a5af /lib64/liblmfit.so.6
-===ExeBinSignature=== MD5: 641b598339d2f688c409faf509548cd6 /lib64/libpthread.so.0
-===ExeBinSignature=== MD5: 6b604799f58d496f1a6050543629a7b3 /lib64/libstdc++.so.6
-===ExeBinSignature=== MD5: 7b3c8715beae1fe8ede7bb352b9cd94e /lib64/libm.so.6
-===ExeBinSignature=== MD5: a32f74e2518eebc029ce4f8f9c09249a /lib64/libgomp.so.1
-===ExeBinSignature=== MD5: 863284498537791b9582e0b6ac96e770 /lib64/libgcc_s.so.1
-===ExeBinSignature=== MD5: 73ae799408ded6010d7d1a8dd55a8cf1 /lib64/libc.so.6
-===ExeBinSignature=== MD5: 7d009194094fba5c87c1d2777bd32c8a /lib64/libuuid.so.1
-===ExeBinSignature=== MD5: 34f8d445e6ef15216e18f1635e56d5e9 /lib64/libxcb.so.1
+===ExeBinSignature=== MD5: 4ef6c623f4537579f2f40215476cee06 /lib64/libz.so.1
 ===ExeBinSignature=== MD5: cf43693b9f2d42b19614900cc334a7f2 /lib64/libnuma.so.1
 ===ExeBinSignature=== MD5: 70092cff2a31ccf39d7df1e451153b74 /lib64/libltdl.so.7
-===ExeBinSignature=== MD5: 7a2a38521e00752073f676abeed21d73 /lib64/libz.so.1
-===ExeBinSignature=== MD5: c2f792d50c59fd151ca01b5b0c54b4f4 /lib64/libgfortran.so.3
-===ExeBinSignature=== MD5: 34738c57abf04763d1873a68a7876c7d /lib64/libXau.so.6
-===ExeBinSignature=== MD5: af61d0c92f1658de72e6a1b701c2660e /lib64/libquadmath.so.0
+===ExeBinSignature=== MD5: f853559b85021584a50d8658dc574a99 /lib64/libgfortran.so.3
+===ExeBinSignature=== MD5: 1f981a97e5bbfb76059cbb640bb24573 /lib64/libquadmath.so.0
+                      :-) GROMACS - gmx mdrun, 2018.4 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2017, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx mdrun, version 2018.4
+Executable:   /usr/bin/gmx
+Data prefix:  /usr
+Working dir:  /tmp/gromacs.DZTRA3S0V
+Command line:
+  gmx mdrun -deffnm md_0_2
+
+NOTE: Detection of GPUs failed. The API reported:
+            GROMACS cannot run tasks on a GPU.
+Compiled SIMD: SSE2, but for this host/run AVX2_256 might be better (see log).
+
+The current CPU can measure timings more accurately than the code in
+gmx mdrun was configured to use. This might affect your simulation
+speed as accurate timings are needed for load-balancing.
+Please consider rebuilding gmx mdrun with the GMX_USE_RDTSCP=ON CMake option.
+Reading file md_0_2.tpr, VERSION 2018.4 (single precision)
+Changing nstlist from 10 to 40, rlist from 1 to 1.096
+
+
+Using 1 MPI thread
+Using 12 OpenMP threads 
+
+starting mdrun 'LYSOZYME in water'
+100 steps,      0.2 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:       16.978        1.415     1200.0
+                 (ns/day)    (hour/ns)
+Performance:       12.336        1.946
+
+GROMACS reminds you: "Performance and power are great targets for tuning, but really you want to tune for money!" (Erik Lindahl)
+

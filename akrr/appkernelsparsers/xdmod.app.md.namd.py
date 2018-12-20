@@ -20,24 +20,24 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:Coordinate File')
-    parser.setMustHaveParameter('Input:Number of Angles')
-    parser.setMustHaveParameter('Input:Number of Atoms')
-    parser.setMustHaveParameter('Input:Number of Bonds')
-    parser.setMustHaveParameter('Input:Number of Dihedrals')
-    parser.setMustHaveParameter('Input:Number of Steps')
-    parser.setMustHaveParameter('Input:Structure File')
-    parser.setMustHaveParameter('Input:Timestep')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:Coordinate File')
+    parser.add_must_have_parameter('Input:Number of Angles')
+    parser.add_must_have_parameter('Input:Number of Atoms')
+    parser.add_must_have_parameter('Input:Number of Bonds')
+    parser.add_must_have_parameter('Input:Number of Dihedrals')
+    parser.add_must_have_parameter('Input:Number of Steps')
+    parser.add_must_have_parameter('Input:Structure File')
+    parser.add_must_have_parameter('Input:Timestep')
     
-    parser.setMustHaveStatistic('Memory')
-    parser.setMustHaveStatistic('Molecular Dynamics Simulation Performance')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Memory')
+    parser.add_must_have_statistic('Molecular Dynamics Simulation Performance')
+    parser.add_must_have_statistic('Wall Clock Time')
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -52,24 +52,24 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
        m=re.match(r'^Info: NAMD ([0-9a-zA-Z\.]+)',lines[j])
-       if m:parser.setParameter("App:Version",m.group(1))
+       if m:parser.set_parameter("App:Version", m.group(1))
        
        m=re.match(r'^Info: TIMESTEP\s+([0-9\.]+)',lines[j])
-       if m:parser.setParameter("Input:Timestep",m.group(1)+"e-15", "Second per Step" )
+       if m:parser.set_parameter("Input:Timestep", m.group(1) + "e-15", "Second per Step")
        
        m=re.match(r'^Info: NUMBER OF STEPS\s+([0-9\.]+)',lines[j])
-       if m:parser.setParameter("Input:Number of Steps",m.group(1))
+       if m:parser.set_parameter("Input:Number of Steps", m.group(1))
        
        m=re.match(r'^Info: COORDINATE PDB\s+(.+)',lines[j])
-       if m:parser.setParameter("Input:Coordinate File",m.group(1))
+       if m:parser.set_parameter("Input:Coordinate File", m.group(1))
        
        m=re.match(r'^Info: STRUCTURE FILE\s+(.+)',lines[j])
-       if m:parser.setParameter("Input:Structure File",m.group(1))
+       if m:parser.set_parameter("Input:Structure File", m.group(1))
        
        m=re.match(r'^Info: Running on ([0-9\.]+) processors, ([0-9\.]+) nodes, ([0-9\.]+) physical nodes.',lines[j])
        if m:
-           parser.setParameter("App:NCores",m.group(1).strip())
-           parser.setParameter("App:NNodes",m.group(3).strip())
+           parser.set_parameter("App:NCores", m.group(1).strip())
+           parser.set_parameter("App:NNodes", m.group(3).strip())
        
        if re.match(r'^Info: STRUCTURE SUMMARY',lines[j]):
           j+=1
@@ -78,27 +78,27 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 break
              
              m=re.match(r'^Info:\s+([0-9]+)\s+ATOMS\n',lines[j])
-             if m:parser.setParameter("Input:Number of Atoms",m.group(1))
+             if m:parser.set_parameter("Input:Number of Atoms", m.group(1))
              
              m=re.match(r'^Info:\s+([0-9]+)\s+BONDS\n',lines[j])
-             if m:parser.setParameter("Input:Number of Bonds",m.group(1))
+             if m:parser.set_parameter("Input:Number of Bonds", m.group(1))
              
              m=re.match(r'^Info:\s+([0-9]+)\s+ANGLES\n',lines[j])
-             if m:parser.setParameter("Input:Number of Angles",m.group(1))
+             if m:parser.set_parameter("Input:Number of Angles", m.group(1))
              
              m=re.match(r'^Info:\s+([0-9]+)\s+DIHEDRALS\n',lines[j])
-             if m:parser.setParameter("Input:Number of Dihedrals",m.group(1))
+             if m:parser.set_parameter("Input:Number of Dihedrals", m.group(1))
              
              j+=1
        
        if re.search(r'Info: Benchmark time:',lines[j]):
           m=re.search(r' ([0-9.]+) days/ns',lines[j])      
-          if m:parser.setStatistic( "Molecular Dynamics Simulation Performance", str(1.0e-9/float(m.group(1))), "Second per Day" )
+          if m:parser.set_statistic("Molecular Dynamics Simulation Performance", str(1.0e-9 / float(m.group(1))), "Second per Day")
        
        m=re.match(r'^WallClock:\s+([0-9\.]+)\s+CPUTime:\s+([0-9\.]+)\s+Memory:\s+([0-9\.]+)',lines[j])
        if m:
-          parser.setStatistic("Wall Clock Time", m.group(1), "Second")
-          parser.setStatistic("Memory", m.group(3), "MByte")
+          parser.set_statistic("Wall Clock Time", m.group(1), "Second")
+          parser.set_statistic("Memory", m.group(3), "MByte")
           successfulRun=True
        
        m=re.match(r'^End of program',lines[j])
@@ -108,12 +108,12 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

@@ -23,16 +23,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics (App:ExeBinSignature and RunEnv:Nodes)
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets
-    #parser.setMustHaveParameter('App:Version')
+    #parser.add_must_have_parameter('App:Version')
     
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Wall Clock Time')
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
 
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     #Here can be custom output parsing
 #     #read output
@@ -47,10 +47,10 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
 #     j=0
 #     while j<len(lines):
 #         m=re.search(r'My mega parameter\s+(\d+)',lines[j])
-#         if m:parser.setParameter("mega parameter",m.group(1))
+#         if m:parser.set_parameter("mega parameter",m.group(1))
 #         
 #         m=re.search(r'My mega parameter\s+(\d+)',lines[j])
-#         if m:parser.setStatistic("mega statistics",m.group(1),"Seconds")
+#         if m:parser.set_statistic("mega statistics",m.group(1),"Seconds")
 #
 #         m=re.search(r'Done',lines[j])
 #         if m:parser.successfulRun=True
@@ -60,14 +60,14 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("Parsing complete:",parser.parsingComplete(Verbose=True))
+        print("Parsing complete:", parser.parsing_complete(verbose=True))
         print("Following statistics and parameter can be set as obligatory:")
-        parser.printParsNStatsAsMustHave()
+        parser.print_params_stats_as_must_have()
         print("\nResulting XML:")
-        print(parser.getXML())
+        print(parser.get_xml())
     
     #return complete XML otherwise return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

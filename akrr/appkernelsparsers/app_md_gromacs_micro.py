@@ -2,15 +2,10 @@ import re
 import os
 import sys
 
-# Set proper path for stand alone test runs
-if __name__ == "__main__":
-    sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
-
-
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
 
 
-def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, appKerNResVars=None):
+def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
         name='xdmod.app.md.gromacs.micro',
@@ -21,62 +16,60 @@ def processAppKerOutput(appstdout=None, stdout=None, stderr=None, geninfo=None, 
     )
     # set obligatory parameters and statistics
     # set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     # set app kernel custom sets
-    parser.setMustHaveParameter('App:Version')
+    parser.add_must_have_parameter('App:Version')
 
-    parser.setMustHaveStatistic('Simulation Speed')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Simulation Speed')
+    parser.add_must_have_statistic('Wall Clock Time')
 
     # parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout, stdout, stderr, geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
 
     # read output
     lines = []
     if os.path.isfile(appstdout):
-        print("HHHH")
         fin = open(appstdout, "rt")
         lines = fin.readlines()
         fin.close()
-    print(appstdout)
-
 
     # process the output
-    successfulRun = False
+    successful_run = False
     j = 0
     while j < len(lines):
-        print(lines[j])
         m = re.search(r'^GROMACS:\s+ gmx mdrun, version\s+(\S+)$', lines[j])
         if m:
-            parser.setParameter("App:Version",m.group(1))
+            parser.set_parameter("App:Version", m.group(1))
 
         m = re.search(r'^Performance:  \s+([0-9.]+)', lines[j])
         if m:
-            parser.setStatistic("Simulation Speed", float(m.group(1)), "ns/day")
+            parser.set_statistic("Simulation Speed", float(m.group(1)), "ns/day")
 
         m = re.search(r'^ \s+Time:  \s+([0-9.]+) \s+([0-9.]+)', lines[j])
         if m:
-            parser.setStatistic("Wall Clock Time", m.group(2), "Second")
-            parser.setStatistic("Core Clock Time", m.group(1), "Second")
+            parser.set_statistic("Wall Clock Time", m.group(2), "Second")
+            parser.set_statistic("Core Clock Time", m.group(1), "Second")
 
         m = re.match(r'^GROMACS reminds you', lines[j])
         if m:
-            successfulRun = True
+            successful_run = True
 
         j += 1
 
+    parser.successfulRun = successful_run
+
     if __name__ == "__main__":
         # output for testing purpose
-        print("parsing complete:", parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
 
     # return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
 
 
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir = sys.argv[1]
     print("Proccessing Output From", jobdir)
-    processAppKerOutput(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))
+    process_appker_output(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))

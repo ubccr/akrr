@@ -20,26 +20,26 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:Number of Atoms')
-    parser.setMustHaveParameter('Input:Number of Steps')
-    parser.setMustHaveParameter('Input:Timestep')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:Number of Atoms')
+    parser.add_must_have_parameter('Input:Number of Steps')
+    parser.add_must_have_parameter('Input:Timestep')
     
-    parser.setMustHaveStatistic('Molecular Dynamics Simulation Performance')
-    parser.setMustHaveStatistic('Per-Process Memory')
-    parser.setMustHaveStatistic('Time Spent in Bond Potential Calculation')
-    parser.setMustHaveStatistic('Time Spent in Communication')
-    parser.setMustHaveStatistic('Time Spent in Long-Range Coulomb Potential (K-Space) Calculation')
-    parser.setMustHaveStatistic('Time Spent in Neighbor List Regeneration')
-    parser.setMustHaveStatistic('Time Spent in Pairwise Potential Calculation')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Molecular Dynamics Simulation Performance')
+    parser.add_must_have_statistic('Per-Process Memory')
+    parser.add_must_have_statistic('Time Spent in Bond Potential Calculation')
+    parser.add_must_have_statistic('Time Spent in Communication')
+    parser.add_must_have_statistic('Time Spent in Long-Range Coulomb Potential (K-Space) Calculation')
+    parser.add_must_have_statistic('Time Spent in Neighbor List Regeneration')
+    parser.add_must_have_statistic('Time Spent in Pairwise Potential Calculation')
+    parser.add_must_have_statistic('Wall Clock Time')
 
 
     
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     #read output
     lines=[]
@@ -58,18 +58,18 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     while j<len(lines):
        
         m=re.match(r'^LAMMPS\s+\(([\w ]+)\)',lines[j])
-        if m:parser.setParameter("App:Version",m.group(1).strip())
+        if m:parser.set_parameter("App:Version", m.group(1).strip())
         
         m=re.match(r'^Memory usage per processor = ([\d\.]+) Mbyte',lines[j])
-        if m:parser.setStatistic( "Per-Process Memory",m.group(1).strip(), "MByte" )
+        if m:parser.set_statistic("Per-Process Memory", m.group(1).strip(), "MByte")
        
         m=re.match(r'^Loop time of ([\d\.]+) on',lines[j])
         if m:
             parser.successfulRun=True
             wallClockTime=float(m.group(1).strip())
-            parser.setStatistic("Wall Clock Time", wallClockTime, "Second" )
+            parser.set_statistic("Wall Clock Time", wallClockTime, "Second")
             m1=re.search(r'(\d+) atoms',lines[j])
-            if m1:parser.setParameter( "Input:Number of Atoms", m1.group(1).strip())
+            if m1:parser.set_parameter("Input:Number of Atoms", m1.group(1).strip())
        
         m=re.match(r'^units\s+(\w+)',lines[j])
         if m:simulationUnits=m.group(1).strip().lower()
@@ -77,30 +77,30 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
         m=re.match(r'^run\s+(\d+)',lines[j])
         if m:
             numSteps=int(m.group(1).strip())
-            parser.setParameter("Input:Number of Steps", numSteps)
+            parser.set_parameter("Input:Number of Steps", numSteps)
         
         m=re.match(r'^timestep\s+([\d\.]+)',lines[j])
         if m:stepSize=float(m.group(1).strip())
         
         m=re.match(r'^Pair\s+time.+= ([\d\.]+)',lines[j])
         if parser.successfulRun and m:
-            parser.setStatistic("Time Spent in Pairwise Potential Calculation", m.group(1).strip(), "Second" )
+            parser.set_statistic("Time Spent in Pairwise Potential Calculation", m.group(1).strip(), "Second")
         
         m=re.match(r'^Bond\s+time.+= ([\d\.]+)',lines[j])
         if parser.successfulRun and m:
-            parser.setStatistic("Time Spent in Bond Potential Calculation", m.group(1).strip(), "Second" )
+            parser.set_statistic("Time Spent in Bond Potential Calculation", m.group(1).strip(), "Second")
         
         m=re.match(r'^Kspce\s+time.+= ([\d\.]+)',lines[j])
         if parser.successfulRun and m:
-            parser.setStatistic("Time Spent in Long-Range Coulomb Potential (K-Space) Calculation", m.group(1).strip(), "Second" )
+            parser.set_statistic("Time Spent in Long-Range Coulomb Potential (K-Space) Calculation", m.group(1).strip(), "Second")
         
         m=re.match(r'^Neigh\s+time.+= ([\d\.]+)',lines[j])
         if parser.successfulRun and m:
-            parser.setStatistic("Time Spent in Neighbor List Regeneration", m.group(1).strip(), "Second" )
+            parser.set_statistic("Time Spent in Neighbor List Regeneration", m.group(1).strip(), "Second")
         
         m=re.match(r'^Comm\s+time.+= ([\d\.]+)',lines[j])
         if parser.successfulRun and m:
-            parser.setStatistic("Time Spent in Communication", m.group(1).strip(), "Second" )
+            parser.set_statistic("Time Spent in Communication", m.group(1).strip(), "Second")
         
         j+=1
     
@@ -132,16 +132,16 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             if simulationUnits.find("electron")>=0 or  simulationUnits.find("real")>=0: stepSizeInSec=stepSize*1.0e-15
             if simulationUnits=="metal":  stepSizeInSec=stepSize*1.0e-12
         if stepSizeInSec:
-            parser.setParameter("Input:Timestep", stepSizeInSec, "Second per Step" );
-            parser.setStatistic("Molecular Dynamics Simulation Performance", 1.0e-9*( 1.0e9 * stepSizeInSec * numSteps ) / ( wallClockTime / 86400.0 ), "Second per Day" )
+            parser.set_parameter("Input:Timestep", stepSizeInSec, "Second per Step");
+            parser.set_statistic("Molecular Dynamics Simulation Performance", 1.0e-9 * (1.0e9 * stepSizeInSec * numSteps) / (wallClockTime / 86400.0), "Second per Day")
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete())
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete())
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":

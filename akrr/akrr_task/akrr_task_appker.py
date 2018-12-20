@@ -516,21 +516,19 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             parser_filename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
 
             import importlib.machinery
-            this_app_ker_parser = importlib.machinery.SourceFileLoader(
+            this_appker_parser = importlib.machinery.SourceFileLoader(
                 'this_app_ker_parser', parser_filename).load_module()
 
-            appker_n_res_vars = {
+            resource_appker_vars = {
                 'resource': self.resource,
                 'app': self.app
             }
-            appker_n_res_vars['resource'].update(self.resourceParam)
-            appker_n_res_vars['app'].update(self.appParam)
+            resource_appker_vars['resource'].update(self.resourceParam)
+            resource_appker_vars['app'].update(self.appParam)
 
-            performance = this_app_ker_parser.processAppKerOutput(appstdout=appstdoutFile,
-                                                                  stdout=stdoutFile,
-                                                                  stderr=stderrFile,
-                                                                  geninfo=os.path.join(batchJobDir, "gen.info"),
-                                                                  appKerNResVars=appker_n_res_vars)
+            performance = this_appker_parser.process_appker_output(
+                appstdout=appstdoutFile, stdout=stdoutFile, stderr=stderrFile,
+                geninfo=os.path.join(batchJobDir, "gen.info"), resource_appker_vars=resource_appker_vars)
             if performance is None:
                 self.set_method_to_run_next("push_to_db", "ERROR: Job have not finished successfully", "")
                 self.write_error_xml(result_file)
@@ -879,7 +877,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
         if os.path.isfile(nodes_filename):
             parser = AppKerOutputParser()
-            parser.parseCommonParsAndStats(geninfo=nodes_filename)
+            parser.parse_common_params_and_stats(geninfo=nodes_filename)
             if hasattr(parser, 'geninfo') and 'nodeList' in parser.geninfo:
                 nodes_list = parser.geninfo['nodeList'].split()
                 nodes = ";"

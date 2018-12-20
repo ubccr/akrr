@@ -29,38 +29,38 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     )
     #set obligatory parameters and statistics
     #set common parameters and statistics
-    parser.setCommonMustHaveParsAndStats()
+    parser.add_common_must_have_params_and_stats()
     #set app kernel custom sets  
-    parser.setMustHaveParameter('App:Version')
-    parser.setMustHaveParameter('Input:DGEMM Problem Size')
-    parser.setMustHaveParameter('Input:High Performance LINPACK Grid Cols')
-    parser.setMustHaveParameter('Input:High Performance LINPACK Grid Rows')
-    parser.setMustHaveParameter('Input:High Performance LINPACK Problem Size')
-    parser.setMustHaveParameter('Input:MPI Ranks')
-    parser.setMustHaveParameter('Input:MPIRandom Problem Size')
-    parser.setMustHaveParameter('Input:OpenMP Threads')
-    parser.setMustHaveParameter('Input:PTRANS Problem Size')
-    parser.setMustHaveParameter('Input:STREAM Array Size')
-    parser.setMustHaveParameter('RunEnv:CPU Speed')
-    parser.setMustHaveParameter('RunEnv:Nodes')
+    parser.add_must_have_parameter('App:Version')
+    parser.add_must_have_parameter('Input:DGEMM Problem Size')
+    parser.add_must_have_parameter('Input:High Performance LINPACK Grid Cols')
+    parser.add_must_have_parameter('Input:High Performance LINPACK Grid Rows')
+    parser.add_must_have_parameter('Input:High Performance LINPACK Problem Size')
+    parser.add_must_have_parameter('Input:MPI Ranks')
+    parser.add_must_have_parameter('Input:MPIRandom Problem Size')
+    parser.add_must_have_parameter('Input:OpenMP Threads')
+    parser.add_must_have_parameter('Input:PTRANS Problem Size')
+    parser.add_must_have_parameter('Input:STREAM Array Size')
+    parser.add_must_have_parameter('RunEnv:CPU Speed')
+    parser.add_must_have_parameter('RunEnv:Nodes')
     
-    parser.setMustHaveStatistic('Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance')
-    parser.setMustHaveStatistic("Average STREAM 'Add' Memory Bandwidth")
-    parser.setMustHaveStatistic("Average STREAM 'Copy' Memory Bandwidth")
-    parser.setMustHaveStatistic("Average STREAM 'Scale' Memory Bandwidth")
-    parser.setMustHaveStatistic("Average STREAM 'Triad' Memory Bandwidth")
-    parser.setMustHaveStatistic('Fast Fourier Transform (FFTW) Floating-Point Performance')
-    parser.setMustHaveStatistic('High Performance LINPACK Efficiency')
-    parser.setMustHaveStatistic('High Performance LINPACK Floating-Point Performance')
-    parser.setMustHaveStatistic('High Performance LINPACK Run Time')
-    parser.setMustHaveStatistic('MPI Random Access')
-    parser.setMustHaveStatistic('Parallel Matrix Transpose (PTRANS)')
-    parser.setMustHaveStatistic('Wall Clock Time')
+    parser.add_must_have_statistic('Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance')
+    parser.add_must_have_statistic("Average STREAM 'Add' Memory Bandwidth")
+    parser.add_must_have_statistic("Average STREAM 'Copy' Memory Bandwidth")
+    parser.add_must_have_statistic("Average STREAM 'Scale' Memory Bandwidth")
+    parser.add_must_have_statistic("Average STREAM 'Triad' Memory Bandwidth")
+    parser.add_must_have_statistic('Fast Fourier Transform (FFTW) Floating-Point Performance')
+    parser.add_must_have_statistic('High Performance LINPACK Efficiency')
+    parser.add_must_have_statistic('High Performance LINPACK Floating-Point Performance')
+    parser.add_must_have_statistic('High Performance LINPACK Run Time')
+    parser.add_must_have_statistic('MPI Random Access')
+    parser.add_must_have_statistic('Parallel Matrix Transpose (PTRANS)')
+    parser.add_must_have_statistic('Wall Clock Time')
     #parse common parameters and statistics
-    parser.parseCommonParsAndStats(appstdout,stdout,stderr,geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
     
     if hasattr(parser,'appKerWallClockTime'):
-        parser.setStatistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
     
     # Intel MPI benchmark suite contains three classes of benchmarks:
     #
@@ -151,7 +151,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     if "VersionRelease" in values:
         hpccVersion+=values["VersionRelease"]
     if hpccVersion:
-        parser.setParameter("App:Version", hpccVersion)
+        parser.set_parameter("App:Version", hpccVersion)
     
     for k,v in Params.items():
         if not k in values:
@@ -162,7 +162,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             val=eval(v[2])
         if v[1]=="":
             v[1]=None
-        parser.setParameter( "Input:" + v[0],val, v[1])
+        parser.set_parameter("Input:" + v[0], val, v[1])
     
     for k,v in Metrics.items():
         if not k in values:
@@ -173,7 +173,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
             val=eval(v[2])
         if v[1]=="":
             v[1]=None
-        parser.setStatistic(v[0],val, v[1])
+        parser.set_statistic(v[0], val, v[1])
     
     if "cpuSpeed" in parser.geninfo:
         ll=parser.geninfo["cpuSpeed"].splitlines()
@@ -184,7 +184,7 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
                 v=float(m.group(1).strip())
                 if v>cpuSpeedMax:cpuSpeedMax=v
         if cpuSpeedMax>0.0:
-            parser.setParameter("RunEnv:CPU Speed",cpuSpeedMax, "MHz" )
+            parser.set_parameter("RunEnv:CPU Speed", cpuSpeedMax, "MHz")
             MHz=cpuSpeedMax
     #print appKerNResVars
     #print MHz
@@ -204,19 +204,19 @@ def processAppKerOutput(appstdout=None,stdout=None,stderr=None,geninfo=None,appK
     if theoreticalGFlops and hpl_tflops:
             # Convert both to GFlops and derive the Efficiency
             percent = ( 1000.0 * hpl_tflops / theoreticalGFlops ) * 100.0;
-            parser.setStatistic("High Performance LINPACK Efficiency", "%.3f"%percent, "Percent")
+            parser.set_statistic("High Performance LINPACK Efficiency", "%.3f" % percent, "Percent")
             
     
            
     
     if __name__ == "__main__":
         #output for testing purpose
-        print("parsing complete:",parser.parsingComplete(Verbose=True))
-        parser.printParsNStatsAsMustHave()
-        print(parser.getXML())
+        print("parsing complete:", parser.parsing_complete(verbose=True))
+        parser.print_params_stats_as_must_have()
+        print(parser.get_xml())
     
     #return complete XML overwize return None
-    return parser.getXML()
+    return parser.get_xml()
     
     
 if __name__ == "__main__":
