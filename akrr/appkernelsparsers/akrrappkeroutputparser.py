@@ -19,7 +19,7 @@ def total_seconds(d):
 
 
 class AppKerOutputParser:
-    def __init__(self, name='', version=1, description='', url='', measurement_name='', resource_appker_vars=None):
+    def __init__(self, name='', version=1, description='', url='', measurement_name=''):
         self.name = name
         self.version = version
         self.description = description
@@ -32,7 +32,6 @@ class AppKerOutputParser:
         self.statistics = []
         self.mustHaveParameters = []
         self.mustHaveStatistics = []
-        self.resource_appker_vars = resource_appker_vars
         # complete
         self.successfulRun = None
         self.completeOnPartialMustHaveStatistics = False
@@ -129,7 +128,8 @@ class AppKerOutputParser:
         self.add_must_have_parameter('App:ExeBinSignature')
         self.add_must_have_parameter('RunEnv:Nodes')
 
-    def parse_common_params_and_stats(self, appstdout=None, stdout=None, stderr=None, geninfo=None):
+    def parse_common_params_and_stats(self, appstdout=None, stdout=None, stderr=None, geninfo=None,
+                                      resource_appker_vars=None):
         # retrieve node lists and set respective parameter
         try:
             if geninfo is not None:
@@ -224,6 +224,12 @@ class AppKerOutputParser:
                 self.set_statistic(k + " exists", int(v))
             for k, v in list(self.dirAccess.items()):
                 self.set_statistic(k + " accessible", int(v))
+
+        if resource_appker_vars is not None:
+            if 'resource' in resource_appker_vars:
+                self.set_parameter("resource", resource_appker_vars["resource"])
+            if 'app' in resource_appker_vars:
+                self.set_parameter("app", resource_appker_vars["app"])
 
     def parsing_complete(self, verbose=False):
         """i.e. app output was having all mandatory parameters and statistics"""

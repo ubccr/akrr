@@ -126,3 +126,26 @@ def replace_at_var_at(s: str, ds: List[dict]):
         var_value = d[var_name]
         s = s.replace("@" + var_name + "@", str(var_value))
     return s
+
+
+def floats_are_close(a, b, rel_tol=1.0e-7):
+    from math import fabs
+    if a == 0 and b == 0:
+        return True
+    if a == 0:
+        if b <= rel_tol:
+            return True
+        else:
+            return False
+    if b == 0:
+        if a <= rel_tol:
+            return True
+        else:
+            return False
+
+    rel_diff = fabs(2.0*(a-b)/(a+b))
+
+    if rel_diff <= rel_tol:
+        return True
+
+    return False

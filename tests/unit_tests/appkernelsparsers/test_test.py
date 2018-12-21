@@ -6,7 +6,8 @@ def test_parser(datadir):
         appstdout=str(datadir / 'appstdout'),
         stdout=str(datadir / 'stdout'),
         stderr=str(datadir / 'stderr'),
-        geninfo=str(datadir / 'gen.info')
+        geninfo=str(datadir / 'gen.info'),
+        resource_appker_vars={'resource': 'HPC-Cluster'}
     )
     print(results)
     # check resulting xml
