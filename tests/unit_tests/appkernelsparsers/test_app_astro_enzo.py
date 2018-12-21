@@ -15,10 +15,12 @@ def test_parser(datadir):
     params = xml_out.find(".//parameters")
     stats = xml_out.find(".//statistics")
 
+    assert xml_out.find('./exitStatus/completed').text == "true"
+
     assert len(params.find(".//parameter[ID='RunEnv:Nodes']").find('value').text) > 5
     assert params.find(".//parameter[ID='resource']").find('value').text == "HPC-Cluster"
     assert floats_are_close(
-        float(stats.find(".//statistic[ID='All Data Group Write Time']").find('value').text),10.915409)
+        float(stats.find(".//statistic[ID='All Data Group Write Time']").find('value').text), 10.915409)
     assert floats_are_close(
         float(stats.find(".//statistic[ID='All Grid Level 00 Calculation Time']").find('value').text), 42.9321762)
     assert floats_are_close(
