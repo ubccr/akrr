@@ -1,0 +1,10 @@
+Temporary working directory: /gpfs/scratch/xdtas/ubhpc/gamess.Swa9WNC0c
+AKRR_NODELIST
+cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-27 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-28 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-30 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31 cpn-u22-31
+SLURM_NODELIST
+cpn-u22-[27-28,30-31]
+GMX_NODELIST
+cpn-u22-27:cpus=32 cpn-u22-28:cpus=32 cpn-u22-30:cpus=32 cpn-u22-31:cpus=32
+Attempt to launch GAMESS: 0
+Total attempt to launch GAMESS is 1
+Deleting temporary files
