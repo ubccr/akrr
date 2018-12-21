@@ -1,0 +1,2730 @@
+===ExeBinSignature=== MD5: e3f44bab3b6f611f53168d43943f0594 /projects/ccrstaff/general/appker/UBHPC/execs/graph500/mpi214/graph500_mpi_replicated_csc_seqval
+===ExeBinSignature=== MD5: 7b3c8715beae1fe8ede7bb352b9cd94e /lib64/libm.so.6
+===ExeBinSignature=== MD5: 0f65391c22de4d15744ea80ec857419a /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: d9196e5f82db2befd02eb55c78747724 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: f379afb21d46e2d642fcadb95d7da37c /lib64/libdl.so.2
+===ExeBinSignature=== MD5: b6fafb6234cb418d25ad5b8d548a3e68 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 641b598339d2f688c409faf509548cd6 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 071ea8658daf96a77a828111b40261de /util/academic/intel/18.3/lib/intel64/libiomp5.so
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 73ae799408ded6010d7d1a8dd55a8cf1 /lib64/libc.so.6
+Graph500 version: 2.1.4 replicated csc
+Reading input from /projects/ccrstaff/general/appker/UBHPC/inputs/graph500/input23
+rank 1/4
+rank 3/4
+rank 2/4
+rank 0/4
+	Scale: 23
+	Edgefactor 16
+	Number of BFS roots: 64
+	Use pure OpenMP Implementation for single node: 1
+	Run performance section: 1
+	Run validation: 1
+	Time for performance section in seconds: 300.000000
+	Use only performance section for TEPS calculation: 1
+	Max number of cycles: 1000
+	Number of MPI processes: 4
+	Max number of threads per MPI process: 32
+MPI Process 0:
+Cpus_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
+Cpus_allowed_list:	0-31
+
+MPI Process 1:
+Cpus_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
+Cpus_allowed_list:	0-31
+
+MPI Process 3:
+Cpus_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
+Cpus_allowed_list:	0-31
+
+MPI Process 2:
+Cpus_allowed:	00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,ffffffff
+Cpus_allowed_list:	0-31
+
+graph_generation:               4.590322 s
+construction_time:              24.859040 s
+Starting cycle 0.
+Time for BFS 0 is 0.142938
+Time for BFS 1 is 0.140267
+Time for BFS 2 is 0.164211
+Time for BFS 3 is 0.145550
+Time for BFS 4 is 0.134340
+Time for BFS 5 is 0.160629
+Time for BFS 6 is 0.143625
+Time for BFS 7 is 0.211808
+Time for BFS 8 is 0.135898
+Time for BFS 9 is 0.141008
+Time for BFS 10 is 0.140576
+Time for BFS 11 is 0.136826
+Time for BFS 12 is 0.135739
+Time for BFS 13 is 0.137863
+Time for BFS 14 is 0.135452
+Time for BFS 15 is 0.140650
+Time for BFS 16 is 0.140230
+Time for BFS 17 is 0.147223
+Time for BFS 18 is 0.134829
+Time for BFS 19 is 0.141115
+Time for BFS 20 is 0.140768
+Time for BFS 21 is 0.190009
+Time for BFS 22 is 0.136718
+Time for BFS 23 is 0.135736
+Time for BFS 24 is 0.140175
+Time for BFS 25 is 0.203358
+Time for BFS 26 is 0.136311
+Time for BFS 27 is 0.220926
+Time for BFS 28 is 0.139759
+Time for BFS 29 is 0.173923
+Time for BFS 30 is 0.142471
+Time for BFS 31 is 0.191009
+Time for BFS 32 is 0.140028
+Time for BFS 33 is 0.134625
+Time for BFS 34 is 0.138982
+Time for BFS 35 is 0.136176
+Time for BFS 36 is 0.139565
+Time for BFS 37 is 0.153226
+Time for BFS 38 is 0.250899
+Time for BFS 39 is 0.237491
+Time for BFS 40 is 0.134965
+Time for BFS 41 is 0.217023
+Time for BFS 42 is 0.155683
+Time for BFS 43 is 0.191761
+Time for BFS 44 is 0.158128
+Time for BFS 45 is 0.163338
+Time for BFS 46 is 0.158852
+Time for BFS 47 is 0.176570
+Time for BFS 48 is 0.147079
+Time for BFS 49 is 0.157640
+Time for BFS 50 is 0.135034
+Time for BFS 51 is 0.133199
+Time for BFS 52 is 0.160079
+Time for BFS 53 is 0.134690
+Time for BFS 54 is 0.134603
+Time for BFS 55 is 0.211924
+Time for BFS 56 is 0.143443
+Time for BFS 57 is 0.133570
+Time for BFS 58 is 0.132912
+Time for BFS 59 is 0.137031
+Time for BFS 60 is 0.142274
+Time for BFS 61 is 0.133984
+Time for BFS 62 is 0.175716
+Time for BFS 63 is 0.160046
+Starting cycle 1.
+Time for BFS 0 is 0.137857
+Time for BFS 1 is 0.136563
+Time for BFS 2 is 0.140691
+Time for BFS 3 is 0.134856
+Time for BFS 4 is 0.176733
+Time for BFS 5 is 0.135525
+Time for BFS 6 is 0.170977
+Time for BFS 7 is 0.135827
+Time for BFS 8 is 0.133297
+Time for BFS 9 is 0.138025
+Time for BFS 10 is 0.136823
+Time for BFS 11 is 0.134530
+Time for BFS 12 is 0.132282
+Time for BFS 13 is 0.144855
+Time for BFS 14 is 0.133363
+Time for BFS 15 is 0.135371
+Time for BFS 16 is 0.136555
+Time for BFS 17 is 0.140667
+Time for BFS 18 is 0.133813
+Time for BFS 19 is 0.136725
+Time for BFS 20 is 0.188296
+Time for BFS 21 is 0.150707
+Time for BFS 22 is 0.134225
+Time for BFS 23 is 0.133134
+Time for BFS 24 is 0.139599
+Time for BFS 25 is 0.133198
+Time for BFS 26 is 0.133847
+Time for BFS 27 is 0.147678
+Time for BFS 28 is 0.139056
+Time for BFS 29 is 0.133736
+Time for BFS 30 is 0.138606
+Time for BFS 31 is 0.131881
+Time for BFS 32 is 0.137168
+Time for BFS 33 is 0.133997
+Time for BFS 34 is 0.134011
+Time for BFS 35 is 0.133139
+Time for BFS 36 is 0.135824
+Time for BFS 37 is 0.170332
+Time for BFS 38 is 0.151356
+Time for BFS 39 is 0.136716
+Time for BFS 40 is 0.148868
+Time for BFS 41 is 0.135477
+Time for BFS 42 is 0.132355
+Time for BFS 43 is 0.145600
+Time for BFS 44 is 0.132848
+Time for BFS 45 is 0.133486
+Time for BFS 46 is 0.136379
+Time for BFS 47 is 0.134261
+Time for BFS 48 is 0.147424
+Time for BFS 49 is 0.239790
+Time for BFS 50 is 0.148528
+Time for BFS 51 is 0.133974
+Time for BFS 52 is 0.131703
+Time for BFS 53 is 0.135686
+Time for BFS 54 is 0.134712
+Time for BFS 55 is 0.136687
+Time for BFS 56 is 0.144577
+Time for BFS 57 is 0.134075
+Time for BFS 58 is 0.133335
+Time for BFS 59 is 0.133383
+Time for BFS 60 is 0.137468
+Time for BFS 61 is 0.134333
+Time for BFS 62 is 0.132931
+Time for BFS 63 is 0.134918
+Starting cycle 2.
+Time for BFS 0 is 0.135946
+Time for BFS 1 is 0.136513
+Time for BFS 2 is 0.150897
+Time for BFS 3 is 0.158364
+Time for BFS 4 is 0.132696
+Time for BFS 5 is 0.135739
+Time for BFS 6 is 0.134760
+Time for BFS 7 is 0.133618
+Time for BFS 8 is 0.138239
+Time for BFS 9 is 0.189616
+Time for BFS 10 is 0.244209
+Time for BFS 11 is 0.175365
+Time for BFS 12 is 0.143482
+Time for BFS 13 is 0.176386
+Time for BFS 14 is 0.155120
+Time for BFS 15 is 0.168187
+Time for BFS 16 is 0.139661
+Time for BFS 17 is 0.137749
+Time for BFS 18 is 0.165422
+Time for BFS 19 is 0.173482
+Time for BFS 20 is 0.155635
+Time for BFS 21 is 0.132754
+Time for BFS 22 is 0.151174
+Time for BFS 23 is 0.173615
+Time for BFS 24 is 0.147969
+Time for BFS 25 is 0.133892
+Time for BFS 26 is 0.134186
+Time for BFS 27 is 0.143632
+Time for BFS 28 is 0.136176
+Time for BFS 29 is 0.133686
+Time for BFS 30 is 0.139453
+Time for BFS 31 is 0.132003
+Time for BFS 32 is 0.159912
+Time for BFS 33 is 0.152772
+Time for BFS 34 is 0.134058
+Time for BFS 35 is 0.133258
+Time for BFS 36 is 0.135984
+Time for BFS 37 is 0.141142
+Time for BFS 38 is 0.135537
+Time for BFS 39 is 0.137946
+Time for BFS 40 is 0.133833
+Time for BFS 41 is 0.143829
+Time for BFS 42 is 0.132623
+Time for BFS 43 is 0.141486
+Time for BFS 44 is 0.132865
+Time for BFS 45 is 0.132999
+Time for BFS 46 is 0.136186
+Time for BFS 47 is 0.142295
+Time for BFS 48 is 0.136063
+Time for BFS 49 is 0.132812
+Time for BFS 50 is 0.133632
+Time for BFS 51 is 0.135509
+Time for BFS 52 is 0.131014
+Time for BFS 53 is 0.141605
+Time for BFS 54 is 0.134864
+Time for BFS 55 is 0.136305
+Time for BFS 56 is 0.138793
+Time for BFS 57 is 0.133413
+Time for BFS 58 is 0.133297
+Time for BFS 59 is 0.142373
+Time for BFS 60 is 0.144918
+Time for BFS 61 is 0.139324
+Time for BFS 62 is 0.131630
+Time for BFS 63 is 0.134348
+Starting cycle 3.
+Time for BFS 0 is 0.135402
+Time for BFS 1 is 0.139706
+Time for BFS 2 is 0.131842
+Time for BFS 3 is 0.134964
+Time for BFS 4 is 0.132293
+Time for BFS 5 is 0.140154
+Time for BFS 6 is 0.197920
+Time for BFS 7 is 0.133450
+Time for BFS 8 is 0.133404
+Time for BFS 9 is 0.137291
+Time for BFS 10 is 0.136683
+Time for BFS 11 is 0.148176
+Time for BFS 12 is 0.213088
+Time for BFS 13 is 0.134850
+Time for BFS 14 is 0.153231
+Time for BFS 15 is 0.148404
+Time for BFS 16 is 0.148809
+Time for BFS 17 is 0.141670
+Time for BFS 18 is 0.132527
+Time for BFS 19 is 0.137151
+Time for BFS 20 is 0.137022
+Time for BFS 21 is 0.132555
+Time for BFS 22 is 0.134204
+Time for BFS 23 is 0.133516
+Time for BFS 24 is 0.136680
+Time for BFS 25 is 0.132855
+Time for BFS 26 is 0.134067
+Time for BFS 27 is 0.143595
+Time for BFS 28 is 0.221461
+Time for BFS 29 is 0.133614
+Time for BFS 30 is 0.139041
+Time for BFS 31 is 0.131891
+Time for BFS 32 is 0.136484
+Time for BFS 33 is 0.132402
+Time for BFS 34 is 0.134063
+Time for BFS 35 is 0.133048
+Time for BFS 36 is 0.149317
+Time for BFS 37 is 0.136704
+Time for BFS 38 is 0.134505
+Time for BFS 39 is 0.142988
+Time for BFS 40 is 0.133783
+Time for BFS 41 is 0.134411
+Time for BFS 42 is 0.133046
+Time for BFS 43 is 0.141636
+Time for BFS 44 is 0.132883
+Time for BFS 45 is 0.132881
+Time for BFS 46 is 0.136143
+Time for BFS 47 is 0.135512
+Time for BFS 48 is 0.136153
+Time for BFS 49 is 0.132898
+Time for BFS 50 is 0.133601
+Time for BFS 51 is 0.133071
+Time for BFS 52 is 0.131105
+Time for BFS 53 is 0.133931
+Time for BFS 54 is 0.134266
+Time for BFS 55 is 0.136063
+Time for BFS 56 is 0.134050
+Time for BFS 57 is 0.133481
+Time for BFS 58 is 0.137866
+Time for BFS 59 is 0.132884
+Time for BFS 60 is 0.137200
+Time for BFS 61 is 0.133819
+Time for BFS 62 is 0.131628
+Time for BFS 63 is 0.139966
+Starting cycle 4.
+Time for BFS 0 is 0.143634
+Time for BFS 1 is 0.136318
+Time for BFS 2 is 0.131753
+Time for BFS 3 is 0.139881
+Time for BFS 4 is 0.132459
+Time for BFS 5 is 0.135809
+Time for BFS 6 is 0.134734
+Time for BFS 7 is 0.132951
+Time for BFS 8 is 0.133415
+Time for BFS 9 is 0.137197
+Time for BFS 10 is 0.136759
+Time for BFS 11 is 0.134868
+Time for BFS 12 is 0.181416
+Time for BFS 13 is 0.135007
+Time for BFS 14 is 0.133013
+Time for BFS 15 is 0.135637
+Time for BFS 16 is 0.136368
+Time for BFS 17 is 0.137886
+Time for BFS 18 is 0.208408
+Time for BFS 19 is 0.136756
+Time for BFS 20 is 0.162687
+Time for BFS 21 is 0.132526
+Time for BFS 22 is 0.149402
+Time for BFS 23 is 0.133037
+Time for BFS 24 is 0.136280
+Time for BFS 25 is 0.132976
+Time for BFS 26 is 0.134213
+Time for BFS 27 is 0.143447
+Time for BFS 28 is 0.137074
+Time for BFS 29 is 0.134350
+Time for BFS 30 is 0.138931
+Time for BFS 31 is 0.131999
+Time for BFS 32 is 0.136661
+Time for BFS 33 is 0.132800
+Time for BFS 34 is 0.134194
+Time for BFS 35 is 0.196641
+Time for BFS 36 is 0.136699
+Time for BFS 37 is 0.136817
+Time for BFS 38 is 0.136169
+Time for BFS 39 is 0.137495
+Time for BFS 40 is 0.133791
+Time for BFS 41 is 0.134520
+Time for BFS 42 is 0.133187
+Time for BFS 43 is 0.141895
+Time for BFS 44 is 0.135985
+Time for BFS 45 is 0.133152
+Time for BFS 46 is 0.150362
+Time for BFS 47 is 0.134877
+Time for BFS 48 is 0.136240
+Time for BFS 49 is 0.132931
+Time for BFS 50 is 0.133509
+Time for BFS 51 is 0.132978
+Time for BFS 52 is 0.131267
+Time for BFS 53 is 0.134341
+Time for BFS 54 is 0.134165
+Time for BFS 55 is 0.136163
+Time for BFS 56 is 0.133937
+Time for BFS 57 is 0.134063
+Time for BFS 58 is 0.134268
+Time for BFS 59 is 0.132918
+Time for BFS 60 is 0.137045
+Time for BFS 61 is 0.133794
+Time for BFS 62 is 0.131486
+Time for BFS 63 is 0.142401
+Starting cycle 5.
+Time for BFS 0 is 0.135906
+Time for BFS 1 is 0.149719
+Time for BFS 2 is 0.131740
+Time for BFS 3 is 0.145515
+Time for BFS 4 is 0.132390
+Time for BFS 5 is 0.135632
+Time for BFS 6 is 0.135308
+Time for BFS 7 is 0.133214
+Time for BFS 8 is 0.133661
+Time for BFS 9 is 0.137078
+Time for BFS 10 is 0.137136
+Time for BFS 11 is 0.134548
+Time for BFS 12 is 0.132228
+Time for BFS 13 is 0.134852
+Time for BFS 14 is 0.133114
+Time for BFS 15 is 0.146310
+Time for BFS 16 is 0.136753
+Time for BFS 17 is 0.146492
+Time for BFS 18 is 0.193918
+Time for BFS 19 is 0.137236
+Time for BFS 20 is 0.138146
+Time for BFS 21 is 0.132410
+Time for BFS 22 is 0.134175
+Time for BFS 23 is 0.133082
+Time for BFS 24 is 0.210540
+Time for BFS 25 is 0.160587
+Time for BFS 26 is 0.150647
+Time for BFS 27 is 0.143522
+Time for BFS 28 is 0.136490
+Time for BFS 29 is 0.161532
+Time for BFS 30 is 0.151039
+Time for BFS 31 is 0.208173
+Time for BFS 32 is 0.140250
+Time for BFS 33 is 0.132312
+Time for BFS 34 is 0.134390
+Time for BFS 35 is 0.184049
+Time for BFS 36 is 0.136032
+Time for BFS 37 is 0.165455
+Time for BFS 38 is 0.134417
+Time for BFS 39 is 0.166207
+Time for BFS 40 is 0.135808
+Time for BFS 41 is 0.146976
+Time for BFS 42 is 0.132512
+Time for BFS 43 is 0.141479
+Time for BFS 44 is 0.132821
+Time for BFS 45 is 0.132960
+Time for BFS 46 is 0.136494
+Time for BFS 47 is 0.135837
+Time for BFS 48 is 0.136317
+Time for BFS 49 is 0.132775
+Time for BFS 50 is 0.133544
+Time for BFS 51 is 0.132988
+Time for BFS 52 is 0.131272
+Time for BFS 53 is 0.134307
+Time for BFS 54 is 0.134275
+Time for BFS 55 is 0.148533
+Time for BFS 56 is 0.134160
+Time for BFS 57 is 0.133430
+Time for BFS 58 is 0.136822
+Time for BFS 59 is 0.132844
+Time for BFS 60 is 0.137010
+Time for BFS 61 is 0.134035
+Time for BFS 62 is 0.131603
+Time for BFS 63 is 0.135445
+Starting cycle 6.
+Time for BFS 0 is 0.138623
+Time for BFS 1 is 0.146842
+Time for BFS 2 is 0.131735
+Time for BFS 3 is 0.135433
+Time for BFS 4 is 0.132351
+Time for BFS 5 is 0.135836
+Time for BFS 6 is 0.137145
+Time for BFS 7 is 0.133243
+Time for BFS 8 is 0.133500
+Time for BFS 9 is 0.137304
+Time for BFS 10 is 0.141089
+Time for BFS 11 is 0.134808
+Time for BFS 12 is 0.131951
+Time for BFS 13 is 0.135086
+Time for BFS 14 is 0.132946
+Time for BFS 15 is 0.136129
+Time for BFS 16 is 0.136871
+Time for BFS 17 is 0.138007
+Time for BFS 18 is 0.132665
+Time for BFS 19 is 0.137328
+Time for BFS 20 is 0.137309
+Time for BFS 21 is 0.132521
+Time for BFS 22 is 0.135706
+Time for BFS 23 is 0.195895
+Time for BFS 24 is 0.136213
+Time for BFS 25 is 0.132998
+Time for BFS 26 is 0.134423
+Time for BFS 27 is 0.144695
+Time for BFS 28 is 0.136307
+Time for BFS 29 is 0.192239
+Time for BFS 30 is 0.150893
+Time for BFS 31 is 0.178586
+Time for BFS 32 is 0.139368
+Time for BFS 33 is 0.132223
+Time for BFS 34 is 0.133969
+Time for BFS 35 is 0.133091
+Time for BFS 36 is 0.136245
+Time for BFS 37 is 0.136543
+Time for BFS 38 is 0.134582
+Time for BFS 39 is 0.137670
+Time for BFS 40 is 0.134340
+Time for BFS 41 is 0.134332
+Time for BFS 42 is 0.141410
+Time for BFS 43 is 0.141381
+Time for BFS 44 is 0.132646
+Time for BFS 45 is 0.257682
+Time for BFS 46 is 0.188927
+Time for BFS 47 is 0.214672
+Time for BFS 48 is 0.136056
+Time for BFS 49 is 0.132882
+Time for BFS 50 is 0.133459
+Time for BFS 51 is 0.132654
+Time for BFS 52 is 0.156440
+Time for BFS 53 is 0.134556
+Time for BFS 54 is 0.134294
+Time for BFS 55 is 0.136106
+Time for BFS 56 is 0.133952
+Time for BFS 57 is 0.133551
+Time for BFS 58 is 0.132880
+Time for BFS 59 is 0.133039
+Time for BFS 60 is 0.137045
+Time for BFS 61 is 0.140430
+Time for BFS 62 is 0.131466
+Time for BFS 63 is 0.134680
+Starting cycle 7.
+Time for BFS 0 is 0.135610
+Time for BFS 1 is 0.136964
+Time for BFS 2 is 0.133300
+Time for BFS 3 is 0.135575
+Time for BFS 4 is 0.132422
+Time for BFS 5 is 0.135752
+Time for BFS 6 is 0.138251
+Time for BFS 7 is 0.133180
+Time for BFS 8 is 0.133444
+Time for BFS 9 is 0.137227
+Time for BFS 10 is 0.136892
+Time for BFS 11 is 0.134352
+Time for BFS 12 is 0.132103
+Time for BFS 13 is 0.134834
+Time for BFS 14 is 0.132977
+Time for BFS 15 is 0.136435
+Time for BFS 16 is 0.136635
+Time for BFS 17 is 0.138038
+Time for BFS 18 is 0.132747
+Time for BFS 19 is 0.138395
+Time for BFS 20 is 0.137161
+Time for BFS 21 is 0.132600
+Time for BFS 22 is 0.134246
+Time for BFS 23 is 0.133162
+Time for BFS 24 is 0.136410
+Time for BFS 25 is 0.133061
+Time for BFS 26 is 0.133982
+Time for BFS 27 is 0.143290
+Time for BFS 28 is 0.183931
+Time for BFS 29 is 0.133706
+Time for BFS 30 is 0.138815
+Time for BFS 31 is 0.132806
+Time for BFS 32 is 0.136550
+Time for BFS 33 is 0.132340
+Time for BFS 34 is 0.199714
+Time for BFS 35 is 0.132963
+Time for BFS 36 is 0.166087
+Time for BFS 37 is 0.136760
+Time for BFS 38 is 0.134549
+Time for BFS 39 is 0.137149
+Time for BFS 40 is 0.133853
+Time for BFS 41 is 0.134370
+Time for BFS 42 is 0.132429
+Time for BFS 43 is 0.141432
+Time for BFS 44 is 0.132890
+Time for BFS 45 is 0.133836
+Time for BFS 46 is 0.136470
+Time for BFS 47 is 0.134483
+Time for BFS 48 is 0.136156
+Time for BFS 49 is 0.132670
+Time for BFS 50 is 0.133472
+Time for BFS 51 is 0.200443
+Time for BFS 52 is 0.132261
+Time for BFS 53 is 0.134260
+Time for BFS 54 is 0.134203
+Time for BFS 55 is 0.136410
+Time for BFS 56 is 0.133877
+Time for BFS 57 is 0.133553
+Time for BFS 58 is 0.133269
+Time for BFS 59 is 0.132963
+Time for BFS 60 is 0.138806
+Time for BFS 61 is 0.133830
+Time for BFS 62 is 0.131608
+Time for BFS 63 is 0.134823
+Starting cycle 8.
+Time for BFS 0 is 0.135741
+Time for BFS 1 is 0.137150
+Time for BFS 2 is 0.131604
+Time for BFS 3 is 0.135787
+Time for BFS 4 is 0.132351
+Time for BFS 5 is 0.135668
+Time for BFS 6 is 0.134996
+Time for BFS 7 is 0.133167
+Time for BFS 8 is 0.133692
+Time for BFS 9 is 0.137131
+Time for BFS 10 is 0.136813
+Time for BFS 11 is 0.134475
+Time for BFS 12 is 0.132136
+Time for BFS 13 is 0.134801
+Time for BFS 14 is 0.132967
+Time for BFS 15 is 0.213877
+Time for BFS 16 is 0.146915
+Time for BFS 17 is 0.145180
+Time for BFS 18 is 0.132613
+Time for BFS 19 is 0.137340
+Time for BFS 20 is 0.147118
+Time for BFS 21 is 0.132548
+Time for BFS 22 is 0.141602
+Time for BFS 23 is 0.133328
+Time for BFS 24 is 0.136183
+Time for BFS 25 is 0.132898
+Time for BFS 26 is 0.133944
+Time for BFS 27 is 0.143917
+Time for BFS 28 is 0.136531
+Time for BFS 29 is 0.133681
+Time for BFS 30 is 0.138847
+Time for BFS 31 is 0.131979
+Time for BFS 32 is 0.136560
+Time for BFS 33 is 0.166594
+Time for BFS 34 is 0.138048
+Time for BFS 35 is 0.134398
+Time for BFS 36 is 0.136438
+Time for BFS 37 is 0.136594
+Time for BFS 38 is 0.134591
+Time for BFS 39 is 0.137363
+Time for BFS 40 is 0.160758
+Time for BFS 41 is 0.169989
+Time for BFS 42 is 0.159059
+Time for BFS 43 is 0.141569
+Time for BFS 44 is 0.132702
+Time for BFS 45 is 0.150903
+Time for BFS 46 is 0.180401
+Time for BFS 47 is 0.184164
+Time for BFS 48 is 0.137699
+Time for BFS 49 is 0.132861
+Time for BFS 50 is 0.133728
+Time for BFS 51 is 0.193229
+Time for BFS 52 is 0.139394
+Time for BFS 53 is 0.135102
+Time for BFS 54 is 0.134148
+Time for BFS 55 is 0.146239
+Time for BFS 56 is 0.138778
+Time for BFS 57 is 0.133662
+Time for BFS 58 is 0.132886
+Time for BFS 59 is 0.133114
+Time for BFS 60 is 0.136967
+Time for BFS 61 is 0.133874
+Time for BFS 62 is 0.131328
+Time for BFS 63 is 0.134582
+Starting cycle 9.
+Time for BFS 0 is 0.135595
+Time for BFS 1 is 0.136910
+Time for BFS 2 is 0.131721
+Time for BFS 3 is 0.135690
+Time for BFS 4 is 0.132305
+Time for BFS 5 is 0.135925
+Time for BFS 6 is 0.135065
+Time for BFS 7 is 0.133202
+Time for BFS 8 is 0.133563
+Time for BFS 9 is 0.138469
+Time for BFS 10 is 0.136692
+Time for BFS 11 is 0.134488
+Time for BFS 12 is 0.132120
+Time for BFS 13 is 0.134867
+Time for BFS 14 is 0.133005
+Time for BFS 15 is 0.135940
+Time for BFS 16 is 0.136854
+Time for BFS 17 is 0.137978
+Time for BFS 18 is 0.132662
+Time for BFS 19 is 0.137192
+Time for BFS 20 is 0.137516
+Time for BFS 21 is 0.132516
+Time for BFS 22 is 0.134145
+Time for BFS 23 is 0.135007
+Time for BFS 24 is 0.136257
+Time for BFS 25 is 0.132975
+Time for BFS 26 is 0.135031
+Time for BFS 27 is 0.143461
+Time for BFS 28 is 0.136816
+Time for BFS 29 is 0.146390
+Time for BFS 30 is 0.139141
+Time for BFS 31 is 0.131894
+Time for BFS 32 is 0.136864
+Time for BFS 33 is 0.132282
+Time for BFS 34 is 0.133741
+Time for BFS 35 is 0.133087
+Time for BFS 36 is 0.136178
+Time for BFS 37 is 0.136591
+Time for BFS 38 is 0.134558
+Time for BFS 39 is 0.137557
+Time for BFS 40 is 0.147420
+Time for BFS 41 is 0.134244
+Time for BFS 42 is 0.140077
+Time for BFS 43 is 0.141758
+Time for BFS 44 is 0.133245
+Time for BFS 45 is 0.132697
+Time for BFS 46 is 0.209195
+Time for BFS 47 is 0.135118
+Time for BFS 48 is 0.177223
+Time for BFS 49 is 0.132861
+Time for BFS 50 is 0.134479
+Time for BFS 51 is 0.132714
+Time for BFS 52 is 0.131037
+Time for BFS 53 is 0.134095
+Time for BFS 54 is 0.134233
+Time for BFS 55 is 0.137256
+Time for BFS 56 is 0.135981
+Time for BFS 57 is 0.133588
+Time for BFS 58 is 0.135021
+Time for BFS 59 is 0.133077
+Time for BFS 60 is 0.137235
+Time for BFS 61 is 0.133973
+Time for BFS 62 is 0.215270
+Time for BFS 63 is 0.134586
+Starting cycle 10.
+Time for BFS 0 is 0.136023
+Time for BFS 1 is 0.136756
+Time for BFS 2 is 0.131500
+Time for BFS 3 is 0.135210
+Time for BFS 4 is 0.132254
+Time for BFS 5 is 0.136270
+Time for BFS 6 is 0.139632
+Time for BFS 7 is 0.133173
+Time for BFS 8 is 0.133791
+Time for BFS 9 is 0.137645
+Time for BFS 10 is 0.136995
+Time for BFS 11 is 0.134785
+Time for BFS 12 is 0.132257
+Time for BFS 13 is 0.135117
+Time for BFS 14 is 0.133023
+Time for BFS 15 is 0.135676
+Time for BFS 16 is 0.136493
+Time for BFS 17 is 0.138088
+Time for BFS 18 is 0.132577
+Time for BFS 19 is 0.137214
+Time for BFS 20 is 0.137001
+Time for BFS 21 is 0.132608
+Time for BFS 22 is 0.134203
+Time for BFS 23 is 0.132864
+Time for BFS 24 is 0.136122
+Time for BFS 25 is 0.132773
+Time for BFS 26 is 0.133822
+Time for BFS 27 is 0.143606
+Time for BFS 28 is 0.136288
+Time for BFS 29 is 0.133540
+Time for BFS 30 is 0.139176
+Time for BFS 31 is 0.131826
+Time for BFS 32 is 0.136506
+Time for BFS 33 is 0.132288
+Time for BFS 34 is 0.133836
+Time for BFS 35 is 0.133175
+Time for BFS 36 is 0.136256
+Time for BFS 37 is 0.136528
+Time for BFS 38 is 0.134508
+Time for BFS 39 is 0.137317
+Time for BFS 40 is 0.133547
+Time for BFS 41 is 0.134390
+Time for BFS 42 is 0.132492
+Time for BFS 43 is 0.142206
+Time for BFS 44 is 0.132843
+Time for BFS 45 is 0.132656
+Time for BFS 46 is 0.206291
+Time for BFS 47 is 0.157622
+Time for BFS 48 is 0.137903
+Time for BFS 49 is 0.132797
+Time for BFS 50 is 0.135162
+Time for BFS 51 is 0.132761
+Time for BFS 52 is 0.152645
+Time for BFS 53 is 0.138456
+Time for BFS 54 is 0.202484
+Time for BFS 55 is 0.136625
+Time for BFS 56 is 0.133860
+Time for BFS 57 is 0.133562
+Time for BFS 58 is 0.132764
+Time for BFS 59 is 0.133090
+Time for BFS 60 is 0.137025
+Time for BFS 61 is 0.133973
+Time for BFS 62 is 0.131481
+Time for BFS 63 is 0.146865
+Starting cycle 11.
+Time for BFS 0 is 0.135781
+Time for BFS 1 is 0.136509
+Time for BFS 2 is 0.132475
+Time for BFS 3 is 0.135202
+Time for BFS 4 is 0.132286
+Time for BFS 5 is 0.149914
+Time for BFS 6 is 0.134987
+Time for BFS 7 is 0.134388
+Time for BFS 8 is 0.133891
+Time for BFS 9 is 0.137431
+Time for BFS 10 is 0.136794
+Time for BFS 11 is 0.134510
+Time for BFS 12 is 0.132183
+Time for BFS 13 is 0.134921
+Time for BFS 14 is 0.133008
+Time for BFS 15 is 0.135824
+Time for BFS 16 is 0.136659
+Time for BFS 17 is 0.137998
+Time for BFS 18 is 0.132588
+Time for BFS 19 is 0.137270
+Time for BFS 20 is 0.136972
+Time for BFS 21 is 0.132593
+Time for BFS 22 is 0.134058
+Time for BFS 23 is 0.132937
+Time for BFS 24 is 0.136239
+Time for BFS 25 is 0.132920
+Time for BFS 26 is 0.134053
+Time for BFS 27 is 0.143706
+Time for BFS 28 is 0.136085
+Time for BFS 29 is 0.133606
+Time for BFS 30 is 0.139184
+Time for BFS 31 is 0.131995
+Time for BFS 32 is 0.136590
+Time for BFS 33 is 0.132338
+Time for BFS 34 is 0.142635
+Time for BFS 35 is 0.133152
+Time for BFS 36 is 0.143597
+Time for BFS 37 is 0.144131
+Time for BFS 38 is 0.134622
+Time for BFS 39 is 0.137253
+Time for BFS 40 is 0.133583
+Time for BFS 41 is 0.134405
+Time for BFS 42 is 0.132528
+Time for BFS 43 is 0.141855
+Time for BFS 44 is 0.132828
+Time for BFS 45 is 0.150294
+Time for BFS 46 is 0.136605
+Time for BFS 47 is 0.134672
+Time for BFS 48 is 0.136589
+Time for BFS 49 is 0.157158
+Time for BFS 50 is 0.159088
+Time for BFS 51 is 0.140394
+Time for BFS 52 is 0.189770
+Time for BFS 53 is 0.134204
+Time for BFS 54 is 0.134132
+Time for BFS 55 is 0.136308
+Time for BFS 56 is 0.133939
+Time for BFS 57 is 0.133318
+Time for BFS 58 is 0.211796
+Time for BFS 59 is 0.161028
+Time for BFS 60 is 0.177269
+Time for BFS 61 is 0.134031
+Time for BFS 62 is 0.131651
+Time for BFS 63 is 0.156661
+Starting cycle 12.
+Time for BFS 0 is 0.175119
+Time for BFS 1 is 0.167474
+Time for BFS 2 is 0.135778
+Time for BFS 3 is 0.135452
+Time for BFS 4 is 0.132331
+Time for BFS 5 is 0.224955
+Time for BFS 6 is 0.177006
+Time for BFS 7 is 0.133257
+Time for BFS 8 is 0.134248
+Time for BFS 9 is 0.210037
+Time for BFS 10 is 0.137190
+Time for BFS 11 is 0.134885
+Time for BFS 12 is 0.131781
+Time for BFS 13 is 0.135249
+Time for BFS 14 is 0.133141
+Time for BFS 15 is 0.136366
+Time for BFS 16 is 0.137067
+Time for BFS 17 is 0.138310
+Time for BFS 18 is 0.132747
+Time for BFS 19 is 0.137464
+Time for BFS 20 is 0.137357
+Time for BFS 21 is 0.132409
+Time for BFS 22 is 0.134269
+Time for BFS 23 is 0.132990
+Time for BFS 24 is 0.139606
+Time for BFS 25 is 0.148747
+Time for BFS 26 is 0.133929
+Time for BFS 27 is 0.144089
+Time for BFS 28 is 0.136477
+Time for BFS 29 is 0.133518
+Time for BFS 30 is 0.139936
+Time for BFS 31 is 0.131797
+Time for BFS 32 is 0.136781
+Time for BFS 33 is 0.132362
+Time for BFS 34 is 0.133885
+Time for BFS 35 is 0.133110
+Time for BFS 36 is 0.136785
+Time for BFS 37 is 0.136743
+Time for BFS 38 is 0.134805
+Time for BFS 39 is 0.137647
+Time for BFS 40 is 0.133852
+Time for BFS 41 is 0.134409
+Time for BFS 42 is 0.132654
+Time for BFS 43 is 0.143355
+Time for BFS 44 is 0.133614
+Time for BFS 45 is 0.132754
+Time for BFS 46 is 0.137192
+Time for BFS 47 is 0.140735
+Time for BFS 48 is 0.136706
+Time for BFS 49 is 0.132923
+Time for BFS 50 is 0.133621
+Time for BFS 51 is 0.132753
+Time for BFS 52 is 0.131248
+Time for BFS 53 is 0.134321
+Time for BFS 54 is 0.134725
+Time for BFS 55 is 0.136739
+Time for BFS 56 is 0.133842
+Time for BFS 57 is 0.158496
+Time for BFS 58 is 0.133047
+Time for BFS 59 is 0.139176
+Time for BFS 60 is 0.137543
+Time for BFS 61 is 0.134779
+Time for BFS 62 is 0.131749
+Time for BFS 63 is 0.181922
+Starting cycle 13.
+Time for BFS 0 is 0.136073
+Time for BFS 1 is 0.165716
+Time for BFS 2 is 0.131860
+Time for BFS 3 is 0.135486
+Time for BFS 4 is 0.132363
+Time for BFS 5 is 0.136473
+Time for BFS 6 is 0.135627
+Time for BFS 7 is 0.133429
+Time for BFS 8 is 0.134008
+Time for BFS 9 is 0.137688
+Time for BFS 10 is 0.154488
+Time for BFS 11 is 0.135089
+Time for BFS 12 is 0.131934
+Time for BFS 13 is 0.135145
+Time for BFS 14 is 0.133135
+Time for BFS 15 is 0.166895
+Time for BFS 16 is 0.145447
+Time for BFS 17 is 0.138686
+Time for BFS 18 is 0.132755
+Time for BFS 19 is 0.137630
+Time for BFS 20 is 0.137367
+Time for BFS 21 is 0.132656
+Time for BFS 22 is 0.134325
+Time for BFS 23 is 0.133195
+Time for BFS 24 is 0.138877
+Time for BFS 25 is 0.133031
+Time for BFS 26 is 0.133942
+Time for BFS 27 is 0.144100
+Time for BFS 28 is 0.136629
+Time for BFS 29 is 0.133588
+Time for BFS 30 is 0.140025
+Time for BFS 31 is 0.131990
+Time for BFS 32 is 0.136631
+Time for BFS 33 is 0.132449
+Time for BFS 34 is 0.133758
+Time for BFS 35 is 0.133029
+Time for BFS 36 is 0.136834
+Time for BFS 37 is 0.136827
+Time for BFS 38 is 0.134760
+Time for BFS 39 is 0.137454
+Time for BFS 40 is 0.134399
+Time for BFS 41 is 0.134397
+Time for BFS 42 is 0.132688
+Time for BFS 43 is 0.142249
+Time for BFS 44 is 0.133241
+Time for BFS 45 is 0.132818
+Time for BFS 46 is 0.136723
+Time for BFS 47 is 0.137029
+Time for BFS 48 is 0.136866
+Time for BFS 49 is 0.132905
+Time for BFS 50 is 0.133568
+Time for BFS 51 is 0.132686
+Time for BFS 52 is 0.132240
+Time for BFS 53 is 0.134548
+Time for BFS 54 is 0.134216
+Time for BFS 55 is 0.136487
+Time for BFS 56 is 0.134272
+Time for BFS 57 is 0.144130
+Time for BFS 58 is 0.133141
+Time for BFS 59 is 0.132748
+Time for BFS 60 is 0.137405
+Time for BFS 61 is 0.134063
+Time for BFS 62 is 0.131644
+Time for BFS 63 is 0.134621
+Starting cycle 14.
+Time for BFS 0 is 0.155314
+Time for BFS 1 is 0.136873
+Time for BFS 2 is 0.131716
+Time for BFS 3 is 0.135635
+Time for BFS 4 is 0.133244
+Time for BFS 5 is 0.136651
+Time for BFS 6 is 0.181840
+Time for BFS 7 is 0.133356
+Time for BFS 8 is 0.167696
+Time for BFS 9 is 0.142052
+Time for BFS 10 is 0.137183
+Time for BFS 11 is 0.134882
+Time for BFS 12 is 0.132203
+Time for BFS 13 is 0.135047
+Time for BFS 14 is 0.133139
+Time for BFS 15 is 0.136280
+Time for BFS 16 is 0.137073
+Time for BFS 17 is 0.138479
+Time for BFS 18 is 0.132801
+Time for BFS 19 is 0.137684
+Time for BFS 20 is 0.137492
+Time for BFS 21 is 0.132534
+Time for BFS 22 is 0.222826
+Time for BFS 23 is 0.133278
+Time for BFS 24 is 0.136679
+Time for BFS 25 is 0.133060
+Time for BFS 26 is 0.134042
+Time for BFS 27 is 0.143962
+Time for BFS 28 is 0.136501
+Time for BFS 29 is 0.374946
+Time for BFS 30 is 0.177675
+Time for BFS 31 is 0.149502
+Time for BFS 32 is 0.136771
+Time for BFS 33 is 0.132525
+Time for BFS 34 is 0.134347
+Time for BFS 35 is 0.133064
+Time for BFS 36 is 0.136510
+Time for BFS 37 is 0.190260
+Time for BFS 38 is 0.134772
+Time for BFS 39 is 0.137725
+Time for BFS 40 is 0.133763
+Time for BFS 41 is 0.134231
+Time for BFS 42 is 0.133208
+Time for BFS 43 is 0.141908
+Time for BFS 44 is 0.139068
+Time for BFS 45 is 0.132708
+Time for BFS 46 is 0.136602
+Time for BFS 47 is 0.134786
+Time for BFS 48 is 0.136534
+Time for BFS 49 is 0.160641
+Time for BFS 50 is 0.134823
+Time for BFS 51 is 0.195815
+Time for BFS 52 is 0.130951
+Time for BFS 53 is 0.139975
+Time for BFS 54 is 0.134154
+Time for BFS 55 is 0.136224
+Time for BFS 56 is 0.133883
+Time for BFS 57 is 0.133864
+Time for BFS 58 is 0.133030
+Time for BFS 59 is 0.132890
+Time for BFS 60 is 0.137103
+Time for BFS 61 is 0.134148
+Time for BFS 62 is 0.131432
+Time for BFS 63 is 0.134533
+Starting cycle 15.
+Time for BFS 0 is 0.135779
+Time for BFS 1 is 0.136909
+Time for BFS 2 is 0.131895
+Time for BFS 3 is 0.194541
+Time for BFS 4 is 0.132430
+Time for BFS 5 is 0.136113
+Time for BFS 6 is 0.135235
+Time for BFS 7 is 0.133289
+Time for BFS 8 is 0.134617
+Time for BFS 9 is 0.171879
+Time for BFS 10 is 0.174174
+Time for BFS 11 is 0.157868
+Time for BFS 12 is 0.143111
+Time for BFS 13 is 0.134700
+Time for BFS 14 is 0.152771
+Time for BFS 15 is 0.154748
+Time for BFS 16 is 0.137037
+Time for BFS 17 is 0.176390
+Time for BFS 18 is 0.132886
+Time for BFS 19 is 0.138220
+Time for BFS 20 is 0.207531
+Time for BFS 21 is 0.148778
+Time for BFS 22 is 0.136735
+Time for BFS 23 is 0.132792
+Time for BFS 24 is 0.147183
+Time for BFS 25 is 0.147197
+Time for BFS 26 is 0.134130
+Time for BFS 27 is 0.143676
+Time for BFS 28 is 0.136597
+Time for BFS 29 is 0.140824
+Time for BFS 30 is 0.139205
+Time for BFS 31 is 0.131848
+Time for BFS 32 is 0.136886
+Time for BFS 33 is 0.132322
+Time for BFS 34 is 0.133874
+Time for BFS 35 is 0.133379
+Time for BFS 36 is 0.136466
+Time for BFS 37 is 0.136936
+Time for BFS 38 is 0.134727
+Time for BFS 39 is 0.137480
+Time for BFS 40 is 0.133822
+Time for BFS 41 is 0.134455
+Time for BFS 42 is 0.134242
+Time for BFS 43 is 0.141931
+Time for BFS 44 is 0.132918
+Time for BFS 45 is 0.132646
+Time for BFS 46 is 0.136691
+Time for BFS 47 is 0.134680
+Time for BFS 48 is 0.136362
+Time for BFS 49 is 0.133824
+Time for BFS 50 is 0.133462
+Time for BFS 51 is 0.132727
+Time for BFS 52 is 0.136734
+Time for BFS 53 is 0.134124
+Time for BFS 54 is 0.134127
+Time for BFS 55 is 0.137590
+Time for BFS 56 is 0.134547
+Time for BFS 57 is 0.133806
+Time for BFS 58 is 0.135206
+Time for BFS 59 is 0.133061
+Time for BFS 60 is 0.137062
+Time for BFS 61 is 0.134278
+Time for BFS 62 is 0.131454
+Time for BFS 63 is 0.136167
+Starting cycle 16.
+Time for BFS 0 is 0.135984
+Time for BFS 1 is 0.136790
+Time for BFS 2 is 0.131614
+Time for BFS 3 is 0.138200
+Time for BFS 4 is 0.132487
+Time for BFS 5 is 0.136155
+Time for BFS 6 is 0.135217
+Time for BFS 7 is 0.135647
+Time for BFS 8 is 0.133829
+Time for BFS 9 is 0.166174
+Time for BFS 10 is 0.137040
+Time for BFS 11 is 0.135948
+Time for BFS 12 is 0.132054
+Time for BFS 13 is 0.134938
+Time for BFS 14 is 0.133953
+Time for BFS 15 is 0.179217
+Time for BFS 16 is 0.136628
+Time for BFS 17 is 0.161274
+Time for BFS 18 is 0.134131
+Time for BFS 19 is 0.137192
+Time for BFS 20 is 0.144563
+Time for BFS 21 is 0.132349
+Time for BFS 22 is 0.134154
+Time for BFS 23 is 0.132898
+Time for BFS 24 is 0.136143
+Time for BFS 25 is 0.132979
+Time for BFS 26 is 0.134865
+Time for BFS 27 is 0.143686
+Time for BFS 28 is 0.136473
+Time for BFS 29 is 0.133803
+Time for BFS 30 is 0.139259
+Time for BFS 31 is 0.136635
+Time for BFS 32 is 0.154755
+Time for BFS 33 is 0.132369
+Time for BFS 34 is 0.133784
+Time for BFS 35 is 0.133116
+Time for BFS 36 is 0.136499
+Time for BFS 37 is 0.136802
+Time for BFS 38 is 0.134913
+Time for BFS 39 is 0.137374
+Time for BFS 40 is 0.133624
+Time for BFS 41 is 0.134378
+Time for BFS 42 is 0.133616
+Time for BFS 43 is 0.141842
+Time for BFS 44 is 0.132818
+Time for BFS 45 is 0.132675
+Time for BFS 46 is 0.136140
+Time for BFS 47 is 0.134789
+Time for BFS 48 is 0.136330
+Time for BFS 49 is 0.132754
+Time for BFS 50 is 0.133639
+Time for BFS 51 is 0.132513
+Time for BFS 52 is 0.130903
+Time for BFS 53 is 0.135113
+Time for BFS 54 is 0.135586
+Time for BFS 55 is 0.136289
+Time for BFS 56 is 0.134152
+Time for BFS 57 is 0.133239
+Time for BFS 58 is 0.132865
+Time for BFS 59 is 0.132816
+Time for BFS 60 is 0.137045
+Time for BFS 61 is 0.133872
+Time for BFS 62 is 0.131270
+Time for BFS 63 is 0.134661
+Starting cycle 17.
+Time for BFS 0 is 0.135789
+Time for BFS 1 is 0.136901
+Time for BFS 2 is 0.131651
+Time for BFS 3 is 0.135337
+Time for BFS 4 is 0.132359
+Time for BFS 5 is 0.136067
+Time for BFS 6 is 0.135325
+Time for BFS 7 is 0.133319
+Time for BFS 8 is 0.133771
+Time for BFS 9 is 0.137326
+Time for BFS 10 is 0.137124
+Time for BFS 11 is 0.134336
+Time for BFS 12 is 0.132077
+Time for BFS 13 is 0.134735
+Time for BFS 14 is 0.133038
+Time for BFS 15 is 0.135959
+Time for BFS 16 is 0.174204
+Time for BFS 17 is 0.138257
+Time for BFS 18 is 0.132751
+Time for BFS 19 is 0.137278
+Time for BFS 20 is 0.138274
+Time for BFS 21 is 0.132323
+Time for BFS 22 is 0.202869
+Time for BFS 23 is 0.132751
+Time for BFS 24 is 0.176913
+Time for BFS 25 is 0.132977
+Time for BFS 26 is 0.136145
+Time for BFS 27 is 0.143652
+Time for BFS 28 is 0.136508
+Time for BFS 29 is 0.133638
+Time for BFS 30 is 0.139199
+Time for BFS 31 is 0.131763
+Time for BFS 32 is 0.136758
+Time for BFS 33 is 0.132253
+Time for BFS 34 is 0.134063
+Time for BFS 35 is 0.147154
+Time for BFS 36 is 0.135881
+Time for BFS 37 is 0.136783
+Time for BFS 38 is 0.134517
+Time for BFS 39 is 0.148534
+Time for BFS 40 is 0.133190
+Time for BFS 41 is 0.134088
+Time for BFS 42 is 0.133127
+Time for BFS 43 is 0.141679
+Time for BFS 44 is 0.132774
+Time for BFS 45 is 0.132405
+Time for BFS 46 is 0.136313
+Time for BFS 47 is 0.134729
+Time for BFS 48 is 0.136275
+Time for BFS 49 is 0.132355
+Time for BFS 50 is 0.133061
+Time for BFS 51 is 0.132127
+Time for BFS 52 is 0.130547
+Time for BFS 53 is 0.134216
+Time for BFS 54 is 0.133902
+Time for BFS 55 is 0.136053
+Time for BFS 56 is 0.133889
+Time for BFS 57 is 0.132917
+Time for BFS 58 is 0.132507
+Time for BFS 59 is 0.132663
+Time for BFS 60 is 0.136957
+Time for BFS 61 is 0.133647
+Time for BFS 62 is 0.135050
+Time for BFS 63 is 0.134413
+Starting cycle 18.
+Time for BFS 0 is 0.135415
+Time for BFS 1 is 0.136598
+Time for BFS 2 is 0.131106
+Time for BFS 3 is 0.135179
+Time for BFS 4 is 0.131932
+Time for BFS 5 is 0.139171
+Time for BFS 6 is 0.182479
+Time for BFS 7 is 0.132738
+Time for BFS 8 is 0.133717
+Time for BFS 9 is 0.137128
+Time for BFS 10 is 0.136806
+Time for BFS 11 is 0.134969
+Time for BFS 12 is 0.131788
+Time for BFS 13 is 0.135769
+Time for BFS 14 is 0.132916
+Time for BFS 15 is 0.135643
+Time for BFS 16 is 0.136599
+Time for BFS 17 is 0.144219
+Time for BFS 18 is 0.138478
+Time for BFS 19 is 0.137745
+Time for BFS 20 is 0.138493
+Time for BFS 21 is 0.132332
+Time for BFS 22 is 0.134140
+Time for BFS 23 is 0.149952
+Time for BFS 24 is 0.136332
+Time for BFS 25 is 0.132479
+Time for BFS 26 is 0.133611
+Time for BFS 27 is 0.143994
+Time for BFS 28 is 0.136282
+Time for BFS 29 is 0.155890
+Time for BFS 30 is 0.178614
+Time for BFS 31 is 0.203231
+Time for BFS 32 is 0.136486
+Time for BFS 33 is 0.132131
+Time for BFS 34 is 0.148001
+Time for BFS 35 is 0.146100
+Time for BFS 36 is 0.179993
+Time for BFS 37 is 0.145483
+Time for BFS 38 is 0.134706
+Time for BFS 39 is 0.137315
+Time for BFS 40 is 0.180247
+Time for BFS 41 is 0.176556
+Time for BFS 42 is 0.132094
+Time for BFS 43 is 0.141676
+Time for BFS 44 is 0.193109
+Time for BFS 45 is 0.132197
+Time for BFS 46 is 0.136293
+Time for BFS 47 is 0.134374
+Time for BFS 48 is 0.136089
+Time for BFS 49 is 0.132326
+Time for BFS 50 is 0.140398
+Time for BFS 51 is 0.136256
+Time for BFS 52 is 0.130446
+Time for BFS 53 is 0.134091
+Time for BFS 54 is 0.133651
+Time for BFS 55 is 0.136266
+Time for BFS 56 is 0.133961
+Time for BFS 57 is 0.132808
+Time for BFS 58 is 0.133288
+Time for BFS 59 is 0.132666
+Time for BFS 60 is 0.137114
+Time for BFS 61 is 0.133714
+Time for BFS 62 is 0.131104
+Time for BFS 63 is 0.134437
+Starting cycle 19.
+Time for BFS 0 is 0.135792
+Time for BFS 1 is 0.136767
+Time for BFS 2 is 0.131122
+Time for BFS 3 is 0.135328
+Time for BFS 4 is 0.131732
+Time for BFS 5 is 0.135978
+Time for BFS 6 is 0.134965
+Time for BFS 7 is 0.132698
+Time for BFS 8 is 0.133571
+Time for BFS 9 is 0.137119
+Time for BFS 10 is 0.137097
+Time for BFS 11 is 0.134844
+Time for BFS 12 is 0.131681
+Time for BFS 13 is 0.134862
+Time for BFS 14 is 0.132502
+Time for BFS 15 is 0.135587
+Time for BFS 16 is 0.136485
+Time for BFS 17 is 0.137909
+Time for BFS 18 is 0.132375
+Time for BFS 19 is 0.143329
+Time for BFS 20 is 0.137059
+Time for BFS 21 is 0.132236
+Time for BFS 22 is 0.133894
+Time for BFS 23 is 0.132727
+Time for BFS 24 is 0.135959
+Time for BFS 25 is 0.132514
+Time for BFS 26 is 0.133524
+Time for BFS 27 is 0.143557
+Time for BFS 28 is 0.199595
+Time for BFS 29 is 0.133420
+Time for BFS 30 is 0.139095
+Time for BFS 31 is 0.134055
+Time for BFS 32 is 0.136553
+Time for BFS 33 is 0.132126
+Time for BFS 34 is 0.217502
+Time for BFS 35 is 0.132875
+Time for BFS 36 is 0.155267
+Time for BFS 37 is 0.136684
+Time for BFS 38 is 0.134375
+Time for BFS 39 is 0.144427
+Time for BFS 40 is 0.142929
+Time for BFS 41 is 0.133913
+Time for BFS 42 is 0.132005
+Time for BFS 43 is 0.141742
+Time for BFS 44 is 0.132680
+Time for BFS 45 is 0.132614
+Time for BFS 46 is 0.136244
+Time for BFS 47 is 0.148820
+Time for BFS 48 is 0.136210
+Time for BFS 49 is 0.132279
+Time for BFS 50 is 0.231693
+Time for BFS 51 is 0.160161
+Time for BFS 52 is 0.134088
+Time for BFS 53 is 0.180417
+Time for BFS 54 is 0.133686
+Time for BFS 55 is 0.136117
+Time for BFS 56 is 0.133994
+Time for BFS 57 is 0.132810
+Time for BFS 58 is 0.132424
+Time for BFS 59 is 0.132729
+Time for BFS 60 is 0.137036
+Time for BFS 61 is 0.133732
+Time for BFS 62 is 0.131321
+Time for BFS 63 is 0.134365
+Starting cycle 20.
+Time for BFS 0 is 0.135759
+Time for BFS 1 is 0.136713
+Time for BFS 2 is 0.131098
+Time for BFS 3 is 0.135360
+Time for BFS 4 is 0.131761
+Time for BFS 5 is 0.135958
+Time for BFS 6 is 0.135030
+Time for BFS 7 is 0.133402
+Time for BFS 8 is 0.134411
+Time for BFS 9 is 0.137284
+Time for BFS 10 is 0.136745
+Time for BFS 11 is 0.134296
+Time for BFS 12 is 0.131756
+Time for BFS 13 is 0.134531
+Time for BFS 14 is 0.132657
+Time for BFS 15 is 0.135543
+Time for BFS 16 is 0.136460
+Time for BFS 17 is 0.139484
+Time for BFS 18 is 0.133075
+Time for BFS 19 is 0.137091
+Time for BFS 20 is 0.137101
+Time for BFS 21 is 0.132325
+Time for BFS 22 is 0.134101
+Time for BFS 23 is 0.132652
+Time for BFS 24 is 0.136107
+Time for BFS 25 is 0.132573
+Time for BFS 26 is 0.133603
+Time for BFS 27 is 0.143381
+Time for BFS 28 is 0.136418
+Time for BFS 29 is 0.138482
+Time for BFS 30 is 0.139018
+Time for BFS 31 is 0.132796
+Time for BFS 32 is 0.136517
+Time for BFS 33 is 0.132106
+Time for BFS 34 is 0.154578
+Time for BFS 35 is 0.135751
+Time for BFS 36 is 0.136027
+Time for BFS 37 is 0.136704
+Time for BFS 38 is 0.134370
+Time for BFS 39 is 0.137047
+Time for BFS 40 is 0.150720
+Time for BFS 41 is 0.137693
+Time for BFS 42 is 0.141896
+Time for BFS 43 is 0.147777
+Time for BFS 44 is 0.132646
+Time for BFS 45 is 0.132202
+Time for BFS 46 is 0.137675
+Time for BFS 47 is 0.134481
+Time for BFS 48 is 0.136024
+Time for BFS 49 is 0.132302
+Time for BFS 50 is 0.133138
+Time for BFS 51 is 0.133137
+Time for BFS 52 is 0.130664
+Time for BFS 53 is 0.134252
+Time for BFS 54 is 0.133689
+Time for BFS 55 is 0.135929
+Time for BFS 56 is 0.133940
+Time for BFS 57 is 0.197791
+Time for BFS 58 is 0.132447
+Time for BFS 59 is 0.132899
+Time for BFS 60 is 0.137136
+Time for BFS 61 is 0.133716
+Time for BFS 62 is 0.131303
+Time for BFS 63 is 0.134669
+Starting cycle 21.
+Time for BFS 0 is 0.135868
+Time for BFS 1 is 0.137332
+Time for BFS 2 is 0.131291
+Time for BFS 3 is 0.135357
+Time for BFS 4 is 0.131983
+Time for BFS 5 is 0.136042
+Time for BFS 6 is 0.135064
+Time for BFS 7 is 0.133277
+Time for BFS 8 is 0.133765
+Time for BFS 9 is 0.137575
+Time for BFS 10 is 0.137445
+Time for BFS 11 is 0.134267
+Time for BFS 12 is 0.131848
+Time for BFS 13 is 0.134626
+Time for BFS 14 is 0.132747
+Time for BFS 15 is 0.135663
+Time for BFS 16 is 0.136402
+Time for BFS 17 is 0.138107
+Time for BFS 18 is 0.132451
+Time for BFS 19 is 0.137013
+Time for BFS 20 is 0.137180
+Time for BFS 21 is 0.132286
+Time for BFS 22 is 0.134119
+Time for BFS 23 is 0.176620
+Time for BFS 24 is 0.136330
+Time for BFS 25 is 0.160352
+Time for BFS 26 is 0.133504
+Time for BFS 27 is 0.143551
+Time for BFS 28 is 0.136163
+Time for BFS 29 is 0.133519
+Time for BFS 30 is 0.139189
+Time for BFS 31 is 0.132020
+Time for BFS 32 is 0.136728
+Time for BFS 33 is 0.132120
+Time for BFS 34 is 0.133692
+Time for BFS 35 is 0.132830
+Time for BFS 36 is 0.136182
+Time for BFS 37 is 0.136903
+Time for BFS 38 is 0.135787
+Time for BFS 39 is 0.137043
+Time for BFS 40 is 0.135017
+Time for BFS 41 is 0.156261
+Time for BFS 42 is 0.131891
+Time for BFS 43 is 0.141625
+Time for BFS 44 is 0.132747
+Time for BFS 45 is 0.132248
+Time for BFS 46 is 0.136312
+Time for BFS 47 is 0.204525
+Time for BFS 48 is 0.136231
+Time for BFS 49 is 0.163381
+Time for BFS 50 is 0.138316
+Time for BFS 51 is 0.132190
+Time for BFS 52 is 0.161309
+Time for BFS 53 is 0.162907
+Time for BFS 54 is 0.135238
+Time for BFS 55 is 0.165344
+Time for BFS 56 is 0.134219
+Time for BFS 57 is 0.133379
+Time for BFS 58 is 0.132322
+Time for BFS 59 is 0.152334
+Time for BFS 60 is 0.146836
+Time for BFS 61 is 0.133712
+Time for BFS 62 is 0.131302
+Time for BFS 63 is 0.148549
+Starting cycle 22.
+Time for BFS 0 is 0.135824
+Time for BFS 1 is 0.137204
+Time for BFS 2 is 0.131033
+Time for BFS 3 is 0.135836
+Time for BFS 4 is 0.131795
+Time for BFS 5 is 0.136181
+Time for BFS 6 is 0.135661
+Time for BFS 7 is 0.132753
+Time for BFS 8 is 0.133673
+Time for BFS 9 is 0.137212
+Time for BFS 10 is 0.136766
+Time for BFS 11 is 0.134354
+Time for BFS 12 is 0.131894
+Time for BFS 13 is 0.134855
+Time for BFS 14 is 0.133009
+Time for BFS 15 is 0.135967
+Time for BFS 16 is 0.144544
+Time for BFS 17 is 0.138677
+Time for BFS 18 is 0.132289
+Time for BFS 19 is 0.137313
+Time for BFS 20 is 0.138567
+Time for BFS 21 is 0.132687
+Time for BFS 22 is 0.134199
+Time for BFS 23 is 0.133747
+Time for BFS 24 is 0.136033
+Time for BFS 25 is 0.132501
+Time for BFS 26 is 0.133566
+Time for BFS 27 is 0.143563
+Time for BFS 28 is 0.136606
+Time for BFS 29 is 0.133417
+Time for BFS 30 is 0.139472
+Time for BFS 31 is 0.131636
+Time for BFS 32 is 0.137304
+Time for BFS 33 is 0.132106
+Time for BFS 34 is 0.133586
+Time for BFS 35 is 0.132651
+Time for BFS 36 is 0.136762
+Time for BFS 37 is 0.136755
+Time for BFS 38 is 0.134316
+Time for BFS 39 is 0.162016
+Time for BFS 40 is 0.133283
+Time for BFS 41 is 0.134006
+Time for BFS 42 is 0.132015
+Time for BFS 43 is 0.143684
+Time for BFS 44 is 0.132688
+Time for BFS 45 is 0.132232
+Time for BFS 46 is 0.136784
+Time for BFS 47 is 0.148902
+Time for BFS 48 is 0.136415
+Time for BFS 49 is 0.132280
+Time for BFS 50 is 0.134984
+Time for BFS 51 is 0.132188
+Time for BFS 52 is 0.159820
+Time for BFS 53 is 0.191716
+Time for BFS 54 is 0.133966
+Time for BFS 55 is 0.204125
+Time for BFS 56 is 0.134035
+Time for BFS 57 is 0.132766
+Time for BFS 58 is 0.132598
+Time for BFS 59 is 0.132695
+Time for BFS 60 is 0.136989
+Time for BFS 61 is 0.140213
+Time for BFS 62 is 0.131396
+Time for BFS 63 is 0.134658
+Starting cycle 23.
+Time for BFS 0 is 0.135803
+Time for BFS 1 is 0.137128
+Time for BFS 2 is 0.138967
+Time for BFS 3 is 0.136138
+Time for BFS 4 is 0.131642
+Time for BFS 5 is 0.136067
+Time for BFS 6 is 0.163969
+Time for BFS 7 is 0.132637
+Time for BFS 8 is 0.134169
+Time for BFS 9 is 0.137661
+Time for BFS 10 is 0.136766
+Time for BFS 11 is 0.134356
+Time for BFS 12 is 0.131681
+Time for BFS 13 is 0.134737
+Time for BFS 14 is 0.132514
+Time for BFS 15 is 0.137130
+Time for BFS 16 is 0.139734
+Time for BFS 17 is 0.137907
+Time for BFS 18 is 0.132268
+Time for BFS 19 is 0.137375
+Time for BFS 20 is 0.137315
+Time for BFS 21 is 0.132299
+Time for BFS 22 is 0.134069
+Time for BFS 23 is 0.132655
+Time for BFS 24 is 0.136198
+Time for BFS 25 is 0.132303
+Time for BFS 26 is 0.133470
+Time for BFS 27 is 0.143746
+Time for BFS 28 is 0.136759
+Time for BFS 29 is 0.133481
+Time for BFS 30 is 0.139150
+Time for BFS 31 is 0.131607
+Time for BFS 32 is 0.137857
+Time for BFS 33 is 0.132073
+Time for BFS 34 is 0.133569
+Time for BFS 35 is 0.132610
+Time for BFS 36 is 0.136307
+Time for BFS 37 is 0.136650
+Time for BFS 38 is 0.134529
+Time for BFS 39 is 0.143486
+Time for BFS 40 is 0.133287
+Time for BFS 41 is 0.133904
+Time for BFS 42 is 0.132014
+Time for BFS 43 is 0.141698
+Time for BFS 44 is 0.132912
+Time for BFS 45 is 0.132369
+Time for BFS 46 is 0.136777
+Time for BFS 47 is 0.134733
+Time for BFS 48 is 0.136272
+Time for BFS 49 is 0.132122
+Time for BFS 50 is 0.133056
+Time for BFS 51 is 0.132044
+Time for BFS 52 is 0.175057
+Time for BFS 53 is 0.134200
+Time for BFS 54 is 0.139870
+Time for BFS 55 is 0.136931
+Time for BFS 56 is 0.134120
+Time for BFS 57 is 0.132820
+Time for BFS 58 is 0.133358
+Time for BFS 59 is 0.132565
+Time for BFS 60 is 0.196763
+Time for BFS 61 is 0.133594
+Time for BFS 62 is 0.159714
+Time for BFS 63 is 0.134531
+Starting cycle 24.
+Time for BFS 0 is 0.135659
+Time for BFS 1 is 0.137166
+Time for BFS 2 is 0.137383
+Time for BFS 3 is 0.135622
+Time for BFS 4 is 0.131732
+Time for BFS 5 is 0.135823
+Time for BFS 6 is 0.135092
+Time for BFS 7 is 0.132627
+Time for BFS 8 is 0.133602
+Time for BFS 9 is 0.143279
+Time for BFS 10 is 0.138013
+Time for BFS 11 is 0.141781
+Time for BFS 12 is 0.131702
+Time for BFS 13 is 0.154382
+Time for BFS 14 is 0.132788
+Time for BFS 15 is 0.136990
+Time for BFS 16 is 0.136724
+Time for BFS 17 is 0.138057
+Time for BFS 18 is 0.132487
+Time for BFS 19 is 0.137435
+Time for BFS 20 is 0.137386
+Time for BFS 21 is 0.152065
+Time for BFS 22 is 0.143737
+Time for BFS 23 is 0.132638
+Time for BFS 24 is 0.135830
+Time for BFS 25 is 0.132374
+Time for BFS 26 is 0.139155
+Time for BFS 27 is 0.143981
+Time for BFS 28 is 0.136749
+Time for BFS 29 is 0.133442
+Time for BFS 30 is 0.138905
+Time for BFS 31 is 0.131602
+Time for BFS 32 is 0.136656
+Time for BFS 33 is 0.132237
+Time for BFS 34 is 0.133856
+Time for BFS 35 is 0.132823
+Time for BFS 36 is 0.136452
+Time for BFS 37 is 0.136480
+Time for BFS 38 is 0.134809
+Time for BFS 39 is 0.137839
+Time for BFS 40 is 0.133574
+Time for BFS 41 is 0.134554
+Time for BFS 42 is 0.132061
+Time for BFS 43 is 0.167829
+Time for BFS 44 is 0.157426
+Time for BFS 45 is 0.132188
+Time for BFS 46 is 0.136696
+Time for BFS 47 is 0.134489
+Time for BFS 48 is 0.136052
+Time for BFS 49 is 0.144567
+Time for BFS 50 is 0.132992
+Time for BFS 51 is 0.131957
+Time for BFS 52 is 0.130443
+Time for BFS 53 is 0.134076
+Time for BFS 54 is 0.133742
+Time for BFS 55 is 0.136206
+Time for BFS 56 is 0.134137
+Time for BFS 57 is 0.149449
+Time for BFS 58 is 0.132589
+Time for BFS 59 is 0.132646
+Time for BFS 60 is 0.225553
+Time for BFS 61 is 0.147841
+Time for BFS 62 is 0.131218
+Time for BFS 63 is 0.134547
+Starting cycle 25.
+Time for BFS 0 is 0.135580
+Time for BFS 1 is 0.137024
+Time for BFS 2 is 0.158360
+Time for BFS 3 is 0.177795
+Time for BFS 4 is 0.153966
+Time for BFS 5 is 0.136909
+Time for BFS 6 is 0.135186
+Time for BFS 7 is 0.151916
+Time for BFS 8 is 0.174683
+Time for BFS 9 is 0.187491
+Time for BFS 10 is 0.145996
+Time for BFS 11 is 0.134448
+Time for BFS 12 is 0.131768
+Time for BFS 13 is 0.178669
+Time for BFS 14 is 0.195719
+Time for BFS 15 is 0.136040
+Time for BFS 16 is 0.136472
+Time for BFS 17 is 0.162139
+Time for BFS 18 is 0.132437
+Time for BFS 19 is 0.137447
+Time for BFS 20 is 0.137358
+Time for BFS 21 is 0.132292
+Time for BFS 22 is 0.136005
+Time for BFS 23 is 0.132821
+Time for BFS 24 is 0.139779
+Time for BFS 25 is 0.132548
+Time for BFS 26 is 0.133425
+Time for BFS 27 is 0.143549
+Time for BFS 28 is 0.136850
+Time for BFS 29 is 0.133439
+Time for BFS 30 is 0.139428
+Time for BFS 31 is 0.131423
+Time for BFS 32 is 0.136761
+Time for BFS 33 is 0.132277
+Time for BFS 34 is 0.133604
+Time for BFS 35 is 0.132933
+Time for BFS 36 is 0.160162
+Time for BFS 37 is 0.136454
+Time for BFS 38 is 0.134349
+Time for BFS 39 is 0.141008
+Time for BFS 40 is 0.133397
+Time for BFS 41 is 0.133752
+Time for BFS 42 is 0.131927
+Time for BFS 43 is 0.141611
+Time for BFS 44 is 0.132634
+Time for BFS 45 is 0.132341
+Time for BFS 46 is 0.136550
+Time for BFS 47 is 0.140309
+Time for BFS 48 is 0.138390
+Time for BFS 49 is 0.132257
+Time for BFS 50 is 0.133060
+Time for BFS 51 is 0.132160
+Time for BFS 52 is 0.130477
+Time for BFS 53 is 0.134069
+Time for BFS 54 is 0.134355
+Time for BFS 55 is 0.136331
+Time for BFS 56 is 0.133870
+Time for BFS 57 is 0.132859
+Time for BFS 58 is 0.132266
+Time for BFS 59 is 0.132596
+Time for BFS 60 is 0.137428
+Time for BFS 61 is 0.133733
+Time for BFS 62 is 0.131298
+Time for BFS 63 is 0.134483
+Starting cycle 26.
+Time for BFS 0 is 0.137027
+Time for BFS 1 is 0.194024
+Time for BFS 2 is 0.131142
+Time for BFS 3 is 0.135534
+Time for BFS 4 is 0.138731
+Time for BFS 5 is 0.135797
+Time for BFS 6 is 0.135114
+Time for BFS 7 is 0.160539
+Time for BFS 8 is 0.135270
+Time for BFS 9 is 0.169476
+Time for BFS 10 is 0.141271
+Time for BFS 11 is 0.134432
+Time for BFS 12 is 0.132133
+Time for BFS 13 is 0.142483
+Time for BFS 14 is 0.145596
+Time for BFS 15 is 0.136621
+Time for BFS 16 is 0.137092
+Time for BFS 17 is 0.138349
+Time for BFS 18 is 0.133568
+Time for BFS 19 is 0.137721
+Time for BFS 20 is 0.137903
+Time for BFS 21 is 0.133063
+Time for BFS 22 is 0.134531
+Time for BFS 23 is 0.133098
+Time for BFS 24 is 0.156652
+Time for BFS 25 is 0.133134
+Time for BFS 26 is 0.134881
+Time for BFS 27 is 0.143815
+Time for BFS 28 is 0.137412
+Time for BFS 29 is 0.133796
+Time for BFS 30 is 0.139372
+Time for BFS 31 is 0.131983
+Time for BFS 32 is 0.137220
+Time for BFS 33 is 0.132497
+Time for BFS 34 is 0.134751
+Time for BFS 35 is 0.133225
+Time for BFS 36 is 0.157018
+Time for BFS 37 is 0.136934
+Time for BFS 38 is 0.134924
+Time for BFS 39 is 0.138350
+Time for BFS 40 is 0.133916
+Time for BFS 41 is 0.134044
+Time for BFS 42 is 0.132484
+Time for BFS 43 is 0.141867
+Time for BFS 44 is 0.132971
+Time for BFS 45 is 0.132942
+Time for BFS 46 is 0.137328
+Time for BFS 47 is 0.134946
+Time for BFS 48 is 0.140350
+Time for BFS 49 is 0.132679
+Time for BFS 50 is 0.133323
+Time for BFS 51 is 0.132563
+Time for BFS 52 is 0.131170
+Time for BFS 53 is 0.134468
+Time for BFS 54 is 0.133778
+Time for BFS 55 is 0.136767
+Time for BFS 56 is 0.134206
+Time for BFS 57 is 0.133224
+Time for BFS 58 is 0.132720
+Time for BFS 59 is 0.133053
+Time for BFS 60 is 0.137239
+Time for BFS 61 is 0.133737
+Time for BFS 62 is 0.132014
+Time for BFS 63 is 0.134818
+Starting cycle 27.
+Time for BFS 0 is 0.136073
+Time for BFS 1 is 0.137634
+Time for BFS 2 is 0.131580
+Time for BFS 3 is 0.136125
+Time for BFS 4 is 0.132164
+Time for BFS 5 is 0.141042
+Time for BFS 6 is 0.135449
+Time for BFS 7 is 0.133041
+Time for BFS 8 is 0.167237
+Time for BFS 9 is 0.137751
+Time for BFS 10 is 0.137353
+Time for BFS 11 is 0.134587
+Time for BFS 12 is 0.132013
+Time for BFS 13 is 0.135054
+Time for BFS 14 is 0.142361
+Time for BFS 15 is 0.139402
+Time for BFS 16 is 0.194631
+Time for BFS 17 is 0.138883
+Time for BFS 18 is 0.133043
+Time for BFS 19 is 0.139026
+Time for BFS 20 is 0.137918
+Time for BFS 21 is 0.133249
+Time for BFS 22 is 0.134477
+Time for BFS 23 is 0.133085
+Time for BFS 24 is 0.136574
+Time for BFS 25 is 0.133879
+Time for BFS 26 is 0.133685
+Time for BFS 27 is 0.143882
+Time for BFS 28 is 0.137160
+Time for BFS 29 is 0.133762
+Time for BFS 30 is 0.139872
+Time for BFS 31 is 0.148958
+Time for BFS 32 is 0.137043
+Time for BFS 33 is 0.132793
+Time for BFS 34 is 0.133886
+Time for BFS 35 is 0.132998
+Time for BFS 36 is 0.137199
+Time for BFS 37 is 0.145587
+Time for BFS 38 is 0.134748
+Time for BFS 39 is 0.138689
+Time for BFS 40 is 0.133903
+Time for BFS 41 is 0.134076
+Time for BFS 42 is 0.132580
+Time for BFS 43 is 0.141894
+Time for BFS 44 is 0.132875
+Time for BFS 45 is 0.133039
+Time for BFS 46 is 0.137237
+Time for BFS 47 is 0.134988
+Time for BFS 48 is 0.185024
+Time for BFS 49 is 0.138542
+Time for BFS 50 is 0.133402
+Time for BFS 51 is 0.132560
+Time for BFS 52 is 0.131327
+Time for BFS 53 is 0.134517
+Time for BFS 54 is 0.133864
+Time for BFS 55 is 0.136879
+Time for BFS 56 is 0.134844
+Time for BFS 57 is 0.133451
+Time for BFS 58 is 0.132795
+Time for BFS 59 is 0.132873
+Time for BFS 60 is 0.137359
+Time for BFS 61 is 0.161294
+Time for BFS 62 is 0.131517
+Time for BFS 63 is 0.185033
+Starting cycle 28.
+Time for BFS 0 is 0.136053
+Time for BFS 1 is 0.137706
+Time for BFS 2 is 0.131730
+Time for BFS 3 is 0.136207
+Time for BFS 4 is 0.132256
+Time for BFS 5 is 0.136655
+Time for BFS 6 is 0.136185
+Time for BFS 7 is 0.133320
+Time for BFS 8 is 0.133718
+Time for BFS 9 is 0.138536
+Time for BFS 10 is 0.137394
+Time for BFS 11 is 0.134545
+Time for BFS 12 is 0.132064
+Time for BFS 13 is 0.142842
+Time for BFS 14 is 0.180805
+Time for BFS 15 is 0.179496
+Time for BFS 16 is 0.137251
+Time for BFS 17 is 0.138416
+Time for BFS 18 is 0.133171
+Time for BFS 19 is 0.137957
+Time for BFS 20 is 0.159626
+Time for BFS 21 is 0.170875
+Time for BFS 22 is 0.167565
+Time for BFS 23 is 0.132936
+Time for BFS 24 is 0.136420
+Time for BFS 25 is 0.155420
+Time for BFS 26 is 0.174365
+Time for BFS 27 is 0.200448
+Time for BFS 28 is 0.142069
+Time for BFS 29 is 0.133856
+Time for BFS 30 is 0.139276
+Time for BFS 31 is 0.147028
+Time for BFS 32 is 0.193821
+Time for BFS 33 is 0.132405
+Time for BFS 34 is 0.134018
+Time for BFS 35 is 0.181140
+Time for BFS 36 is 0.137070
+Time for BFS 37 is 0.136912
+Time for BFS 38 is 0.134994
+Time for BFS 39 is 0.137456
+Time for BFS 40 is 0.134176
+Time for BFS 41 is 0.134060
+Time for BFS 42 is 0.132517
+Time for BFS 43 is 0.142001
+Time for BFS 44 is 0.132997
+Time for BFS 45 is 0.132652
+Time for BFS 46 is 0.137933
+Time for BFS 47 is 0.134883
+Time for BFS 48 is 0.136732
+Time for BFS 49 is 0.132990
+Time for BFS 50 is 0.133399
+Time for BFS 51 is 0.132576
+Time for BFS 52 is 0.131238
+Time for BFS 53 is 0.134295
+Time for BFS 54 is 0.133894
+Time for BFS 55 is 0.137022
+Time for BFS 56 is 0.134134
+Time for BFS 57 is 0.133350
+Time for BFS 58 is 0.132913
+Time for BFS 59 is 0.132919
+Time for BFS 60 is 0.137273
+Time for BFS 61 is 0.134199
+Time for BFS 62 is 0.131483
+Time for BFS 63 is 0.134799
+Starting cycle 29.
+Time for BFS 0 is 0.136103
+Time for BFS 1 is 0.137717
+Time for BFS 2 is 0.131652
+Time for BFS 3 is 0.136005
+Time for BFS 4 is 0.132119
+Time for BFS 5 is 0.136591
+Time for BFS 6 is 0.135525
+Time for BFS 7 is 0.133287
+Time for BFS 8 is 0.134175
+Time for BFS 9 is 0.137914
+Time for BFS 10 is 0.137175
+Time for BFS 11 is 0.137534
+Time for BFS 12 is 0.132145
+Time for BFS 13 is 0.135102
+Time for BFS 14 is 0.133075
+Time for BFS 15 is 0.136978
+Time for BFS 16 is 0.137759
+Time for BFS 17 is 0.140100
+Time for BFS 18 is 0.133182
+Time for BFS 19 is 0.204219
+Time for BFS 20 is 0.138086
+Time for BFS 21 is 0.133291
+Time for BFS 22 is 0.134642
+Time for BFS 23 is 0.133225
+Time for BFS 24 is 0.136926
+Time for BFS 25 is 0.210197
+Time for BFS 26 is 0.133567
+Time for BFS 27 is 0.163988
+Time for BFS 28 is 0.141756
+Time for BFS 29 is 0.133688
+Time for BFS 30 is 0.139398
+Time for BFS 31 is 0.131859
+Time for BFS 32 is 0.137238
+Time for BFS 33 is 0.134330
+Time for BFS 34 is 0.133886
+Time for BFS 35 is 0.133141
+Time for BFS 36 is 0.136620
+Time for BFS 37 is 0.136817
+Time for BFS 38 is 0.134982
+Time for BFS 39 is 0.137855
+Time for BFS 40 is 0.134004
+Time for BFS 41 is 0.134033
+Time for BFS 42 is 0.157939
+Time for BFS 43 is 0.142255
+Time for BFS 44 is 0.133034
+Time for BFS 45 is 0.132781
+Time for BFS 46 is 0.137374
+Time for BFS 47 is 0.134988
+Time for BFS 48 is 0.136765
+Time for BFS 49 is 0.132892
+Time for BFS 50 is 0.133442
+Time for BFS 51 is 0.132680
+Time for BFS 52 is 0.131231
+Time for BFS 53 is 0.134382
+Time for BFS 54 is 0.133958
+Time for BFS 55 is 0.136795
+Time for BFS 56 is 0.134166
+Time for BFS 57 is 0.133408
+Time for BFS 58 is 0.132856
+Time for BFS 59 is 0.133261
+Time for BFS 60 is 0.137401
+Time for BFS 61 is 0.135040
+Time for BFS 62 is 0.131666
+Time for BFS 63 is 0.134754
+Starting cycle 30.
+Time for BFS 0 is 0.136797
+Time for BFS 1 is 0.137836
+Time for BFS 2 is 0.131628
+Time for BFS 3 is 0.136176
+Time for BFS 4 is 0.132262
+Time for BFS 5 is 0.136434
+Time for BFS 6 is 0.135625
+Time for BFS 7 is 0.133253
+Time for BFS 8 is 0.133719
+Time for BFS 9 is 0.137726
+Time for BFS 10 is 0.144978
+Time for BFS 11 is 0.134616
+Time for BFS 12 is 0.132174
+Time for BFS 13 is 0.135111
+Time for BFS 14 is 0.133015
+Time for BFS 15 is 0.136455
+Time for BFS 16 is 0.137334
+Time for BFS 17 is 0.138347
+Time for BFS 18 is 0.133377
+Time for BFS 19 is 0.138085
+Time for BFS 20 is 0.137934
+Time for BFS 21 is 0.133135
+Time for BFS 22 is 0.134492
+Time for BFS 23 is 0.133091
+Time for BFS 24 is 0.136625
+Time for BFS 25 is 0.133259
+Time for BFS 26 is 0.258296
+Time for BFS 27 is 0.174506
+Time for BFS 28 is 0.174566
+Time for BFS 29 is 0.164028
+Time for BFS 30 is 0.168426
+Time for BFS 31 is 0.236800
+Time for BFS 32 is 0.220784
+Time for BFS 33 is 0.132611
+Time for BFS 34 is 0.133685
+Time for BFS 35 is 0.133310
+Time for BFS 36 is 0.195533
+Time for BFS 37 is 0.137086
+Time for BFS 38 is 0.139111
+Time for BFS 39 is 0.225459
+Time for BFS 40 is 0.168115
+Time for BFS 41 is 0.161397
+Time for BFS 42 is 0.151670
+Time for BFS 43 is 0.142051
+Time for BFS 44 is 0.132964
+Time for BFS 45 is 0.234696
+Time for BFS 46 is 0.166031
+Time for BFS 47 is 0.164681
+Time for BFS 48 is 0.172319
+Time for BFS 49 is 0.156948
+Time for BFS 50 is 0.163784
+Time for BFS 51 is 0.335012
+Time for BFS 52 is 0.330676
+Time for BFS 53 is 0.155746
+Time for BFS 54 is 0.151197
+Time for BFS 55 is 0.251185
+Time for BFS 56 is 0.167585
+Time for BFS 57 is 0.209864
+Time for BFS 58 is 0.173035
+Time for BFS 59 is 0.174412
+Time for BFS 60 is 0.229633
+Time for BFS 61 is 0.206412
+Time for BFS 62 is 0.133917
+Time for BFS 63 is 0.134786
+Starting cycle 31.
+Time for BFS 0 is 0.136016
+Time for BFS 1 is 0.137366
+Time for BFS 2 is 0.131632
+Time for BFS 3 is 0.162862
+Time for BFS 4 is 0.136556
+Time for BFS 5 is 0.151379
+Time for BFS 6 is 0.135508
+Time for BFS 7 is 0.133576
+Time for BFS 8 is 0.133661
+Time for BFS 9 is 0.137716
+Time for BFS 10 is 0.137430
+Time for BFS 11 is 0.134476
+Time for BFS 12 is 0.132152
+Time for BFS 13 is 0.135072
+Time for BFS 14 is 0.133042
+Time for BFS 15 is 0.136691
+Time for BFS 16 is 0.136938
+Time for BFS 17 is 0.336675
+Time for BFS 18 is 0.321473
+Time for BFS 19 is 0.165328
+Time for BFS 20 is 0.177584
+Time for BFS 21 is 0.156017
+Time for BFS 22 is 0.147529
+Time for BFS 23 is 0.133688
+Time for BFS 24 is 0.167045
+Time for BFS 25 is 0.194654
+Time for BFS 26 is 0.166205
+Time for BFS 27 is 0.144529
+Time for BFS 28 is 0.176687
+Time for BFS 29 is 0.180321
+Time for BFS 30 is 0.150451
+Time for BFS 31 is 0.143723
+Time for BFS 32 is 0.137864
+Time for BFS 33 is 0.133770
+Time for BFS 34 is 0.135217
+Time for BFS 35 is 0.230055
+Time for BFS 36 is 0.137577
+Time for BFS 37 is 0.137629
+Time for BFS 38 is 0.145447
+Time for BFS 39 is 0.143369
+Time for BFS 40 is 0.134477
+Time for BFS 41 is 0.134374
+Time for BFS 42 is 0.132953
+Time for BFS 43 is 0.142974
+Time for BFS 44 is 0.134099
+Time for BFS 45 is 0.133306
+Time for BFS 46 is 0.236901
+Time for BFS 47 is 0.311960
+Time for BFS 48 is 0.178540
+Time for BFS 49 is 0.136632
+Time for BFS 50 is 0.165964
+Time for BFS 51 is 0.146334
+Time for BFS 52 is 0.135951
+Time for BFS 53 is 0.138373
+Time for BFS 54 is 0.138133
+Time for BFS 55 is 0.162363
+Time for BFS 56 is 0.207231
+Time for BFS 57 is 0.199992
+Time for BFS 58 is 0.137192
+Time for BFS 59 is 0.151163
+Time for BFS 60 is 0.140099
+Time for BFS 61 is 0.134371
+Time for BFS 62 is 0.134952
+Time for BFS 63 is 0.135304
+Starting cycle 32.
+Time for BFS 0 is 0.143163
+Time for BFS 1 is 0.172685
+Time for BFS 2 is 0.147575
+Time for BFS 3 is 0.160702
+Time for BFS 4 is 0.132904
+Time for BFS 5 is 0.141594
+Time for BFS 6 is 0.161378
+Time for BFS 7 is 0.133562
+Time for BFS 8 is 0.143091
+Time for BFS 9 is 0.243185
+Time for BFS 10 is 0.166552
+Time for BFS 11 is 0.183421
+Time for BFS 12 is 0.132810
+Time for BFS 13 is 0.177832
+Time for BFS 14 is 0.139141
+Time for BFS 15 is 0.160050
+Time for BFS 16 is 0.191881
+Time for BFS 17 is 0.144682
+Time for BFS 18 is 0.140011
+Time for BFS 19 is 0.138725
+Time for BFS 20 is 0.162142
+Time for BFS 21 is 0.140453
+Time for BFS 22 is 0.174411
+Time for BFS 23 is 0.254365
+Time for BFS 24 is 0.142139
+Time for BFS 25 is 0.133530
+Time for BFS 26 is 0.158464
+Time for BFS 27 is 0.170639
+Time for BFS 28 is 0.169148
+Time for BFS 29 is 0.140844
+Time for BFS 30 is 0.178414
+Time for BFS 31 is 0.135675
+Time for BFS 32 is 0.138008
+Time for BFS 33 is 0.195854
+Time for BFS 34 is 0.143736
+Time for BFS 35 is 0.138514
+Time for BFS 36 is 0.208447
+Time for BFS 37 is 0.152033
+Time for BFS 38 is 0.170816
+Time for BFS 39 is 0.170145
+Time for BFS 40 is 0.199438
+Time for BFS 41 is 0.150088
+Time for BFS 42 is 0.147893
+Time for BFS 43 is 0.160238
+Time for BFS 44 is 0.137303
+Time for BFS 45 is 0.150867
+Time for BFS 46 is 0.138187
+Time for BFS 47 is 0.264981
+Time for BFS 48 is 0.142981
+Time for BFS 49 is 0.133446
+Time for BFS 50 is 0.269038
+Time for BFS 51 is 0.133132
+Time for BFS 52 is 0.131560
+Time for BFS 53 is 0.134975
+Time for BFS 54 is 0.134784
+Time for BFS 55 is 0.137268
+Time for BFS 56 is 0.135371
+Time for BFS 57 is 0.134549
+Time for BFS 58 is 0.133802
+Time for BFS 59 is 0.133474
+Time for BFS 60 is 0.138781
+Time for BFS 61 is 0.134675
+Time for BFS 62 is 0.132525
+Time for BFS 63 is 0.135289
+Starting cycle 33.
+Running BFS 0
+Time for BFS 0 is 0.136681
+Validating BFS 0
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 0 is 0.258954
+TEPS for BFS 0 is 9.81966e+08
+Running BFS 1
+Time for BFS 1 is 0.138487
+Validating BFS 1
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 1 is 0.252431
+TEPS for BFS 1 is 9.6916e+08
+Running BFS 2
+Time for BFS 2 is 0.132756
+Validating BFS 2
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 2 is 0.251720
+TEPS for BFS 2 is 1.011e+09
+Running BFS 3
+Time for BFS 3 is 0.136928
+Validating BFS 3
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 3 is 0.250126
+TEPS for BFS 3 is 9.80195e+08
+Running BFS 4
+Time for BFS 4 is 0.133265
+Validating BFS 4
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 4 is 0.252240
+TEPS for BFS 4 is 1.00714e+09
+Running BFS 5
+Time for BFS 5 is 0.137470
+Validating BFS 5
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 5 is 0.249582
+TEPS for BFS 5 is 9.76331e+08
+Running BFS 6
+Time for BFS 6 is 0.143446
+Validating BFS 6
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 6 is 0.250530
+TEPS for BFS 6 is 9.35657e+08
+Running BFS 7
+Time for BFS 7 is 0.136087
+Validating BFS 7
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 7 is 0.252677
+TEPS for BFS 7 is 9.86253e+08
+Running BFS 8
+Time for BFS 8 is 0.148773
+Validating BFS 8
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 8 is 0.251180
+TEPS for BFS 8 is 9.02154e+08
+Running BFS 9
+Time for BFS 9 is 0.207858
+Validating BFS 9
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 9 is 0.248845
+TEPS for BFS 9 is 6.45711e+08
+Running BFS 10
+Time for BFS 10 is 0.138565
+Validating BFS 10
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 10 is 0.248440
+TEPS for BFS 10 is 9.68615e+08
+Running BFS 11
+Time for BFS 11 is 0.135335
+Validating BFS 11
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 11 is 0.252013
+TEPS for BFS 11 is 9.91733e+08
+Running BFS 12
+Time for BFS 12 is 0.133352
+Validating BFS 12
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 12 is 0.250785
+TEPS for BFS 12 is 1.00648e+09
+Running BFS 13
+Time for BFS 13 is 0.136050
+Validating BFS 13
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 13 is 0.249822
+TEPS for BFS 13 is 9.86521e+08
+Running BFS 14
+Time for BFS 14 is 0.183581
+Validating BFS 14
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 14 is 0.250032
+TEPS for BFS 14 is 7.31101e+08
+Running BFS 15
+Time for BFS 15 is 0.169528
+Validating BFS 15
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 15 is 0.249341
+TEPS for BFS 15 is 7.91705e+08
+Running BFS 16
+Time for BFS 16 is 0.138403
+Validating BFS 16
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 16 is 0.248736
+TEPS for BFS 16 is 9.69749e+08
+Running BFS 17
+Time for BFS 17 is 0.139620
+Validating BFS 17
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 17 is 0.248388
+TEPS for BFS 17 is 9.61296e+08
+Running BFS 18
+Time for BFS 18 is 0.133540
+Validating BFS 18
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 18 is 0.251281
+TEPS for BFS 18 is 1.00506e+09
+Running BFS 19
+Time for BFS 19 is 0.139296
+Validating BFS 19
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 19 is 0.248537
+TEPS for BFS 19 is 9.63533e+08
+Running BFS 20
+Time for BFS 20 is 0.139247
+Validating BFS 20
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 20 is 0.248975
+TEPS for BFS 20 is 9.63872e+08
+Running BFS 21
+Time for BFS 21 is 0.133756
+Validating BFS 21
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 21 is 0.251020
+TEPS for BFS 21 is 1.00344e+09
+Running BFS 22
+Time for BFS 22 is 0.135264
+Validating BFS 22
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 22 is 0.249222
+TEPS for BFS 22 is 9.92254e+08
+Running BFS 23
+Time for BFS 23 is 0.134281
+Validating BFS 23
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 23 is 0.250463
+TEPS for BFS 23 is 9.99518e+08
+Running BFS 24
+Time for BFS 24 is 0.138298
+Validating BFS 24
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 24 is 0.248654
+TEPS for BFS 24 is 9.70487e+08
+Running BFS 25
+Time for BFS 25 is 0.175547
+Validating BFS 25
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 25 is 0.293657
+TEPS for BFS 25 is 7.6456e+08
+Running BFS 26
+Time for BFS 26 is 0.134594
+Validating BFS 26
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 26 is 0.251505
+TEPS for BFS 26 is 9.97193e+08
+Running BFS 27
+Time for BFS 27 is 0.144998
+Validating BFS 27
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 27 is 0.249203
+TEPS for BFS 27 is 9.25643e+08
+Running BFS 28
+Time for BFS 28 is 0.160504
+Validating BFS 28
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 28 is 0.249682
+TEPS for BFS 28 is 8.36216e+08
+Running BFS 29
+Time for BFS 29 is 0.135151
+Validating BFS 29
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 29 is 0.249979
+TEPS for BFS 29 is 9.93082e+08
+Running BFS 30
+Time for BFS 30 is 0.140744
+Validating BFS 30
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 30 is 0.249699
+TEPS for BFS 30 is 9.53619e+08
+Running BFS 31
+Time for BFS 31 is 0.170560
+Validating BFS 31
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 31 is 0.256694
+TEPS for BFS 31 is 7.86915e+08
+Running BFS 32
+Time for BFS 32 is 0.139339
+Validating BFS 32
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 32 is 0.248989
+TEPS for BFS 32 is 9.63235e+08
+Running BFS 33
+Time for BFS 33 is 0.160616
+Validating BFS 33
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 33 is 0.317690
+TEPS for BFS 33 is 8.35633e+08
+Running BFS 34
+Time for BFS 34 is 0.135385
+Validating BFS 34
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 34 is 0.251251
+TEPS for BFS 34 is 9.91366e+08
+Running BFS 35
+Time for BFS 35 is 0.148068
+Validating BFS 35
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 35 is 0.326906
+TEPS for BFS 35 is 9.0645e+08
+Running BFS 36
+Time for BFS 36 is 0.151417
+Validating BFS 36
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 36 is 0.249055
+TEPS for BFS 36 is 8.86401e+08
+Running BFS 37
+Time for BFS 37 is 0.155035
+Validating BFS 37
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 37 is 0.248777
+TEPS for BFS 37 is 8.65715e+08
+Running BFS 38
+Time for BFS 38 is 0.135957
+Validating BFS 38
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 38 is 0.249124
+TEPS for BFS 38 is 9.87196e+08
+Running BFS 39
+Time for BFS 39 is 0.138690
+Validating BFS 39
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 39 is 0.248592
+TEPS for BFS 39 is 9.67742e+08
+Running BFS 40
+Time for BFS 40 is 0.134709
+Validating BFS 40
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 40 is 0.250511
+TEPS for BFS 40 is 9.96341e+08
+Running BFS 41
+Time for BFS 41 is 0.134845
+Validating BFS 41
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 41 is 0.251615
+TEPS for BFS 41 is 9.95338e+08
+Running BFS 42
+Time for BFS 42 is 0.133255
+Validating BFS 42
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 42 is 0.251060
+TEPS for BFS 42 is 1.00721e+09
+Running BFS 43
+Time for BFS 43 is 0.143305
+Validating BFS 43
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 43 is 0.250320
+TEPS for BFS 43 is 9.36577e+08
+Running BFS 44
+Time for BFS 44 is 0.134647
+Validating BFS 44
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 44 is 0.251121
+TEPS for BFS 44 is 9.96799e+08
+Running BFS 45
+Time for BFS 45 is 0.136052
+Validating BFS 45
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 45 is 0.251723
+TEPS for BFS 45 is 9.86507e+08
+Running BFS 46
+Time for BFS 46 is 0.138568
+Validating BFS 46
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 46 is 0.249070
+TEPS for BFS 46 is 9.68595e+08
+Running BFS 47
+Time for BFS 47 is 0.160829
+Validating BFS 47
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 47 is 0.249927
+TEPS for BFS 47 is 8.34527e+08
+Running BFS 48
+Time for BFS 48 is 0.137562
+Validating BFS 48
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 48 is 0.249399
+TEPS for BFS 48 is 9.75677e+08
+Running BFS 49
+Time for BFS 49 is 0.133249
+Validating BFS 49
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 49 is 0.251472
+TEPS for BFS 49 is 1.00726e+09
+Running BFS 50
+Time for BFS 50 is 0.138366
+Validating BFS 50
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 50 is 0.251403
+TEPS for BFS 50 is 9.70008e+08
+Running BFS 51
+Time for BFS 51 is 0.133543
+Validating BFS 51
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 51 is 0.251647
+TEPS for BFS 51 is 1.00504e+09
+Running BFS 52
+Time for BFS 52 is 0.132277
+Validating BFS 52
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 52 is 0.251478
+TEPS for BFS 52 is 1.01466e+09
+Running BFS 53
+Time for BFS 53 is 0.135269
+Validating BFS 53
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 53 is 0.249950
+TEPS for BFS 53 is 9.92217e+08
+Running BFS 54
+Time for BFS 54 is 0.135007
+Validating BFS 54
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 54 is 0.251584
+TEPS for BFS 54 is 9.94143e+08
+Running BFS 55
+Time for BFS 55 is 0.137480
+Validating BFS 55
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 55 is 0.248984
+TEPS for BFS 55 is 9.76259e+08
+Running BFS 56
+Time for BFS 56 is 0.135149
+Validating BFS 56
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 56 is 0.260325
+TEPS for BFS 56 is 9.93098e+08
+Running BFS 57
+Time for BFS 57 is 0.138664
+Validating BFS 57
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 57 is 0.251457
+TEPS for BFS 57 is 9.67924e+08
+Running BFS 58
+Time for BFS 58 is 0.215933
+Validating BFS 58
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 58 is 0.331860
+TEPS for BFS 58 is 6.21564e+08
+Running BFS 59
+Time for BFS 59 is 0.185941
+Validating BFS 59
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 59 is 0.250545
+TEPS for BFS 59 is 7.2182e+08
+Running BFS 60
+Time for BFS 60 is 0.140607
+Validating BFS 60
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 60 is 0.251624
+TEPS for BFS 60 is 9.54549e+08
+Running BFS 61
+Time for BFS 61 is 0.134439
+Validating BFS 61
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 61 is 0.250510
+TEPS for BFS 61 is 9.98343e+08
+Running BFS 62
+Time for BFS 62 is 0.131966
+Validating BFS 62
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 62 is 0.251267
+TEPS for BFS 62 is 1.01705e+09
+Running BFS 63
+Time for BFS 63 is 0.192951
+Validating BFS 63
+verify_bfs_tree nedge_traversed 134216176.
+Validate time for BFS 63 is 0.250291
+TEPS for BFS 63 is 6.95597e+08
+Completed 34 cycles
+1805703 134216176 # [ 0] bfs_roots edge_visit_count
+1032249 134216176 # [ 1] bfs_roots edge_visit_count
+7917425 134216176 # [ 2] bfs_roots edge_visit_count
+3239957 134216176 # [ 3] bfs_roots edge_visit_count
+76917 134216176 # [ 4] bfs_roots edge_visit_count
+3815512 134216176 # [ 5] bfs_roots edge_visit_count
+174671 134216176 # [ 6] bfs_roots edge_visit_count
+3609940 134216176 # [ 7] bfs_roots edge_visit_count
+5837436 134216176 # [ 8] bfs_roots edge_visit_count
+5684172 134216176 # [ 9] bfs_roots edge_visit_count
+1340648 134216176 # [10] bfs_roots edge_visit_count
+1691812 134216176 # [11] bfs_roots edge_visit_count
+5181795 134216176 # [12] bfs_roots edge_visit_count
+788916 134216176 # [13] bfs_roots edge_visit_count
+4388711 134216176 # [14] bfs_roots edge_visit_count
+8037089 134216176 # [15] bfs_roots edge_visit_count
+2189123 134216176 # [16] bfs_roots edge_visit_count
+7920425 134216176 # [17] bfs_roots edge_visit_count
+6843805 134216176 # [18] bfs_roots edge_visit_count
+624929 134216176 # [19] bfs_roots edge_visit_count
+2207564 134216176 # [20] bfs_roots edge_visit_count
+3060994 134216176 # [21] bfs_roots edge_visit_count
+6109334 134216176 # [22] bfs_roots edge_visit_count
+7359038 134216176 # [23] bfs_roots edge_visit_count
+5142872 134216176 # [24] bfs_roots edge_visit_count
+5824305 134216176 # [25] bfs_roots edge_visit_count
+7024709 134216176 # [26] bfs_roots edge_visit_count
+4667849 134216176 # [27] bfs_roots edge_visit_count
+5489981 134216176 # [28] bfs_roots edge_visit_count
+801594 134216176 # [29] bfs_roots edge_visit_count
+7204470 134216176 # [30] bfs_roots edge_visit_count
+1760602 134216176 # [31] bfs_roots edge_visit_count
+1454110 134216176 # [32] bfs_roots edge_visit_count
+4357966 134216176 # [33] bfs_roots edge_visit_count
+4546676 134216176 # [34] bfs_roots edge_visit_count
+6685069 134216176 # [35] bfs_roots edge_visit_count
+4275070 134216176 # [36] bfs_roots edge_visit_count
+5819934 134216176 # [37] bfs_roots edge_visit_count
+6677030 134216176 # [38] bfs_roots edge_visit_count
+7274958 134216176 # [39] bfs_roots edge_visit_count
+1223645 134216176 # [40] bfs_roots edge_visit_count
+6724419 134216176 # [41] bfs_roots edge_visit_count
+2788893 134216176 # [42] bfs_roots edge_visit_count
+3135279 134216176 # [43] bfs_roots edge_visit_count
+5850292 134216176 # [44] bfs_roots edge_visit_count
+119448 134216176 # [45] bfs_roots edge_visit_count
+5833803 134216176 # [46] bfs_roots edge_visit_count
+2420186 134216176 # [47] bfs_roots edge_visit_count
+1667495 134216176 # [48] bfs_roots edge_visit_count
+2996058 134216176 # [49] bfs_roots edge_visit_count
+2741287 134216176 # [50] bfs_roots edge_visit_count
+2486602 134216176 # [51] bfs_roots edge_visit_count
+4332209 134216176 # [52] bfs_roots edge_visit_count
+5625394 134216176 # [53] bfs_roots edge_visit_count
+322481 134216176 # [54] bfs_roots edge_visit_count
+6589548 134216176 # [55] bfs_roots edge_visit_count
+220738 134216176 # [56] bfs_roots edge_visit_count
+383606 134216176 # [57] bfs_roots edge_visit_count
+6211335 134216176 # [58] bfs_roots edge_visit_count
+2967650 134216176 # [59] bfs_roots edge_visit_count
+7292718 134216176 # [60] bfs_roots edge_visit_count
+460434 134216176 # [61] bfs_roots edge_visit_count
+3466339 134216176 # [62] bfs_roots edge_visit_count
+2123770 134216176 # [63] bfs_roots edge_visit_count
+SCALE:                          23
+edgefactor:                     16
+NBFS:                           64
+graph_generation:               4.59032
+num_mpi_processes:              4
+construction_time:              24.859
+min_time:                       0.134655
+firstquartile_time:             0.138662
+median_time:                    0.142009
+thirdquartile_time:             0.145001
+max_time:                       0.154512
+mean_time:                      0.142094
+stddev_time:                    0.00412435
+min_nedge:                      134216176
+firstquartile_nedge:            134216176
+median_nedge:                   134216176
+thirdquartile_nedge:            134216176
+max_nedge:                      134216176
+mean_nedge:                     134216176
+stddev_nedge:                   0
+min_TEPS:                       8.68646e+08
+firstquartile_TEPS:             9.25625e+08
+median_TEPS:                    9.45122e+08
+thirdquartile_TEPS:             9.67936e+08
+max_TEPS:                       9.96738e+08
+harmonic_mean_TEPS:             9.44557e+08
+harmonic_stddev_TEPS:           3.45411e+06
+min_validate:                   0.248388
+firstquartile_validate:         0.249282
+median_validate:                0.25052
+thirdquartile_validate:         0.2516
+max_validate:                   0.33186
+mean_validate:                  0.254905
+stddev_validate:                0.0168464
+MPI Process 0, memory usage:
+VmPeak:	 9637780 kB
+VmSize:	 4966748 kB
+VmLck:	       0 kB
+VmPin:	   16388 kB
+VmHWM:	 7400744 kB
+VmRSS:	 2714064 kB
+VmData:	 4890020 kB
+VmStk:	     140 kB
+VmExe:	     580 kB
+VmLib:	   15676 kB
+VmPTE:	    5700 kB
+VmSwap:	       0 kB
+
+MPI Process 1, memory usage:
+VmPeak:	 6557248 kB
+VmSize:	 2854608 kB
+VmLck:	       0 kB
+VmPin:	     776 kB
+VmHWM:	 1620028 kB
+VmRSS:	  595312 kB
+VmData:	 2777880 kB
+VmStk:	     140 kB
+VmExe:	     580 kB
+VmLib:	   15676 kB
+VmPTE:	    1588 kB
+VmSwap:	       0 kB
+
+MPI Process 2, memory usage:
+VmPeak:	 6549056 kB
+VmSize:	 2844388 kB
+VmLck:	       0 kB
+VmPin:	     776 kB
+VmHWM:	 1613268 kB
+VmRSS:	  593228 kB
+VmData:	 2767660 kB
+VmStk:	     140 kB
+VmExe:	     580 kB
+VmLib:	   15676 kB
+VmPTE:	    1560 kB
+VmSwap:	       0 kB
+
+MPI Process 3, memory usage:
+VmPeak:	 6557264 kB
+VmSize:	 2850084 kB
+VmLck:	       0 kB
+VmPin:	     772 kB
+VmHWM:	 1633112 kB
+VmRSS:	  601528 kB
+VmData:	 2773356 kB
+VmStk:	     140 kB
+VmExe:	     580 kB
+VmLib:	   15676 kB
+VmPTE:	    1584 kB
+VmSwap:	       0 kB
+
