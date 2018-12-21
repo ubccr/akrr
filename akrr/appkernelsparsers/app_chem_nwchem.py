@@ -98,6 +98,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
             parser.set_statistic("Floating-Point Performance (User Time)", 1000.0 * float(m.group(1).strip()),
                                  "MFLOP per Second")
         j += 1
+
     if __name__ == "__main__":
         # output for testing purpose
         print("parsing complete:", parser.parsing_complete())

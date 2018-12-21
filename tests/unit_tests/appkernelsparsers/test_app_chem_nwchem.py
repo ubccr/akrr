@@ -11,7 +11,7 @@ def test_parser(datadir):
         resource_appker_vars={'resource': 'HPC-Cluster'}
     )
     # check resulting xml
-    xml_out = ElementTree.fromstring(results.replace("'",""))
+    xml_out = ElementTree.fromstring(results.replace("'", ""))
     params = xml_out.find(".//parameters")
     stats = xml_out.find(".//statistics")
 

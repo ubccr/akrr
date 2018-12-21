@@ -129,6 +129,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 
         j += 1
     parser.successfulRun = successful_run
+
     if __name__ == "__main__":
         # output for testing purpose
         print(("parsing complete:", parser.parsing_complete()))

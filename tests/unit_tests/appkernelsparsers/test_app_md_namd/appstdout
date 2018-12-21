@@ -1,0 +1,1294 @@
+===ExeBinSignature=== MD5: f28293db1cc0731f4d9e1151598e6c18 /projects/ccrstaff/general/appker/UBHPC/execs/NAMD_2.13b1_Source/Linux-x86_64-icc/namd2
+===ExeBinSignature=== MD5: f379afb21d46e2d642fcadb95d7da37c /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 641b598339d2f688c409faf509548cd6 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 7b3c8715beae1fe8ede7bb352b9cd94e /lib64/libm.so.6
+===ExeBinSignature=== MD5: ebc6518301d43233b1de262f6cfdbfcc /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpicxx.so.12
+===ExeBinSignature=== MD5: 0f65391c22de4d15744ea80ec857419a /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: d9196e5f82db2befd02eb55c78747724 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: b6fafb6234cb418d25ad5b8d548a3e68 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 0c2a641bb744d8fe380b7037b350c886 /lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 73ae799408ded6010d7d1a8dd55a8cf1 /lib64/libc.so.6
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfi_userinit: mmap of status page (dabbad0008030000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfi_userinit: mmap of status page (dabbad0008040000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122054hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122054PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfi_userinit: mmap of status page (dabbad0008030000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446314hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfi_userinit: mmap of status page (dabbad0008030000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39778hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfi_userinit: mmap of status page (dabbad0008040000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446315hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfi_userinit: mmap of status page (dabbad0008040000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39786hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122053hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfi_userinit: mmap of status page (dabbad0008040000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418467hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfi_userinit: mmap of status page (dabbad0008050000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446316hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfi_userinit: mmap of status page (dabbad0008050000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39787hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfi_userinit: mmap of status page (dabbad0008050000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122055hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfi_userinit: mmap of status page (dabbad0008030000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418468hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfi_userinit: mmap of status page (dabbad0008060000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446317hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39778PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfi_userinit: mmap of status page (dabbad0008060000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122056hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfi_userinit: mmap of status page (dabbad0008050000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418469hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446314PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39786PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122053PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfi_userinit: mmap of status page (dabbad0008060000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418470hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446315PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39787PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122055PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418467PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446316PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfi_userinit: mmap of status page (dabbad0008060000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39788hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122056PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418468PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446317PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39788PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfi_userinit: mmap of status page (dabbad0008070000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418469PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfi_userinit: mmap of status page (dabbad0008070000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446318hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfi_userinit: mmap of status page (dabbad0008070000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39790hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfi_userinit: mmap of status page (dabbad0008080000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418470PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446318PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39790PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122057hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfi_userinit: mmap of status page (dabbad0008070000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418471hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfi_userinit: mmap of status page (dabbad0008080000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446319hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfi_userinit: mmap of status page (dabbad0008080000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39789hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122057PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418471PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446319PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39789PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfi_userinit: mmap of status page (dabbad0008080000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418474hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfi_userinit: mmap of status page (dabbad0008090000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446320hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfi_userinit: mmap of status page (dabbad0008090000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39791hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418474PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446320PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39791PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfi_userinit: mmap of status page (dabbad0008090000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418472hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfi_userinit: mmap of status page (dabbad00080c0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446322hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfi_userinit: mmap of status page (dabbad00080a0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39792hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418472PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfi_userinit: mmap of status page (dabbad00080a0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446323hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfi_userinit: mmap of status page (dabbad00080c0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39793hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfi_userinit: mmap of status page (dabbad00080a0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418475hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfi_userinit: mmap of status page (dabbad00080b0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446324hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39792PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122058hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418475PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446322PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39793PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122058cpn-u22-24.cbls.ccr.buffalo.edu.418476hfi_userinit: mmap of status page (dabbad00080f0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418476hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446323PSM2 can't open hfi unit: -1 (err=23)
+PSM2 can't open hfi unit: -1 (err=23)cpn-u22-24.cbls.ccr.buffalo.edu.418477hfi_userinit: mmap of status page (dabbad00080e0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418477hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446324PSM2 can't open hfi unit: -1 (err=23)
+
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfi_userinit: mmap of status page (dabbad00080d0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418478hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfi_userinit: mmap of status page (dabbad00080d0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446325hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfi_userinit: mmap of status page (dabbad00080a0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfi_userinit: mmap of status page (dabbad00080b0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418480hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446325PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfi_userinit: mmap of status page (dabbad0008100000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418481hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfi_userinit: mmap of status page (dabbad00080e0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446327hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418476PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfi_userinit: mmap of status page (dabbad00080f0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446329hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418477PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfi_userinit: mmap of status page (dabbad0008110000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446326hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418478PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfi_userinit: mmap of status page (dabbad0008100000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446328hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418480PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446326PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122059hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfi_userinit: mmap of status page (dabbad0008110000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418482hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446327PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122059cpn-u22-24.cbls.ccr.buffalo.edu.418481PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446328PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfi_userinit: mmap of status page (dabbad00080b0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122060hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418482PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446329PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122060PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfi_userinit: mmap of status page (dabbad00080c0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418479hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfi_userinit: mmap of status page (dabbad0008090000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122063hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418479PSM2 can't open hfi unit: -1 (err=23)
+PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122063PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfi_userinit: mmap of status page (dabbad00080c0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122061hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122061PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfi_userinit: mmap of status page (dabbad00080d0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122062hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122062PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfi_userinit: mmap of status page (dabbad00080e0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfi_userinit: mmap of status page (dabbad00080f0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfi_userinit: mmap of status page (dabbad0008100000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122065hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122064hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122064PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122065PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfi_userinit: mmap of status page (dabbad0008120000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122068hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfi_userinit: mmap of status page (dabbad0008110000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122069hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122068PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122069PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122067hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122067PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfi_userinit: mmap of status page (dabbad0008220000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418473hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418473PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfi_userinit: mmap of status page (dabbad00081b0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39779hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfi_userinit: mmap of status page (dabbad00081a0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39781hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfi_userinit: mmap of status page (dabbad00081c0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39785hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39779PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39781PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39785PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfi_userinit: mmap of status page (dabbad00081e0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39780hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfi_userinit: mmap of status page (dabbad00081f0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39782hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39780PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfi_userinit: mmap of status page (dabbad0008210000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfi_userinit: mmap of status page (dabbad0008200000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39784hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39782PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39783hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39783PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39784PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfi_userinit: mmap of status page (dabbad0008120000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfi_userinit: mmap of status page (dabbad00080d0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39797hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39797PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfi_userinit: mmap of status page (dabbad0008120000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446333hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446333PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418485hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418485PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfi_userinit: mmap of status page (dabbad0008150000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfi_userinit: mmap of status page (dabbad0008140000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfi_userinit: mmap of status page (dabbad0008150000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfi_userinit: mmap of status page (dabbad00080b0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfi_userinit: mmap of status page (dabbad0008140000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122073hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfi_userinit: mmap of status page (dabbad00080e0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39795hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122073PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfi_userinit: mmap of status page (dabbad0008180000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446340hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfi_userinit: mmap of status page (dabbad0008100000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39798hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446340PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39795PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfi_userinit: mmap of status page (dabbad0008130000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39798PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446331hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418486hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446331PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418486cpn-u22-26.cbls.ccr.buffalo.edu.39794hfi_userinit: mmap of status page (dabbad00080f0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122072hfi_userinit: assign_context command failed: Invalid argument
+PSM2 can't open hfi unit: -1 (err=23)cpn-u22-27.cbls.ccr.buffalo.edu.446335hfi_userinit: mmap of status page (dabbad0008170000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446335hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39794hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122072
+cpn-u22-27.cbls.ccr.buffalo.edu.446335PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfi_userinit: mmap of status page (dabbad0008120000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+PSM2 can't open hfi unit: -1 (err=23)cpn-u22-24.cbls.ccr.buffalo.edu.418496hfi_userinit: mmap of status page (dabbad0008160000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfi_userinit: mmap of status page (dabbad00081a0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39794PSM2 can't open hfi unit: -1 (err=23)
+
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfi_userinit: mmap of status page (dabbad0008160000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446334hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39806hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfi_userinit: mmap of status page (dabbad0008160000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfi_userinit: mmap of status page (dabbad0008190000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446338hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39806PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418496hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446339hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418496PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446339PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfi_userinit: mmap of status page (dabbad0008150000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418489hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfi_userinit: mmap of status page (dabbad0008140000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446330hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418489PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446334PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39796hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfi_userinit: mmap of status page (dabbad0008170000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418491hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446338PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfi_userinit: mmap of status page (dabbad0008110000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122079hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418491PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446330PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39796cpn-u22-16.cbls.ccr.buffalo.edu.122081hfi_userinit: mmap of status page (dabbad00081b0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122081hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfi_userinit: mmap of status page (dabbad0008130000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418483hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfi_userinit: mmap of status page (dabbad00081c0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39800hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122079PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfi_userinit: mmap of status page (dabbad00081a0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418493hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446341hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfi_userinit: mmap of status page (dabbad0008150000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39802hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfi_userinit: mmap of status page (dabbad0008180000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418483PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfi_userinit: mmap of status page (dabbad00081b0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446342hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39800PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfi_userinit: mmap of status page (dabbad00081a0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfi_userinit: mmap of status page (dabbad0008180000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418484hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfi_userinit: mmap of status page (dabbad00081e0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446344hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfi_userinit: mmap of status page (dabbad0008130000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39799hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122081PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfi_userinit: mmap of status page (dabbad0008190000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418495hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfi_userinit: mmap of status page (dabbad00081d0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39802PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122076hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418493PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446341PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfi_userinit: mmap of status page (dabbad0008140000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39804hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122080hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfi_userinit: mmap of status page (dabbad00081b0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418490hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446342PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfi_userinit: mmap of status page (dabbad0008170000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122076PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418484PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446344PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39799PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122080PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418495PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfi_userinit: mmap of status page (dabbad0008200000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfi_userinit: mmap of status page (dabbad0008160000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfi_userinit: mmap of status page (dabbad0008170000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfi_userinit: mmap of status page (dabbad00081e0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446337hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39807hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfi_userinit: mmap of status page (dabbad00081c0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122075hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfi_userinit: mmap of status page (dabbad00081f0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418497hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfi_userinit: mmap of status page (dabbad00081f0000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446343hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39804PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122075PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418490PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446337PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39807PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfi_userinit: mmap of status page (dabbad0008200000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418487hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446343PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39805hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfi_userinit: mmap of status page (dabbad00081d0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122082hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfi_userinit: mmap of status page (dabbad00081d0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418488hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446336hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39805PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfi_userinit: mmap of status page (dabbad00081e0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122084hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfi_userinit: mmap of status page (dabbad0008210000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418492hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446336PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfi_userinit: mmap of status page (dabbad0008180000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfi_userinit: mmap of status page (dabbad0008200000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418494hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446332hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfi_userinit: mmap of status page (dabbad0008190000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39809hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfi_userinit: mmap of status page (dabbad00081f0000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122085hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfi_userinit: mmap of status page (dabbad00081c0000) failed: Operation not permitted
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-24.cbls.ccr.buffalo.edu.418498hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446332PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfi_userinit: mmap of status page (dabbad00081d0000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122074PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418492PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfi_userinit: mmap of status page (dabbad0008210000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446345hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39808hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122082PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418494PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446345PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39808PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122084PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418497PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39809PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfi_userinit: mmap of status page (dabbad0008190000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122077hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418487PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39803hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122083hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-24.cbls.ccr.buffalo.edu.418488PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39803PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122077PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-24.cbls.ccr.buffalo.edu.418498PSM2 can't open hfi unit: -1 (err=23)
+PSM2 can't open hfi unit: -1 (err=23)cpn-u22-16.cbls.ccr.buffalo.edu.122083PSM2 can't open hfi unit: -1 (err=23)
+
+cpn-u22-16.cbls.ccr.buffalo.edu.122085PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfi_userinit: mmap of status page (dabbad0008220000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-26.cbls.ccr.buffalo.edu.39801hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfi_userinit: mmap of status page (dabbad0008210000) failed: Operation not permitted
+cpn-u22-26.cbls.ccr.buffalo.edu.39801PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122071hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122071PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfi_userinit: mmap of status page (dabbad0008130000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122070hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122070PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfi_userinit: mmap of status page (dabbad0008220000) failed: Operation not permitted
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-16.cbls.ccr.buffalo.edu.122078hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-16.cbls.ccr.buffalo.edu.122078PSM2 can't open hfi unit: -1 (err=23)
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfi_userinit: mmap of status page (dabbad0008220000) failed: Operation not permitted
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfp_gen1_context_open: hfi_userinit: failed, trying again (1/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfp_gen1_context_open: hfi_userinit: failed, trying again (2/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfp_gen1_context_open: hfi_userinit: failed, trying again (3/3)
+cpn-u22-27.cbls.ccr.buffalo.edu.446321hfi_userinit: assign_context command failed: Invalid argument
+cpn-u22-27.cbls.ccr.buffalo.edu.446321PSM2 can't open hfi unit: -1 (err=23)
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: MPI_THREAD_SINGLE (desired: MPI_THREAD_SINGLE)
+Charm++> Running in non-SMP mode: numPes 128
+Charm++> Using recursive bisection (scheme 3) for topology aware partitions
+Converse/Charm++ Commit ID: v6.8.2-0-g26d4bd8-namd-charm-6.8.2-build-2018-Jan-11-30463
+Warning> Randomization of virtual memory (ASLR) is turned on in the kernel, thread migration may not work! Run 'echo 0 > /proc/sys/kernel/randomize_va_space' as root to disable it, or try running with '+isomalloc_sync'.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> Running on 4 unique compute nodes (32-way SMP).
+Charm++> cpu topology info is gathered in 0.026 seconds.
+Info: NAMD 2.13b1 for Linux-x86_64-MPI
+Info: 
+Info: Please visit http://www.ks.uiuc.edu/Research/namd/
+Info: for updates, documentation, and support information.
+Info: 
+Info: Please cite Phillips et al., J. Comp. Chem. 26:1781-1802 (2005)
+Info: in all publications reporting results obtained with NAMD.
+Info: 
+Info: Based on Charm++/Converse 60800 for mpi-linux-x86_64
+Info: Built Fri Sep 14 14:49:53 EDT 2018 by xdtas on cpn-u22-35.cbls.ccr.buffalo.edu
+Info: 1 NAMD  2.13b1  Linux-x86_64-MPI  128    cpn-u22-16.cbls.ccr.buffalo.edu  xdtas
+Info: Running on 128 processors, 128 nodes, 4 physical nodes.
+Info: CPU topology information available.
+Info: Charm++/Converse parallel runtime startup completed at 0.0457902 s
+Info: 419.078 MB of memory in use based on /proc/self/stat
+Info: Configuration file is ./input.namd
+Info: Changed directory to .
+TCL: Suspending until startup complete.
+Info: SIMULATION PARAMETERS:
+Info: TIMESTEP               2
+Info: NUMBER OF STEPS        1200
+Info: STEPS PER CYCLE        20
+Info: PERIODIC CELL BASIS 1  108.861 0 0
+Info: PERIODIC CELL BASIS 2  0 108.861 0
+Info: PERIODIC CELL BASIS 3  0 0 77.758
+Info: PERIODIC CELL CENTER   0 0 0
+Info: LOAD BALANCER  Centralized
+Info: LOAD BALANCING STRATEGY  New Load Balancers -- DEFAULT
+Info: LDB PERIOD             4000 steps
+Info: FIRST LDB TIMESTEP     100
+Info: LAST LDB TIMESTEP     -1
+Info: LDB BACKGROUND SCALING 1
+Info: HOM BACKGROUND SCALING 1
+Info: PME BACKGROUND SCALING 1
+Info: REMOVING PATCHES FROM PROCESSOR 0
+Info: MIN ATOMS PER PATCH    40
+Info: INITIAL TEMPERATURE    300
+Info: CENTER OF MASS MOVING INITIALLY? NO
+Info: DIELECTRIC             1
+Info: EXCLUDE                SCALED ONE-FOUR
+Info: 1-4 ELECTROSTATICS SCALED BY 1
+Info: MODIFIED 1-4 VDW PARAMETERS WILL BE USED
+Info: NO DCD TRAJECTORY OUTPUT
+Info: NO EXTENDED SYSTEM TRAJECTORY OUTPUT
+Info: NO VELOCITY DCD OUTPUT
+Info: NO FORCE DCD OUTPUT
+Info: OUTPUT FILENAME        ./apoa1-out
+Info: BINARY OUTPUT FILES WILL BE USED
+Info: NO RESTART FILE
+Info: SWITCHING ACTIVE
+Info: SWITCHING ON           10
+Info: SWITCHING OFF          12
+Info: PAIRLIST DISTANCE      13.5
+Info: PAIRLIST SHRINK RATE   0.01
+Info: PAIRLIST GROW RATE     0.01
+Info: PAIRLIST TRIGGER       0.3
+Info: PAIRLISTS PER CYCLE    2
+Info: PAIRLISTS ENABLED
+Info: MARGIN                 0
+Info: HYDROGEN GROUP CUTOFF  2.5
+Info: PATCH DIMENSION        16
+Info: ENERGY OUTPUT STEPS    500
+Info: CROSSTERM ENERGY INCLUDED IN DIHEDRAL
+Info: TIMING OUTPUT STEPS    500
+Info: PARTICLE MESH EWALD (PME) ACTIVE
+Info: PME TOLERANCE               1e-06
+Info: PME EWALD COEFFICIENT       0.257952
+Info: PME INTERPOLATION ORDER     4
+Info: PME GRID DIMENSIONS         108 108 80
+Info: PME MAXIMUM GRID SPACING    1.5
+Info: Attempting to read FFTW data from FFTW_NAMD_2.13b1_Linux-x86_64-MPI.txt
+Info: Optimizing 6 FFT steps.  1... 2... 3... 4... 5... 6...   Done.
+Info: Writing FFTW data to FFTW_NAMD_2.13b1_Linux-x86_64-MPI.txt
+Info: FULL ELECTROSTATIC EVALUATION FREQUENCY      2
+Info: USING VERLET I (r-RESPA) MTS SCHEME.
+Info: C1 SPLITTING OF LONG RANGE ELECTROSTATICS
+Info: PLACING ATOMS IN PATCHES BY HYDROGEN GROUPS
+Info: RIGID BONDS TO HYDROGEN : ALL
+Info:         ERROR TOLERANCE : 1e-08
+Info:          MAX ITERATIONS : 100
+Info: RIGID WATER USING SETTLE ALGORITHM
+Info: RANDOM NUMBER SEED     74269
+Info: USE HYDROGEN BONDS?    NO
+Info: COORDINATE PDB         apoa1.pdb
+Info: STRUCTURE FILE         apoa1.psf
+Info: PARAMETER file: XPLOR format! (default) 
+Info: PARAMETERS             par_all22_prot_lipid.xplor
+Info: PARAMETERS             par_all22_popc.xplor
+Info: USING ARITHMETIC MEAN TO COMBINE L-J SIGMA PARAMETERS
+Info: SUMMARY OF PARAMETERS:
+Info: 177 BONDS
+Info: 435 ANGLES
+Info: 446 DIHEDRAL
+Info: 45 IMPROPER
+Info: 0 CROSSTERM
+Info: 83 VDW
+Info: 6 VDW_PAIRS
+Info: 0 NBTHOLE_PAIRS
+Info: TIME FOR READING PSF FILE: 0.65979
+Info: Reading pdb file apoa1.pdb
+Info: TIME FOR READING PDB FILE: 0.111978
+Info: 
+Info: ****************************
+Info: STRUCTURE SUMMARY:
+Info: 92224 ATOMS
+Info: 70660 BONDS
+Info: 74136 ANGLES
+Info: 74130 DIHEDRALS
+Info: 1402 IMPROPERS
+Info: 0 CROSSTERMS
+Info: 0 EXCLUSIONS
+Info: 1568 DIHEDRALS WITH MULTIPLE PERIODICITY (BASED ON PSF FILE)
+Info: 80690 RIGID BONDS
+Info: 195979 DEGREES OF FREEDOM
+Info: 32992 HYDROGEN GROUPS
+Info: 4 ATOMS IN LARGEST HYDROGEN GROUP
+Info: 32992 MIGRATION GROUPS
+Info: 4 ATOMS IN LARGEST MIGRATION GROUP
+Info: TOTAL MASS = 553785 amu
+Info: TOTAL CHARGE = -14 e
+Info: MASS DENSITY = 0.997951 g/cm^3
+Info: ATOM DENSITY = 0.100081 atoms/A^3
+Info: *****************************
+Info: 
+Info: Entering startup at 23.71 s, 546.418 MB of memory in use
+Info: Startup phase 0 took 0.00117087 s, 546.418 MB of memory in use
+Info: ADDED 218698 IMPLICIT EXCLUSIONS
+Info: Startup phase 1 took 0.177867 s, 568.441 MB of memory in use
+Info: NONBONDED TABLE R-SQUARED SPACING: 0.0625
+Info: NONBONDED TABLE SIZE: 769 POINTS
+Info: ABSOLUTE IMPRECISION IN FAST TABLE FORCE: 2.64698e-23 AT 11.9138
+Info: RELATIVE IMPRECISION IN FAST TABLE FORCE: 1.40436e-16 AT 11.9138
+Info: INCONSISTENCY IN FAST TABLE ENERGY VS FORCE: 0.000325096 AT 11.9556
+Info: ABSOLUTE IMPRECISION IN SCOR TABLE FORCE: 4.10282e-22 AT 11.9138
+Info: RELATIVE IMPRECISION IN SCOR TABLE FORCE: 3.56912e-15 AT 11.9138
+Info: INCONSISTENCY IN SCOR TABLE ENERGY VS FORCE: 0.000324844 AT 11.9556
+Info: ABSOLUTE IMPRECISION IN VDWA TABLE ENERGY: 9.86076e-32 AT 11.8295
+Info: RELATIVE IMPRECISION IN VDWA TABLE ENERGY: 6.75473e-14 AT 11.9138
+Info: ABSOLUTE IMPRECISION IN VDWA TABLE FORCE: 4.62223e-32 AT 11.9138
+Info: RELATIVE IMPRECISION IN VDWA TABLE FORCE: 2.12237e-15 AT 11.9138
+Info: INCONSISTENCY IN VDWA TABLE ENERGY VS FORCE: 0.0040507 AT 0.251946
+Info: ABSOLUTE IMPRECISION IN VDWB TABLE ENERGY: 4.1359e-25 AT 11.8295
+Info: RELATIVE IMPRECISION IN VDWB TABLE ENERGY: 7.56853e-15 AT 11.9138
+Info: ABSOLUTE IMPRECISION IN VDWB TABLE FORCE: 3.87741e-26 AT 11.9138
+Info: RELATIVE IMPRECISION IN VDWB TABLE FORCE: 5.97409e-16 AT 11.9138
+Info: INCONSISTENCY IN VDWB TABLE ENERGY VS FORCE: 0.00150189 AT 0.251946
+Info: Startup phase 2 took 0.00243807 s, 568.441 MB of memory in use
+Info: Startup phase 3 took 0.000937939 s, 568.441 MB of memory in use
+Info: Startup phase 4 took 0.00114512 s, 568.441 MB of memory in use
+Info: Startup phase 5 took 0.000954866 s, 568.441 MB of memory in use
+Info: REDUCING NUMBER OF PATCHES TO IMPROVE LOAD BALANCE
+Info: PATCH GRID IS 6 (PERIODIC) BY 5 (PERIODIC) BY 4 (PERIODIC)
+Info: PATCH GRID IS 1-AWAY BY 1-AWAY BY 1-AWAY
+Info: REMOVING COM VELOCITY 0.00117959 0.0289175 0.0202933
+Info: LARGEST PATCH (50) HAS 851 ATOMS
+Info: TORUS A SIZE 4 USING 0 1 2 3
+Info: TORUS B SIZE 1 USING 0
+Info: TORUS C SIZE 1 USING 0
+Info: TORUS MINIMAL MESH SIZE IS 4 BY 1 BY 1
+Info: Placed 100% of base nodes on same physical node as patch
+Info: Startup phase 6 took 0.0275772 s, 586.16 MB of memory in use
+Info: PME using 54 and 54 processors for FFT and reciprocal sum.
+Info: PME GRID LOCATIONS: 3 5 7 11 13 15 19 21 23 25 ...
+Info: PME TRANS LOCATIONS: 1 2 6 9 10 12 14 17 18 20 ...
+Info: PME USING 54 GRID NODES AND 54 TRANS NODES
+Info: Startup phase 7 took 0.00120997 s, 586.16 MB of memory in use
+Info: Startup phase 8 took 0.000859022 s, 586.16 MB of memory in use
+Info: Startup phase 9 took 0.00510883 s, 586.16 MB of memory in use
+Info: Startup phase 10 took 0.000858068 s, 586.16 MB of memory in use
+Info: Startup phase 11 took 0.0162301 s, 586.16 MB of memory in use
+LDB: Central LB being created...
+Info: Startup phase 12 took 0.00431585 s, 586.16 MB of memory in use
+Info: CREATING 3000 COMPUTE OBJECTS
+Info: Startup phase 13 took 0.00173807 s, 586.16 MB of memory in use
+Info: useSync: 1 useProxySync: 0
+Info: Startup phase 14 took 0.0011301 s, 586.16 MB of memory in use
+Info: Startup phase 15 took 0.000136852 s, 586.16 MB of memory in use
+Info: Finished startup at 23.9537 s, 586.16 MB of memory in use
+
+ETITLE:      TS           BOND          ANGLE          DIHED          IMPRP               ELECT            VDW       BOUNDARY           MISC        KINETIC               TOTAL           TEMP      POTENTIAL         TOTAL3        TEMPAVG            PRESSURE      GPRESSURE         VOLUME       PRESSAVG      GPRESSAVG
+
+ENERGY:       0       723.4861      6503.1224      4548.6740        48.0513        -325762.0101     23491.7726         0.0000         0.0000     58604.1211        -231842.7827       300.9602   -290446.9038   -231819.9685       300.9602          -1059.4690     -1065.1460    921491.4634     -1059.4690     -1065.1460
+
+LDB: ============= START OF LOAD BALANCING ============== 24.2062
+LDB: ============== END OF LOAD BALANCING =============== 24.2066
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 24.2083
+LDB: ============= START OF LOAD BALANCING ============== 25.1186
+LDB: Largest compute 230 load 0.253525 is 38.1% of average load 0.665315
+LDB: Average compute 0.025452 is 3.8% of average load 0.665315
+LDB: Partitioning computes with target load 0.066531
+LDB: Increased migratable compute count from 2280 to 2739
+LDB: Largest unpartitionable compute is 0.030244
+LDB: ============== END OF LOAD BALANCING =============== 25.123
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 25.1325
+Info: Initial time: 128 CPUs 0.011374 s/step 0.0658217 days/ns 586.16 MB memory
+LDB: ============= START OF LOAD BALANCING ============== 25.3623
+LDB: ============== END OF LOAD BALANCING =============== 25.3627
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 25.3644
+LDB: ============= START OF LOAD BALANCING ============== 26.4941
+LDB: Largest compute 645 load 0.100008 is 14.7% of average load 0.678610
+LDB: Average compute 0.021325 is 3.1% of average load 0.678610
+LDB: TIME 26.4977 LOAD: AVG 0.67861 MAX 0.927475  PROXIES: TOTAL 854 MAXPE 7 MAXPATCH 8 None MEM: 586.16 MB
+LDB: TIME 26.4998 LOAD: AVG 0.67861 MAX 0.741019  PROXIES: TOTAL 854 MAXPE 7 MAXPATCH 8 TorusLB MEM: 586.16 MB
+LDB: ============== END OF LOAD BALANCING =============== 26.5034
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 26.5116
+Info: Initial time: 128 CPUs 0.0135745 s/step 0.078556 days/ns 586.16 MB memory
+LDB: ============= START OF LOAD BALANCING ============== 27.7516
+LDB: Largest compute 3163 load 0.108491 is 12.6% of average load 0.860043
+LDB: Average compute 0.026829 is 3.1% of average load 0.860043
+LDB: TIME 27.7552 LOAD: AVG 0.860043 MAX 1.02451  PROXIES: TOTAL 854 MAXPE 7 MAXPATCH 8 None MEM: 586.16 MB
+LDB: TIME 27.7557 LOAD: AVG 0.860043 MAX 1.02451  PROXIES: TOTAL 854 MAXPE 7 MAXPATCH 8 RefineTorusLB MEM: 586.16 MB
+LDB: TIME 27.7567 LOAD: AVG 0.860043 MAX 0.908585  PROXIES: TOTAL 855 MAXPE 8 MAXPATCH 8 RefineTorusLB MEM: 586.16 MB
+LDB: ============== END OF LOAD BALANCING =============== 27.7582
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 27.7746
+Info: Initial time: 128 CPUs 0.0123846 s/step 0.07167 days/ns 586.16 MB memory
+LDB: ============= START OF LOAD BALANCING ============== 28.8671
+LDB: Largest compute 3168 load 0.110382 is 12.8% of average load 0.860215
+LDB: Average compute 0.026808 is 3.1% of average load 0.860215
+LDB: TIME 28.8708 LOAD: AVG 0.860215 MAX 0.970063  PROXIES: TOTAL 854 MAXPE 7 MAXPATCH 8 None MEM: 586.16 MB
+LDB: TIME 28.8713 LOAD: AVG 0.860215 MAX 0.970063  PROXIES: TOTAL 855 MAXPE 8 MAXPATCH 8 RefineTorusLB MEM: 586.16 MB
+LDB: TIME 28.8716 LOAD: AVG 0.860215 MAX 0.906235  PROXIES: TOTAL 855 MAXPE 8 MAXPATCH 8 RefineTorusLB MEM: 586.16 MB
+LDB: ============== END OF LOAD BALANCING =============== 28.8726
+Info: useSync: 1 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 28.8807
+Info: Benchmark time: 128 CPUs 0.0109103 s/step 0.0631384 days/ns 586.16 MB memory
+Info: Benchmark time: 128 CPUs 0.010207 s/step 0.0590681 days/ns 586.16 MB memory
+TIMING: 500  CPU: 5.97043, 0.0118381/step  Wall: 5.97043, 0.0118381/step, 0.00230186 hours remaining, 586.160156 MB of memory in use.
+ENERGY:     500      2119.3710     10836.2422      5712.6262       177.9249        -300553.5652     16944.6267         0.0000         0.0000     33420.6855        -231342.0887       171.6312   -264762.7742   -231171.7233       168.3236          -1980.8342     -1951.1427    921491.4634     -1734.6991     -1734.6439
+
+Info: Benchmark time: 128 CPUs 0.00952479 s/step 0.0551203 days/ns 586.16 MB memory
+Info: Benchmark time: 128 CPUs 0.00947847 s/step 0.0548523 days/ns 586.16 MB memory
+Info: Benchmark time: 128 CPUs 0.0101782 s/step 0.0589016 days/ns 586.16 MB memory
+Info: Benchmark time: 128 CPUs 0.00933925 s/step 0.0540466 days/ns 586.16 MB memory
+TIMING: 1000  CPU: 10.7623, 0.00958364/step  Wall: 10.7623, 0.00958364/step, 0.000532425 hours remaining, 586.160156 MB of memory in use.
+ENERGY:    1000      2030.6175     10856.8607      5705.3099       180.4898        -302043.2045     18006.4457         0.0000         0.0000     33913.7026        -231349.7782       174.1631   -265263.4808   -231170.7442       173.3410          -1680.7034     -1651.6894    921491.4634     -1821.8949     -1821.8726
+
+WRITING EXTENDED SYSTEM TO OUTPUT FILE AT STEP 1200
+WRITING COORDINATES TO OUTPUT FILE AT STEP 1200
+The last position output (seq=-2) takes 0.002 seconds, 586.160 MB of memory in use
+WRITING VELOCITIES TO OUTPUT FILE AT STEP 1200
+The last velocity output (seq=-2) takes 0.001 seconds, 586.160 MB of memory in use
+====================================================
+
+WallClock: 36.651707  CPUTime: 36.651707  Memory: 586.160156 MB
+[Partition 0][Node 0] End of program
