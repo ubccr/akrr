@@ -22,7 +22,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     parser.add_must_have_statistic('Wall Clock Time')
     parser.add_must_have_statistic('Shell is BASH')
     # parse common parameters and statistics
-    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo, resource_appker_vars)
 
     # set statistics
     if parser.wallClockTime is not None:

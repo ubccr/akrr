@@ -7,8 +7,7 @@ def test_appkeroutputparser(datadir):
         version=1,
         description="Test the resource deployment",
         url='http://xdmod.buffalo.edu',
-        measurement_name='test',
-        resource_appker_vars={'resource': 'HPC', 'app': 'test'}
+        measurement_name='test'
     )
     parser.add_common_must_have_params_and_stats()
     assert len(parser.mustHaveParameters) == 2
@@ -28,7 +27,8 @@ def test_appkeroutputparser(datadir):
 
     # parse common parameters and statistics
     parser.parse_common_params_and_stats(
-        str(datadir / 'appstdout'),  str(datadir / 'stdout'), str(datadir / 'stderr'), str(datadir / 'gen.info'))
+        str(datadir / 'appstdout'),  str(datadir / 'stdout'), str(datadir / 'stderr'), str(datadir / 'gen.info'),
+        resource_appker_vars={'resource': 'HPC', 'app': 'test'})
 
     # set statistics
     if parser.wallClockTime is not None:

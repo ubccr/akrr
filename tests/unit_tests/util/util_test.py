@@ -74,3 +74,21 @@ def test_replace_at_var_at(s, ds, expected):
     from akrr.util import replace_at_var_at
     assert replace_at_var_at(s, ds) == expected
 
+
+@pytest.mark.parametrize("a, b, tol, result", [
+    (0.0, 0.0, None, True),
+    (1.0e-8, 0.0, None, True),
+    (0.0, 1.0e-8, None, True),
+    (1.0e-6, 0.0, None, False),
+    (0.0, 1.0e-6, None, False),
+    (1234.5678, 1234.5688, None, False),
+    (1234.5678, 1234.5679, None, True),
+    (1234.56, 1245.56, 1.0e-3, False),
+    (1234.56, 1235.56, 1.0e-3, True),
+])
+def test_floats_are_close(a, b, tol, result):
+    from akrr.util import floats_are_close
+    if tol is None:
+        assert floats_are_close(a, b) == result
+    else:
+        assert floats_are_close(a, b, tol) == result

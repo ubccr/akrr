@@ -5,5 +5,6 @@ def test_parser(datadir):
         stdout=str(datadir.join('stdout')),
         stderr=str(datadir.join('stderr')),
         geninfo=str(datadir.join('gen.info')),
+        resource_appker_vars={'resource': 'HPC-Cluster'}
     )
     print(results)

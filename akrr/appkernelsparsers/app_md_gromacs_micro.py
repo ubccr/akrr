@@ -24,7 +24,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     parser.add_must_have_statistic('Wall Clock Time')
 
     # parse common parameters and statistics
-    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo)
+    parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo, resource_appker_vars)
 
     # read output
     lines = []
@@ -41,11 +41,11 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         if m:
             parser.set_parameter("App:Version", m.group(1))
 
-        m = re.search(r'^Performance:  \s+([0-9.]+)', lines[j])
+        m = re.search(r'^Performance: \s+([0-9.]+)', lines[j])
         if m:
             parser.set_statistic("Simulation Speed", float(m.group(1)), "ns/day")
 
-        m = re.search(r'^ \s+Time:  \s+([0-9.]+) \s+([0-9.]+)', lines[j])
+        m = re.search(r'^ \s+Time: \s+([0-9.]+) \s+([0-9.]+)', lines[j])
         if m:
             parser.set_statistic("Wall Clock Time", m.group(2), "Second")
             parser.set_statistic("Core Clock Time", m.group(1), "Second")
