@@ -128,7 +128,7 @@ def replace_at_var_at(s: str, ds: List[dict]):
     return s
 
 
-def floats_are_close(a, b, rel_tol=1.0e-7):
+def floats_are_close(a: float, b: float, rel_tol: float=1.0e-7) -> bool:
     from math import fabs
     if a == 0 and b == 0:
         return True
@@ -149,3 +149,15 @@ def floats_are_close(a, b, rel_tol=1.0e-7):
         return True
 
     return False
+
+
+def get_float_or_int(a: Union[str, float, int]) -> Union[int,float]:
+    """return float or int"""
+    if isinstance(a, (int, float)):
+        return a
+    if isinstance(a, str):
+        if a.isdigit():
+            return int(a)
+        else:
+            return float(a)
+    raise ValueError("Unknown type")

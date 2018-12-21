@@ -92,3 +92,24 @@ def test_floats_are_close(a, b, tol, result):
         assert floats_are_close(a, b) == result
     else:
         assert floats_are_close(a, b, tol) == result
+
+
+@pytest.mark.parametrize("a, result", [
+    ("0.0", 0.0),
+    ("0", 0),
+    ("10.0", 10.0),
+    ("10", 10),
+    ("10.20", 10.20),
+    ("103", 103)
+])
+def test_get_float_or_int(a, result):
+    from akrr.util import floats_are_close, get_float_or_int
+
+    b = get_float_or_int(a)
+    assert type(b) == type(result)
+    if isinstance(result, int):
+        assert b == result
+    elif isinstance(result, float):
+        assert floats_are_close(b, result)
+    else:
+        assert 0
