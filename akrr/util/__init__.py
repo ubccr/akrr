@@ -151,12 +151,28 @@ def floats_are_close(a: float, b: float, rel_tol: float=1.0e-7) -> bool:
     return False
 
 
-def get_float_or_int(a: Union[str, float, int]) -> Union[int,float]:
+def is_int(s: str) -> bool:
+    try:
+        int(s)
+        return True
+    except ValueError:
+        return False
+
+
+def is_float(s: str) -> bool:
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+def get_float_or_int(a: Union[str, float, int]) -> Union[int, float]:
     """return float or int"""
     if isinstance(a, (int, float)):
         return a
     if isinstance(a, str):
-        if a.isdigit():
+        if is_int(a):
             return int(a)
         else:
             return float(a)

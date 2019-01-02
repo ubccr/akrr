@@ -1,0 +1,2753 @@
+===ExeBinSignature=== MD5: 545ddfe51ab5c4907865c7f73f2e528a /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior
+===ExeBinSignature=== MD5: d74b2178e51775912ac0a754ada35608 /lib64/libgpfs.so
+===ExeBinSignature=== MD5: 7a2a38521e00752073f676abeed21d73 /lib64/libz.so.1
+===ExeBinSignature=== MD5: f39525b25452b5d88bf2d8fea2efe132 /util/academic/intel/17.0/compilers_and_libraries_2017/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: ba257e6c8616bdb6f3add04ecdf30aa0 /util/academic/intel/17.0/compilers_and_libraries_2017/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: f379afb21d46e2d642fcadb95d7da37c /lib64/libdl.so.2
+===ExeBinSignature=== MD5: b6fafb6234cb418d25ad5b8d548a3e68 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 641b598339d2f688c409faf509548cd6 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 7b3c8715beae1fe8ede7bb352b9cd94e /lib64/libm.so.6
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 73ae799408ded6010d7d1a8dd55a8cf1 /lib64/libc.so.6
+Using /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4 for test....
+File System To Test: gpfs gpfs0 /gpfs
+# Starting Test: -a POSIX 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:43:10 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:43:10 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = POSIX
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+	access             = single-shared-file
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285390 (0x5c2a714e) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:43:10 2018
+write     613.20     204800     20480      0.161028   31.29      13.50      31.31      0   
+
+Max Write: 613.20 MiB/sec (642.98 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         613.20     613.20     613.20       0.00   31.31128 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 POSIX 0
+
+Finished: Mon Dec 31 14:43:42 2018
+# Starting Test: -a POSIX -F 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX -F  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:43:46 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -F -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:43:46 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = POSIX
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+	access             = file-per-process
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285426 (0x5c2a7172) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:43:46 2018
+write     488.70     204800     20480      38.60      39.26      38.33      39.29      0   
+
+Max Write: 488.70 MiB/sec (512.43 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         488.70     488.70     488.70       0.00   39.28823 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 POSIX 0
+
+Finished: Mon Dec 31 14:44:26 2018
+# Starting Test: -a MPIIO 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:44:30 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:44:30 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285471 (0x5c2a719f) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:44:31 2018
+write     517.62     204800     20480      0.819208   36.86      18.75      37.09      0   
+
+Max Write: 517.62 MiB/sec (542.76 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         517.62     517.62     517.62       0.00   37.09316 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:45:08 2018
+# Starting Test: -a MPIIO -c 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -c  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:45:12 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -c -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:45:12 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285512 (0x5c2a71c8) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:45:12 2018
+write     468.32     204800     20480      0.773575   40.82      3.86       41.00      0   
+
+Max Write: 468.32 MiB/sec (491.07 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         468.32     468.32     468.32       0.00   40.99750 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:45:53 2018
+# Starting Test: -a MPIIO -F 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -F  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:45:58 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -F -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:45:58 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285558 (0x5c2a71f6) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:46:10 2018
+write     701.60     204800     20480      26.62      27.34      27.27      27.37      0   
+
+Max Write: 701.60 MiB/sec (735.68 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         701.60     701.60     701.60       0.00   27.36599 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:46:25 2018
+# Starting Test: -a HDF5 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:46:30 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:46:30 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285590 (0x5c2a7216) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:46:30 2018
+write     544.09     204800     20480      0.797255   34.43      17.24      35.29      0   
+
+Max Write: 544.09 MiB/sec (570.52 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         544.09     544.09     544.09       0.00   35.28822 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:47:05 2018
+# Starting Test: -a HDF5 -c 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -c  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:47:10 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -c -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:47:10 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285630 (0x5c2a723e) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:47:10 2018
+write     189.38     204800     20480      0.771071   99.09      2.12       101.38     0   
+
+Max Write: 189.38 MiB/sec (198.58 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         189.38     189.38     189.38       0.00  101.38267 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:48:51 2018
+# Starting Test: -a HDF5 -F 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -F  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:48:56 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -F -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:48:56 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285736 (0x5c2a72a8) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:49:19 2018
+write     755.65     204800     20480      24.63      25.39      25.30      25.41      0   
+
+Max Write: 755.65 MiB/sec (792.35 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         755.65     755.65     755.65       0.00   25.40873 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:49:22 2018
+# Starting Test: -a NCMPI 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:49:26 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.01 sec
+
+Test 0 started: Mon Dec 31 14:49:26 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = NCMPI (version = 1.3.1 of 24 Sep 2012)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285766 (0x5c2a72c6) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:49:26 2018
+write     317.39     204800     20480      0.793515   60.15      22.18      60.49      0   
+
+Max Write: 317.39 MiB/sec (332.80 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         317.39     317.39     317.39       0.00   60.49409 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 NCMPI 0
+
+Finished: Mon Dec 31 14:50:27 2018
+# Starting Test: -a NCMPI -c 
+executing: mpirun -machinefile all_nodes -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI -c  -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:50:31 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -c -w -k -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:50:31 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = NCMPI (version = 1.3.1 of 24 Sep 2012)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285831 (0x5c2a7307) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Mon Dec 31 14:50:31 2018
+write     752.14     204800     20480      0.826898   25.31      0.032479   25.53      0   
+
+Max Write: 752.14 MiB/sec (788.68 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+write         752.14     752.14     752.14       0.00   25.52711 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 NCMPI 0
+
+Finished: Mon Dec 31 14:50:57 2018
+# Starting Test: -a POSIX 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:51:01 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:51:01 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = POSIX
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX
+	access             = single-shared-file
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285861 (0x5c2a7325) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:51:01 2018
+read      742.56     204800     20480      0.082365   25.11      22.47      25.86      0   
+remove    -          -          -          -          -          -          0.017531   0   
+
+Max Read:  742.56 MiB/sec (778.63 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          742.56     742.56     742.56       0.00   25.85657 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 POSIX 0
+
+Finished: Mon Dec 31 14:51:27 2018
+# Starting Test: -a POSIX -F 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX -F  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:51:31 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -F -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:51:31 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = POSIX
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_POSIX__F
+	access             = file-per-process
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285891 (0x5c2a7343) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:51:32 2018
+read      938.84     204800     20480      15.40      20.45      15.76      20.45      0   
+remove    -          -          -          -          -          -          0.536207   0   
+
+Max Read:  938.84 MiB/sec (984.45 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          938.84     938.84     938.84       0.00   20.45073 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 POSIX 0
+
+Finished: Mon Dec 31 14:51:53 2018
+# Starting Test: -a MPIIO 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:51:57 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:51:57 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285917 (0x5c2a735d) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:51:57 2018
+read      492.79     204800     20480      0.807227   37.89      36.32      38.96      0   
+remove    -          -          -          -          -          -          0.015729   0   
+
+Max Read:  492.79 MiB/sec (516.73 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          492.79     492.79     492.79       0.00   38.96196 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:52:36 2018
+# Starting Test: -a MPIIO -c 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -c  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:52:40 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -c -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:52:40 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546285960 (0x5c2a7388) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:52:41 2018
+read      357.51     204800     20480      0.803321   53.42      0.174882   53.71      0   
+remove    -          -          -          -          -          -          0.014268   0   
+
+Max Read:  357.51 MiB/sec (374.87 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          357.51     357.51     357.51       0.00   53.70500 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:53:35 2018
+# Starting Test: -a MPIIO -F 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -F  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:53:39 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -F -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:53:39 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = MPIIO (version=3, subversion=1)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_MPIIO__F
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286019 (0x5c2a73c3) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:53:39 2018
+read      927.21     204800     20480      0.091708   20.66      11.36      20.71      0   
+remove    -          -          -          -          -          -          0.532155   0   
+
+Max Read:  927.21 MiB/sec (972.25 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          927.21     927.21     927.21       0.00   20.70738 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 MPIIO 0
+
+Finished: Mon Dec 31 14:54:00 2018
+# Starting Test: -a HDF5 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:54:05 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.01 sec
+
+Test 0 started: Mon Dec 31 14:54:05 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286045 (0x5c2a73dd) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:54:05 2018
+read      812.37     204800     20480      0.465735   22.18      7.54       23.63      0   
+remove    -          -          -          -          -          -          0.019747   0   
+
+Max Read:  812.37 MiB/sec (851.83 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          812.37     812.37     812.37       0.00   23.63462 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:54:29 2018
+# Starting Test: -a HDF5 -c 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -c  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:54:33 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -c -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:54:33 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286073 (0x5c2a73f9) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:54:33 2018
+read      411.51     204800     20480      0.384665   46.27      0.078640   46.66      0   
+remove    -          -          -          -          -          -          0.018763   0   
+
+Max Read:  411.51 MiB/sec (431.50 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          411.51     411.51     411.51       0.00   46.65741 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:55:20 2018
+# Starting Test: -a HDF5 -F 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -F  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:55:24 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -F -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:55:24 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = HDF5-1.8.14 (Parallel)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_HDF5__F
+	access             = file-per-process, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286124 (0x5c2a742c) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:55:25 2018
+read      929.46     204800     20480      10.95      20.57      17.68      20.66      0   
+remove    -          -          -          -          -          -          0.590762   0   
+
+Max Read:  929.46 MiB/sec (974.61 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          929.46     929.46     929.46       0.00   20.65715 0 96 12 1 1 0 1 1 0 1 209715200 20971520 20132659200 HDF5 0
+
+Finished: Mon Dec 31 14:55:46 2018
+# Starting Test: -a NCMPI 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:55:50 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:55:50 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = NCMPI (version = 1.3.1 of 24 Sep 2012)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI
+	access             = single-shared-file, independent
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286150 (0x5c2a7446) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:55:51 2018
+read      861.72     204800     20480      0.910970   21.34      5.90       22.28      0   
+remove    -          -          -          -          -          -          0.015022   0   
+
+Max Read:  861.72 MiB/sec (903.58 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          861.72     861.72     861.72       0.00   22.28108 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 NCMPI 0
+
+Finished: Mon Dec 31 14:56:13 2018
+# Starting Test: -a NCMPI -c 
+executing: mpirun -machinefile all_nodes_offset -n 96 /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI -c  -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+IOR-3.0.1: MPI Coordinated Test of Parallel I/O
+
+Began: Mon Dec 31 14:56:17 2018
+Command line used: /projects/ccrstaff/general/appker/edge12core/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -c -r -o /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+Machine: Linux cpn-k07-01-01.cbls.ccr.buffalo.edu 3.10.0-862.3.3.el7.x86_64 #1 SMP Fri Jun 15 04:15:27 UTC 2018 x86_64
+Using synchronized MPI timer
+Start time skew across all tasks: 0.00 sec
+
+Test 0 started: Mon Dec 31 14:56:17 2018
+Path: /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4
+FS: 2634.4 TiB   Used FS: 28.5%   Inodes: 381.5 Mi   Used Inodes: 58.3%
+Participating tasks: 96
+task 0 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 1 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 10 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 11 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 12 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 13 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 14 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 15 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 16 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 17 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 18 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 19 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 2 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 20 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 21 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 22 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 23 on cpn-k08-18-02.cbls.ccr.buffalo.edu
+task 24 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 25 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 26 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 27 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 28 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 29 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 3 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 30 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 31 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 32 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 33 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 34 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 35 on cpn-k08-29-01.cbls.ccr.buffalo.edu
+task 36 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 37 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 38 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 39 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 4 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 40 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 41 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 42 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 43 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 44 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 45 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 46 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 47 on cpn-k08-36-01.cbls.ccr.buffalo.edu
+task 48 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 49 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 5 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 50 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 51 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 52 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 53 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 54 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 55 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 56 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 57 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 58 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 59 on cpn-k10-13-02.cbls.ccr.buffalo.edu
+task 6 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 60 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 61 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 62 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 63 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 64 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 65 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 66 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 67 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 68 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 69 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 7 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 70 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 71 on cpn-k10-18-01.cbls.ccr.buffalo.edu
+task 72 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 73 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 74 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 75 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 76 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 77 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 78 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 79 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 8 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 80 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 81 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 82 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 83 on cpn-k10-26-01.cbls.ccr.buffalo.edu
+task 84 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 85 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 86 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 87 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 88 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 89 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 9 on cpn-k07-01-01.cbls.ccr.buffalo.edu
+task 90 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 91 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 92 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 93 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 94 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+task 95 on cpn-k10-29-02.cbls.ccr.buffalo.edu
+Summary:
+	api                = NCMPI (version = 1.3.1 of 24 Sep 2012)
+	test filename      = /gpfs/scratch/xdtas/edge12core/ior.v41LZf7X4/ior_test_file__a_NCMPI__c
+	access             = single-shared-file, collective
+	pattern            = segmented (1 segment)
+	ordering in a file = sequential offsets
+	ordering inter file= random task offsets >= 1, seed=0
+	clients            = 96 (12 per node)
+	repetitions        = 1
+	xfersize           = 20 MiB
+	blocksize          = 200 MiB
+	aggregate filesize = 18.75 GiB
+Using Time Stamp 1546286177 (0x5c2a7461) for Data Signature
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+#File Hits Dist: 29 45 16 5 1
+Commencing read performance test: Mon Dec 31 14:56:17 2018
+read      803.91     204800     20480      0.874303   22.98      0.626368   23.88      0   
+remove    -          -          -          -          -          -          0.015269   0   
+
+Max Read:  803.91 MiB/sec (842.96 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
+read          803.91     803.91     803.91       0.00   23.88329 0 96 12 1 0 0 1 1 0 1 209715200 20971520 20132659200 NCMPI 0
+
+Finished: Mon Dec 31 14:56:41 2018
