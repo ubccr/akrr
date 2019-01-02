@@ -15,8 +15,6 @@ def test_parser(datadir):
     params = xml_out.find(".//parameters")
     stats = xml_out.find(".//statistics")
 
-    print(results)
-
     assert xml_out.find('./exitStatus/completed').text == "true"
 
     assert len(params.find(".//parameter[ID='App:ExeBinSignature']").find('value').text) > 5
