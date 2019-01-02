@@ -4,6 +4,7 @@ import sys
 from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 from akrr.util import get_float_or_int
 
+
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
