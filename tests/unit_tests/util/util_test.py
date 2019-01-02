@@ -1,5 +1,4 @@
 import pytest
-import os
 
 
 def test_clear_from_build_in_var():
@@ -92,6 +91,42 @@ def test_floats_are_close(a, b, tol, result):
         assert floats_are_close(a, b) == result
     else:
         assert floats_are_close(a, b, tol) == result
+
+
+@pytest.mark.parametrize("s, result", [
+    ("0.0", False),
+    ("0", True),
+    ("10.0", False),
+    ("10", True),
+    ("10.20", False),
+    ("-10.0", False),
+    ("-10", True),
+    ("-10.20", False),
+    ("10.0a", False),
+    ("-1a0", False),
+    ("10.20a", False),
+])
+def test_is_int(s, result):
+    from akrr.util import is_int
+    assert is_int(s) == result
+
+
+@pytest.mark.parametrize("s, result", [
+    ("0.0", True),
+    ("0", True),
+    ("10.0", True),
+    ("10", True),
+    ("10.20", True),
+    ("-10.0", True),
+    ("-10", True),
+    ("-10.20", True),
+    ("10.0a", False),
+    ("-1a0", False),
+    ("10.20a", False),
+])
+def test_is_float(s, result):
+    from akrr.util import is_float
+    assert is_float(s) == result
 
 
 @pytest.mark.parametrize("a, result", [
