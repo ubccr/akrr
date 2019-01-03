@@ -379,16 +379,19 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
                     parser.set_parameter("Transfer Size Per I/O", transfer_size, "MByte")
 
             m0 = re.match(
-                r'^access\s+bw\(MiB/s\)\s+block\(KiB\)\s+xfer\(KiB\)\s+open\(s\)\s+wr/rd\(s\)\s+close\(s\)\s+total\(s\)\s+iter',
+                r'^access\s+bw\(MiB/s\)\s+block\(KiB\)\s+xfer\(KiB\)\s+'
+                r'open\(s\)\s+wr/rd\(s\)\s+close\(s\)\s+total\(s\)\s+iter',
                 lines[i])
             if m0:
                 i += 1
                 while i < len(lines):
                     m1 = re.match(
-                        r'^write\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+',
+                        r'^write\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+'
+                        r'([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+',
                         lines[i])
                     m2 = re.match(
-                        r'^read\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+',
+                        r'^read\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+'
+                        r'([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+\s+([0-9.]+)+',
                         lines[i])
                     if m1 or m2:
                         if m1:
