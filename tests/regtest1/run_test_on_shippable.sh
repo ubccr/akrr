@@ -59,6 +59,6 @@ rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
 cd tests
 pytest -v --junitxml=../shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:../shippable/codecoverage/coverage.xml \
-       -m "not openstack" \
+       --cov-branch -m "not openstack" \
        ./unit_tests ./sys_tests
 cd ..
