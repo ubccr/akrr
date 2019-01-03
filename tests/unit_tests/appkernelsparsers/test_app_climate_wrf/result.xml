@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>WRF</ID>
+      <benchmark>
+        <ID>WRF</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAKO5HFECA52TTXPTMBBA7/0VPhaGsaXV6qtHUmA6tNApJ04dabUqpk5ibGeg/x45aULocCi9yBqvn95qd734fHV9cfnu5qy6WE3cVe/XwzSEVbVYL/u246GSUIvq1Ilqapc8vqksOkBRxYeJx1cniyf4AfuyaSd+hEHuYWOksM9lZS2rU7VH0aF7LilmEg6kNe75TvEy0s/Kwz0l/Eeu4t/g+ddPlxdv99jVx8vtvWr5NHB9UWE9R4Swh9iHro1UQS3hz6vForrZrGZRcfd9aXR12cYhDA/lAFWLk6tzfVYZHbOICbUODgS4YLKDpNllQlImVq+bPqzyuFtroqGOm5xDt645bZp+WH9nmsamBMYp5Nzc8YqH0DWh7+95aDjdcfNzyE1sV/Oz5l+8M4uAmnO2QrIyJmstIyqZOHnFsoSKudzK4Lymrh7XNexAIGTylLUj0DKzUK6MGfusvCAjoYCbqe2adi5Ys29AMze7EU41y/tuPrPhpcFp3pUXt9uPb7veYDE9ethHpJwhyGQgJeWUSxqdIKcoeH6RZ+QfGy5dCd3BU6qsMYNRpfQoPSUogkiUhfAIqF7kofXAB0MqTQYWORtvkUhgVJIj2QRW+OzMcan76dvAIc31fhwR77GkYymTiklYtBDLMxsoO+1c/js/ENvE2pJlcxjUXWwn2GbYt7MAdwLrrQ0BA0AZQ6cxFJkDTYG9QZP0ywR3+UiBWjIqL5U1PploNbIlkFDql3VU4rgCwzSD8hFMoAvIHtCXKiRW5CwnwzITGxWOweXMmR3HRSOkMiELKXKZdSMTco5YLik5+2OOjjgVPJFiZSEgI5Q/TVkq462iBFMm8pi7I7odd7me/AZk3eOV2QUAAA==</value>
+          </parameter>
+          <parameter>
+            <ID>App:Version</ID>
+            <value>3.3</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Grid Resolution</ID>
+            <value>12 x 12</value>
+            <units>km^2</units>
+          </parameter>
+          <parameter>
+            <ID>Input:Simulation Length</ID>
+            <value>3.0</value>
+            <units>Hour</units>
+          </parameter>
+          <parameter>
+            <ID>Input:Simulation Start Date</ID>
+            <value>2001-10-24_00:00:00</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Timestep</ID>
+            <value>72.0</value>
+            <units>Second per Step</units>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAKO5HFECA0sxNM4zMFRIIYsyJ5MyI5MyJpniAgAkE9Yi4AAAAA==</value>
+          </parameter>
+          <parameter>
+            <ID>WRF Dynamical Solver</ID>
+            <value>Advanced Research WRF (ARW)</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Average Floating-Point Performance</ID>
+            <value>45428.6148454</value>
+            <units>MFLOP per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Average Simulation Speed</ID>
+            <value>108.680896759</value>
+            <units>Simulated Second per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Mean Time To Simulate One Timestep</ID>
+            <value>0.662489932886</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Output Data Size</ID>
+            <value>625.235920906</value>
+            <units>MByte</units>
+          </statistic>
+          <statistic>
+            <ID>Peak Floating-Point Performance</ID>
+            <value>50479.704797</value>
+            <units>MFLOP per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Peak Simulation Speed</ID>
+            <value>120.764844012</value>
+            <units>Simulated Second per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent on I/O</ID>
+            <value>40.9111</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>144.0</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>

@@ -1,0 +1,303 @@
+ 'lammps/1May10' load complete.
+Currently Loaded Modulefiles:
+  1) intel-mpi/4.0.1       3) intel/11.1
+  2) java/j2sdk/1.6.0_16   4) lammps/1May10
+MPD ring info:
+d13n01
+d13n06
+d13n07
+d13n03
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.1 (26 times, 75200 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.0 (8 times, 23712 bytes)
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 11.0 (7 times, 224 bytes)
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 12.0 (7 times, 224 bytes)
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 11.1 (7 times, 224 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 12.0 (6 times, 20272 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.1 (4 times, 23152 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.1.2 (2 times, 188 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 9.1 (1 times, 128 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.0 (1 times, 128 bytes)
+===ExeBinSignature=== DYNLIB: Intel MPI 4.0.1.007
+===ExeBinSignature=== DYNLIB: Intel MPI 4.0.0.025
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GNU C++ Standard Library 3.4.13
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: ef5ca6113ae9370111f610329e4cb91d */ifs/util/util64/lammps/lammps-1May10/src/lmp_linux
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: 8fba7e5701b6fc3d7b88b2960bc1a768 */usr/lib64/libfftw.so.2
+===ExeBinSignature=== MD5: 4758972a2c417daa0f66f49f6d0ee77a */util/intel/Compiler/11.1/059/lib/intel64/libifcore.so.5
+===ExeBinSignature=== MD5: 0d07dd2a5ca41aafca5bc031d573f714 */util/intel/Compiler/11.1/059/lib/intel64/libsvml.so
+===ExeBinSignature=== MD5: 7f5128c1300b3e5d02377820f559e378 */util/intel/Compiler/11.1/059/lib/intel64/libompstub.so
+===ExeBinSignature=== MD5: 93ed07534f072e074069fefde8a9fe2e */util/intel/Compiler/11.1/059/lib/intel64/libimf.so
+===ExeBinSignature=== MD5: 8d92ff91e1280f722e26ea4bfcd76e68 */usr/lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: bf60f23b9aaaf513cb712015f3a9b0af */util/intel/2011.0/impi/4.0.1.007/intel64/lib/libmpigc4.so.4
+===ExeBinSignature=== MD5: 9943bc7cfc3bd07472bbd0f62472588f */util/intel/2011.0/impi/4.0.1.007/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: 7977aa4a22455854ac7c825cae9646d5 */util/intel/2011.0/impi/4.0.1.007/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: 4d25439e92493bcde3c87ed6e1fce63a */lib64/libm.so.6
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: e9d60136af010f0a461d4efb42241ef9 */lib64/libc.so.6
+===ExeBinSignature=== MD5: 564b09778faef6b7d014d5833e200b89 */util/intel/Compiler/11.1/059/lib/intel64/libintlc.so.5
+[0] I_MPI_env_printf(): dflt: I_MPI_WAIT_MODE=0
+[1] MPI startup(): shm and ofa data transfer modes
+[11] MPI startup(): shm and ofa data transfer modes
+[15] MPI startup(): shm and ofa data transfer modes
+[0] MPI startup(): shm and ofa data transfer modes
+[0] I_MPI_env_printf(): dflt: I_MPI_EAGER_THRESHOLD=24960
+[0] I_MPI_env_printf(): dflt: I_MPI_INTRANODE_EAGER_THRESHOLD=65432
+[7] MPI startup(): shm and ofa data transfer modes
+[21] MPI startup(): shm and ofa data transfer modes
+[24] MPI startup(): shm and ofa data transfer modes
+[23] MPI startup(): shm and ofa data transfer modes
+[19] MPI startup(): shm and ofa data transfer modes
+[31] MPI startup(): shm and ofa data transfer modes
+[26] MPI startup(): shm and ofa data transfer modes
+[28] MPI startup(): shm and ofa data transfer modes
+[4] MPI startup(): shm and ofa data transfer modes
+[2] MPI startup(): shm and ofa data transfer modes
+[3] MPI startup(): shm and ofa data transfer modes
+[14] MPI startup(): shm and ofa data transfer modes
+[8] MPI startup(): shm and ofa data transfer modes
+[9] MPI startup(): shm and ofa data transfer modes
+[22] MPI startup(): shm and ofa data transfer modes
+[16] MPI startup(): shm and ofa data transfer modes
+[17] MPI startup(): shm and ofa data transfer modes
+[12] MPI startup(): shm and ofa data transfer modes
+[5] MPI startup(): shm and ofa data transfer modes
+[29] MPI startup(): shm and ofa data transfer modes
+[6] MPI startup(): shm and ofa data transfer modes
+[20] MPI startup(): shm and ofa data transfer modes
+[13] MPI startup(): shm and ofa data transfer modes
+[27] MPI startup(): shm and ofa data transfer modes
+[30] MPI startup(): shm and ofa data transfer modes
+[18] MPI startup(): shm and ofa data transfer modes
+[10] MPI startup(): shm and ofa data transfer modes
+[25] MPI startup(): shm and ofa data transfer modes
+[0] I_MPI_env_printf(): dflt: I_MPI_SPIN_COUNT=250
+[0] I_MPI_env_printf(): dflt: I_MPI_SHM_SPIN_COUNT=10
+[23] MPI startup(): process is pinned to CPU07 on node d13n07.ccr.buffalo.edu
+[1] MPI startup(): process is pinned to CPU01 on node d13n01.ccr.buffalo.edu
+[30] MPI startup(): process is pinned to CPU06 on node d13n03.ccr.buffalo.edu
+[31] MPI startup(): process is pinned to CPU07 on node d13n03.ccr.buffalo.edu
+[6] MPI startup(): process is pinned to CPU06 on node d13n01.ccr.buffalo.edu
+[7] MPI startup(): process is pinned to CPU07 on node d13n01.ccr.buffalo.edu
+[26] MPI startup(): process is pinned to CPU02 on node d13n03.ccr.buffalo.edu
+[24] MPI startup(): process is pinned to CPU00 on node d13n03.ccr.buffalo.edu
+[5] MPI startup(): process is pinned to CPU05 on node d13n01.ccr.buffalo.edu
+[0] MPI startup(): process is pinned to CPU00 on node d13n01.ccr.buffalo.edu
+[2] MPI startup(): process is pinned to CPU02 on node d13n01.ccr.buffalo.edu
+[22] MPI startup(): process is pinned to CPU06 on node d13n07.ccr.buffalo.edu
+[18] MPI startup(): process is pinned to CPU02 on node d13n07.ccr.buffalo.edu
+[20] MPI startup(): process is pinned to CPU04 on node d13n07.ccr.buffalo.edu
+[25] MPI startup(): process is pinned to CPU01 on node d13n03.ccr.buffalo.edu
+[28] MPI startup(): process is pinned to CPU04 on node d13n03.ccr.buffalo.edu
+[3] MPI startup(): process is pinned to CPU03 on node d13n01.ccr.buffalo.edu
+[29] MPI startup(): process is pinned to CPU05 on node d13n03.ccr.buffalo.edu
+[8] MPI startup(): process is pinned to CPU00 on node d13n06.ccr.buffalo.edu
+[27] MPI startup(): process is pinned to CPU03 on node d13n03.ccr.buffalo.edu
+[4] MPI startup(): process is pinned to CPU04 on node d13n01.ccr.buffalo.edu
+[19] MPI startup(): process is pinned to CPU03 on node d13n07.ccr.buffalo.edu
+[12] MPI startup(): process is pinned to CPU04 on node d13n06.ccr.buffalo.edu
+[16] MPI startup(): process is pinned to CPU00 on node d13n07.ccr.buffalo.edu
+[17] MPI startup(): process is pinned to CPU01 on node d13n07.ccr.buffalo.edu
+[10] MPI startup(): process is pinned to CPU02 on node d13n06.ccr.buffalo.edu
+[21] MPI startup(): process is pinned to CPU05 on node d13n07.ccr.buffalo.edu
+[9] MPI startup(): process is pinned to CPU01 on node d13n06.ccr.buffalo.edu
+[14] MPI startup(): process is pinned to CPU06 on node d13n06.ccr.buffalo.edu
+[11] MPI startup(): process is pinned to CPU03 on node d13n06.ccr.buffalo.edu
+[15] MPI startup(): process is pinned to CPU07 on node d13n06.ccr.buffalo.edu
+[13] MPI startup(): process is pinned to CPU05 on node d13n06.ccr.buffalo.edu
+[0] I_MPI_env_printf(): dflt: Quantity of processess=32
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLGATHER=1:0-359;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLGATHERV=1:0-4000;0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLREDUCE=1:0-602;2:602-1393881;4:1393881-2979431;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALL=1:0-831;4:831-7855;3:7855-19310;4:19310-84421;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALLV=2:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALLW=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_BARRIER=2:0-2147483647;4:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_BCAST=7:0-425;1:425-1057;7:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_EXSCAN=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_GATHER=2:0-2181;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_GATHERV=1:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_REDUCE_SCATTER=4:0-39;1:39-352;3:352-396772;4:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_REDUCE=1:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCAN=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCATTER=1:0-8;3:100000-140000;1:0-525;2:525-2263;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCATTERV=1:0-2147483647
+[0] Rank    Pid      Node name               Pin cpu
+[0] 0       2818     d13n01.ccr.buffalo.edu  0
+[0] 1       2811     d13n01.ccr.buffalo.edu  1
+[0] 2       2812     d13n01.ccr.buffalo.edu  2
+[0] 3       2813     d13n01.ccr.buffalo.edu  3
+[0] 4       2816     d13n01.ccr.buffalo.edu  4
+[0] 5       2814     d13n01.ccr.buffalo.edu  5
+[0] 6       2815     d13n01.ccr.buffalo.edu  6
+[0] 7       2817     d13n01.ccr.buffalo.edu  7
+[0] 8       3912     d13n06.ccr.buffalo.edu  0
+[0] 9       3911     d13n06.ccr.buffalo.edu  1
+[0] 10      3913     d13n06.ccr.buffalo.edu  2
+[0] 11      3914     d13n06.ccr.buffalo.edu  3
+[0] 12      3915     d13n06.ccr.buffalo.edu  4
+[0] 13      3916     d13n06.ccr.buffalo.edu  5
+[0] 14      3917     d13n06.ccr.buffalo.edu  6
+[0] 15      3918     d13n06.ccr.buffalo.edu  7
+[0] 16      20404    d13n07.ccr.buffalo.edu  0
+[0] 17      20405    d13n07.ccr.buffalo.edu  1
+[0] 18      20406    d13n07.ccr.buffalo.edu  2
+[0] 19      20407    d13n07.ccr.buffalo.edu  3
+[0] 20      20408    d13n07.ccr.buffalo.edu  4
+[0] 21      20409    d13n07.ccr.buffalo.edu  5
+[0] 22      20410    d13n07.ccr.buffalo.edu  6
+[0] 23      20411    d13n07.ccr.buffalo.edu  7
+[0] 24      14570    d13n03.ccr.buffalo.edu  0
+[0] 25      14571    d13n03.ccr.buffalo.edu  1
+[0] 26      14572    d13n03.ccr.buffalo.edu  2
+[0] 27      14573    d13n03.ccr.buffalo.edu  3
+[0] 28      14574    d13n03.ccr.buffalo.edu  4
+[0] 29      14575    d13n03.ccr.buffalo.edu  5
+[0] 30      14576    d13n03.ccr.buffalo.edu  6
+[0] 31      14577    d13n03.ccr.buffalo.edu  7
+[0] MPI startup(): I_MPI_DEBUG=5
+[0] MPI startup(): I_MPI_FABRICS_LIST=ofa,dapl,tcp
+[0] MPI startup(): I_MPI_FALLBACK=enable
+[0] MPI startup(): I_MPI_PLATFORM=auto
+[0] MPI startup(): I_MPI_PRINT_ENV=1
+LAMMPS (1 May 2010)
+# Rhodopsin model
+
+units           real  
+neigh_modify    delay 5 every 1   
+
+atom_style      full  
+bond_style      harmonic 
+angle_style     charmm 
+dihedral_style  charmm 
+improper_style  harmonic 
+pair_style      lj/charmm/coul/long 8.0 10.0 
+pair_modify     mix arithmetic 
+kspace_style    pppm 1e-4 
+
+read_data       data.rhodo.gz
+Scanning data file ...
+  4 = max bonds/atom
+  8 = max angles/atom
+  18 = max dihedrals/atom
+  2 = max impropers/atom
+Reading data file ...
+  orthogonal box = (-27.5 -38.5 -36.3646) to (27.5 38.5 36.3615)
+  2 by 4 by 4 processor grid
+  32000 atoms
+  32000 velocities
+  27723 bonds
+  40467 angles
+  56829 dihedrals
+  1034 impropers
+Finding 1-2 1-3 1-4 neighbors ...
+  4 = max # of 1-2 neighbors
+  12 = max # of 1-3 neighbors
+  24 = max # of 1-4 neighbors
+  26 = max # of special neighbors
+
+fix             1 all shake 0.0001 5 0 m 1.0 a 232
+Finding SHAKE clusters ...
+  1617 = # of size 2 clusters
+  3633 = # of size 3 clusters
+  747 = # of size 4 clusters
+  4233 = # of frozen angles
+fix             2 all npt temp 300.0 300.0 100.0 		z 0.0 0.0 1000.0 mtk no pchain 0 tchain 1
+
+special_bonds   charmm
+ 
+thermo          500
+thermo_style    multi 
+timestep        2.0
+
+run		4000
+PPPM initialization ...
+  G vector = 0.248831
+  grid = 25 32 32
+  stencil order = 5
+  RMS precision = 7.57143e-05
+  brick FFT buffer size/proc = 3042 832 2106
+Setting up run ...
+Memory usage per processor = 11.8058 Mbytes
+---------------- Step        0 ----- CPU =      0.0000 (sec) ----------------
+TotEng   =    -25356.2055 KinEng   =     21444.8313 Temp     =       299.0397 
+PotEng   =    -46801.0368 E_bond   =      2537.9940 E_angle  =     10921.3742 
+E_dihed  =      5211.7865 E_impro  =       213.5116 E_vdwl   =     -2307.8634 
+E_coul   =    207021.6603 E_long   =   -270399.5000 Press    =      -142.6030 
+Volume   =    307995.0335 
+---------------- Step      500 ----- CPU =     11.9027 (sec) ----------------
+TotEng   =    -25190.2626 KinEng   =     21500.4547 Temp     =       299.8153 
+PotEng   =    -46690.7173 E_bond   =      2549.9232 E_angle  =     10901.7144 
+E_dihed  =      5247.1545 E_impro  =       217.1849 E_vdwl   =     -2055.6392 
+E_coul   =    206838.3369 E_long   =   -270389.3919 Press    =      -140.2747 
+Volume   =    309589.5434 
+---------------- Step     1000 ----- CPU =     23.9492 (sec) ----------------
+TotEng   =    -25117.8483 KinEng   =     21448.1917 Temp     =       299.0865 
+PotEng   =    -46566.0400 E_bond   =      2527.9509 E_angle  =     11040.7756 
+E_dihed  =      5274.5914 E_impro  =       224.3041 E_vdwl   =     -2120.4059 
+E_coul   =    206885.5751 E_long   =   -270398.8311 Press    =      -289.0654 
+Volume   =    309239.7715 
+---------------- Step     1500 ----- CPU =     35.8293 (sec) ----------------
+TotEng   =    -25194.6771 KinEng   =     21419.1947 Temp     =       298.6822 
+PotEng   =    -46613.8717 E_bond   =      2576.8706 E_angle  =     10952.9171 
+E_dihed  =      5256.1565 E_impro  =       232.5325 E_vdwl   =     -2135.3072 
+E_coul   =    206897.7753 E_long   =   -270394.8167 Press    =       -83.4901 
+Volume   =    308955.8972 
+---------------- Step     2000 ----- CPU =     48.1143 (sec) ----------------
+TotEng   =    -25011.9360 KinEng   =     21640.2865 Temp     =       301.7652 
+PotEng   =    -46652.2224 E_bond   =      2534.4065 E_angle  =     11144.8764 
+E_dihed  =      5190.2733 E_impro  =       225.7472 E_vdwl   =     -1945.7576 
+E_coul   =    206599.4628 E_long   =   -270401.2311 Press    =       162.9347 
+Volume   =    309621.3735 
+---------------- Step     2500 ----- CPU =     60.2494 (sec) ----------------
+TotEng   =    -25013.8981 KinEng   =     21716.0933 Temp     =       302.8223 
+PotEng   =    -46729.9914 E_bond   =      2598.0752 E_angle  =     10971.0980 
+E_dihed  =      5275.8241 E_impro  =       228.2484 E_vdwl   =     -2141.5231 
+E_coul   =    206732.2943 E_long   =   -270394.0082 Press    =      -193.2670 
+Volume   =    310836.1619 
+---------------- Step     3000 ----- CPU =     72.4114 (sec) ----------------
+TotEng   =    -24913.4279 KinEng   =     21621.6701 Temp     =       301.5056 
+PotEng   =    -46535.0980 E_bond   =      2578.3282 E_angle  =     11101.1469 
+E_dihed  =      5239.3978 E_impro  =       210.2638 E_vdwl   =     -2073.1081 
+E_coul   =    206811.6858 E_long   =   -270402.8124 Press    =        -9.2993 
+Volume   =    309404.7972 
+---------------- Step     3500 ----- CPU =     84.5247 (sec) ----------------
+TotEng   =    -25315.6139 KinEng   =     21397.5802 Temp     =       298.3808 
+PotEng   =    -46713.1941 E_bond   =      2510.1648 E_angle  =     11106.7098 
+E_dihed  =      5183.5042 E_impro  =       224.7229 E_vdwl   =     -1961.0675 
+E_coul   =    206618.0212 E_long   =   -270395.2495 Press    =       323.1246 
+Volume   =    309905.2913 
+---------------- Step     4000 ----- CPU =     96.6190 (sec) ----------------
+TotEng   =    -25080.2356 KinEng   =     21632.7264 Temp     =       301.6598 
+PotEng   =    -46712.9620 E_bond   =      2578.9963 E_angle  =     10948.7625 
+E_dihed  =      5272.9761 E_impro  =       235.7977 E_vdwl   =     -2076.9036 
+E_coul   =    206727.4903 E_long   =   -270400.0813 Press    =      -326.8460 
+Volume   =    310140.8936 
+Loop time of 96.6193 on 32 procs for 4000 steps with 32000 atoms
+
+Pair  time (%) = 54.2335 (56.1312)
+Bond  time (%) = 3.04537 (3.15193)
+Kspce time (%) = 22.1585 (22.9338)
+Neigh time (%) = 9.04183 (9.35821)
+Comm  time (%) = 3.19531 (3.30711)
+Outpt time (%) = 0.00123183 (0.00127494)
+Other time (%) = 4.94353 (5.1165)
+
+FFT time (% of Kspce) = 6.44953 (29.1064)
+FFT Gflps 3d (1d only) = 3.22317 57.8217
+
+Nlocal:    1000 ave 1070 max 937 min
+Histogram: 1 3 1 5 6 10 2 1 2 1
+Nghost:    8721.94 ave 8825 max 8639 min
+Histogram: 6 2 3 3 4 3 2 6 2 1
+Neighs:    373565 ave 408327 max 336456 min
+Histogram: 2 1 1 3 10 5 6 1 0 3
+
+Total # of neighbors = 11954066
+Ave neighs/atom = 373.565
+Ave special neighs/atom = 7.43187
+Neighbor list builds = 430
+Dangerous builds = 0

@@ -1,0 +1,303 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>MPI-Tile-IO</ID>
+      <benchmark>
+        <ID>MPI-Tile-IO</ID>
+        <parameters>
+          <parameter>
+            <ID>2D Collective Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D Collective Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D HDF5 Collective Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D HDF5 Collective Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D Independent Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D Independent Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>2D Per-Process Data Topology</ID>
+            <value>5120x5120</value>
+            <units>Element</units>
+          </parameter>
+          <parameter>
+            <ID>2D Per-Process Ghost Zone</ID>
+            <value>0x0</value>
+          </parameter>
+          <parameter>
+            <ID>2D Per-Process Memory</ID>
+            <value>200.0</value>
+            <units>MByte</units>
+          </parameter>
+          <parameter>
+            <ID>2D Process Topology</ID>
+            <value>8x8</value>
+          </parameter>
+          <parameter>
+            <ID>3D Collective Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D Collective Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D HDF5 Collective Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D HDF5 Collective Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D Independent Read Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D Independent Write Test File System</ID>
+            <value>panfs (panfs://panfs.ccr.buffalo.edu:global)</value>
+          </parameter>
+          <parameter>
+            <ID>3D Per-Process Data Topology</ID>
+            <value>256x320x320</value>
+            <units>Element</units>
+          </parameter>
+          <parameter>
+            <ID>3D Per-Process Ghost Zone</ID>
+            <value>0x0x0</value>
+          </parameter>
+          <parameter>
+            <ID>3D Per-Process Memory</ID>
+            <value>200.0</value>
+            <units>MByte</units>
+          </parameter>
+          <parameter>
+            <ID>3D Process Topology</ID>
+            <value>4x4x4</value>
+          </parameter>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAAxQe1ICA+1WTW/UMBC991fkCIgm/pix4x7ZIlSpBVROnCp7PG4XtrtRkpVafj0TdoFIcCkSVQV7iCN/vJc39ntyFu8u3p+dv748qd4sFhXUUN9Vz3Q1Lm95eFkhVOl+5OH50eKXdfa3604/vj0/eyWrVstElam1+TkkwMvteoJUH7Zdt+nH6nyZ+tjfC6Gt1dHFKZ5UnHPkCJFi9Dpi9iUHTCm3VssYt9WLpovrMuzamqiv07aUuNrUnLdN128+MY1DIxPDGEtprnnNfVw1ses+c99wvmZtaNNzw3dMQ3PbLY/H5YqPl5tm6Olbn7Zp6u8UBaJsWLGNIYgYp0WfF2UxJm8gZlG0HfpGKnYwtdRf9dt1PezhKgJyKV5pts4VRJ3A6sw5WNYyJfAf0LwSWG12QMxKkQ4EjNpCix4TcjTO5yJ8kKbvivBmuR5ZWtHdQK1rVSsDu8Ed6fTI5MQMO2YpB2xrGKEtHrXBYkIESMpzaoN7KPN1mXEDaiEP2noXsksegT0ZbVRrCyar5uX24wTUe1GYimxzKS54IFKQrOZEPhuvQmndHNiNNz3HPKH3trHsLGCWFxWlTCYC2fLsgdkqB2WOvp1wbo+LcryWrTcRGIwYyXrSytukjTMc5rhroqthphjFkjGkYGxqPZGU6DN6Rt8akaLTHEu7by6eXN4IIcuOBzmi4rQrJhoukE0xbZsVqEfJ275/yNshb/963qTeHFSJkFC85rxrQyxyzs4FzYj2r+ftJperJ3PHiQlt8dZqbMnHTEJCKls0mB2yhTnwy8wKf2q/Q8YfkvH/Paveo/VWiS8DcYjOogZndUvT/6hR/tGy+iTux0NWD1n9ntWjr8Mq48M5DgAA</value>
+          </parameter>
+          <parameter>
+            <ID>HDF Version</ID>
+            <value>1.8.11 (Parallel)</value>
+          </parameter>
+          <parameter>
+            <ID>MPI-IO Hints</ID>
+            <value>panfs_concurrent_write=1;</value>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAAxQe1ICA0sxsMwztCw2MFJIoRrLyKDYwJDKLCNqskzgJlOFZWxIZZYxzKVUYBka5xmYkEmZkUxxAQCMgAMaUAIAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>2D Array Collective Read Aggregate Throughput</ID>
+            <value>620.45</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>2D Array Collective Write Aggregate Throughput</ID>
+            <value>287.00</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>2D Array HDF5 Collective Read Aggregate Throughput</ID>
+            <value>653.72</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>2D Array HDF5 Collective Write Aggregate Throughput</ID>
+            <value>330.36</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>2D Array Independent Read Aggregate Throughput</ID>
+            <value>541.87</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>2D Array Independent Write Aggregate Throughput</ID>
+            <value>21.46</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array Collective Read Aggregate Throughput</ID>
+            <value>652.08</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array Collective Write Aggregate Throughput</ID>
+            <value>336.02</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array HDF5 Collective Read Aggregate Throughput</ID>
+            <value>636.77</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array HDF5 Collective Write Aggregate Throughput</ID>
+            <value>317.90</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array Independent Read Aggregate Throughput</ID>
+            <value>331.93</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>3D Array Independent Write Aggregate Throughput</ID>
+            <value>27.17</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data Collective Read)</ID>
+            <value>0.000261</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data Collective Write)</ID>
+            <value>0.181099</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data HDF5 Collective Read)</ID>
+            <value>0.000697</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data HDF5 Collective Write)</ID>
+            <value>0.772100</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data Independent Read)</ID>
+            <value>0.000081</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (2D Data Independent Write)</ID>
+            <value>0.032696</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data Collective Read)</ID>
+            <value>0.000405</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data Collective Write)</ID>
+            <value>0.191116</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data HDF5 Collective Read)</ID>
+            <value>0.000653</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data HDF5 Collective Write)</ID>
+            <value>0.841222</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data Independent Read)</ID>
+            <value>0.000288</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Close Time (3D Data Independent Write)</ID>
+            <value>0.032183</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data Collective Read)</ID>
+            <value>0.086550</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data Collective Write)</ID>
+            <value>0.049139</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data HDF5 Collective Read)</ID>
+            <value>0.078241</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data HDF5 Collective Write)</ID>
+            <value>0.037127</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data Independent Read)</ID>
+            <value>0.030526</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (2D Data Independent Write)</ID>
+            <value>0.041617</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data Collective Read)</ID>
+            <value>0.071459</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data Collective Write)</ID>
+            <value>0.037431</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data HDF5 Collective Read)</ID>
+            <value>0.061011</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data HDF5 Collective Write)</ID>
+            <value>0.049155</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data Independent Read)</ID>
+            <value>0.054999</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>File Open Time (3D Data Independent Write)</ID>
+            <value>0.034026</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>864.0</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>

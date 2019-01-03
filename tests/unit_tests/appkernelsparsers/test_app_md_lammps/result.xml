@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>LAMMPS</ID>
+      <benchmark>
+        <ID>LAMMPS</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAIirHFECA52VTW8bRwyG7/4Ve0zrdpec78mxShsYsJMiQQ89BfNBpgtIsrC7aut/X64lS5s2QWVDkFbQzPOSfMkZrd7f/Xpz+/OH183NdqJ1s7rf7Po1Dc3HfT9Rg9hi80q5Zuo3NP7QeKsAmvww0fjd1ep/WWhehSdUaY/qW+gv98M0pO1Z4gD7E6zM5ah6OfpY7iXov2t9jHmySYHy6lIU5pjmbBPar6BvV6vGtNgq6cbTVgzhwhhxDoEnToXLc4Ovg29+f3d789MTJiKSnRTSAvhvrMlL2dPa23WfS6NaVOef3v3WrK6vm49T2tY01Oa2z0MaHhrdSuX6vE+s+LDfzjlJmrudNPG01bS6hau7N/Z1Q2xLcog6UdQeEJEdglaRTMkRa/N91/PY7ad+/fjhTLdOm81uPD5+xLv0gNCNQ+nWm92ndb/d/32QhmQsMYsoaefYWsxGY6UaNaEsibSUNwv2ua7b8b5VBzBwTp6sgNlx0dXnELKKDnLB5F0QcD8OZ5h5+muBG29D9CqpYtDXlIAluonsKhB5n2Z8Lqefje+eetnNU92BjbPiYe2g3nO5H2jWt8e6KvhaVRLjDKbEJdlcQCqzXrNH80z98c/NXPxB27OV8SmoAbImW0HuAx8UiHuRtA/P1Jb1cdrnk7w4L8lbbRi8IvAGXGTiSiHJU9FzrdnwSTrUqJgjkuQP7JUi5SiZzKV6R/9t2jjVcn092+oOApkdsNI5JvHUoi5ZbkJAyzrFDIm/zE1W5Bh1vWTYnc7UMrf5LYufi5ljmGP90ehcfJGpymKE8SrLk52SbzaEF8ZYBPBRBiyZJHeitcGaJMGCkkmh6Iyr9oVF8CJEtZmld8wuelMKmKyRpKiqPEQObnmsdtMfA6U608fzbiyS0RG1d7G67K0hX5QYHTTbrGFJD9MM4hGsygpIUZkoHlbSJXiqjpALOZ2W4GbRVuleKVpmVyVDRkYkaV8QvM6onKK45D6X8mlcxCRJEVC7xIDAcp84rIY4G7EXib9gyyKmdSaDdCJwIpYiK6CpNmhN8r+cQ3zumG+ndTlcAFf/AHWvopkKCAAA</value>
+          </parameter>
+          <parameter>
+            <ID>App:Version</ID>
+            <value>1 May 2010</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Atoms</ID>
+            <value>32000</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Steps</ID>
+            <value>4000</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Timestep</ID>
+            <value>2e-15</value>
+            <units>Second per Step</units>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAIerHFECA0sxNM4zMFRIIYsyJ5MyI5MyJpniAgAkE9Yi4AAAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Molecular Dynamics Simulation Performance</ID>
+            <value>7.15385021419e-09</value>
+            <units>Second per Day</units>
+          </statistic>
+          <statistic>
+            <ID>Per-Process Memory</ID>
+            <value>11.8058</value>
+            <units>MByte</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Bond Potential Calculation</ID>
+            <value>3.04537</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Communication</ID>
+            <value>3.19531</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Long-Range Coulomb Potential (K-Space) Calculation</ID>
+            <value>22.1585</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Neighbor List Regeneration</ID>
+            <value>9.04183</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Pairwise Potential Calculation</ID>
+            <value>54.2335</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>96.6193</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>

@@ -1,0 +1,88 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>Amber</ID>
+      <benchmark>
+        <ID>Amber</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAJerHFECA5WSy27bQAxF9/kKLdOikYeclya71mkDo05aJNl0VcyDkwqwHEOWgebvS1mx4rZ5OBiIixmdS16S028X32fzz1enxWzZ0aL4ctd2rV8W07tmVS+oLQBKKI6tKLq6ofWHwjiw1hThvqP1u6PpP/iIXW/qjh5gxB1slamqQ1ksRXFsdigKtHh4Wkb1iEo+h6Kir1g9oqCfQM+n00KVUCKb2/0Kzzv7v6lbbyNq1IHVub44GDNidbgr8TR49uNyPvu0w1iEfYn+oB7fzhd1iAWWgI9X3ICrzbLX4xSrFRss5nVofXvPArIUR9c3H29m033tr/O+DuybZu1j16x0Y4efg4Y1cuMa2cqI1xhR/mZmnKQRVpoXmarczh7GNFoZIV5B4K2IexG5ONOnRSYXvRGmAuKlj0klBQKjrpLOHnl27yd1Xk82Xb3YBqMmvgnUDhHgJGzqRTpp/D0KgN3tJNTLyaqhJpU85iGT8EpTzlYASWOy1hCUhETJSQJ+4kw8e9bnmBbl+q7EAUw6ZCSRs3FWxShUkEAh2oRWuFyZfXDV/WrJp54WA61tFYgdapmsBSSdnPAyIsZMHDXTW3N137VJzas8GbdyuByU+48fe2X1YMh6yFk7CxXJ6LIgQ2DROlDSaOXfqHyb97SVBlLSgbTGJROsVmQjAopKZh2k2Pfcdj0ID2BCzSA5VE6GmLiyylLiynIkI/0+2PScGTjiNAKk8VmAyDwrA0lRDgpRAWW3z8U9TnoXoyRp0StSmLOXNgLvfwA0SH9xtzH+XA+1Hv0B1epqxgwGAAA=</value>
+          </parameter>
+          <parameter>
+            <ID>App:Version</ID>
+            <value>PMEMD 11</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Coordinate File</ID>
+            <value>inpcrd</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Angles</ID>
+            <value>4561</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Atoms</ID>
+            <value>23558</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Bonds</ID>
+            <value>23592</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Dihedrals</ID>
+            <value>8166</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Steps</ID>
+            <value>10000</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Structure File</ID>
+            <value>prmtop</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Timestep</ID>
+            <value>2e-15</value>
+            <units>Second per Step</units>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAJerHFECA0sxNM4zMFRIIYsyJ5MyI5MyJpniAgAkE9Yi4AAAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Molecular Dynamics Simulation Performance</ID>
+            <value>2.21538461538e-08</value>
+            <units>Second per Day</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Direct Force Calculation</ID>
+            <value>42.76</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Non-Bond List Regeneration</ID>
+            <value>6.81</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Reciprocal Force Calculation</ID>
+            <value>9.86</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>78</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>

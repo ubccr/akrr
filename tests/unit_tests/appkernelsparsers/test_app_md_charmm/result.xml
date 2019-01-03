@@ -1,0 +1,95 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>CHARMM</ID>
+      <benchmark>
+        <ID>CHARMM</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAJWrHFECA5WRy27bMBBF9/kKLtOilTjDISlmWacNDDhtka66KvgYJgL8giwDzd+Xsh1FKVzABSEuODp37tyZfbv/Pl98frgR83XPS/Fl0/WdX4vZZrVtl9wJgArEtTWib1e8+yAMNdKQCM89795dzf7CR+zHvu35BEMzwlI6cymLlRTXY1+UaPHytgXVI6rKuRSVg2N6RUGfQe9mM0EVVCiu8eVXaJp/9TgXqpyi1lyO4htU20vzdIdVjC2xuTwReR68/fl1Mf/0ghWRkokcDuqxdrdsQxRYAb4+lfAe9utBr7TYbsuEYtGGznfPRUBV8ur+Vt+IqFk3ugEDWmptG4oJjI8AlrwzFMT7us27et+3y8NlqI5Pvlut6qh0gA4+tmWOmn9zrHllqD+Vj+rSk+acrQRWxmStIZCCxMkphlIq6sV50Sx3Wla7TYVHsDgJ7I3UKlkLyDo56VVEjJnLrQt4sNQOodQHC2Mqx8ej6PCV4qBMJ0vWQ87aWWhYRZclGwaL1gEpo8n/p/JjnmgnHTKyzNk4SzFKCgo4RJvQSpcbMx132z917NNAn1ZBGpiUA2WNSyZYTWwjAspGZR2UnNJdP4BwAhPqArJDcirEVOZqLKcyV45slJ+Cq4EzR45LGwnK+CxB5rIrA4k4B0Ik4OymXJxwyrsYFSuLnpgwZ69sBGlVADTIb7jHGH/tjl6v/gBZz7r5BgUAAA==</value>
+          </parameter>
+          <parameter>
+            <ID>App:Version</ID>
+            <value>35b1</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Angles</ID>
+            <value>16145</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Atoms</ID>
+            <value>26047</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Bonds</ID>
+            <value>26115</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Dihedrals</ID>
+            <value>13402</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Steps</ID>
+            <value>1000</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Timestep</ID>
+            <value>1e-15</value>
+            <units>Second per Step</units>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAJWrHFECA0sxNM4zMFRIIYsyJ5MyI5MyJpniAgAkE9Yi4AAAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Molecular Dynamics Simulation Performance</ID>
+            <value>2.47848537005e-09</value>
+            <units>Second per Day</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in External Energy Calculation</ID>
+            <value>16.0</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Integration</ID>
+            <value>0.2</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Internal Energy Calculation</ID>
+            <value>2.3</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Non-Bond List Generation</ID>
+            <value>3.2</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Waiting (Load Unbalance-ness)</ID>
+            <value>0.1</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>User Time</ID>
+            <value>33.00</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>34.86</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>

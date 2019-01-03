@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>Quantum_ESPRESSO</ID>
+      <benchmark>
+        <ID>Quantum_ESPRESSO</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIAIiyHFECA52UyW7cSAyG734KHT2DiVRksbYcp7PAGDsxkkOQk1ELa0ZIt7sjyUjy9qG6baWdBegMBJQKYH38yb8orV5fXV9cPn/ztLm4nXjdvNgO0xBvm9V2s+vXPDQALTTnzjVTv+Hxr8ZZdIqa9GXi8Y+z1Xf4gr296ye+h8E/wFapYE9lsVXNuX1AUaHD02UFNQuq5TkVVXPF9A0F8xP05WrVUAstNuf4cBS8/5XGj6bue1tQe6qfYW/nooj+9K7Uz8Fn719dXvz9gF39czmfxRa/D1xfSMPiTauUW2Iv133KDbbw7fjszJu721lItHc76by57NMQhy+SQLfq7OqZedoQqYJMtTqbbfZBkwLIMhwl5qJBNX92fR27u6lf7xdLHY+7gcdxu2yekBQK3fW7bvep/XzIi5gBiio6E0ajuVQiNBls1Z6ZouTd5+znrrrNh3V3aLdVaDrppuONpWneSexmf+pmvbPUjtt7gZJBk5QZo/OEIRXGGlVINZhcOPyewMgf71jMiutFIBSRCAlqrT5pzNoHrzSZTNprlO/wtwTyduAltSq1JqAYailsxPQcAYB9QNAJa55Tj8OMit2y1jp90kK3+r60QDpll2vWqShHDpO8q0XZGe/r49JQzZ9h18sgdsvoHGKH9Psad/1eQAZuL+GCczFSRCRjvKEocl4uMHKw4rr5fxJ9fSRCBph0AO1sKDY5Q+wyAiqvq0l6Hr7Fg2GaUTiAxaSKrGq1wVHOipIGFkeK/BJD9fYY3E3/DRzLTN/PvIpkWCZeAWtrqzGQSEPhEjSDhI7pMg/EUm9BI/VyQApyAYV19o6LZaiZrY7H4Gbm7IFj6U6BtrEqUFXkLRTimkjcBa7hmMtHnI4hZ83aYSQmrDVql0E5nQAt8iPu35xvxoNFZ18BlpQHl0wGAAA=</value>
+          </parameter>
+          <parameter>
+            <ID>App:Version</ID>
+            <value>v.4.2.1</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Atomic Types</ID>
+            <value>2</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Atoms per Cell</ID>
+            <value>63</value>
+          </parameter>
+          <parameter>
+            <ID>Input:Number of Electrons</ID>
+            <value>564.00</value>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIAIiyHFECA0sxNM4zMFRIIYsyJ5MyI5MyJpniAgAkE9Yi4AAAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Per-Process Dynamical Memory</ID>
+            <value>77.6</value>
+            <units>MByte</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Electron Energy Calculation</ID>
+            <value>149.84</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Force Calculation</ID>
+            <value>2.24</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Time Spent in Program Initialization</ID>
+            <value>2.79</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>User Time</ID>
+            <value>155.69</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>157.34</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>
