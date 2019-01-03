@@ -1,0 +1,95 @@
+#!/bin/bash
+#SBATCH --partition=skylake
+#SBATCH --qos=supporters
+#SBATCH --nodes=8
+#SBATCH --ntasks-per-node=32
+#SBATCH --time=00:01:00
+#SBATCH --output=/gpfs/scratch/xdtas/ubhpc/akrr_data/UBHPC/xdmod.benchmark.mpi.imb/2019.01.03.02.01.40.618248/stdout
+#SBATCH --error=/gpfs/scratch/xdtas/ubhpc/akrr_data/UBHPC/xdmod.benchmark.mpi.imb/2019.01.03.02.01.40.618248/stderr
+#SBATCH --constraint=OPA,CPU-Gold-6130
+#SBATCH --exclusive
+
+
+#Common commands
+export AKRR_NODES=8
+export AKRR_CORES=256
+export AKRR_CORES_PER_NODE=32
+export AKRR_NETWORK_SCRATCH="/gpfs/scratch/xdtas/ubhpc"
+export AKRR_LOCAL_SCRATCH="/scratch"
+export AKRR_TASK_WORKDIR="/gpfs/scratch/xdtas/ubhpc/akrr_data/UBHPC/xdmod.benchmark.mpi.imb/2019.01.03.02.01.40.618248"
+export AKRR_APPKER_DIR="/projects/ccrstaff/general/appker/UBHPC"
+export AKRR_AKRR_DIR="/gpfs/scratch/xdtas/ubhpc/akrr_data/UBHPC"
+
+export AKRR_APPKER_NAME="xdmod.benchmark.mpi.imb"
+export AKRR_RESOURCE_NAME="UBHPC"
+export AKRR_TIMESTAMP="2019.01.03.02.01.40.618248"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/projects/ccrstaff/general/appker/UBHPC/execs/imb/src/IMB-EXT"
+export AKRR_APPKERNEL_EXECUTABLE="/projects/ccrstaff/general/appker/UBHPC/execs/imb/src/IMB-MPI1"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrrPerformCommonTests
+
+#Write some info to gen.info, JSON-Like file
+writeToGenInfo "startTime" "`date`"
+writeToGenInfo "nodeList" "$AKRR_NODELIST"
+
+
+#create working dir
+mkdir workdir
+cd workdir
+
+export AKRR_APPKER_EXEC_DIR=/projects/ccrstaff/general/appker/UBHPC/execs/imb/src
+
+
+
+#Load application enviroment
+module load intel/18.3 intel-mpi/2018.3
+module list
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+
+ulimit -s unlimited
+
+#set how to run mpi applications, one process per node
+RUNMPI="srun --ntasks-per-node=1 -n 8"
+
+
+#Generate AppKer signature
+appsigcheck.sh /projects/ccrstaff/general/appker/UBHPC/execs/imb/src/IMB-MPI1 $AKRR_TASK_WORKDIR/.. >> $AKRR_APP_STDOUT_FILE
+appsigcheck.sh /projects/ccrstaff/general/appker/UBHPC/execs/imb/src/IMB-EXT  $AKRR_TASK_WORKDIR/.. >> $AKRR_APP_STDOUT_FILE
+
+
+#Execute AppKer
+echo "Checking that running one process per node (for debugging)"
+${RUNMPI} hostname
+
+writeToGenInfo "appKerStartTime" "`date`"
+${RUNMPI} ${AKRR_APPKER_EXEC_DIR}/IMB-MPI1 -multi 0 -npmin 8 -iter 1000 >> $AKRR_APP_STDOUT_FILE 2>&1
+${RUNMPI} ${AKRR_APPKER_EXEC_DIR}/IMB-EXT  -multi 0 -npmin 8 -iter 1000 >> $AKRR_APP_STDOUT_FILE 2>&1
+writeToGenInfo "appKerEndTime" "`date`"
+
+
+
+
+#clean-up
+cd ..
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting input files"
+        rm -rf workdir
+fi
+
+
+
+writeToGenInfo "endTime" "`date`"
