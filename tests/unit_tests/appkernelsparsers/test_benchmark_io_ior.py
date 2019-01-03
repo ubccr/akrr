@@ -43,6 +43,12 @@ def test_parser(datadir):
     # Compare stats to reference
     assert parstat_val_i(stats, "App kernel executable exists") == 1
     assert parstat_val_i(stats, "App kernel input exists") == 1
+    assert parstat_val_i(stats, "Task working directory accessible") == 1
+    assert parstat_val_i(stats, "Task working directory exists") == 1
+    assert parstat_val_i(stats, "local scratch directory accessible") == 1
+    assert parstat_val_i(stats, "local scratch directory exists") == 1
+    assert parstat_val_i(stats, "Network scratch directory accessible") == 1
+    assert parstat_val_i(stats, "Network scratch directory exists") == 1
     assert floats_are_close(parstat_val_f(stats, "HDF5 Collective N-to-1  File Close Time (Read)"), 0.078640)
     assert floats_are_close(parstat_val_f(stats, "HDF5 Collective N-to-1  File Close Time (Write)"), 2.12)
     assert floats_are_close(parstat_val_f(stats, "HDF5 Collective N-to-1  File Open Time (Read)"), 0.384665)
@@ -79,8 +85,6 @@ def test_parser(datadir):
     assert floats_are_close(parstat_val_f(stats, "MPIIO N-to-N  File Open Time (Write)"), 26.62)
     assert floats_are_close(parstat_val_f(stats, "MPIIO N-to-N Read Aggregate Throughput"), 927.21)
     assert floats_are_close(parstat_val_f(stats, "MPIIO N-to-N Write Aggregate Throughput"), 701.60)
-    assert parstat_val_i(stats, "Network scratch directory accessible") == 1
-    assert parstat_val_i(stats, "Network scratch directory exists") == 1
     assert parstat_val_i(stats, "Number of Tests Passed") == 10
     assert parstat_val_i(stats, "Number of Tests Started") == 20
     assert floats_are_close(parstat_val_f(stats, "POSIX N-to-1  File Close Time (Read)"), 22.47)
@@ -112,8 +116,4 @@ def test_parser(datadir):
                             861.72)
     assert floats_are_close(parstat_val_f(stats, "Parallel NetCDF Independent N-to-1 Write Aggregate Throughput"),
                             317.39)
-    assert parstat_val_i(stats, "Task working directory accessible") == 1
-    assert parstat_val_i(stats, "Task working directory exists") == 1
     assert floats_are_close(parstat_val_f(stats, "Wall Clock Time"), 816.0)
-    assert parstat_val_i(stats, "local scratch directory accessible") == 1
-    assert parstat_val_i(stats, "local scratch directory exists") == 1
