@@ -1,0 +1,184 @@
+<?xml version="1.0" ?>
+<rep:report xmlns:rep="report">
+  <body>
+    <performance>
+      <ID>Intel MPI Benchmarks</ID>
+      <benchmark>
+        <ID>Intel MPI Benchmarks</ID>
+        <parameters>
+          <parameter>
+            <ID>App:ExeBinSignature</ID>
+            <value>H4sIADLtLVwCA+3SS2vcMBAH8Hs+xX6BrjSSRo8c0xaaw0IOLfS2aB5K3Xof2A7k41dmQ/G9tKccDGbs38zI/h8+4f3OVQQOgdBDC8AuJE8CvgoFAmv9zlyny0/lZTbM07zU1syznnWqo6nX6y+dzLeHL08fjb4qz2Y4kZknNo+Hhw+Hp0e4O6xDbIvoS+/uRIMAphC0Zquc+y2UujMvy9D7cRU9DWyG86Kjgbz3hi+n6zDqNB/rWY7jQFOdBp2Pzq6P9845Mw7nl1fTX7u5GHqF1quX2mVa9vNlD+62iRQoUbFlJ+RIm1inhMgpp5CSC/9uk+0WzadSGzmQENVJDK71gVRQklSfeLeam5ZxhW+OYussOh+YAmRxWAUpC4Zcvca8cW/HvrkYgLBk74u4FnPmYEvvhLZ0yRI37rr8mLTKiu0NJ/KcEyBpVWiaVTQReXRUWErQDT6tLN4Y5+YYfFJVqAEzEFvqMnpxHNdg/WHPzMd5s27yVVMpwWZRiRZs/yxQswhizdxgQ3kzUTETEafW/yg1LMX2U0LsBR9bSfgXUf78/et7kt+T/B+SfPcb2PHjgpYFAAA=</value>
+          </parameter>
+          <parameter>
+            <ID>App:MPI Thread Environment</ID>
+            <value/>
+          </parameter>
+          <parameter>
+            <ID>App:MPI Version</ID>
+            <value>3.1 </value>
+          </parameter>
+          <parameter>
+            <ID>App:Max Message Size</ID>
+            <value>4.0 </value>
+            <units>MByte</units>
+          </parameter>
+          <parameter>
+            <ID>RunEnv:Nodes</ID>
+            <value>H4sIADLtLVwCA0suyNMtNTLSNbRQSB5l0o5pbDDKpCnTZJRJO6axrpHBKJOWTONRJm2ZpqNM2jFNEFXdKJM2TMtRJi2YXAC+CYa+AQsAAA==</value>
+          </parameter>
+        </parameters>
+        <statistics>
+          <statistic>
+            <ID>Max Exchange Bandwidth</ID>
+            <value>18536.14</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Bidirectional 'Get' Bandwidth (aggregate)</ID>
+            <value>1619.75</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Bidirectional 'Get' Bandwidth (non-aggregate)</ID>
+            <value>3465.83</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Bidirectional 'Put' Bandwidth (aggregate)</ID>
+            <value>10857.36</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Bidirectional 'Put' Bandwidth (non-aggregate)</ID>
+            <value>11046.2</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Unidirectional 'Get' Bandwidth (aggregate)</ID>
+            <value>3664.45</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Unidirectional 'Get' Bandwidth (non-aggregate)</ID>
+            <value>3809.56</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Unidirectional 'Put' Bandwidth (aggregate)</ID>
+            <value>12090.85</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max MPI-2 Unidirectional 'Put' Bandwidth (non-aggregate)</ID>
+            <value>11589.06</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max PingPing Bandwidth</ID>
+            <value>11277.77</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max PingPong Bandwidth</ID>
+            <value>11833.44</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Max SendRecv Bandwidth</ID>
+            <value>18086.86</value>
+            <units>MByte per Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min AllGather Latency</ID>
+            <value>4.669999999999999e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min AllGatherV Latency</ID>
+            <value>4.8299999999999995e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min AllReduce Latency</ID>
+            <value>4.69e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min AllToAll Latency</ID>
+            <value>4.16e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min AllToAllV Latency</ID>
+            <value>4.24e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min Barrier Latency</ID>
+            <value>4.41e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min Broadcast Latency</ID>
+            <value>1.83e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min Gather Latency</ID>
+            <value>6.5e-07</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min GatherV Latency</ID>
+            <value>4.2099999999999995e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min MPI-2 'Accumulate' Latency (aggregate)</ID>
+            <value>3.8499999999999996e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min MPI-2 'Accumulate' Latency (non-aggregate)</ID>
+            <value>1.3539999999999999e-05</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min MPI-2 Window Creation Latency</ID>
+            <value>5.4189999999999994e-05</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min Reduce Latency</ID>
+            <value>3.92e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min ReduceScatter Latency</ID>
+            <value>2.35e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min Scatter Latency</ID>
+            <value>1.47e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Min ScatterV Latency</ID>
+            <value>1.48e-06</value>
+            <units>Second</units>
+          </statistic>
+          <statistic>
+            <ID>Wall Clock Time</ID>
+            <value>48.0</value>
+            <units>Second</units>
+          </statistic>
+        </statistics>
+      </benchmark>
+    </performance>
+  </body>
+  <exitStatus>
+    <completed>true</completed>
+  </exitStatus>
+</rep:report>
