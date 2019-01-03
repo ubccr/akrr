@@ -27,5 +27,6 @@
 /.coverage
 /.pytest_cache
 /shippable
-
+/tests/.coverage
+/tests/regtest1/.crontmp
 
