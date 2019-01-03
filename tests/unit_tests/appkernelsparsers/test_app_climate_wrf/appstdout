@@ -1,0 +1,2634 @@
+Currently Loaded Modulefiles:
+  1) intel-mpi/4.0.1   2) mkl/11.0
+MPD ring info:
+d13n01
+d13n06
+d13n03
+d13n07
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 12.0 (80 times, 748240 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 12.0 (21 times, 66107 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.1 (3 times, 4848 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.1 (2 times, 4768 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.0 (2 times, 4768 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 9.1 (1 times, 128 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.0 (1 times, 128 bytes)
+===ExeBinSignature=== DYNLIB: Intel MKL 10.1.1
+===ExeBinSignature=== DYNLIB: Intel MPI 4.0.1.007
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: 65bf0bd455a82028a6f82d5e8fc4c36b */panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge/wrf/bin/wrf.exe
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: 2c4ec9cf58c251fe038107e9f390c612 */util/intel/Compiler/11.0/083/mkl/lib/em64t/libmkl_intel_lp64.so
+===ExeBinSignature=== MD5: 2e9b4cff2a1d62dd3838d5480c83ca9e */util/intel/Compiler/11.0/083/mkl/lib/em64t/libmkl_sequential.so
+===ExeBinSignature=== MD5: 36b54f2636f8419cd2c83bccf0094243 */util/intel/Compiler/11.0/083/mkl/lib/em64t/libmkl_core.so
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 9943bc7cfc3bd07472bbd0f62472588f */util/intel/2011.0/impi/4.0.1.007/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: 7977aa4a22455854ac7c825cae9646d5 */util/intel/2011.0/impi/4.0.1.007/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: 4d25439e92493bcde3c87ed6e1fce63a */lib64/libm.so.6
+===ExeBinSignature=== MD5: e9d60136af010f0a461d4efb42241ef9 */lib64/libc.so.6
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+XDMOD***SIZE OF CURRENT DIR BEFORE WRF RUN  6775	.
+XDMOD***WRF RUN BEGINS HERE -- Thu Feb 14 04:50:49 EST 2013
+CURRENT WORKING DIRECTORY IS /scratch/3721753.d15n41.ccr.buffalo.edu
+LAUNCHING mpiexec  -ppn 8 -np 32 /panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge/wrf/bin/wrf.exe 
+[0] I_MPI_env_printf(): dflt: I_MPI_WAIT_MODE=0
+[14] MPI startup(): shm and ofa data transfer modes
+[3] MPI startup(): shm and ofa data transfer modes
+[1] MPI startup(): shm and ofa data transfer modes
+[10] MPI startup(): shm and ofa data transfer modes
+[31] MPI startup(): shm and ofa data transfer modes
+[6] MPI startup(): shm and ofa data transfer modes
+[27] MPI startup(): shm and ofa data transfer modes
+[28] MPI startup(): shm and ofa data transfer modes
+[8] MPI startup(): shm and ofa data transfer modes
+[18] MPI startup(): shm and ofa data transfer modes
+[19] MPI startup(): shm and ofa data transfer modes
+[5] MPI startup(): shm and ofa data transfer modes
+[22] MPI startup(): shm and ofa data transfer modes
+[16] MPI startup(): shm and ofa data transfer modes
+[11] MPI startup(): shm and ofa data transfer modes
+[2] MPI startup(): shm and ofa data transfer modes
+[4] MPI startup(): shm and ofa data transfer modes
+[13] MPI startup(): shm and ofa data transfer modes
+[9] MPI startup(): shm and ofa data transfer modes
+[15] MPI startup(): shm and ofa data transfer modes
+[12] MPI startup(): shm and ofa data transfer modes
+[21] MPI startup(): shm and ofa data transfer modes
+[0] MPI startup(): shm and ofa data transfer modes
+[0] I_MPI_env_printf(): dflt: I_MPI_EAGER_THRESHOLD=24960
+[0] I_MPI_env_printf(): dflt: I_MPI_INTRANODE_EAGER_THRESHOLD=65432
+[23] MPI startup(): shm and ofa data transfer modes
+[26] MPI startup(): shm and ofa data transfer modes
+[30] MPI startup(): shm and ofa data transfer modes
+[7] MPI startup(): shm and ofa data transfer modes
+[25] MPI startup(): shm and ofa data transfer modes
+[17] MPI startup(): shm and ofa data transfer modes
+[24] MPI startup(): shm and ofa data transfer modes
+[29] MPI startup(): shm and ofa data transfer modes
+[20] MPI startup(): shm and ofa data transfer modes
+[0] I_MPI_env_printf(): dflt: I_MPI_SPIN_COUNT=250
+[0] I_MPI_env_printf(): dflt: I_MPI_SHM_SPIN_COUNT=10
+[12] MPI startup(): process is pinned to CPU04 on node d13n06.ccr.buffalo.edu
+[13] MPI startup(): process is pinned to CPU05 on node d13n06.ccr.buffalo.edu
+[11] MPI startup(): process is pinned to CPU03 on node d13n06.ccr.buffalo.edu
+[15] MPI startup(): process is pinned to CPU07 on node d13n06.ccr.buffalo.edu
+[14] MPI startup(): process is pinned to CPU06 on node d13n06.ccr.buffalo.edu
+[16] MPI startup(): process is pinned to CPU00 on node d13n03.ccr.buffalo.edu
+[8] MPI startup(): process is pinned to CPU00 on node d13n06.ccr.buffalo.edu
+[10] MPI startup(): process is pinned to CPU02 on node d13n06.ccr.buffalo.edu
+[9] MPI startup(): process is pinned to CPU01 on node d13n06.ccr.buffalo.edu
+[1] MPI startup(): process is pinned to CPU01 on node d13n01.ccr.buffalo.edu
+[28] MPI startup(): process is pinned to CPU04 on node d13n07.ccr.buffalo.edu
+[7] MPI startup(): process is pinned to CPU07 on node d13n01.ccr.buffalo.edu
+[25] MPI startup(): process is pinned to CPU01 on node d13n07.ccr.buffalo.edu
+[18] MPI startup(): process is pinned to CPU02 on node d13n03.ccr.buffalo.edu
+[27] MPI startup(): process is pinned to CPU03 on node d13n07.ccr.buffalo.edu
+[20] MPI startup(): process is pinned to CPU04 on node d13n03.ccr.buffalo.edu
+[0] MPI startup(): process is pinned to CPU00 on node d13n01.ccr.buffalo.edu
+[5] MPI startup(): process is pinned to CPU05 on node d13n01.ccr.buffalo.edu
+[2] MPI startup(): process is pinned to CPU02 on node d13n01.ccr.buffalo.edu
+[17] MPI startup(): process is pinned to CPU01 on node d13n03.ccr.buffalo.edu
+[4] MPI startup(): process is pinned to CPU04 on node d13n01.ccr.buffalo.edu
+[21] MPI startup(): process is pinned to CPU05 on node d13n03.ccr.buffalo.edu
+[19] MPI startup(): process is pinned to CPU03 on node d13n03.ccr.buffalo.edu
+[26] MPI startup(): process is pinned to CPU02 on node d13n07.ccr.buffalo.edu
+[23] MPI startup(): process is pinned to CPU07 on node d13n03.ccr.buffalo.edu
+[6] MPI startup(): process is pinned to CPU06 on node d13n01.ccr.buffalo.edu
+[3] MPI startup(): process is pinned to CPU03 on node d13n01.ccr.buffalo.edu
+[24] MPI startup(): process is pinned to CPU00 on node d13n07.ccr.buffalo.edu
+[29] MPI startup(): process is pinned to CPU05 on node d13n07.ccr.buffalo.edu
+[31] MPI startup(): process is pinned to CPU07 on node d13n07.ccr.buffalo.edu
+[30] MPI startup(): process is pinned to CPU06 on node d13n07.ccr.buffalo.edu
+[22] MPI startup(): process is pinned to CPU06 on node d13n03.ccr.buffalo.edu
+[0] I_MPI_env_printf(): dflt: Quantity of processess=32
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLGATHER=1:0-359;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLGATHERV=1:0-4000;0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLREDUCE=1:0-602;2:602-1393881;4:1393881-2979431;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALL=1:0-831;4:831-7855;3:7855-19310;4:19310-84421;3:0-2147483647
+ starting wrf task            1  of           32
+ starting wrf task            2  of           32
+ starting wrf task            3  of           32
+ starting wrf task            5  of           32
+ starting wrf task           12  of           32
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALLV=2:0-2147483647
+ starting wrf task            7  of           32
+ starting wrf task            8  of           32
+ starting wrf task           15  of           32
+ starting wrf task           18  of           32
+ starting wrf task            6  of           32
+ starting wrf task           11  of           32
+ starting wrf task           17  of           32
+ starting wrf task           31  of           32
+ starting wrf task           16  of           32
+ starting wrf task           28  of           32
+ starting wrf task           13  of           32
+ starting wrf task           29  of           32
+ starting wrf task           27  of           32
+ starting wrf task           25  of           32
+ starting wrf task           26  of           32
+ starting wrf task           23  of           32
+ starting wrf task           24  of           32
+ starting wrf task            9  of           32
+ starting wrf task           19  of           32
+ starting wrf task           20  of           32
+ starting wrf task            4  of           32
+ starting wrf task           14  of           32
+ starting wrf task           30  of           32
+ starting wrf task           21  of           32
+ starting wrf task           22  of           32
+ starting wrf task           10  of           32
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_ALLTOALLW=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_BARRIER=2:0-2147483647;4:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_BCAST=7:0-425;1:425-1057;7:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_EXSCAN=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_GATHER=2:0-2181;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_GATHERV=1:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_REDUCE_SCATTER=4:0-39;1:39-352;3:352-396772;4:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_REDUCE=1:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCAN=0:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCATTER=1:0-8;3:100000-140000;1:0-525;2:525-2263;3:0-2147483647
+[0] I_MPI_env_printf(): dflt: I_MPI_ADJUST_SCATTERV=1:0-2147483647
+[0] Rank    Pid      Node name               Pin cpu
+[0] 0       6802     d13n01.ccr.buffalo.edu  0
+[0] 1       6795     d13n01.ccr.buffalo.edu  1
+[0] 2       6796     d13n01.ccr.buffalo.edu  2
+[0] 3       6797     d13n01.ccr.buffalo.edu  3
+[0] 4       6798     d13n01.ccr.buffalo.edu  4
+[0] 5       6799     d13n01.ccr.buffalo.edu  5
+[0] 6       6800     d13n01.ccr.buffalo.edu  6
+[0] 7       6801     d13n01.ccr.buffalo.edu  7
+[0] 8       6683     d13n06.ccr.buffalo.edu  0
+[0] 9       6684     d13n06.ccr.buffalo.edu  1
+[0] 10      6685     d13n06.ccr.buffalo.edu  2
+[0] 11      6686     d13n06.ccr.buffalo.edu  3
+[0] 12      6687     d13n06.ccr.buffalo.edu  4
+[0] 13      6688     d13n06.ccr.buffalo.edu  5
+[0] 14      6689     d13n06.ccr.buffalo.edu  6
+[0] 15      6690     d13n06.ccr.buffalo.edu  7
+[0] 16      17342    d13n03.ccr.buffalo.edu  0
+[0] 17      17343    d13n03.ccr.buffalo.edu  1
+[0] 18      17345    d13n03.ccr.buffalo.edu  2
+[0] 19      17344    d13n03.ccr.buffalo.edu  3
+[0] 20      17346    d13n03.ccr.buffalo.edu  4
+[0] 21      17347    d13n03.ccr.buffalo.edu  5
+[0] 22      17348    d13n03.ccr.buffalo.edu  6
+[0] 23      17349    d13n03.ccr.buffalo.edu  7
+[0] 24      23052    d13n07.ccr.buffalo.edu  0
+[0] 25      23053    d13n07.ccr.buffalo.edu  1
+[0] 26      23054    d13n07.ccr.buffalo.edu  2
+[0] 27      23055    d13n07.ccr.buffalo.edu  3
+[0] 28      23056    d13n07.ccr.buffalo.edu  4
+[0] 29      23057    d13n07.ccr.buffalo.edu  5
+[0] 30      23058    d13n07.ccr.buffalo.edu  6
+[0] 31      23059    d13n07.ccr.buffalo.edu  7
+[0] MPI startup(): I_MPI_DEBUG=5
+[0] MPI startup(): I_MPI_FABRICS_LIST=ofa,dapl,tcp
+[0] MPI startup(): I_MPI_FALLBACK=enable
+[0] MPI startup(): I_MPI_PLATFORM=auto
+[0] MPI startup(): I_MPI_PRINT_ENV=1
+ starting wrf task            0  of           32
+XDMOD***WRF RUN HAS FINISHED -- Thu Feb 14 04:53:13 EST 2013
+XDMOD***SIZE OF CURRENT DIR AFTER WRF RUN 655614156	.
+
+XDMOD***RESULT OF rsl.error.0000 BEGINS
+taskid: 0 hostname: d13n01.ccr.buffalo.edu
+ Namelist fdda not found in namelist.input. Using registry defaults for variable
+ s in fdda
+ Namelist dfi_control not found in namelist.input. Using registry defaults for v
+ ariables in dfi_control
+ Namelist tc not found in namelist.input. Using registry defaults for variables 
+ in tc
+ Namelist scm not found in namelist.input. Using registry defaults for variables
+  in scm
+ Namelist grib2 not found in namelist.input. Using registry defaults for variabl
+ es in grib2
+ Namelist fire not found in namelist.input. Using registry defaults for variable
+ s in fire
+  Ntasks in X            4, ntasks in Y            8
+ --- NOTE: sst_update is 0, setting io_form_auxinput4 = 0 and auxinput4_interval
+  = 0 for all domains
+ --- NOTE: grid_fdda is 0 for domain      1, setting gfdda interval and ending t
+ ime to 0 for that domain.
+ --- NOTE: both grid_sfdda and pxlsm_soil_nudge are 0 for domain      1, setting
+  sgfdda interval and ending time to 0 for that domain.
+ --- NOTE: obs_nudge_opt is 0 for domain      1, setting obs nudging interval an
+ d ending time to 0 for that domain.
+ --- NOTE: num_soil_layers has been set to      5
+ WRF V3.3 MODEL
+  *************************************
+  Parent domain
+  ids,ide,jds,jde            1         425           1         300
+  ims,ime,jms,jme           -4         113          -4          45
+  ips,ipe,jps,jpe            1         106           1          38
+  *************************************
+ DYNAMICS OPTION: Eulerian Mass Coordinate
+    alloc_space_field: domain            1,              128443204 bytes allocat
+ ed
+  RESTART run: opening wrfrst_d01_2001-10-25_00_00_00 for reading
+Timing for processing restart file for domain        1:   17.63610 elapsed seconds.
+Timing for Writing wrfout_d01_2001-10-25_00_00_00 for domain        1:    9.49340 elapsed seconds.
+ THIS TIME 2001-10-24_00:00:00NEXT TIME 2001-10-24_06:00:00
+ THIS TIME 2001-10-24_06:00:00NEXT TIME 2001-10-24_12:00:00
+ THIS TIME 2001-10-24_12:00:00NEXT TIME 2001-10-24_18:00:00
+ THIS TIME 2001-10-24_18:00:00NEXT TIME 2001-10-25_00:00:00
+Timing for processing lateral boundary for domain        1:    0.53900 elapsed seconds.
+ WRF TILE   1 IS      1 IE    106 JS      1 JE     38
+ WRF NUMBER OF TILES =   1
+Timing for main: time 2001-10-25_00:01:12 on domain   1:   11.33130 elapsed seconds.
+Timing for main: time 2001-10-25_00:02:24 on domain   1:    0.62660 elapsed seconds.
+Timing for main: time 2001-10-25_00:03:36 on domain   1:    0.62680 elapsed seconds.
+Timing for main: time 2001-10-25_00:04:48 on domain   1:    0.70210 elapsed seconds.
+Timing for main: time 2001-10-25_00:06:00 on domain   1:    0.62650 elapsed seconds.
+Timing for main: time 2001-10-25_00:07:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_00:08:24 on domain   1:    0.60070 elapsed seconds.
+Timing for main: time 2001-10-25_00:09:36 on domain   1:    0.69920 elapsed seconds.
+Timing for main: time 2001-10-25_00:10:48 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_00:12:00 on domain   1:    0.62580 elapsed seconds.
+Timing for main: time 2001-10-25_00:13:12 on domain   1:    0.62690 elapsed seconds.
+Timing for main: time 2001-10-25_00:14:24 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_00:15:36 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:16:48 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_00:18:00 on domain   1:    0.60080 elapsed seconds.
+Timing for main: time 2001-10-25_00:19:12 on domain   1:    0.69980 elapsed seconds.
+Timing for main: time 2001-10-25_00:20:24 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_00:21:36 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:22:48 on domain   1:    0.62690 elapsed seconds.
+Timing for main: time 2001-10-25_00:24:00 on domain   1:    0.70000 elapsed seconds.
+Timing for main: time 2001-10-25_00:25:12 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:26:24 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:27:36 on domain   1:    0.60220 elapsed seconds.
+Timing for main: time 2001-10-25_00:28:48 on domain   1:    0.70020 elapsed seconds.
+Timing for main: time 2001-10-25_00:30:00 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_00:31:12 on domain   1:    1.24230 elapsed seconds.
+Timing for main: time 2001-10-25_00:32:24 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:33:36 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_00:34:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_00:36:00 on domain   1:    0.60070 elapsed seconds.
+Timing for main: time 2001-10-25_00:37:12 on domain   1:    0.62620 elapsed seconds.
+Timing for main: time 2001-10-25_00:38:24 on domain   1:    0.70040 elapsed seconds.
+Timing for main: time 2001-10-25_00:39:36 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_00:40:48 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:42:00 on domain   1:    0.62660 elapsed seconds.
+Timing for main: time 2001-10-25_00:43:12 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_00:44:24 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_00:45:36 on domain   1:    0.60320 elapsed seconds.
+Timing for main: time 2001-10-25_00:46:48 on domain   1:    0.62670 elapsed seconds.
+Timing for main: time 2001-10-25_00:48:00 on domain   1:    0.70080 elapsed seconds.
+Timing for main: time 2001-10-25_00:49:12 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_00:50:24 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:51:36 on domain   1:    0.62640 elapsed seconds.
+Timing for main: time 2001-10-25_00:52:48 on domain   1:    0.70180 elapsed seconds.
+Timing for main: time 2001-10-25_00:54:00 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_00:55:12 on domain   1:    0.60570 elapsed seconds.
+Timing for main: time 2001-10-25_00:56:24 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_00:57:36 on domain   1:    0.70100 elapsed seconds.
+Timing for main: time 2001-10-25_00:58:48 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:00:00 on domain   1:    0.63010 elapsed seconds.
+Timing for main: time 2001-10-25_01:01:12 on domain   1:    1.24180 elapsed seconds.
+Timing for main: time 2001-10-25_01:02:24 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:03:36 on domain   1:    0.62600 elapsed seconds.
+Timing for main: time 2001-10-25_01:04:48 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_01:06:00 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:07:12 on domain   1:    0.70070 elapsed seconds.
+Timing for main: time 2001-10-25_01:08:24 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_01:09:36 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:10:48 on domain   1:    0.62640 elapsed seconds.
+Timing for main: time 2001-10-25_01:12:00 on domain   1:    0.70360 elapsed seconds.
+Timing for main: time 2001-10-25_01:13:12 on domain   1:    0.59820 elapsed seconds.
+Timing for main: time 2001-10-25_01:14:24 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:15:36 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:16:48 on domain   1:    0.70010 elapsed seconds.
+Timing for main: time 2001-10-25_01:18:00 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:19:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:20:24 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:21:36 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:22:48 on domain   1:    0.59890 elapsed seconds.
+Timing for main: time 2001-10-25_01:24:00 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:25:12 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_01:26:24 on domain   1:    0.70050 elapsed seconds.
+Timing for main: time 2001-10-25_01:27:36 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:28:48 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:30:00 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:31:12 on domain   1:    1.31810 elapsed seconds.
+Timing for main: time 2001-10-25_01:32:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_01:33:36 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:34:48 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:36:00 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:37:12 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_01:38:24 on domain   1:    0.62450 elapsed seconds.
+Timing for main: time 2001-10-25_01:39:36 on domain   1:    0.62620 elapsed seconds.
+Timing for main: time 2001-10-25_01:40:48 on domain   1:    0.70120 elapsed seconds.
+Timing for main: time 2001-10-25_01:42:00 on domain   1:    0.60370 elapsed seconds.
+Timing for main: time 2001-10-25_01:43:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:44:24 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_01:45:36 on domain   1:    0.70090 elapsed seconds.
+Timing for main: time 2001-10-25_01:46:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_01:48:00 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_01:49:12 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:50:24 on domain   1:    0.70150 elapsed seconds.
+Timing for main: time 2001-10-25_01:51:36 on domain   1:    0.59800 elapsed seconds.
+Timing for main: time 2001-10-25_01:52:48 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_01:54:00 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:55:12 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:56:24 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_01:57:36 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:58:48 on domain   1:    0.62650 elapsed seconds.
+Timing for main: time 2001-10-25_02:00:00 on domain   1:    0.70070 elapsed seconds.
+Timing for main: time 2001-10-25_02:01:12 on domain   1:    1.21870 elapsed seconds.
+Timing for main: time 2001-10-25_02:02:24 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:03:36 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_02:04:48 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_02:06:00 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:07:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_02:08:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:09:36 on domain   1:    0.67240 elapsed seconds.
+Timing for main: time 2001-10-25_02:10:48 on domain   1:    0.62410 elapsed seconds.
+Timing for main: time 2001-10-25_02:12:00 on domain   1:    0.62440 elapsed seconds.
+Timing for main: time 2001-10-25_02:13:12 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_02:14:24 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_02:15:36 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:16:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_02:18:00 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_02:19:12 on domain   1:    0.67590 elapsed seconds.
+Timing for main: time 2001-10-25_02:20:24 on domain   1:    0.62730 elapsed seconds.
+Timing for main: time 2001-10-25_02:21:36 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:22:48 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:24:00 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_02:25:12 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:26:24 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:27:36 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_02:28:48 on domain   1:    0.70160 elapsed seconds.
+Timing for main: time 2001-10-25_02:30:00 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:31:12 on domain   1:    1.24130 elapsed seconds.
+Timing for main: time 2001-10-25_02:32:24 on domain   1:    0.62940 elapsed seconds.
+Timing for main: time 2001-10-25_02:33:36 on domain   1:    0.70120 elapsed seconds.
+Timing for main: time 2001-10-25_02:34:48 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_02:36:00 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_02:37:12 on domain   1:    0.59660 elapsed seconds.
+Timing for main: time 2001-10-25_02:38:24 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_02:39:36 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:40:48 on domain   1:    0.62430 elapsed seconds.
+Timing for main: time 2001-10-25_02:42:00 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:43:12 on domain   1:    0.70270 elapsed seconds.
+Timing for main: time 2001-10-25_02:44:24 on domain   1:    0.64970 elapsed seconds.
+Timing for main: time 2001-10-25_02:45:36 on domain   1:    0.63070 elapsed seconds.
+Timing for main: time 2001-10-25_02:46:48 on domain   1:    0.59620 elapsed seconds.
+Timing for main: time 2001-10-25_02:48:00 on domain   1:    0.70190 elapsed seconds.
+Timing for main: time 2001-10-25_02:49:12 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_02:50:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:51:36 on domain   1:    0.62450 elapsed seconds.
+Timing for main: time 2001-10-25_02:52:48 on domain   1:    0.70250 elapsed seconds.
+Timing for main: time 2001-10-25_02:54:00 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_02:55:12 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_02:56:24 on domain   1:    0.60010 elapsed seconds.
+Timing for main: time 2001-10-25_02:57:36 on domain   1:    0.70230 elapsed seconds.
+Timing for main: time 2001-10-25_02:58:48 on domain   1:    0.62580 elapsed seconds.
+Timing for main: time 2001-10-25_03:00:00 on domain   1:    0.62420 elapsed seconds.
+Timing for Writing wrfout_d01_2001-10-25_03_00_00 for domain        1:   13.78160 elapsed seconds.
+ d01 2001-10-25_03:00:00 wrf: SUCCESS COMPLETE WRF
+XDMOD***RESULT OF rsl.error.0000 ENDS
+
+XDMOD***RESULT OF rsl.out.0000 BEGINS
+taskid: 0 hostname: d13n01.ccr.buffalo.edu
+ Namelist fdda not found in namelist.input. Using registry defaults for variable
+ s in fdda
+ Namelist dfi_control not found in namelist.input. Using registry defaults for v
+ ariables in dfi_control
+ Namelist tc not found in namelist.input. Using registry defaults for variables 
+ in tc
+ Namelist scm not found in namelist.input. Using registry defaults for variables
+  in scm
+ Namelist grib2 not found in namelist.input. Using registry defaults for variabl
+ es in grib2
+ Namelist fire not found in namelist.input. Using registry defaults for variable
+ s in fire
+  Ntasks in X            4, ntasks in Y            8
+ --- NOTE: sst_update is 0, setting io_form_auxinput4 = 0 and auxinput4_interval
+  = 0 for all domains
+ --- NOTE: grid_fdda is 0 for domain      1, setting gfdda interval and ending t
+ ime to 0 for that domain.
+ --- NOTE: both grid_sfdda and pxlsm_soil_nudge are 0 for domain      1, setting
+  sgfdda interval and ending time to 0 for that domain.
+ --- NOTE: obs_nudge_opt is 0 for domain      1, setting obs nudging interval an
+ d ending time to 0 for that domain.
+ --- NOTE: num_soil_layers has been set to      5
+ WRF V3.3 MODEL
+  *************************************
+  Parent domain
+  ids,ide,jds,jde            1         425           1         300
+  ims,ime,jms,jme           -4         113          -4          45
+  ips,ipe,jps,jpe            1         106           1          38
+  *************************************
+ DYNAMICS OPTION: Eulerian Mass Coordinate
+    alloc_space_field: domain            1,              128443204 bytes allocat
+ ed
+  RESTART run: opening wrfrst_d01_2001-10-25_00_00_00 for reading
+Timing for processing restart file for domain        1:   17.63610 elapsed seconds.
+Timing for Writing wrfout_d01_2001-10-25_00_00_00 for domain        1:    9.49340 elapsed seconds.
+Timing for processing lateral boundary for domain        1:    0.53900 elapsed seconds.
+ WRF TILE   1 IS      1 IE    106 JS      1 JE     38
+ WRF NUMBER OF TILES =   1
+Timing for main: time 2001-10-25_00:01:12 on domain   1:   11.33130 elapsed seconds.
+Timing for main: time 2001-10-25_00:02:24 on domain   1:    0.62660 elapsed seconds.
+Timing for main: time 2001-10-25_00:03:36 on domain   1:    0.62680 elapsed seconds.
+Timing for main: time 2001-10-25_00:04:48 on domain   1:    0.70210 elapsed seconds.
+Timing for main: time 2001-10-25_00:06:00 on domain   1:    0.62650 elapsed seconds.
+Timing for main: time 2001-10-25_00:07:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_00:08:24 on domain   1:    0.60070 elapsed seconds.
+Timing for main: time 2001-10-25_00:09:36 on domain   1:    0.69920 elapsed seconds.
+Timing for main: time 2001-10-25_00:10:48 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_00:12:00 on domain   1:    0.62580 elapsed seconds.
+Timing for main: time 2001-10-25_00:13:12 on domain   1:    0.62690 elapsed seconds.
+Timing for main: time 2001-10-25_00:14:24 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_00:15:36 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:16:48 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_00:18:00 on domain   1:    0.60080 elapsed seconds.
+Timing for main: time 2001-10-25_00:19:12 on domain   1:    0.69980 elapsed seconds.
+Timing for main: time 2001-10-25_00:20:24 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_00:21:36 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:22:48 on domain   1:    0.62690 elapsed seconds.
+Timing for main: time 2001-10-25_00:24:00 on domain   1:    0.70000 elapsed seconds.
+Timing for main: time 2001-10-25_00:25:12 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:26:24 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:27:36 on domain   1:    0.60220 elapsed seconds.
+Timing for main: time 2001-10-25_00:28:48 on domain   1:    0.70020 elapsed seconds.
+Timing for main: time 2001-10-25_00:30:00 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_00:31:12 on domain   1:    1.24230 elapsed seconds.
+Timing for main: time 2001-10-25_00:32:24 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:33:36 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_00:34:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_00:36:00 on domain   1:    0.60070 elapsed seconds.
+Timing for main: time 2001-10-25_00:37:12 on domain   1:    0.62620 elapsed seconds.
+Timing for main: time 2001-10-25_00:38:24 on domain   1:    0.70040 elapsed seconds.
+Timing for main: time 2001-10-25_00:39:36 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_00:40:48 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_00:42:00 on domain   1:    0.62660 elapsed seconds.
+Timing for main: time 2001-10-25_00:43:12 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_00:44:24 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_00:45:36 on domain   1:    0.60320 elapsed seconds.
+Timing for main: time 2001-10-25_00:46:48 on domain   1:    0.62670 elapsed seconds.
+Timing for main: time 2001-10-25_00:48:00 on domain   1:    0.70080 elapsed seconds.
+Timing for main: time 2001-10-25_00:49:12 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_00:50:24 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_00:51:36 on domain   1:    0.62640 elapsed seconds.
+Timing for main: time 2001-10-25_00:52:48 on domain   1:    0.70180 elapsed seconds.
+Timing for main: time 2001-10-25_00:54:00 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_00:55:12 on domain   1:    0.60570 elapsed seconds.
+Timing for main: time 2001-10-25_00:56:24 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_00:57:36 on domain   1:    0.70100 elapsed seconds.
+Timing for main: time 2001-10-25_00:58:48 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:00:00 on domain   1:    0.63010 elapsed seconds.
+Timing for main: time 2001-10-25_01:01:12 on domain   1:    1.24180 elapsed seconds.
+Timing for main: time 2001-10-25_01:02:24 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:03:36 on domain   1:    0.62600 elapsed seconds.
+Timing for main: time 2001-10-25_01:04:48 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_01:06:00 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:07:12 on domain   1:    0.70070 elapsed seconds.
+Timing for main: time 2001-10-25_01:08:24 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_01:09:36 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:10:48 on domain   1:    0.62640 elapsed seconds.
+Timing for main: time 2001-10-25_01:12:00 on domain   1:    0.70360 elapsed seconds.
+Timing for main: time 2001-10-25_01:13:12 on domain   1:    0.59820 elapsed seconds.
+Timing for main: time 2001-10-25_01:14:24 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:15:36 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:16:48 on domain   1:    0.70010 elapsed seconds.
+Timing for main: time 2001-10-25_01:18:00 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:19:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:20:24 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:21:36 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:22:48 on domain   1:    0.59890 elapsed seconds.
+Timing for main: time 2001-10-25_01:24:00 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:25:12 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_01:26:24 on domain   1:    0.70050 elapsed seconds.
+Timing for main: time 2001-10-25_01:27:36 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:28:48 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:30:00 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:31:12 on domain   1:    1.31810 elapsed seconds.
+Timing for main: time 2001-10-25_01:32:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_01:33:36 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_01:34:48 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_01:36:00 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:37:12 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_01:38:24 on domain   1:    0.62450 elapsed seconds.
+Timing for main: time 2001-10-25_01:39:36 on domain   1:    0.62620 elapsed seconds.
+Timing for main: time 2001-10-25_01:40:48 on domain   1:    0.70120 elapsed seconds.
+Timing for main: time 2001-10-25_01:42:00 on domain   1:    0.60370 elapsed seconds.
+Timing for main: time 2001-10-25_01:43:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_01:44:24 on domain   1:    0.62570 elapsed seconds.
+Timing for main: time 2001-10-25_01:45:36 on domain   1:    0.70090 elapsed seconds.
+Timing for main: time 2001-10-25_01:46:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_01:48:00 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_01:49:12 on domain   1:    0.62610 elapsed seconds.
+Timing for main: time 2001-10-25_01:50:24 on domain   1:    0.70150 elapsed seconds.
+Timing for main: time 2001-10-25_01:51:36 on domain   1:    0.59800 elapsed seconds.
+Timing for main: time 2001-10-25_01:52:48 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_01:54:00 on domain   1:    0.62630 elapsed seconds.
+Timing for main: time 2001-10-25_01:55:12 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_01:56:24 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_01:57:36 on domain   1:    0.62550 elapsed seconds.
+Timing for main: time 2001-10-25_01:58:48 on domain   1:    0.62650 elapsed seconds.
+Timing for main: time 2001-10-25_02:00:00 on domain   1:    0.70070 elapsed seconds.
+Timing for main: time 2001-10-25_02:01:12 on domain   1:    1.21870 elapsed seconds.
+Timing for main: time 2001-10-25_02:02:24 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:03:36 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_02:04:48 on domain   1:    0.70110 elapsed seconds.
+Timing for main: time 2001-10-25_02:06:00 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:07:12 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_02:08:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:09:36 on domain   1:    0.67240 elapsed seconds.
+Timing for main: time 2001-10-25_02:10:48 on domain   1:    0.62410 elapsed seconds.
+Timing for main: time 2001-10-25_02:12:00 on domain   1:    0.62440 elapsed seconds.
+Timing for main: time 2001-10-25_02:13:12 on domain   1:    0.62560 elapsed seconds.
+Timing for main: time 2001-10-25_02:14:24 on domain   1:    0.70060 elapsed seconds.
+Timing for main: time 2001-10-25_02:15:36 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:16:48 on domain   1:    0.62460 elapsed seconds.
+Timing for main: time 2001-10-25_02:18:00 on domain   1:    0.62530 elapsed seconds.
+Timing for main: time 2001-10-25_02:19:12 on domain   1:    0.67590 elapsed seconds.
+Timing for main: time 2001-10-25_02:20:24 on domain   1:    0.62730 elapsed seconds.
+Timing for main: time 2001-10-25_02:21:36 on domain   1:    0.62490 elapsed seconds.
+Timing for main: time 2001-10-25_02:22:48 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:24:00 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_02:25:12 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:26:24 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:27:36 on domain   1:    0.62540 elapsed seconds.
+Timing for main: time 2001-10-25_02:28:48 on domain   1:    0.70160 elapsed seconds.
+Timing for main: time 2001-10-25_02:30:00 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:31:12 on domain   1:    1.24130 elapsed seconds.
+Timing for main: time 2001-10-25_02:32:24 on domain   1:    0.62940 elapsed seconds.
+Timing for main: time 2001-10-25_02:33:36 on domain   1:    0.70120 elapsed seconds.
+Timing for main: time 2001-10-25_02:34:48 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_02:36:00 on domain   1:    0.62500 elapsed seconds.
+Timing for main: time 2001-10-25_02:37:12 on domain   1:    0.59660 elapsed seconds.
+Timing for main: time 2001-10-25_02:38:24 on domain   1:    0.70130 elapsed seconds.
+Timing for main: time 2001-10-25_02:39:36 on domain   1:    0.62480 elapsed seconds.
+Timing for main: time 2001-10-25_02:40:48 on domain   1:    0.62430 elapsed seconds.
+Timing for main: time 2001-10-25_02:42:00 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:43:12 on domain   1:    0.70270 elapsed seconds.
+Timing for main: time 2001-10-25_02:44:24 on domain   1:    0.64970 elapsed seconds.
+Timing for main: time 2001-10-25_02:45:36 on domain   1:    0.63070 elapsed seconds.
+Timing for main: time 2001-10-25_02:46:48 on domain   1:    0.59620 elapsed seconds.
+Timing for main: time 2001-10-25_02:48:00 on domain   1:    0.70190 elapsed seconds.
+Timing for main: time 2001-10-25_02:49:12 on domain   1:    0.62520 elapsed seconds.
+Timing for main: time 2001-10-25_02:50:24 on domain   1:    0.62510 elapsed seconds.
+Timing for main: time 2001-10-25_02:51:36 on domain   1:    0.62450 elapsed seconds.
+Timing for main: time 2001-10-25_02:52:48 on domain   1:    0.70250 elapsed seconds.
+Timing for main: time 2001-10-25_02:54:00 on domain   1:    0.62590 elapsed seconds.
+Timing for main: time 2001-10-25_02:55:12 on domain   1:    0.62470 elapsed seconds.
+Timing for main: time 2001-10-25_02:56:24 on domain   1:    0.60010 elapsed seconds.
+Timing for main: time 2001-10-25_02:57:36 on domain   1:    0.70230 elapsed seconds.
+Timing for main: time 2001-10-25_02:58:48 on domain   1:    0.62580 elapsed seconds.
+Timing for main: time 2001-10-25_03:00:00 on domain   1:    0.62420 elapsed seconds.
+Timing for Writing wrfout_d01_2001-10-25_03_00_00 for domain        1:   13.78160 elapsed seconds.
+ d01 2001-10-25_03:00:00 wrf: SUCCESS COMPLETE WRF
+XDMOD***RESULT OF rsl.out.0000 ENDS
+
+XDMOD***RESULT OF wrfout_d01_2001-10-25_00_00_00 BEGINS
+netcdf wrfout_d01_2001-10-25_00_00_00 {
+dimensions:
+	Time = UNLIMITED ; // (1 currently)
+	DateStrLen = 19 ;
+	west_east = 424 ;
+	south_north = 299 ;
+	bottom_top = 34 ;
+	bottom_top_stag = 35 ;
+	soil_layers_stag = 5 ;
+	west_east_stag = 425 ;
+	south_north_stag = 300 ;
+variables:
+	char Times(Time, DateStrLen) ;
+	float LU_INDEX(Time, south_north, west_east) ;
+		LU_INDEX:FieldType = 104 ;
+		LU_INDEX:MemoryOrder = "XY " ;
+		LU_INDEX:description = "LAND USE CATEGORY" ;
+		LU_INDEX:units = "" ;
+		LU_INDEX:stagger = "" ;
+		LU_INDEX:coordinates = "XLONG XLAT" ;
+	float ZNU(Time, bottom_top) ;
+		ZNU:FieldType = 104 ;
+		ZNU:MemoryOrder = "Z  " ;
+		ZNU:description = "eta values on half (mass) levels" ;
+		ZNU:units = "" ;
+		ZNU:stagger = "" ;
+	float ZNW(Time, bottom_top_stag) ;
+		ZNW:FieldType = 104 ;
+		ZNW:MemoryOrder = "Z  " ;
+		ZNW:description = "eta values on full (w) levels" ;
+		ZNW:units = "" ;
+		ZNW:stagger = "Z" ;
+	float ZS(Time, soil_layers_stag) ;
+		ZS:FieldType = 104 ;
+		ZS:MemoryOrder = "Z  " ;
+		ZS:description = "DEPTHS OF CENTERS OF SOIL LAYERS" ;
+		ZS:units = "m" ;
+		ZS:stagger = "Z" ;
+	float DZS(Time, soil_layers_stag) ;
+		DZS:FieldType = 104 ;
+		DZS:MemoryOrder = "Z  " ;
+		DZS:description = "THICKNESSES OF SOIL LAYERS" ;
+		DZS:units = "m" ;
+		DZS:stagger = "Z" ;
+	float U(Time, bottom_top, south_north, west_east_stag) ;
+		U:FieldType = 104 ;
+		U:MemoryOrder = "XYZ" ;
+		U:description = "x-wind component" ;
+		U:units = "m s-1" ;
+		U:stagger = "X" ;
+		U:coordinates = "XLONG_U XLAT_U" ;
+	float V(Time, bottom_top, south_north_stag, west_east) ;
+		V:FieldType = 104 ;
+		V:MemoryOrder = "XYZ" ;
+		V:description = "y-wind component" ;
+		V:units = "m s-1" ;
+		V:stagger = "Y" ;
+		V:coordinates = "XLONG_V XLAT_V" ;
+	float W(Time, bottom_top_stag, south_north, west_east) ;
+		W:FieldType = 104 ;
+		W:MemoryOrder = "XYZ" ;
+		W:description = "z-wind component" ;
+		W:units = "m s-1" ;
+		W:stagger = "Z" ;
+		W:coordinates = "XLONG XLAT" ;
+	float PH(Time, bottom_top_stag, south_north, west_east) ;
+		PH:FieldType = 104 ;
+		PH:MemoryOrder = "XYZ" ;
+		PH:description = "perturbation geopotential" ;
+		PH:units = "m2 s-2" ;
+		PH:stagger = "Z" ;
+		PH:coordinates = "XLONG XLAT" ;
+	float PHB(Time, bottom_top_stag, south_north, west_east) ;
+		PHB:FieldType = 104 ;
+		PHB:MemoryOrder = "XYZ" ;
+		PHB:description = "base-state geopotential" ;
+		PHB:units = "m2 s-2" ;
+		PHB:stagger = "Z" ;
+		PHB:coordinates = "XLONG XLAT" ;
+	float T(Time, bottom_top, south_north, west_east) ;
+		T:FieldType = 104 ;
+		T:MemoryOrder = "XYZ" ;
+		T:description = "perturbation potential temperature (theta-t0)" ;
+		T:units = "K" ;
+		T:stagger = "" ;
+		T:coordinates = "XLONG XLAT" ;
+	float HFX_FORCE(Time) ;
+		HFX_FORCE:FieldType = 104 ;
+		HFX_FORCE:MemoryOrder = "0  " ;
+		HFX_FORCE:description = "SCM ideal surface sensible heat flux" ;
+		HFX_FORCE:units = "W m-2" ;
+		HFX_FORCE:stagger = "" ;
+	float LH_FORCE(Time) ;
+		LH_FORCE:FieldType = 104 ;
+		LH_FORCE:MemoryOrder = "0  " ;
+		LH_FORCE:description = "SCM ideal surface latent heat flux" ;
+		LH_FORCE:units = "W m-2" ;
+		LH_FORCE:stagger = "" ;
+	float TSK_FORCE(Time) ;
+		TSK_FORCE:FieldType = 104 ;
+		TSK_FORCE:MemoryOrder = "0  " ;
+		TSK_FORCE:description = "SCM ideal surface skin temperature" ;
+		TSK_FORCE:units = "W m-2" ;
+		TSK_FORCE:stagger = "" ;
+	float HFX_FORCE_TEND(Time) ;
+		HFX_FORCE_TEND:FieldType = 104 ;
+		HFX_FORCE_TEND:MemoryOrder = "0  " ;
+		HFX_FORCE_TEND:description = "SCM ideal surface sensible heat flux tendency" ;
+		HFX_FORCE_TEND:units = "W m-2 s-1" ;
+		HFX_FORCE_TEND:stagger = "" ;
+	float LH_FORCE_TEND(Time) ;
+		LH_FORCE_TEND:FieldType = 104 ;
+		LH_FORCE_TEND:MemoryOrder = "0  " ;
+		LH_FORCE_TEND:description = "SCM ideal surface latent heat flux tendency" ;
+		LH_FORCE_TEND:units = "W m-2 s-1" ;
+		LH_FORCE_TEND:stagger = "" ;
+	float TSK_FORCE_TEND(Time) ;
+		TSK_FORCE_TEND:FieldType = 104 ;
+		TSK_FORCE_TEND:MemoryOrder = "0  " ;
+		TSK_FORCE_TEND:description = "SCM ideal surface skin temperature tendency" ;
+		TSK_FORCE_TEND:units = "W m-2 s-1" ;
+		TSK_FORCE_TEND:stagger = "" ;
+	float MU(Time, south_north, west_east) ;
+		MU:FieldType = 104 ;
+		MU:MemoryOrder = "XY " ;
+		MU:description = "perturbation dry air mass in column" ;
+		MU:units = "Pa" ;
+		MU:stagger = "" ;
+		MU:coordinates = "XLONG XLAT" ;
+	float MUB(Time, south_north, west_east) ;
+		MUB:FieldType = 104 ;
+		MUB:MemoryOrder = "XY " ;
+		MUB:description = "base state dry air mass in column" ;
+		MUB:units = "Pa" ;
+		MUB:stagger = "" ;
+		MUB:coordinates = "XLONG XLAT" ;
+	float NEST_POS(Time, south_north, west_east) ;
+		NEST_POS:FieldType = 104 ;
+		NEST_POS:MemoryOrder = "XY " ;
+		NEST_POS:description = "-" ;
+		NEST_POS:units = "-" ;
+		NEST_POS:stagger = "" ;
+		NEST_POS:coordinates = "XLONG XLAT" ;
+	float P(Time, bottom_top, south_north, west_east) ;
+		P:FieldType = 104 ;
+		P:MemoryOrder = "XYZ" ;
+		P:description = "perturbation pressure" ;
+		P:units = "Pa" ;
+		P:stagger = "" ;
+		P:coordinates = "XLONG XLAT" ;
+	float PB(Time, bottom_top, south_north, west_east) ;
+		PB:FieldType = 104 ;
+		PB:MemoryOrder = "XYZ" ;
+		PB:description = "BASE STATE PRESSURE" ;
+		PB:units = "Pa" ;
+		PB:stagger = "" ;
+		PB:coordinates = "XLONG XLAT" ;
+	float FNM(Time, bottom_top) ;
+		FNM:FieldType = 104 ;
+		FNM:MemoryOrder = "Z  " ;
+		FNM:description = "upper weight for vertical stretching" ;
+		FNM:units = "" ;
+		FNM:stagger = "" ;
+	float FNP(Time, bottom_top) ;
+		FNP:FieldType = 104 ;
+		FNP:MemoryOrder = "Z  " ;
+		FNP:description = "lower weight for vertical stretching" ;
+		FNP:units = "" ;
+		FNP:stagger = "" ;
+	float RDNW(Time, bottom_top) ;
+		RDNW:FieldType = 104 ;
+		RDNW:MemoryOrder = "Z  " ;
+		RDNW:description = "inverse d(eta) values between full (w) levels" ;
+		RDNW:units = "" ;
+		RDNW:stagger = "" ;
+	float RDN(Time, bottom_top) ;
+		RDN:FieldType = 104 ;
+		RDN:MemoryOrder = "Z  " ;
+		RDN:description = "inverse d(eta) values between half (mass) levels" ;
+		RDN:units = "" ;
+		RDN:stagger = "" ;
+	float DNW(Time, bottom_top) ;
+		DNW:FieldType = 104 ;
+		DNW:MemoryOrder = "Z  " ;
+		DNW:description = "d(eta) values between full (w) levels" ;
+		DNW:units = "" ;
+		DNW:stagger = "" ;
+	float DN(Time, bottom_top) ;
+		DN:FieldType = 104 ;
+		DN:MemoryOrder = "Z  " ;
+		DN:description = "d(eta) values between half (mass) levels" ;
+		DN:units = "" ;
+		DN:stagger = "" ;
+	float CFN(Time) ;
+		CFN:FieldType = 104 ;
+		CFN:MemoryOrder = "0  " ;
+		CFN:description = "extrapolation constant" ;
+		CFN:units = "" ;
+		CFN:stagger = "" ;
+	float CFN1(Time) ;
+		CFN1:FieldType = 104 ;
+		CFN1:MemoryOrder = "0  " ;
+		CFN1:description = "extrapolation constant" ;
+		CFN1:units = "" ;
+		CFN1:stagger = "" ;
+	float P_HYD(Time, bottom_top, south_north, west_east) ;
+		P_HYD:FieldType = 104 ;
+		P_HYD:MemoryOrder = "XYZ" ;
+		P_HYD:description = "hydrostatic pressure" ;
+		P_HYD:units = "Pa" ;
+		P_HYD:stagger = "" ;
+		P_HYD:coordinates = "XLONG XLAT" ;
+	float Q2(Time, south_north, west_east) ;
+		Q2:FieldType = 104 ;
+		Q2:MemoryOrder = "XY " ;
+		Q2:description = "QV at 2 M" ;
+		Q2:units = "kg kg-1" ;
+		Q2:stagger = "" ;
+		Q2:coordinates = "XLONG XLAT" ;
+	float T2(Time, south_north, west_east) ;
+		T2:FieldType = 104 ;
+		T2:MemoryOrder = "XY " ;
+		T2:description = "TEMP at 2 M" ;
+		T2:units = "K" ;
+		T2:stagger = "" ;
+		T2:coordinates = "XLONG XLAT" ;
+	float TH2(Time, south_north, west_east) ;
+		TH2:FieldType = 104 ;
+		TH2:MemoryOrder = "XY " ;
+		TH2:description = "POT TEMP at 2 M" ;
+		TH2:units = "K" ;
+		TH2:stagger = "" ;
+		TH2:coordinates = "XLONG XLAT" ;
+	float PSFC(Time, south_north, west_east) ;
+		PSFC:FieldType = 104 ;
+		PSFC:MemoryOrder = "XY " ;
+		PSFC:description = "SFC PRESSURE" ;
+		PSFC:units = "Pa" ;
+		PSFC:stagger = "" ;
+		PSFC:coordinates = "XLONG XLAT" ;
+	float U10(Time, south_north, west_east) ;
+		U10:FieldType = 104 ;
+		U10:MemoryOrder = "XY " ;
+		U10:description = "U at 10 M" ;
+		U10:units = "m s-1" ;
+		U10:stagger = "" ;
+		U10:coordinates = "XLONG XLAT" ;
+	float V10(Time, south_north, west_east) ;
+		V10:FieldType = 104 ;
+		V10:MemoryOrder = "XY " ;
+		V10:description = "V at 10 M" ;
+		V10:units = "m s-1" ;
+		V10:stagger = "" ;
+		V10:coordinates = "XLONG XLAT" ;
+	float RDX(Time) ;
+		RDX:FieldType = 104 ;
+		RDX:MemoryOrder = "0  " ;
+		RDX:description = "INVERSE X GRID LENGTH" ;
+		RDX:units = "" ;
+		RDX:stagger = "" ;
+	float RDY(Time) ;
+		RDY:FieldType = 104 ;
+		RDY:MemoryOrder = "0  " ;
+		RDY:description = "INVERSE Y GRID LENGTH" ;
+		RDY:units = "" ;
+		RDY:stagger = "" ;
+	float RESM(Time) ;
+		RESM:FieldType = 104 ;
+		RESM:MemoryOrder = "0  " ;
+		RESM:description = "TIME WEIGHT CONSTANT FOR SMALL STEPS" ;
+		RESM:units = "" ;
+		RESM:stagger = "" ;
+	float ZETATOP(Time) ;
+		ZETATOP:FieldType = 104 ;
+		ZETATOP:MemoryOrder = "0  " ;
+		ZETATOP:description = "ZETA AT MODEL TOP" ;
+		ZETATOP:units = "" ;
+		ZETATOP:stagger = "" ;
+	float CF1(Time) ;
+		CF1:FieldType = 104 ;
+		CF1:MemoryOrder = "0  " ;
+		CF1:description = "2nd order extrapolation constant" ;
+		CF1:units = "" ;
+		CF1:stagger = "" ;
+	float CF2(Time) ;
+		CF2:FieldType = 104 ;
+		CF2:MemoryOrder = "0  " ;
+		CF2:description = "2nd order extrapolation constant" ;
+		CF2:units = "" ;
+		CF2:stagger = "" ;
+	float CF3(Time) ;
+		CF3:FieldType = 104 ;
+		CF3:MemoryOrder = "0  " ;
+		CF3:description = "2nd order extrapolation constant" ;
+		CF3:units = "" ;
+		CF3:stagger = "" ;
+	int ITIMESTEP(Time) ;
+		ITIMESTEP:FieldType = 106 ;
+		ITIMESTEP:MemoryOrder = "0  " ;
+		ITIMESTEP:description = "" ;
+		ITIMESTEP:units = "" ;
+		ITIMESTEP:stagger = "" ;
+	float XTIME(Time) ;
+		XTIME:FieldType = 104 ;
+		XTIME:MemoryOrder = "0  " ;
+		XTIME:description = "minutes since simulation start" ;
+		XTIME:units = "" ;
+		XTIME:stagger = "" ;
+	float QVAPOR(Time, bottom_top, south_north, west_east) ;
+		QVAPOR:FieldType = 104 ;
+		QVAPOR:MemoryOrder = "XYZ" ;
+		QVAPOR:description = "Water vapor mixing ratio" ;
+		QVAPOR:units = "kg kg-1" ;
+		QVAPOR:stagger = "" ;
+		QVAPOR:coordinates = "XLONG XLAT" ;
+	float QCLOUD(Time, bottom_top, south_north, west_east) ;
+		QCLOUD:FieldType = 104 ;
+		QCLOUD:MemoryOrder = "XYZ" ;
+		QCLOUD:description = "Cloud water mixing ratio" ;
+		QCLOUD:units = "kg kg-1" ;
+		QCLOUD:stagger = "" ;
+		QCLOUD:coordinates = "XLONG XLAT" ;
+	float QRAIN(Time, bottom_top, south_north, west_east) ;
+		QRAIN:FieldType = 104 ;
+		QRAIN:MemoryOrder = "XYZ" ;
+		QRAIN:description = "Rain water mixing ratio" ;
+		QRAIN:units = "kg kg-1" ;
+		QRAIN:stagger = "" ;
+		QRAIN:coordinates = "XLONG XLAT" ;
+	float QICE(Time, bottom_top, south_north, west_east) ;
+		QICE:FieldType = 104 ;
+		QICE:MemoryOrder = "XYZ" ;
+		QICE:description = "Ice mixing ratio" ;
+		QICE:units = "kg kg-1" ;
+		QICE:stagger = "" ;
+		QICE:coordinates = "XLONG XLAT" ;
+	float QSNOW(Time, bottom_top, south_north, west_east) ;
+		QSNOW:FieldType = 104 ;
+		QSNOW:MemoryOrder = "XYZ" ;
+		QSNOW:description = "Snow mixing ratio" ;
+		QSNOW:units = "kg kg-1" ;
+		QSNOW:stagger = "" ;
+		QSNOW:coordinates = "XLONG XLAT" ;
+	float LANDMASK(Time, south_north, west_east) ;
+		LANDMASK:FieldType = 104 ;
+		LANDMASK:MemoryOrder = "XY " ;
+		LANDMASK:description = "LAND MASK (1 FOR LAND, 0 FOR WATER)" ;
+		LANDMASK:units = "" ;
+		LANDMASK:stagger = "" ;
+		LANDMASK:coordinates = "XLONG XLAT" ;
+	float TSLB(Time, soil_layers_stag, south_north, west_east) ;
+		TSLB:FieldType = 104 ;
+		TSLB:MemoryOrder = "XYZ" ;
+		TSLB:description = "SOIL TEMPERATURE" ;
+		TSLB:units = "K" ;
+		TSLB:stagger = "Z" ;
+		TSLB:coordinates = "XLONG XLAT" ;
+	float SMOIS(Time, soil_layers_stag, south_north, west_east) ;
+		SMOIS:FieldType = 104 ;
+		SMOIS:MemoryOrder = "XYZ" ;
+		SMOIS:description = "SOIL MOISTURE" ;
+		SMOIS:units = "m3 m-3" ;
+		SMOIS:stagger = "Z" ;
+		SMOIS:coordinates = "XLONG XLAT" ;
+	float SH2O(Time, soil_layers_stag, south_north, west_east) ;
+		SH2O:FieldType = 104 ;
+		SH2O:MemoryOrder = "XYZ" ;
+		SH2O:description = "SOIL LIQUID WATER" ;
+		SH2O:units = "m3 m-3" ;
+		SH2O:stagger = "Z" ;
+		SH2O:coordinates = "XLONG XLAT" ;
+	float SMCREL(Time, soil_layers_stag, south_north, west_east) ;
+		SMCREL:FieldType = 104 ;
+		SMCREL:MemoryOrder = "XYZ" ;
+		SMCREL:description = "RELATIVE SOIL MOISTURE" ;
+		SMCREL:units = "" ;
+		SMCREL:stagger = "Z" ;
+		SMCREL:coordinates = "XLONG XLAT" ;
+	float SEAICE(Time, south_north, west_east) ;
+		SEAICE:FieldType = 104 ;
+		SEAICE:MemoryOrder = "XY " ;
+		SEAICE:description = "SEA ICE FLAG" ;
+		SEAICE:units = "" ;
+		SEAICE:stagger = "" ;
+		SEAICE:coordinates = "XLONG XLAT" ;
+	float XICEM(Time, south_north, west_east) ;
+		XICEM:FieldType = 104 ;
+		XICEM:MemoryOrder = "XY " ;
+		XICEM:description = "SEA ICE FLAG (PREVIOUS STEP)" ;
+		XICEM:units = "" ;
+		XICEM:stagger = "" ;
+		XICEM:coordinates = "XLONG XLAT" ;
+	float SFROFF(Time, south_north, west_east) ;
+		SFROFF:FieldType = 104 ;
+		SFROFF:MemoryOrder = "XY " ;
+		SFROFF:description = "SURFACE RUNOFF" ;
+		SFROFF:units = "mm" ;
+		SFROFF:stagger = "" ;
+		SFROFF:coordinates = "XLONG XLAT" ;
+	float UDROFF(Time, south_north, west_east) ;
+		UDROFF:FieldType = 104 ;
+		UDROFF:MemoryOrder = "XY " ;
+		UDROFF:description = "UNDERGROUND RUNOFF" ;
+		UDROFF:units = "mm" ;
+		UDROFF:stagger = "" ;
+		UDROFF:coordinates = "XLONG XLAT" ;
+	int IVGTYP(Time, south_north, west_east) ;
+		IVGTYP:FieldType = 106 ;
+		IVGTYP:MemoryOrder = "XY " ;
+		IVGTYP:description = "DOMINANT VEGETATION CATEGORY" ;
+		IVGTYP:units = "" ;
+		IVGTYP:stagger = "" ;
+		IVGTYP:coordinates = "XLONG XLAT" ;
+	int ISLTYP(Time, south_north, west_east) ;
+		ISLTYP:FieldType = 106 ;
+		ISLTYP:MemoryOrder = "XY " ;
+		ISLTYP:description = "DOMINANT SOIL CATEGORY" ;
+		ISLTYP:units = "" ;
+		ISLTYP:stagger = "" ;
+		ISLTYP:coordinates = "XLONG XLAT" ;
+	float VEGFRA(Time, south_north, west_east) ;
+		VEGFRA:FieldType = 104 ;
+		VEGFRA:MemoryOrder = "XY " ;
+		VEGFRA:description = "VEGETATION FRACTION" ;
+		VEGFRA:units = "" ;
+		VEGFRA:stagger = "" ;
+		VEGFRA:coordinates = "XLONG XLAT" ;
+	float GRDFLX(Time, south_north, west_east) ;
+		GRDFLX:FieldType = 104 ;
+		GRDFLX:MemoryOrder = "XY " ;
+		GRDFLX:description = "GROUND HEAT FLUX" ;
+		GRDFLX:units = "W m-2" ;
+		GRDFLX:stagger = "" ;
+		GRDFLX:coordinates = "XLONG XLAT" ;
+	float ACGRDFLX(Time, south_north, west_east) ;
+		ACGRDFLX:FieldType = 104 ;
+		ACGRDFLX:MemoryOrder = "XY " ;
+		ACGRDFLX:description = "ACCUMULATED GROUND HEAT FLUX" ;
+		ACGRDFLX:units = "J m-2" ;
+		ACGRDFLX:stagger = "" ;
+		ACGRDFLX:coordinates = "XLONG XLAT" ;
+	float SNOW(Time, south_north, west_east) ;
+		SNOW:FieldType = 104 ;
+		SNOW:MemoryOrder = "XY " ;
+		SNOW:description = "SNOW WATER EQUIVALENT" ;
+		SNOW:units = "kg m-2" ;
+		SNOW:stagger = "" ;
+		SNOW:coordinates = "XLONG XLAT" ;
+	float SNOWH(Time, south_north, west_east) ;
+		SNOWH:FieldType = 104 ;
+		SNOWH:MemoryOrder = "XY " ;
+		SNOWH:description = "PHYSICAL SNOW DEPTH" ;
+		SNOWH:units = "m" ;
+		SNOWH:stagger = "" ;
+		SNOWH:coordinates = "XLONG XLAT" ;
+	float CANWAT(Time, south_north, west_east) ;
+		CANWAT:FieldType = 104 ;
+		CANWAT:MemoryOrder = "XY " ;
+		CANWAT:description = "CANOPY WATER" ;
+		CANWAT:units = "kg m-2" ;
+		CANWAT:stagger = "" ;
+		CANWAT:coordinates = "XLONG XLAT" ;
+	float SST(Time, south_north, west_east) ;
+		SST:FieldType = 104 ;
+		SST:MemoryOrder = "XY " ;
+		SST:description = "SEA SURFACE TEMPERATURE" ;
+		SST:units = "K" ;
+		SST:stagger = "" ;
+		SST:coordinates = "XLONG XLAT" ;
+	float SSTSK(Time, south_north, west_east) ;
+		SSTSK:FieldType = 104 ;
+		SSTSK:MemoryOrder = "XY " ;
+		SSTSK:description = "SKIN SEA SURFACE TEMPERATURE" ;
+		SSTSK:units = "K" ;
+		SSTSK:stagger = "" ;
+		SSTSK:coordinates = "XLONG XLAT" ;
+	float LAI(Time, south_north, west_east) ;
+		LAI:FieldType = 104 ;
+		LAI:MemoryOrder = "XY " ;
+		LAI:description = "Leaf area index" ;
+		LAI:units = "area/area" ;
+		LAI:stagger = "" ;
+		LAI:coordinates = "XLONG XLAT" ;
+	float H_DIABATIC(Time, bottom_top, south_north, west_east) ;
+		H_DIABATIC:FieldType = 104 ;
+		H_DIABATIC:MemoryOrder = "XYZ" ;
+		H_DIABATIC:description = "MICROPHYSICS LATENT HEATING" ;
+		H_DIABATIC:units = "K s-1" ;
+		H_DIABATIC:stagger = "" ;
+		H_DIABATIC:coordinates = "XLONG XLAT" ;
+	float MAPFAC_M(Time, south_north, west_east) ;
+		MAPFAC_M:FieldType = 104 ;
+		MAPFAC_M:MemoryOrder = "XY " ;
+		MAPFAC_M:description = "Map scale factor on mass grid" ;
+		MAPFAC_M:units = "" ;
+		MAPFAC_M:stagger = "" ;
+		MAPFAC_M:coordinates = "XLONG XLAT" ;
+	float MAPFAC_U(Time, south_north, west_east_stag) ;
+		MAPFAC_U:FieldType = 104 ;
+		MAPFAC_U:MemoryOrder = "XY " ;
+		MAPFAC_U:description = "Map scale factor on u-grid" ;
+		MAPFAC_U:units = "" ;
+		MAPFAC_U:stagger = "X" ;
+		MAPFAC_U:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_V(Time, south_north_stag, west_east) ;
+		MAPFAC_V:FieldType = 104 ;
+		MAPFAC_V:MemoryOrder = "XY " ;
+		MAPFAC_V:description = "Map scale factor on v-grid" ;
+		MAPFAC_V:units = "" ;
+		MAPFAC_V:stagger = "Y" ;
+		MAPFAC_V:coordinates = "XLONG_V XLAT_V" ;
+	float MAPFAC_MX(Time, south_north, west_east) ;
+		MAPFAC_MX:FieldType = 104 ;
+		MAPFAC_MX:MemoryOrder = "XY " ;
+		MAPFAC_MX:description = "Map scale factor on mass grid, x direction" ;
+		MAPFAC_MX:units = "" ;
+		MAPFAC_MX:stagger = "" ;
+		MAPFAC_MX:coordinates = "XLONG XLAT" ;
+	float MAPFAC_MY(Time, south_north, west_east) ;
+		MAPFAC_MY:FieldType = 104 ;
+		MAPFAC_MY:MemoryOrder = "XY " ;
+		MAPFAC_MY:description = "Map scale factor on mass grid, y direction" ;
+		MAPFAC_MY:units = "" ;
+		MAPFAC_MY:stagger = "" ;
+		MAPFAC_MY:coordinates = "XLONG XLAT" ;
+	float MAPFAC_UX(Time, south_north, west_east_stag) ;
+		MAPFAC_UX:FieldType = 104 ;
+		MAPFAC_UX:MemoryOrder = "XY " ;
+		MAPFAC_UX:description = "Map scale factor on u-grid, x direction" ;
+		MAPFAC_UX:units = "" ;
+		MAPFAC_UX:stagger = "X" ;
+		MAPFAC_UX:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_UY(Time, south_north, west_east_stag) ;
+		MAPFAC_UY:FieldType = 104 ;
+		MAPFAC_UY:MemoryOrder = "XY " ;
+		MAPFAC_UY:description = "Map scale factor on u-grid, y direction" ;
+		MAPFAC_UY:units = "" ;
+		MAPFAC_UY:stagger = "X" ;
+		MAPFAC_UY:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_VX(Time, south_north_stag, west_east) ;
+		MAPFAC_VX:FieldType = 104 ;
+		MAPFAC_VX:MemoryOrder = "XY " ;
+		MAPFAC_VX:description = "Map scale factor on v-grid, x direction" ;
+		MAPFAC_VX:units = "" ;
+		MAPFAC_VX:stagger = "Y" ;
+		MAPFAC_VX:coordinates = "XLONG_V XLAT_V" ;
+	float MF_VX_INV(Time, south_north_stag, west_east) ;
+		MF_VX_INV:FieldType = 104 ;
+		MF_VX_INV:MemoryOrder = "XY " ;
+		MF_VX_INV:description = "Inverse map scale factor on v-grid, x direction" ;
+		MF_VX_INV:units = "" ;
+		MF_VX_INV:stagger = "Y" ;
+		MF_VX_INV:coordinates = "XLONG_V XLAT_V" ;
+	float MAPFAC_VY(Time, south_north_stag, west_east) ;
+		MAPFAC_VY:FieldType = 104 ;
+		MAPFAC_VY:MemoryOrder = "XY " ;
+		MAPFAC_VY:description = "Map scale factor on v-grid, y direction" ;
+		MAPFAC_VY:units = "" ;
+		MAPFAC_VY:stagger = "Y" ;
+		MAPFAC_VY:coordinates = "XLONG_V XLAT_V" ;
+	float F(Time, south_north, west_east) ;
+		F:FieldType = 104 ;
+		F:MemoryOrder = "XY " ;
+		F:description = "Coriolis sine latitude term" ;
+		F:units = "s-1" ;
+		F:stagger = "" ;
+		F:coordinates = "XLONG XLAT" ;
+	float E(Time, south_north, west_east) ;
+		E:FieldType = 104 ;
+		E:MemoryOrder = "XY " ;
+		E:description = "Coriolis cosine latitude term" ;
+		E:units = "s-1" ;
+		E:stagger = "" ;
+		E:coordinates = "XLONG XLAT" ;
+	float SINALPHA(Time, south_north, west_east) ;
+		SINALPHA:FieldType = 104 ;
+		SINALPHA:MemoryOrder = "XY " ;
+		SINALPHA:description = "Local sine of map rotation" ;
+		SINALPHA:units = "" ;
+		SINALPHA:stagger = "" ;
+		SINALPHA:coordinates = "XLONG XLAT" ;
+	float COSALPHA(Time, south_north, west_east) ;
+		COSALPHA:FieldType = 104 ;
+		COSALPHA:MemoryOrder = "XY " ;
+		COSALPHA:description = "Local cosine of map rotation" ;
+		COSALPHA:units = "" ;
+		COSALPHA:stagger = "" ;
+		COSALPHA:coordinates = "XLONG XLAT" ;
+	float HGT(Time, south_north, west_east) ;
+		HGT:FieldType = 104 ;
+		HGT:MemoryOrder = "XY " ;
+		HGT:description = "Terrain Height" ;
+		HGT:units = "m" ;
+		HGT:stagger = "" ;
+		HGT:coordinates = "XLONG XLAT" ;
+	float TSK(Time, south_north, west_east) ;
+		TSK:FieldType = 104 ;
+		TSK:MemoryOrder = "XY " ;
+		TSK:description = "SURFACE SKIN TEMPERATURE" ;
+		TSK:units = "K" ;
+		TSK:stagger = "" ;
+		TSK:coordinates = "XLONG XLAT" ;
+	float P_TOP(Time) ;
+		P_TOP:FieldType = 104 ;
+		P_TOP:MemoryOrder = "0  " ;
+		P_TOP:description = "PRESSURE TOP OF THE MODEL" ;
+		P_TOP:units = "Pa" ;
+		P_TOP:stagger = "" ;
+	float T00(Time) ;
+		T00:FieldType = 104 ;
+		T00:MemoryOrder = "0  " ;
+		T00:description = "BASE STATE TEMPERATURE" ;
+		T00:units = "K" ;
+		T00:stagger = "" ;
+	float P00(Time) ;
+		P00:FieldType = 104 ;
+		P00:MemoryOrder = "0  " ;
+		P00:description = "BASE STATE PRESURE" ;
+		P00:units = "Pa" ;
+		P00:stagger = "" ;
+	float TLP(Time) ;
+		TLP:FieldType = 104 ;
+		TLP:MemoryOrder = "0  " ;
+		TLP:description = "BASE STATE LAPSE RATE" ;
+		TLP:units = "" ;
+		TLP:stagger = "" ;
+	float TISO(Time) ;
+		TISO:FieldType = 104 ;
+		TISO:MemoryOrder = "0  " ;
+		TISO:description = "TEMP AT WHICH THE BASE T TURNS CONST" ;
+		TISO:units = "K" ;
+		TISO:stagger = "" ;
+	float MAX_MSTFX(Time) ;
+		MAX_MSTFX:FieldType = 104 ;
+		MAX_MSTFX:MemoryOrder = "0  " ;
+		MAX_MSTFX:description = "Max map factor in domain" ;
+		MAX_MSTFX:units = "" ;
+		MAX_MSTFX:stagger = "" ;
+	float MAX_MSTFY(Time) ;
+		MAX_MSTFY:FieldType = 104 ;
+		MAX_MSTFY:MemoryOrder = "0  " ;
+		MAX_MSTFY:description = "Max map factor in domain" ;
+		MAX_MSTFY:units = "" ;
+		MAX_MSTFY:stagger = "" ;
+	float RAINC(Time, south_north, west_east) ;
+		RAINC:FieldType = 104 ;
+		RAINC:MemoryOrder = "XY " ;
+		RAINC:description = "ACCUMULATED TOTAL CUMULUS PRECIPITATION" ;
+		RAINC:units = "mm" ;
+		RAINC:stagger = "" ;
+		RAINC:coordinates = "XLONG XLAT" ;
+	float RAINSH(Time, south_north, west_east) ;
+		RAINSH:FieldType = 104 ;
+		RAINSH:MemoryOrder = "XY " ;
+		RAINSH:description = "ACCUMULATED SHALLOW CUMULUS PRECIPITATION" ;
+		RAINSH:units = "mm" ;
+		RAINSH:stagger = "" ;
+		RAINSH:coordinates = "XLONG XLAT" ;
+	float RAINNC(Time, south_north, west_east) ;
+		RAINNC:FieldType = 104 ;
+		RAINNC:MemoryOrder = "XY " ;
+		RAINNC:description = "ACCUMULATED TOTAL GRID SCALE PRECIPITATION" ;
+		RAINNC:units = "mm" ;
+		RAINNC:stagger = "" ;
+		RAINNC:coordinates = "XLONG XLAT" ;
+	float SNOWNC(Time, south_north, west_east) ;
+		SNOWNC:FieldType = 104 ;
+		SNOWNC:MemoryOrder = "XY " ;
+		SNOWNC:description = "ACCUMULATED TOTAL GRID SCALE SNOW AND ICE" ;
+		SNOWNC:units = "mm" ;
+		SNOWNC:stagger = "" ;
+		SNOWNC:coordinates = "XLONG XLAT" ;
+	float GRAUPELNC(Time, south_north, west_east) ;
+		GRAUPELNC:FieldType = 104 ;
+		GRAUPELNC:MemoryOrder = "XY " ;
+		GRAUPELNC:description = "ACCUMULATED TOTAL GRID SCALE GRAUPEL" ;
+		GRAUPELNC:units = "mm" ;
+		GRAUPELNC:stagger = "" ;
+		GRAUPELNC:coordinates = "XLONG XLAT" ;
+	float HAILNC(Time, south_north, west_east) ;
+		HAILNC:FieldType = 104 ;
+		HAILNC:MemoryOrder = "XY " ;
+		HAILNC:description = "ACCUMULATED TOTAL GRID SCALE HAIL" ;
+		HAILNC:units = "mm" ;
+		HAILNC:stagger = "" ;
+		HAILNC:coordinates = "XLONG XLAT" ;
+	int STEPAVE_COUNT(Time) ;
+		STEPAVE_COUNT:FieldType = 106 ;
+		STEPAVE_COUNT:MemoryOrder = "0  " ;
+		STEPAVE_COUNT:description = "time steps contained in averages for convective transport" ;
+		STEPAVE_COUNT:units = "" ;
+		STEPAVE_COUNT:stagger = "" ;
+	float CLDFRA(Time, bottom_top, south_north, west_east) ;
+		CLDFRA:FieldType = 104 ;
+		CLDFRA:MemoryOrder = "XYZ" ;
+		CLDFRA:description = "CLOUD FRACTION" ;
+		CLDFRA:units = "" ;
+		CLDFRA:stagger = "" ;
+		CLDFRA:coordinates = "XLONG XLAT" ;
+	float SWDOWN(Time, south_north, west_east) ;
+		SWDOWN:FieldType = 104 ;
+		SWDOWN:MemoryOrder = "XY " ;
+		SWDOWN:description = "DOWNWARD SHORT WAVE FLUX AT GROUND SURFACE" ;
+		SWDOWN:units = "W m-2" ;
+		SWDOWN:stagger = "" ;
+		SWDOWN:coordinates = "XLONG XLAT" ;
+	float GLW(Time, south_north, west_east) ;
+		GLW:FieldType = 104 ;
+		GLW:MemoryOrder = "XY " ;
+		GLW:description = "DOWNWARD LONG WAVE FLUX AT GROUND SURFACE" ;
+		GLW:units = "W m-2" ;
+		GLW:stagger = "" ;
+		GLW:coordinates = "XLONG XLAT" ;
+	float SWNORM(Time, south_north, west_east) ;
+		SWNORM:FieldType = 104 ;
+		SWNORM:MemoryOrder = "XY " ;
+		SWNORM:description = "NORMAL SHORT WAVE FLUX AT GROUND SURFACE (SLOPE-DEPENDENT)" ;
+		SWNORM:units = "W m-2" ;
+		SWNORM:stagger = "" ;
+		SWNORM:coordinates = "XLONG XLAT" ;
+	float OLR(Time, south_north, west_east) ;
+		OLR:FieldType = 104 ;
+		OLR:MemoryOrder = "XY " ;
+		OLR:description = "TOA OUTGOING LONG WAVE" ;
+		OLR:units = "W m-2" ;
+		OLR:stagger = "" ;
+		OLR:coordinates = "XLONG XLAT" ;
+	float XLAT(Time, south_north, west_east) ;
+		XLAT:FieldType = 104 ;
+		XLAT:MemoryOrder = "XY " ;
+		XLAT:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT:units = "degree_north" ;
+		XLAT:stagger = "" ;
+	float XLONG(Time, south_north, west_east) ;
+		XLONG:FieldType = 104 ;
+		XLONG:MemoryOrder = "XY " ;
+		XLONG:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG:units = "degree_east" ;
+		XLONG:stagger = "" ;
+	float XLAT_U(Time, south_north, west_east_stag) ;
+		XLAT_U:FieldType = 104 ;
+		XLAT_U:MemoryOrder = "XY " ;
+		XLAT_U:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT_U:units = "degree_north" ;
+		XLAT_U:stagger = "X" ;
+		XLAT_U:coordinates = "XLONG_U XLAT_U" ;
+	float XLONG_U(Time, south_north, west_east_stag) ;
+		XLONG_U:FieldType = 104 ;
+		XLONG_U:MemoryOrder = "XY " ;
+		XLONG_U:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG_U:units = "degree_east" ;
+		XLONG_U:stagger = "X" ;
+		XLONG_U:coordinates = "XLONG_U XLAT_U" ;
+	float XLAT_V(Time, south_north_stag, west_east) ;
+		XLAT_V:FieldType = 104 ;
+		XLAT_V:MemoryOrder = "XY " ;
+		XLAT_V:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT_V:units = "degree_north" ;
+		XLAT_V:stagger = "Y" ;
+		XLAT_V:coordinates = "XLONG_V XLAT_V" ;
+	float XLONG_V(Time, south_north_stag, west_east) ;
+		XLONG_V:FieldType = 104 ;
+		XLONG_V:MemoryOrder = "XY " ;
+		XLONG_V:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG_V:units = "degree_east" ;
+		XLONG_V:stagger = "Y" ;
+		XLONG_V:coordinates = "XLONG_V XLAT_V" ;
+	float ALBEDO(Time, south_north, west_east) ;
+		ALBEDO:FieldType = 104 ;
+		ALBEDO:MemoryOrder = "XY " ;
+		ALBEDO:description = "ALBEDO" ;
+		ALBEDO:units = "-" ;
+		ALBEDO:stagger = "" ;
+		ALBEDO:coordinates = "XLONG XLAT" ;
+	float ALBBCK(Time, south_north, west_east) ;
+		ALBBCK:FieldType = 104 ;
+		ALBBCK:MemoryOrder = "XY " ;
+		ALBBCK:description = "BACKGROUND ALBEDO" ;
+		ALBBCK:units = "" ;
+		ALBBCK:stagger = "" ;
+		ALBBCK:coordinates = "XLONG XLAT" ;
+	float EMISS(Time, south_north, west_east) ;
+		EMISS:FieldType = 104 ;
+		EMISS:MemoryOrder = "XY " ;
+		EMISS:description = "SURFACE EMISSIVITY" ;
+		EMISS:units = "" ;
+		EMISS:stagger = "" ;
+		EMISS:coordinates = "XLONG XLAT" ;
+	float NOAHRES(Time, south_north, west_east) ;
+		NOAHRES:FieldType = 104 ;
+		NOAHRES:MemoryOrder = "XY " ;
+		NOAHRES:description = "RESIDUAL OF THE NOAH SURFACE ENERGY BUDGET" ;
+		NOAHRES:units = "W m{-2}" ;
+		NOAHRES:stagger = "" ;
+		NOAHRES:coordinates = "XLONG XLAT" ;
+	float TMN(Time, south_north, west_east) ;
+		TMN:FieldType = 104 ;
+		TMN:MemoryOrder = "XY " ;
+		TMN:description = "SOIL TEMPERATURE AT LOWER BOUNDARY" ;
+		TMN:units = "K" ;
+		TMN:stagger = "" ;
+		TMN:coordinates = "XLONG XLAT" ;
+	float XLAND(Time, south_north, west_east) ;
+		XLAND:FieldType = 104 ;
+		XLAND:MemoryOrder = "XY " ;
+		XLAND:description = "LAND MASK (1 FOR LAND, 2 FOR WATER)" ;
+		XLAND:units = "" ;
+		XLAND:stagger = "" ;
+		XLAND:coordinates = "XLONG XLAT" ;
+	float UST(Time, south_north, west_east) ;
+		UST:FieldType = 104 ;
+		UST:MemoryOrder = "XY " ;
+		UST:description = "U* IN SIMILARITY THEORY" ;
+		UST:units = "m s-1" ;
+		UST:stagger = "" ;
+		UST:coordinates = "XLONG XLAT" ;
+	float PBLH(Time, south_north, west_east) ;
+		PBLH:FieldType = 104 ;
+		PBLH:MemoryOrder = "XY " ;
+		PBLH:description = "PBL HEIGHT" ;
+		PBLH:units = "m" ;
+		PBLH:stagger = "" ;
+		PBLH:coordinates = "XLONG XLAT" ;
+	float HFX(Time, south_north, west_east) ;
+		HFX:FieldType = 104 ;
+		HFX:MemoryOrder = "XY " ;
+		HFX:description = "UPWARD HEAT FLUX AT THE SURFACE" ;
+		HFX:units = "W m-2" ;
+		HFX:stagger = "" ;
+		HFX:coordinates = "XLONG XLAT" ;
+	float QFX(Time, south_north, west_east) ;
+		QFX:FieldType = 104 ;
+		QFX:MemoryOrder = "XY " ;
+		QFX:description = "UPWARD MOISTURE FLUX AT THE SURFACE" ;
+		QFX:units = "kg m-2 s-1" ;
+		QFX:stagger = "" ;
+		QFX:coordinates = "XLONG XLAT" ;
+	float LH(Time, south_north, west_east) ;
+		LH:FieldType = 104 ;
+		LH:MemoryOrder = "XY " ;
+		LH:description = "LATENT HEAT FLUX AT THE SURFACE" ;
+		LH:units = "W m-2" ;
+		LH:stagger = "" ;
+		LH:coordinates = "XLONG XLAT" ;
+	float ACHFX(Time, south_north, west_east) ;
+		ACHFX:FieldType = 104 ;
+		ACHFX:MemoryOrder = "XY " ;
+		ACHFX:description = "ACCUMULATED UPWARD HEAT FLUX AT THE SURFACE" ;
+		ACHFX:units = "J m-2" ;
+		ACHFX:stagger = "" ;
+		ACHFX:coordinates = "XLONG XLAT" ;
+	float ACLHF(Time, south_north, west_east) ;
+		ACLHF:FieldType = 104 ;
+		ACLHF:MemoryOrder = "XY " ;
+		ACLHF:description = "ACCUMULATED UPWARD LATENT HEAT FLUX AT THE SURFACE" ;
+		ACLHF:units = "J m-2" ;
+		ACLHF:stagger = "" ;
+		ACLHF:coordinates = "XLONG XLAT" ;
+	float SNOWC(Time, south_north, west_east) ;
+		SNOWC:FieldType = 104 ;
+		SNOWC:MemoryOrder = "XY " ;
+		SNOWC:description = "FLAG INDICATING SNOW COVERAGE (1 FOR SNOW COVER)" ;
+		SNOWC:units = "" ;
+		SNOWC:stagger = "" ;
+		SNOWC:coordinates = "XLONG XLAT" ;
+	float SR(Time, south_north, west_east) ;
+		SR:FieldType = 104 ;
+		SR:MemoryOrder = "XY " ;
+		SR:description = "fraction of frozen precipitation" ;
+		SR:units = "-" ;
+		SR:stagger = "" ;
+		SR:coordinates = "XLONG XLAT" ;
+	float POTEVP(Time, south_north, west_east) ;
+		POTEVP:FieldType = 104 ;
+		POTEVP:MemoryOrder = "XY " ;
+		POTEVP:description = "accumulated potential evaporation" ;
+		POTEVP:units = "W m-2" ;
+		POTEVP:stagger = "" ;
+		POTEVP:coordinates = "XLONG XLAT" ;
+	float SNOPCX(Time, south_north, west_east) ;
+		SNOPCX:FieldType = 104 ;
+		SNOPCX:MemoryOrder = "XY " ;
+		SNOPCX:description = "snow phase change heat flux" ;
+		SNOPCX:units = "W m-2" ;
+		SNOPCX:stagger = "" ;
+		SNOPCX:coordinates = "XLONG XLAT" ;
+	float SOILTB(Time, south_north, west_east) ;
+		SOILTB:FieldType = 104 ;
+		SOILTB:MemoryOrder = "XY " ;
+		SOILTB:description = "bottom soil temperature" ;
+		SOILTB:units = "K" ;
+		SOILTB:stagger = "" ;
+		SOILTB:coordinates = "XLONG XLAT" ;
+	int SAVE_TOPO_FROM_REAL(Time) ;
+		SAVE_TOPO_FROM_REAL:FieldType = 106 ;
+		SAVE_TOPO_FROM_REAL:MemoryOrder = "0  " ;
+		SAVE_TOPO_FROM_REAL:description = "1=original topo from real/0=topo modified by WRF" ;
+		SAVE_TOPO_FROM_REAL:units = "flag" ;
+		SAVE_TOPO_FROM_REAL:stagger = "" ;
+	float AVG_FUEL_FRAC(Time, south_north, west_east) ;
+		AVG_FUEL_FRAC:FieldType = 104 ;
+		AVG_FUEL_FRAC:MemoryOrder = "XY " ;
+		AVG_FUEL_FRAC:description = "fuel remaining averaged to atmospheric grid" ;
+		AVG_FUEL_FRAC:units = "1" ;
+		AVG_FUEL_FRAC:stagger = "Z" ;
+		AVG_FUEL_FRAC:coordinates = "XLONG XLAT" ;
+	float UAH(Time, south_north, west_east_stag) ;
+		UAH:FieldType = 104 ;
+		UAH:MemoryOrder = "XY " ;
+		UAH:description = "wind at fire_wind_height" ;
+		UAH:units = "m/s" ;
+		UAH:stagger = "X" ;
+		UAH:coordinates = "XLONG_U XLAT_U" ;
+	float VAH(Time, south_north_stag, west_east) ;
+		VAH:FieldType = 104 ;
+		VAH:MemoryOrder = "XY " ;
+		VAH:description = "wind at fire_wind_height" ;
+		VAH:units = "m/s" ;
+		VAH:stagger = "Y" ;
+		VAH:coordinates = "XLONG_V XLAT_V" ;
+	int SEED1(Time) ;
+		SEED1:FieldType = 106 ;
+		SEED1:MemoryOrder = "0  " ;
+		SEED1:description = "RANDOM SEED NUMBER 1" ;
+		SEED1:units = "" ;
+		SEED1:stagger = "" ;
+	int SEED2(Time) ;
+		SEED2:FieldType = 106 ;
+		SEED2:MemoryOrder = "0  " ;
+		SEED2:description = "RANDOM SEED NUMBER 2" ;
+		SEED2:units = "" ;
+		SEED2:stagger = "" ;
+
+// global attributes:
+		:TITLE = " OUTPUT FROM WRF V3.3 MODEL" ;
+		:START_DATE = "2001-10-25_00:00:00" ;
+		:SIMULATION_START_DATE = "2001-10-24_00:00:00" ;
+		:WEST-EAST_GRID_DIMENSION = 425 ;
+		:SOUTH-NORTH_GRID_DIMENSION = 300 ;
+		:BOTTOM-TOP_GRID_DIMENSION = 35 ;
+		:DX = 12000.f ;
+		:DY = 12000.f ;
+		:GRIDTYPE = "C" ;
+		:DIFF_OPT = 1 ;
+		:KM_OPT = 4 ;
+		:DAMP_OPT = 0 ;
+		:DAMPCOEF = 0.f ;
+		:KHDIF = 0.f ;
+		:KVDIF = 0.f ;
+		:MP_PHYSICS = 4 ;
+		:RA_LW_PHYSICS = 1 ;
+		:RA_SW_PHYSICS = 1 ;
+		:SF_SFCLAY_PHYSICS = 1 ;
+		:SF_SURFACE_PHYSICS = 1 ;
+		:BL_PBL_PHYSICS = 1 ;
+		:CU_PHYSICS = 1 ;
+		:SURFACE_INPUT_SOURCE = 1 ;
+		:SST_UPDATE = 0 ;
+		:GRID_FDDA = 0 ;
+		:GFDDA_INTERVAL_M = 0 ;
+		:GFDDA_END_H = 0 ;
+		:GRID_SFDDA = 0 ;
+		:SGFDDA_INTERVAL_M = 0 ;
+		:SGFDDA_END_H = 0 ;
+		:SF_URBAN_PHYSICS = 0 ;
+		:FEEDBACK = 1 ;
+		:SMOOTH_OPTION = 0 ;
+		:SWRAD_SCAT = 1.f ;
+		:W_DAMPING = 1 ;
+		:MOIST_ADV_OPT = 1 ;
+		:SCALAR_ADV_OPT = 1 ;
+		:TKE_ADV_OPT = 1 ;
+		:DIFF_6TH_OPT = 0 ;
+		:DIFF_6TH_FACTOR = 0.12f ;
+		:OBS_NUDGE_OPT = 0 ;
+		:BUCKET_MM = -1.f ;
+		:BUCKET_J = -1.f ;
+		:PREC_ACC_DT = 0.f ;
+		:OMLCALL = 0 ;
+		:ISFTCFLX = 0 ;
+		:ISHALLOW = 0 ;
+		:DFI_OPT = 0 ;
+		:SHCU_PHYSICS = 0 ;
+		:WEST-EAST_PATCH_START_UNSTAG = 1 ;
+		:WEST-EAST_PATCH_END_UNSTAG = 424 ;
+		:WEST-EAST_PATCH_START_STAG = 1 ;
+		:WEST-EAST_PATCH_END_STAG = 425 ;
+		:SOUTH-NORTH_PATCH_START_UNSTAG = 1 ;
+		:SOUTH-NORTH_PATCH_END_UNSTAG = 299 ;
+		:SOUTH-NORTH_PATCH_START_STAG = 1 ;
+		:SOUTH-NORTH_PATCH_END_STAG = 300 ;
+		:BOTTOM-TOP_PATCH_START_UNSTAG = 1 ;
+		:BOTTOM-TOP_PATCH_END_UNSTAG = 34 ;
+		:BOTTOM-TOP_PATCH_START_STAG = 1 ;
+		:BOTTOM-TOP_PATCH_END_STAG = 35 ;
+		:GRID_ID = 1 ;
+		:PARENT_ID = 0 ;
+		:I_PARENT_START = 0 ;
+		:J_PARENT_START = 0 ;
+		:PARENT_GRID_RATIO = 1 ;
+		:DT = 72.f ;
+		:CEN_LAT = 40.00001f ;
+		:CEN_LON = -98.f ;
+		:TRUELAT1 = 30.f ;
+		:TRUELAT2 = 60.f ;
+		:MOAD_CEN_LAT = 40.00001f ;
+		:STAND_LON = -98.f ;
+		:POLE_LAT = 0.f ;
+		:POLE_LON = 0.f ;
+		:GMT = 0.f ;
+		:JULYR = 2001 ;
+		:JULDAY = 297 ;
+		:MAP_PROJ = 1 ;
+		:MMINLU = "USGS" ;
+		:NUM_LAND_CAT = 24 ;
+		:ISWATER = 16 ;
+		:ISLAKE = -1 ;
+		:ISICE = 24 ;
+		:ISURBAN = 1 ;
+		:ISOILWATER = 14 ;
+}
+XDMOD***RESULT OF wrfout_d01_2001-10-25_00_00_00 ENDS
+
+XDMOD***RESULT OF wrfout_d01_2001-10-25_03_00_00 BEGINS
+netcdf wrfout_d01_2001-10-25_03_00_00 {
+dimensions:
+	Time = UNLIMITED ; // (1 currently)
+	DateStrLen = 19 ;
+	west_east = 424 ;
+	south_north = 299 ;
+	bottom_top = 34 ;
+	bottom_top_stag = 35 ;
+	soil_layers_stag = 5 ;
+	west_east_stag = 425 ;
+	south_north_stag = 300 ;
+variables:
+	char Times(Time, DateStrLen) ;
+	float LU_INDEX(Time, south_north, west_east) ;
+		LU_INDEX:FieldType = 104 ;
+		LU_INDEX:MemoryOrder = "XY " ;
+		LU_INDEX:description = "LAND USE CATEGORY" ;
+		LU_INDEX:units = "" ;
+		LU_INDEX:stagger = "" ;
+		LU_INDEX:coordinates = "XLONG XLAT" ;
+	float ZNU(Time, bottom_top) ;
+		ZNU:FieldType = 104 ;
+		ZNU:MemoryOrder = "Z  " ;
+		ZNU:description = "eta values on half (mass) levels" ;
+		ZNU:units = "" ;
+		ZNU:stagger = "" ;
+	float ZNW(Time, bottom_top_stag) ;
+		ZNW:FieldType = 104 ;
+		ZNW:MemoryOrder = "Z  " ;
+		ZNW:description = "eta values on full (w) levels" ;
+		ZNW:units = "" ;
+		ZNW:stagger = "Z" ;
+	float ZS(Time, soil_layers_stag) ;
+		ZS:FieldType = 104 ;
+		ZS:MemoryOrder = "Z  " ;
+		ZS:description = "DEPTHS OF CENTERS OF SOIL LAYERS" ;
+		ZS:units = "m" ;
+		ZS:stagger = "Z" ;
+	float DZS(Time, soil_layers_stag) ;
+		DZS:FieldType = 104 ;
+		DZS:MemoryOrder = "Z  " ;
+		DZS:description = "THICKNESSES OF SOIL LAYERS" ;
+		DZS:units = "m" ;
+		DZS:stagger = "Z" ;
+	float U(Time, bottom_top, south_north, west_east_stag) ;
+		U:FieldType = 104 ;
+		U:MemoryOrder = "XYZ" ;
+		U:description = "x-wind component" ;
+		U:units = "m s-1" ;
+		U:stagger = "X" ;
+		U:coordinates = "XLONG_U XLAT_U" ;
+	float V(Time, bottom_top, south_north_stag, west_east) ;
+		V:FieldType = 104 ;
+		V:MemoryOrder = "XYZ" ;
+		V:description = "y-wind component" ;
+		V:units = "m s-1" ;
+		V:stagger = "Y" ;
+		V:coordinates = "XLONG_V XLAT_V" ;
+	float W(Time, bottom_top_stag, south_north, west_east) ;
+		W:FieldType = 104 ;
+		W:MemoryOrder = "XYZ" ;
+		W:description = "z-wind component" ;
+		W:units = "m s-1" ;
+		W:stagger = "Z" ;
+		W:coordinates = "XLONG XLAT" ;
+	float PH(Time, bottom_top_stag, south_north, west_east) ;
+		PH:FieldType = 104 ;
+		PH:MemoryOrder = "XYZ" ;
+		PH:description = "perturbation geopotential" ;
+		PH:units = "m2 s-2" ;
+		PH:stagger = "Z" ;
+		PH:coordinates = "XLONG XLAT" ;
+	float PHB(Time, bottom_top_stag, south_north, west_east) ;
+		PHB:FieldType = 104 ;
+		PHB:MemoryOrder = "XYZ" ;
+		PHB:description = "base-state geopotential" ;
+		PHB:units = "m2 s-2" ;
+		PHB:stagger = "Z" ;
+		PHB:coordinates = "XLONG XLAT" ;
+	float T(Time, bottom_top, south_north, west_east) ;
+		T:FieldType = 104 ;
+		T:MemoryOrder = "XYZ" ;
+		T:description = "perturbation potential temperature (theta-t0)" ;
+		T:units = "K" ;
+		T:stagger = "" ;
+		T:coordinates = "XLONG XLAT" ;
+	float HFX_FORCE(Time) ;
+		HFX_FORCE:FieldType = 104 ;
+		HFX_FORCE:MemoryOrder = "0  " ;
+		HFX_FORCE:description = "SCM ideal surface sensible heat flux" ;
+		HFX_FORCE:units = "W m-2" ;
+		HFX_FORCE:stagger = "" ;
+	float LH_FORCE(Time) ;
+		LH_FORCE:FieldType = 104 ;
+		LH_FORCE:MemoryOrder = "0  " ;
+		LH_FORCE:description = "SCM ideal surface latent heat flux" ;
+		LH_FORCE:units = "W m-2" ;
+		LH_FORCE:stagger = "" ;
+	float TSK_FORCE(Time) ;
+		TSK_FORCE:FieldType = 104 ;
+		TSK_FORCE:MemoryOrder = "0  " ;
+		TSK_FORCE:description = "SCM ideal surface skin temperature" ;
+		TSK_FORCE:units = "W m-2" ;
+		TSK_FORCE:stagger = "" ;
+	float HFX_FORCE_TEND(Time) ;
+		HFX_FORCE_TEND:FieldType = 104 ;
+		HFX_FORCE_TEND:MemoryOrder = "0  " ;
+		HFX_FORCE_TEND:description = "SCM ideal surface sensible heat flux tendency" ;
+		HFX_FORCE_TEND:units = "W m-2 s-1" ;
+		HFX_FORCE_TEND:stagger = "" ;
+	float LH_FORCE_TEND(Time) ;
+		LH_FORCE_TEND:FieldType = 104 ;
+		LH_FORCE_TEND:MemoryOrder = "0  " ;
+		LH_FORCE_TEND:description = "SCM ideal surface latent heat flux tendency" ;
+		LH_FORCE_TEND:units = "W m-2 s-1" ;
+		LH_FORCE_TEND:stagger = "" ;
+	float TSK_FORCE_TEND(Time) ;
+		TSK_FORCE_TEND:FieldType = 104 ;
+		TSK_FORCE_TEND:MemoryOrder = "0  " ;
+		TSK_FORCE_TEND:description = "SCM ideal surface skin temperature tendency" ;
+		TSK_FORCE_TEND:units = "W m-2 s-1" ;
+		TSK_FORCE_TEND:stagger = "" ;
+	float MU(Time, south_north, west_east) ;
+		MU:FieldType = 104 ;
+		MU:MemoryOrder = "XY " ;
+		MU:description = "perturbation dry air mass in column" ;
+		MU:units = "Pa" ;
+		MU:stagger = "" ;
+		MU:coordinates = "XLONG XLAT" ;
+	float MUB(Time, south_north, west_east) ;
+		MUB:FieldType = 104 ;
+		MUB:MemoryOrder = "XY " ;
+		MUB:description = "base state dry air mass in column" ;
+		MUB:units = "Pa" ;
+		MUB:stagger = "" ;
+		MUB:coordinates = "XLONG XLAT" ;
+	float NEST_POS(Time, south_north, west_east) ;
+		NEST_POS:FieldType = 104 ;
+		NEST_POS:MemoryOrder = "XY " ;
+		NEST_POS:description = "-" ;
+		NEST_POS:units = "-" ;
+		NEST_POS:stagger = "" ;
+		NEST_POS:coordinates = "XLONG XLAT" ;
+	float P(Time, bottom_top, south_north, west_east) ;
+		P:FieldType = 104 ;
+		P:MemoryOrder = "XYZ" ;
+		P:description = "perturbation pressure" ;
+		P:units = "Pa" ;
+		P:stagger = "" ;
+		P:coordinates = "XLONG XLAT" ;
+	float PB(Time, bottom_top, south_north, west_east) ;
+		PB:FieldType = 104 ;
+		PB:MemoryOrder = "XYZ" ;
+		PB:description = "BASE STATE PRESSURE" ;
+		PB:units = "Pa" ;
+		PB:stagger = "" ;
+		PB:coordinates = "XLONG XLAT" ;
+	float FNM(Time, bottom_top) ;
+		FNM:FieldType = 104 ;
+		FNM:MemoryOrder = "Z  " ;
+		FNM:description = "upper weight for vertical stretching" ;
+		FNM:units = "" ;
+		FNM:stagger = "" ;
+	float FNP(Time, bottom_top) ;
+		FNP:FieldType = 104 ;
+		FNP:MemoryOrder = "Z  " ;
+		FNP:description = "lower weight for vertical stretching" ;
+		FNP:units = "" ;
+		FNP:stagger = "" ;
+	float RDNW(Time, bottom_top) ;
+		RDNW:FieldType = 104 ;
+		RDNW:MemoryOrder = "Z  " ;
+		RDNW:description = "inverse d(eta) values between full (w) levels" ;
+		RDNW:units = "" ;
+		RDNW:stagger = "" ;
+	float RDN(Time, bottom_top) ;
+		RDN:FieldType = 104 ;
+		RDN:MemoryOrder = "Z  " ;
+		RDN:description = "inverse d(eta) values between half (mass) levels" ;
+		RDN:units = "" ;
+		RDN:stagger = "" ;
+	float DNW(Time, bottom_top) ;
+		DNW:FieldType = 104 ;
+		DNW:MemoryOrder = "Z  " ;
+		DNW:description = "d(eta) values between full (w) levels" ;
+		DNW:units = "" ;
+		DNW:stagger = "" ;
+	float DN(Time, bottom_top) ;
+		DN:FieldType = 104 ;
+		DN:MemoryOrder = "Z  " ;
+		DN:description = "d(eta) values between half (mass) levels" ;
+		DN:units = "" ;
+		DN:stagger = "" ;
+	float CFN(Time) ;
+		CFN:FieldType = 104 ;
+		CFN:MemoryOrder = "0  " ;
+		CFN:description = "extrapolation constant" ;
+		CFN:units = "" ;
+		CFN:stagger = "" ;
+	float CFN1(Time) ;
+		CFN1:FieldType = 104 ;
+		CFN1:MemoryOrder = "0  " ;
+		CFN1:description = "extrapolation constant" ;
+		CFN1:units = "" ;
+		CFN1:stagger = "" ;
+	float P_HYD(Time, bottom_top, south_north, west_east) ;
+		P_HYD:FieldType = 104 ;
+		P_HYD:MemoryOrder = "XYZ" ;
+		P_HYD:description = "hydrostatic pressure" ;
+		P_HYD:units = "Pa" ;
+		P_HYD:stagger = "" ;
+		P_HYD:coordinates = "XLONG XLAT" ;
+	float Q2(Time, south_north, west_east) ;
+		Q2:FieldType = 104 ;
+		Q2:MemoryOrder = "XY " ;
+		Q2:description = "QV at 2 M" ;
+		Q2:units = "kg kg-1" ;
+		Q2:stagger = "" ;
+		Q2:coordinates = "XLONG XLAT" ;
+	float T2(Time, south_north, west_east) ;
+		T2:FieldType = 104 ;
+		T2:MemoryOrder = "XY " ;
+		T2:description = "TEMP at 2 M" ;
+		T2:units = "K" ;
+		T2:stagger = "" ;
+		T2:coordinates = "XLONG XLAT" ;
+	float TH2(Time, south_north, west_east) ;
+		TH2:FieldType = 104 ;
+		TH2:MemoryOrder = "XY " ;
+		TH2:description = "POT TEMP at 2 M" ;
+		TH2:units = "K" ;
+		TH2:stagger = "" ;
+		TH2:coordinates = "XLONG XLAT" ;
+	float PSFC(Time, south_north, west_east) ;
+		PSFC:FieldType = 104 ;
+		PSFC:MemoryOrder = "XY " ;
+		PSFC:description = "SFC PRESSURE" ;
+		PSFC:units = "Pa" ;
+		PSFC:stagger = "" ;
+		PSFC:coordinates = "XLONG XLAT" ;
+	float U10(Time, south_north, west_east) ;
+		U10:FieldType = 104 ;
+		U10:MemoryOrder = "XY " ;
+		U10:description = "U at 10 M" ;
+		U10:units = "m s-1" ;
+		U10:stagger = "" ;
+		U10:coordinates = "XLONG XLAT" ;
+	float V10(Time, south_north, west_east) ;
+		V10:FieldType = 104 ;
+		V10:MemoryOrder = "XY " ;
+		V10:description = "V at 10 M" ;
+		V10:units = "m s-1" ;
+		V10:stagger = "" ;
+		V10:coordinates = "XLONG XLAT" ;
+	float RDX(Time) ;
+		RDX:FieldType = 104 ;
+		RDX:MemoryOrder = "0  " ;
+		RDX:description = "INVERSE X GRID LENGTH" ;
+		RDX:units = "" ;
+		RDX:stagger = "" ;
+	float RDY(Time) ;
+		RDY:FieldType = 104 ;
+		RDY:MemoryOrder = "0  " ;
+		RDY:description = "INVERSE Y GRID LENGTH" ;
+		RDY:units = "" ;
+		RDY:stagger = "" ;
+	float RESM(Time) ;
+		RESM:FieldType = 104 ;
+		RESM:MemoryOrder = "0  " ;
+		RESM:description = "TIME WEIGHT CONSTANT FOR SMALL STEPS" ;
+		RESM:units = "" ;
+		RESM:stagger = "" ;
+	float ZETATOP(Time) ;
+		ZETATOP:FieldType = 104 ;
+		ZETATOP:MemoryOrder = "0  " ;
+		ZETATOP:description = "ZETA AT MODEL TOP" ;
+		ZETATOP:units = "" ;
+		ZETATOP:stagger = "" ;
+	float CF1(Time) ;
+		CF1:FieldType = 104 ;
+		CF1:MemoryOrder = "0  " ;
+		CF1:description = "2nd order extrapolation constant" ;
+		CF1:units = "" ;
+		CF1:stagger = "" ;
+	float CF2(Time) ;
+		CF2:FieldType = 104 ;
+		CF2:MemoryOrder = "0  " ;
+		CF2:description = "2nd order extrapolation constant" ;
+		CF2:units = "" ;
+		CF2:stagger = "" ;
+	float CF3(Time) ;
+		CF3:FieldType = 104 ;
+		CF3:MemoryOrder = "0  " ;
+		CF3:description = "2nd order extrapolation constant" ;
+		CF3:units = "" ;
+		CF3:stagger = "" ;
+	int ITIMESTEP(Time) ;
+		ITIMESTEP:FieldType = 106 ;
+		ITIMESTEP:MemoryOrder = "0  " ;
+		ITIMESTEP:description = "" ;
+		ITIMESTEP:units = "" ;
+		ITIMESTEP:stagger = "" ;
+	float XTIME(Time) ;
+		XTIME:FieldType = 104 ;
+		XTIME:MemoryOrder = "0  " ;
+		XTIME:description = "minutes since simulation start" ;
+		XTIME:units = "" ;
+		XTIME:stagger = "" ;
+	float QVAPOR(Time, bottom_top, south_north, west_east) ;
+		QVAPOR:FieldType = 104 ;
+		QVAPOR:MemoryOrder = "XYZ" ;
+		QVAPOR:description = "Water vapor mixing ratio" ;
+		QVAPOR:units = "kg kg-1" ;
+		QVAPOR:stagger = "" ;
+		QVAPOR:coordinates = "XLONG XLAT" ;
+	float QCLOUD(Time, bottom_top, south_north, west_east) ;
+		QCLOUD:FieldType = 104 ;
+		QCLOUD:MemoryOrder = "XYZ" ;
+		QCLOUD:description = "Cloud water mixing ratio" ;
+		QCLOUD:units = "kg kg-1" ;
+		QCLOUD:stagger = "" ;
+		QCLOUD:coordinates = "XLONG XLAT" ;
+	float QRAIN(Time, bottom_top, south_north, west_east) ;
+		QRAIN:FieldType = 104 ;
+		QRAIN:MemoryOrder = "XYZ" ;
+		QRAIN:description = "Rain water mixing ratio" ;
+		QRAIN:units = "kg kg-1" ;
+		QRAIN:stagger = "" ;
+		QRAIN:coordinates = "XLONG XLAT" ;
+	float QICE(Time, bottom_top, south_north, west_east) ;
+		QICE:FieldType = 104 ;
+		QICE:MemoryOrder = "XYZ" ;
+		QICE:description = "Ice mixing ratio" ;
+		QICE:units = "kg kg-1" ;
+		QICE:stagger = "" ;
+		QICE:coordinates = "XLONG XLAT" ;
+	float QSNOW(Time, bottom_top, south_north, west_east) ;
+		QSNOW:FieldType = 104 ;
+		QSNOW:MemoryOrder = "XYZ" ;
+		QSNOW:description = "Snow mixing ratio" ;
+		QSNOW:units = "kg kg-1" ;
+		QSNOW:stagger = "" ;
+		QSNOW:coordinates = "XLONG XLAT" ;
+	float LANDMASK(Time, south_north, west_east) ;
+		LANDMASK:FieldType = 104 ;
+		LANDMASK:MemoryOrder = "XY " ;
+		LANDMASK:description = "LAND MASK (1 FOR LAND, 0 FOR WATER)" ;
+		LANDMASK:units = "" ;
+		LANDMASK:stagger = "" ;
+		LANDMASK:coordinates = "XLONG XLAT" ;
+	float TSLB(Time, soil_layers_stag, south_north, west_east) ;
+		TSLB:FieldType = 104 ;
+		TSLB:MemoryOrder = "XYZ" ;
+		TSLB:description = "SOIL TEMPERATURE" ;
+		TSLB:units = "K" ;
+		TSLB:stagger = "Z" ;
+		TSLB:coordinates = "XLONG XLAT" ;
+	float SMOIS(Time, soil_layers_stag, south_north, west_east) ;
+		SMOIS:FieldType = 104 ;
+		SMOIS:MemoryOrder = "XYZ" ;
+		SMOIS:description = "SOIL MOISTURE" ;
+		SMOIS:units = "m3 m-3" ;
+		SMOIS:stagger = "Z" ;
+		SMOIS:coordinates = "XLONG XLAT" ;
+	float SH2O(Time, soil_layers_stag, south_north, west_east) ;
+		SH2O:FieldType = 104 ;
+		SH2O:MemoryOrder = "XYZ" ;
+		SH2O:description = "SOIL LIQUID WATER" ;
+		SH2O:units = "m3 m-3" ;
+		SH2O:stagger = "Z" ;
+		SH2O:coordinates = "XLONG XLAT" ;
+	float SMCREL(Time, soil_layers_stag, south_north, west_east) ;
+		SMCREL:FieldType = 104 ;
+		SMCREL:MemoryOrder = "XYZ" ;
+		SMCREL:description = "RELATIVE SOIL MOISTURE" ;
+		SMCREL:units = "" ;
+		SMCREL:stagger = "Z" ;
+		SMCREL:coordinates = "XLONG XLAT" ;
+	float SEAICE(Time, south_north, west_east) ;
+		SEAICE:FieldType = 104 ;
+		SEAICE:MemoryOrder = "XY " ;
+		SEAICE:description = "SEA ICE FLAG" ;
+		SEAICE:units = "" ;
+		SEAICE:stagger = "" ;
+		SEAICE:coordinates = "XLONG XLAT" ;
+	float XICEM(Time, south_north, west_east) ;
+		XICEM:FieldType = 104 ;
+		XICEM:MemoryOrder = "XY " ;
+		XICEM:description = "SEA ICE FLAG (PREVIOUS STEP)" ;
+		XICEM:units = "" ;
+		XICEM:stagger = "" ;
+		XICEM:coordinates = "XLONG XLAT" ;
+	float SFROFF(Time, south_north, west_east) ;
+		SFROFF:FieldType = 104 ;
+		SFROFF:MemoryOrder = "XY " ;
+		SFROFF:description = "SURFACE RUNOFF" ;
+		SFROFF:units = "mm" ;
+		SFROFF:stagger = "" ;
+		SFROFF:coordinates = "XLONG XLAT" ;
+	float UDROFF(Time, south_north, west_east) ;
+		UDROFF:FieldType = 104 ;
+		UDROFF:MemoryOrder = "XY " ;
+		UDROFF:description = "UNDERGROUND RUNOFF" ;
+		UDROFF:units = "mm" ;
+		UDROFF:stagger = "" ;
+		UDROFF:coordinates = "XLONG XLAT" ;
+	int IVGTYP(Time, south_north, west_east) ;
+		IVGTYP:FieldType = 106 ;
+		IVGTYP:MemoryOrder = "XY " ;
+		IVGTYP:description = "DOMINANT VEGETATION CATEGORY" ;
+		IVGTYP:units = "" ;
+		IVGTYP:stagger = "" ;
+		IVGTYP:coordinates = "XLONG XLAT" ;
+	int ISLTYP(Time, south_north, west_east) ;
+		ISLTYP:FieldType = 106 ;
+		ISLTYP:MemoryOrder = "XY " ;
+		ISLTYP:description = "DOMINANT SOIL CATEGORY" ;
+		ISLTYP:units = "" ;
+		ISLTYP:stagger = "" ;
+		ISLTYP:coordinates = "XLONG XLAT" ;
+	float VEGFRA(Time, south_north, west_east) ;
+		VEGFRA:FieldType = 104 ;
+		VEGFRA:MemoryOrder = "XY " ;
+		VEGFRA:description = "VEGETATION FRACTION" ;
+		VEGFRA:units = "" ;
+		VEGFRA:stagger = "" ;
+		VEGFRA:coordinates = "XLONG XLAT" ;
+	float GRDFLX(Time, south_north, west_east) ;
+		GRDFLX:FieldType = 104 ;
+		GRDFLX:MemoryOrder = "XY " ;
+		GRDFLX:description = "GROUND HEAT FLUX" ;
+		GRDFLX:units = "W m-2" ;
+		GRDFLX:stagger = "" ;
+		GRDFLX:coordinates = "XLONG XLAT" ;
+	float ACGRDFLX(Time, south_north, west_east) ;
+		ACGRDFLX:FieldType = 104 ;
+		ACGRDFLX:MemoryOrder = "XY " ;
+		ACGRDFLX:description = "ACCUMULATED GROUND HEAT FLUX" ;
+		ACGRDFLX:units = "J m-2" ;
+		ACGRDFLX:stagger = "" ;
+		ACGRDFLX:coordinates = "XLONG XLAT" ;
+	float SNOW(Time, south_north, west_east) ;
+		SNOW:FieldType = 104 ;
+		SNOW:MemoryOrder = "XY " ;
+		SNOW:description = "SNOW WATER EQUIVALENT" ;
+		SNOW:units = "kg m-2" ;
+		SNOW:stagger = "" ;
+		SNOW:coordinates = "XLONG XLAT" ;
+	float SNOWH(Time, south_north, west_east) ;
+		SNOWH:FieldType = 104 ;
+		SNOWH:MemoryOrder = "XY " ;
+		SNOWH:description = "PHYSICAL SNOW DEPTH" ;
+		SNOWH:units = "m" ;
+		SNOWH:stagger = "" ;
+		SNOWH:coordinates = "XLONG XLAT" ;
+	float CANWAT(Time, south_north, west_east) ;
+		CANWAT:FieldType = 104 ;
+		CANWAT:MemoryOrder = "XY " ;
+		CANWAT:description = "CANOPY WATER" ;
+		CANWAT:units = "kg m-2" ;
+		CANWAT:stagger = "" ;
+		CANWAT:coordinates = "XLONG XLAT" ;
+	float SST(Time, south_north, west_east) ;
+		SST:FieldType = 104 ;
+		SST:MemoryOrder = "XY " ;
+		SST:description = "SEA SURFACE TEMPERATURE" ;
+		SST:units = "K" ;
+		SST:stagger = "" ;
+		SST:coordinates = "XLONG XLAT" ;
+	float SSTSK(Time, south_north, west_east) ;
+		SSTSK:FieldType = 104 ;
+		SSTSK:MemoryOrder = "XY " ;
+		SSTSK:description = "SKIN SEA SURFACE TEMPERATURE" ;
+		SSTSK:units = "K" ;
+		SSTSK:stagger = "" ;
+		SSTSK:coordinates = "XLONG XLAT" ;
+	float LAI(Time, south_north, west_east) ;
+		LAI:FieldType = 104 ;
+		LAI:MemoryOrder = "XY " ;
+		LAI:description = "Leaf area index" ;
+		LAI:units = "area/area" ;
+		LAI:stagger = "" ;
+		LAI:coordinates = "XLONG XLAT" ;
+	float H_DIABATIC(Time, bottom_top, south_north, west_east) ;
+		H_DIABATIC:FieldType = 104 ;
+		H_DIABATIC:MemoryOrder = "XYZ" ;
+		H_DIABATIC:description = "MICROPHYSICS LATENT HEATING" ;
+		H_DIABATIC:units = "K s-1" ;
+		H_DIABATIC:stagger = "" ;
+		H_DIABATIC:coordinates = "XLONG XLAT" ;
+	float MAPFAC_M(Time, south_north, west_east) ;
+		MAPFAC_M:FieldType = 104 ;
+		MAPFAC_M:MemoryOrder = "XY " ;
+		MAPFAC_M:description = "Map scale factor on mass grid" ;
+		MAPFAC_M:units = "" ;
+		MAPFAC_M:stagger = "" ;
+		MAPFAC_M:coordinates = "XLONG XLAT" ;
+	float MAPFAC_U(Time, south_north, west_east_stag) ;
+		MAPFAC_U:FieldType = 104 ;
+		MAPFAC_U:MemoryOrder = "XY " ;
+		MAPFAC_U:description = "Map scale factor on u-grid" ;
+		MAPFAC_U:units = "" ;
+		MAPFAC_U:stagger = "X" ;
+		MAPFAC_U:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_V(Time, south_north_stag, west_east) ;
+		MAPFAC_V:FieldType = 104 ;
+		MAPFAC_V:MemoryOrder = "XY " ;
+		MAPFAC_V:description = "Map scale factor on v-grid" ;
+		MAPFAC_V:units = "" ;
+		MAPFAC_V:stagger = "Y" ;
+		MAPFAC_V:coordinates = "XLONG_V XLAT_V" ;
+	float MAPFAC_MX(Time, south_north, west_east) ;
+		MAPFAC_MX:FieldType = 104 ;
+		MAPFAC_MX:MemoryOrder = "XY " ;
+		MAPFAC_MX:description = "Map scale factor on mass grid, x direction" ;
+		MAPFAC_MX:units = "" ;
+		MAPFAC_MX:stagger = "" ;
+		MAPFAC_MX:coordinates = "XLONG XLAT" ;
+	float MAPFAC_MY(Time, south_north, west_east) ;
+		MAPFAC_MY:FieldType = 104 ;
+		MAPFAC_MY:MemoryOrder = "XY " ;
+		MAPFAC_MY:description = "Map scale factor on mass grid, y direction" ;
+		MAPFAC_MY:units = "" ;
+		MAPFAC_MY:stagger = "" ;
+		MAPFAC_MY:coordinates = "XLONG XLAT" ;
+	float MAPFAC_UX(Time, south_north, west_east_stag) ;
+		MAPFAC_UX:FieldType = 104 ;
+		MAPFAC_UX:MemoryOrder = "XY " ;
+		MAPFAC_UX:description = "Map scale factor on u-grid, x direction" ;
+		MAPFAC_UX:units = "" ;
+		MAPFAC_UX:stagger = "X" ;
+		MAPFAC_UX:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_UY(Time, south_north, west_east_stag) ;
+		MAPFAC_UY:FieldType = 104 ;
+		MAPFAC_UY:MemoryOrder = "XY " ;
+		MAPFAC_UY:description = "Map scale factor on u-grid, y direction" ;
+		MAPFAC_UY:units = "" ;
+		MAPFAC_UY:stagger = "X" ;
+		MAPFAC_UY:coordinates = "XLONG_U XLAT_U" ;
+	float MAPFAC_VX(Time, south_north_stag, west_east) ;
+		MAPFAC_VX:FieldType = 104 ;
+		MAPFAC_VX:MemoryOrder = "XY " ;
+		MAPFAC_VX:description = "Map scale factor on v-grid, x direction" ;
+		MAPFAC_VX:units = "" ;
+		MAPFAC_VX:stagger = "Y" ;
+		MAPFAC_VX:coordinates = "XLONG_V XLAT_V" ;
+	float MF_VX_INV(Time, south_north_stag, west_east) ;
+		MF_VX_INV:FieldType = 104 ;
+		MF_VX_INV:MemoryOrder = "XY " ;
+		MF_VX_INV:description = "Inverse map scale factor on v-grid, x direction" ;
+		MF_VX_INV:units = "" ;
+		MF_VX_INV:stagger = "Y" ;
+		MF_VX_INV:coordinates = "XLONG_V XLAT_V" ;
+	float MAPFAC_VY(Time, south_north_stag, west_east) ;
+		MAPFAC_VY:FieldType = 104 ;
+		MAPFAC_VY:MemoryOrder = "XY " ;
+		MAPFAC_VY:description = "Map scale factor on v-grid, y direction" ;
+		MAPFAC_VY:units = "" ;
+		MAPFAC_VY:stagger = "Y" ;
+		MAPFAC_VY:coordinates = "XLONG_V XLAT_V" ;
+	float F(Time, south_north, west_east) ;
+		F:FieldType = 104 ;
+		F:MemoryOrder = "XY " ;
+		F:description = "Coriolis sine latitude term" ;
+		F:units = "s-1" ;
+		F:stagger = "" ;
+		F:coordinates = "XLONG XLAT" ;
+	float E(Time, south_north, west_east) ;
+		E:FieldType = 104 ;
+		E:MemoryOrder = "XY " ;
+		E:description = "Coriolis cosine latitude term" ;
+		E:units = "s-1" ;
+		E:stagger = "" ;
+		E:coordinates = "XLONG XLAT" ;
+	float SINALPHA(Time, south_north, west_east) ;
+		SINALPHA:FieldType = 104 ;
+		SINALPHA:MemoryOrder = "XY " ;
+		SINALPHA:description = "Local sine of map rotation" ;
+		SINALPHA:units = "" ;
+		SINALPHA:stagger = "" ;
+		SINALPHA:coordinates = "XLONG XLAT" ;
+	float COSALPHA(Time, south_north, west_east) ;
+		COSALPHA:FieldType = 104 ;
+		COSALPHA:MemoryOrder = "XY " ;
+		COSALPHA:description = "Local cosine of map rotation" ;
+		COSALPHA:units = "" ;
+		COSALPHA:stagger = "" ;
+		COSALPHA:coordinates = "XLONG XLAT" ;
+	float HGT(Time, south_north, west_east) ;
+		HGT:FieldType = 104 ;
+		HGT:MemoryOrder = "XY " ;
+		HGT:description = "Terrain Height" ;
+		HGT:units = "m" ;
+		HGT:stagger = "" ;
+		HGT:coordinates = "XLONG XLAT" ;
+	float TSK(Time, south_north, west_east) ;
+		TSK:FieldType = 104 ;
+		TSK:MemoryOrder = "XY " ;
+		TSK:description = "SURFACE SKIN TEMPERATURE" ;
+		TSK:units = "K" ;
+		TSK:stagger = "" ;
+		TSK:coordinates = "XLONG XLAT" ;
+	float P_TOP(Time) ;
+		P_TOP:FieldType = 104 ;
+		P_TOP:MemoryOrder = "0  " ;
+		P_TOP:description = "PRESSURE TOP OF THE MODEL" ;
+		P_TOP:units = "Pa" ;
+		P_TOP:stagger = "" ;
+	float T00(Time) ;
+		T00:FieldType = 104 ;
+		T00:MemoryOrder = "0  " ;
+		T00:description = "BASE STATE TEMPERATURE" ;
+		T00:units = "K" ;
+		T00:stagger = "" ;
+	float P00(Time) ;
+		P00:FieldType = 104 ;
+		P00:MemoryOrder = "0  " ;
+		P00:description = "BASE STATE PRESURE" ;
+		P00:units = "Pa" ;
+		P00:stagger = "" ;
+	float TLP(Time) ;
+		TLP:FieldType = 104 ;
+		TLP:MemoryOrder = "0  " ;
+		TLP:description = "BASE STATE LAPSE RATE" ;
+		TLP:units = "" ;
+		TLP:stagger = "" ;
+	float TISO(Time) ;
+		TISO:FieldType = 104 ;
+		TISO:MemoryOrder = "0  " ;
+		TISO:description = "TEMP AT WHICH THE BASE T TURNS CONST" ;
+		TISO:units = "K" ;
+		TISO:stagger = "" ;
+	float MAX_MSTFX(Time) ;
+		MAX_MSTFX:FieldType = 104 ;
+		MAX_MSTFX:MemoryOrder = "0  " ;
+		MAX_MSTFX:description = "Max map factor in domain" ;
+		MAX_MSTFX:units = "" ;
+		MAX_MSTFX:stagger = "" ;
+	float MAX_MSTFY(Time) ;
+		MAX_MSTFY:FieldType = 104 ;
+		MAX_MSTFY:MemoryOrder = "0  " ;
+		MAX_MSTFY:description = "Max map factor in domain" ;
+		MAX_MSTFY:units = "" ;
+		MAX_MSTFY:stagger = "" ;
+	float RAINC(Time, south_north, west_east) ;
+		RAINC:FieldType = 104 ;
+		RAINC:MemoryOrder = "XY " ;
+		RAINC:description = "ACCUMULATED TOTAL CUMULUS PRECIPITATION" ;
+		RAINC:units = "mm" ;
+		RAINC:stagger = "" ;
+		RAINC:coordinates = "XLONG XLAT" ;
+	float RAINSH(Time, south_north, west_east) ;
+		RAINSH:FieldType = 104 ;
+		RAINSH:MemoryOrder = "XY " ;
+		RAINSH:description = "ACCUMULATED SHALLOW CUMULUS PRECIPITATION" ;
+		RAINSH:units = "mm" ;
+		RAINSH:stagger = "" ;
+		RAINSH:coordinates = "XLONG XLAT" ;
+	float RAINNC(Time, south_north, west_east) ;
+		RAINNC:FieldType = 104 ;
+		RAINNC:MemoryOrder = "XY " ;
+		RAINNC:description = "ACCUMULATED TOTAL GRID SCALE PRECIPITATION" ;
+		RAINNC:units = "mm" ;
+		RAINNC:stagger = "" ;
+		RAINNC:coordinates = "XLONG XLAT" ;
+	float SNOWNC(Time, south_north, west_east) ;
+		SNOWNC:FieldType = 104 ;
+		SNOWNC:MemoryOrder = "XY " ;
+		SNOWNC:description = "ACCUMULATED TOTAL GRID SCALE SNOW AND ICE" ;
+		SNOWNC:units = "mm" ;
+		SNOWNC:stagger = "" ;
+		SNOWNC:coordinates = "XLONG XLAT" ;
+	float GRAUPELNC(Time, south_north, west_east) ;
+		GRAUPELNC:FieldType = 104 ;
+		GRAUPELNC:MemoryOrder = "XY " ;
+		GRAUPELNC:description = "ACCUMULATED TOTAL GRID SCALE GRAUPEL" ;
+		GRAUPELNC:units = "mm" ;
+		GRAUPELNC:stagger = "" ;
+		GRAUPELNC:coordinates = "XLONG XLAT" ;
+	float HAILNC(Time, south_north, west_east) ;
+		HAILNC:FieldType = 104 ;
+		HAILNC:MemoryOrder = "XY " ;
+		HAILNC:description = "ACCUMULATED TOTAL GRID SCALE HAIL" ;
+		HAILNC:units = "mm" ;
+		HAILNC:stagger = "" ;
+		HAILNC:coordinates = "XLONG XLAT" ;
+	int STEPAVE_COUNT(Time) ;
+		STEPAVE_COUNT:FieldType = 106 ;
+		STEPAVE_COUNT:MemoryOrder = "0  " ;
+		STEPAVE_COUNT:description = "time steps contained in averages for convective transport" ;
+		STEPAVE_COUNT:units = "" ;
+		STEPAVE_COUNT:stagger = "" ;
+	float CLDFRA(Time, bottom_top, south_north, west_east) ;
+		CLDFRA:FieldType = 104 ;
+		CLDFRA:MemoryOrder = "XYZ" ;
+		CLDFRA:description = "CLOUD FRACTION" ;
+		CLDFRA:units = "" ;
+		CLDFRA:stagger = "" ;
+		CLDFRA:coordinates = "XLONG XLAT" ;
+	float SWDOWN(Time, south_north, west_east) ;
+		SWDOWN:FieldType = 104 ;
+		SWDOWN:MemoryOrder = "XY " ;
+		SWDOWN:description = "DOWNWARD SHORT WAVE FLUX AT GROUND SURFACE" ;
+		SWDOWN:units = "W m-2" ;
+		SWDOWN:stagger = "" ;
+		SWDOWN:coordinates = "XLONG XLAT" ;
+	float GLW(Time, south_north, west_east) ;
+		GLW:FieldType = 104 ;
+		GLW:MemoryOrder = "XY " ;
+		GLW:description = "DOWNWARD LONG WAVE FLUX AT GROUND SURFACE" ;
+		GLW:units = "W m-2" ;
+		GLW:stagger = "" ;
+		GLW:coordinates = "XLONG XLAT" ;
+	float SWNORM(Time, south_north, west_east) ;
+		SWNORM:FieldType = 104 ;
+		SWNORM:MemoryOrder = "XY " ;
+		SWNORM:description = "NORMAL SHORT WAVE FLUX AT GROUND SURFACE (SLOPE-DEPENDENT)" ;
+		SWNORM:units = "W m-2" ;
+		SWNORM:stagger = "" ;
+		SWNORM:coordinates = "XLONG XLAT" ;
+	float OLR(Time, south_north, west_east) ;
+		OLR:FieldType = 104 ;
+		OLR:MemoryOrder = "XY " ;
+		OLR:description = "TOA OUTGOING LONG WAVE" ;
+		OLR:units = "W m-2" ;
+		OLR:stagger = "" ;
+		OLR:coordinates = "XLONG XLAT" ;
+	float XLAT(Time, south_north, west_east) ;
+		XLAT:FieldType = 104 ;
+		XLAT:MemoryOrder = "XY " ;
+		XLAT:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT:units = "degree_north" ;
+		XLAT:stagger = "" ;
+	float XLONG(Time, south_north, west_east) ;
+		XLONG:FieldType = 104 ;
+		XLONG:MemoryOrder = "XY " ;
+		XLONG:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG:units = "degree_east" ;
+		XLONG:stagger = "" ;
+	float XLAT_U(Time, south_north, west_east_stag) ;
+		XLAT_U:FieldType = 104 ;
+		XLAT_U:MemoryOrder = "XY " ;
+		XLAT_U:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT_U:units = "degree_north" ;
+		XLAT_U:stagger = "X" ;
+		XLAT_U:coordinates = "XLONG_U XLAT_U" ;
+	float XLONG_U(Time, south_north, west_east_stag) ;
+		XLONG_U:FieldType = 104 ;
+		XLONG_U:MemoryOrder = "XY " ;
+		XLONG_U:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG_U:units = "degree_east" ;
+		XLONG_U:stagger = "X" ;
+		XLONG_U:coordinates = "XLONG_U XLAT_U" ;
+	float XLAT_V(Time, south_north_stag, west_east) ;
+		XLAT_V:FieldType = 104 ;
+		XLAT_V:MemoryOrder = "XY " ;
+		XLAT_V:description = "LATITUDE, SOUTH IS NEGATIVE" ;
+		XLAT_V:units = "degree_north" ;
+		XLAT_V:stagger = "Y" ;
+		XLAT_V:coordinates = "XLONG_V XLAT_V" ;
+	float XLONG_V(Time, south_north_stag, west_east) ;
+		XLONG_V:FieldType = 104 ;
+		XLONG_V:MemoryOrder = "XY " ;
+		XLONG_V:description = "LONGITUDE, WEST IS NEGATIVE" ;
+		XLONG_V:units = "degree_east" ;
+		XLONG_V:stagger = "Y" ;
+		XLONG_V:coordinates = "XLONG_V XLAT_V" ;
+	float ALBEDO(Time, south_north, west_east) ;
+		ALBEDO:FieldType = 104 ;
+		ALBEDO:MemoryOrder = "XY " ;
+		ALBEDO:description = "ALBEDO" ;
+		ALBEDO:units = "-" ;
+		ALBEDO:stagger = "" ;
+		ALBEDO:coordinates = "XLONG XLAT" ;
+	float ALBBCK(Time, south_north, west_east) ;
+		ALBBCK:FieldType = 104 ;
+		ALBBCK:MemoryOrder = "XY " ;
+		ALBBCK:description = "BACKGROUND ALBEDO" ;
+		ALBBCK:units = "" ;
+		ALBBCK:stagger = "" ;
+		ALBBCK:coordinates = "XLONG XLAT" ;
+	float EMISS(Time, south_north, west_east) ;
+		EMISS:FieldType = 104 ;
+		EMISS:MemoryOrder = "XY " ;
+		EMISS:description = "SURFACE EMISSIVITY" ;
+		EMISS:units = "" ;
+		EMISS:stagger = "" ;
+		EMISS:coordinates = "XLONG XLAT" ;
+	float NOAHRES(Time, south_north, west_east) ;
+		NOAHRES:FieldType = 104 ;
+		NOAHRES:MemoryOrder = "XY " ;
+		NOAHRES:description = "RESIDUAL OF THE NOAH SURFACE ENERGY BUDGET" ;
+		NOAHRES:units = "W m{-2}" ;
+		NOAHRES:stagger = "" ;
+		NOAHRES:coordinates = "XLONG XLAT" ;
+	float TMN(Time, south_north, west_east) ;
+		TMN:FieldType = 104 ;
+		TMN:MemoryOrder = "XY " ;
+		TMN:description = "SOIL TEMPERATURE AT LOWER BOUNDARY" ;
+		TMN:units = "K" ;
+		TMN:stagger = "" ;
+		TMN:coordinates = "XLONG XLAT" ;
+	float XLAND(Time, south_north, west_east) ;
+		XLAND:FieldType = 104 ;
+		XLAND:MemoryOrder = "XY " ;
+		XLAND:description = "LAND MASK (1 FOR LAND, 2 FOR WATER)" ;
+		XLAND:units = "" ;
+		XLAND:stagger = "" ;
+		XLAND:coordinates = "XLONG XLAT" ;
+	float UST(Time, south_north, west_east) ;
+		UST:FieldType = 104 ;
+		UST:MemoryOrder = "XY " ;
+		UST:description = "U* IN SIMILARITY THEORY" ;
+		UST:units = "m s-1" ;
+		UST:stagger = "" ;
+		UST:coordinates = "XLONG XLAT" ;
+	float PBLH(Time, south_north, west_east) ;
+		PBLH:FieldType = 104 ;
+		PBLH:MemoryOrder = "XY " ;
+		PBLH:description = "PBL HEIGHT" ;
+		PBLH:units = "m" ;
+		PBLH:stagger = "" ;
+		PBLH:coordinates = "XLONG XLAT" ;
+	float HFX(Time, south_north, west_east) ;
+		HFX:FieldType = 104 ;
+		HFX:MemoryOrder = "XY " ;
+		HFX:description = "UPWARD HEAT FLUX AT THE SURFACE" ;
+		HFX:units = "W m-2" ;
+		HFX:stagger = "" ;
+		HFX:coordinates = "XLONG XLAT" ;
+	float QFX(Time, south_north, west_east) ;
+		QFX:FieldType = 104 ;
+		QFX:MemoryOrder = "XY " ;
+		QFX:description = "UPWARD MOISTURE FLUX AT THE SURFACE" ;
+		QFX:units = "kg m-2 s-1" ;
+		QFX:stagger = "" ;
+		QFX:coordinates = "XLONG XLAT" ;
+	float LH(Time, south_north, west_east) ;
+		LH:FieldType = 104 ;
+		LH:MemoryOrder = "XY " ;
+		LH:description = "LATENT HEAT FLUX AT THE SURFACE" ;
+		LH:units = "W m-2" ;
+		LH:stagger = "" ;
+		LH:coordinates = "XLONG XLAT" ;
+	float ACHFX(Time, south_north, west_east) ;
+		ACHFX:FieldType = 104 ;
+		ACHFX:MemoryOrder = "XY " ;
+		ACHFX:description = "ACCUMULATED UPWARD HEAT FLUX AT THE SURFACE" ;
+		ACHFX:units = "J m-2" ;
+		ACHFX:stagger = "" ;
+		ACHFX:coordinates = "XLONG XLAT" ;
+	float ACLHF(Time, south_north, west_east) ;
+		ACLHF:FieldType = 104 ;
+		ACLHF:MemoryOrder = "XY " ;
+		ACLHF:description = "ACCUMULATED UPWARD LATENT HEAT FLUX AT THE SURFACE" ;
+		ACLHF:units = "J m-2" ;
+		ACLHF:stagger = "" ;
+		ACLHF:coordinates = "XLONG XLAT" ;
+	float SNOWC(Time, south_north, west_east) ;
+		SNOWC:FieldType = 104 ;
+		SNOWC:MemoryOrder = "XY " ;
+		SNOWC:description = "FLAG INDICATING SNOW COVERAGE (1 FOR SNOW COVER)" ;
+		SNOWC:units = "" ;
+		SNOWC:stagger = "" ;
+		SNOWC:coordinates = "XLONG XLAT" ;
+	float SR(Time, south_north, west_east) ;
+		SR:FieldType = 104 ;
+		SR:MemoryOrder = "XY " ;
+		SR:description = "fraction of frozen precipitation" ;
+		SR:units = "-" ;
+		SR:stagger = "" ;
+		SR:coordinates = "XLONG XLAT" ;
+	float POTEVP(Time, south_north, west_east) ;
+		POTEVP:FieldType = 104 ;
+		POTEVP:MemoryOrder = "XY " ;
+		POTEVP:description = "accumulated potential evaporation" ;
+		POTEVP:units = "W m-2" ;
+		POTEVP:stagger = "" ;
+		POTEVP:coordinates = "XLONG XLAT" ;
+	float SNOPCX(Time, south_north, west_east) ;
+		SNOPCX:FieldType = 104 ;
+		SNOPCX:MemoryOrder = "XY " ;
+		SNOPCX:description = "snow phase change heat flux" ;
+		SNOPCX:units = "W m-2" ;
+		SNOPCX:stagger = "" ;
+		SNOPCX:coordinates = "XLONG XLAT" ;
+	float SOILTB(Time, south_north, west_east) ;
+		SOILTB:FieldType = 104 ;
+		SOILTB:MemoryOrder = "XY " ;
+		SOILTB:description = "bottom soil temperature" ;
+		SOILTB:units = "K" ;
+		SOILTB:stagger = "" ;
+		SOILTB:coordinates = "XLONG XLAT" ;
+	int SAVE_TOPO_FROM_REAL(Time) ;
+		SAVE_TOPO_FROM_REAL:FieldType = 106 ;
+		SAVE_TOPO_FROM_REAL:MemoryOrder = "0  " ;
+		SAVE_TOPO_FROM_REAL:description = "1=original topo from real/0=topo modified by WRF" ;
+		SAVE_TOPO_FROM_REAL:units = "flag" ;
+		SAVE_TOPO_FROM_REAL:stagger = "" ;
+	float AVG_FUEL_FRAC(Time, south_north, west_east) ;
+		AVG_FUEL_FRAC:FieldType = 104 ;
+		AVG_FUEL_FRAC:MemoryOrder = "XY " ;
+		AVG_FUEL_FRAC:description = "fuel remaining averaged to atmospheric grid" ;
+		AVG_FUEL_FRAC:units = "1" ;
+		AVG_FUEL_FRAC:stagger = "Z" ;
+		AVG_FUEL_FRAC:coordinates = "XLONG XLAT" ;
+	float UAH(Time, south_north, west_east_stag) ;
+		UAH:FieldType = 104 ;
+		UAH:MemoryOrder = "XY " ;
+		UAH:description = "wind at fire_wind_height" ;
+		UAH:units = "m/s" ;
+		UAH:stagger = "X" ;
+		UAH:coordinates = "XLONG_U XLAT_U" ;
+	float VAH(Time, south_north_stag, west_east) ;
+		VAH:FieldType = 104 ;
+		VAH:MemoryOrder = "XY " ;
+		VAH:description = "wind at fire_wind_height" ;
+		VAH:units = "m/s" ;
+		VAH:stagger = "Y" ;
+		VAH:coordinates = "XLONG_V XLAT_V" ;
+	int SEED1(Time) ;
+		SEED1:FieldType = 106 ;
+		SEED1:MemoryOrder = "0  " ;
+		SEED1:description = "RANDOM SEED NUMBER 1" ;
+		SEED1:units = "" ;
+		SEED1:stagger = "" ;
+	int SEED2(Time) ;
+		SEED2:FieldType = 106 ;
+		SEED2:MemoryOrder = "0  " ;
+		SEED2:description = "RANDOM SEED NUMBER 2" ;
+		SEED2:units = "" ;
+		SEED2:stagger = "" ;
+
+// global attributes:
+		:TITLE = " OUTPUT FROM WRF V3.3 MODEL" ;
+		:START_DATE = "2001-10-25_00:00:00" ;
+		:SIMULATION_START_DATE = "2001-10-24_00:00:00" ;
+		:WEST-EAST_GRID_DIMENSION = 425 ;
+		:SOUTH-NORTH_GRID_DIMENSION = 300 ;
+		:BOTTOM-TOP_GRID_DIMENSION = 35 ;
+		:DX = 12000.f ;
+		:DY = 12000.f ;
+		:GRIDTYPE = "C" ;
+		:DIFF_OPT = 1 ;
+		:KM_OPT = 4 ;
+		:DAMP_OPT = 0 ;
+		:DAMPCOEF = 0.f ;
+		:KHDIF = 0.f ;
+		:KVDIF = 0.f ;
+		:MP_PHYSICS = 4 ;
+		:RA_LW_PHYSICS = 1 ;
+		:RA_SW_PHYSICS = 1 ;
+		:SF_SFCLAY_PHYSICS = 1 ;
+		:SF_SURFACE_PHYSICS = 1 ;
+		:BL_PBL_PHYSICS = 1 ;
+		:CU_PHYSICS = 1 ;
+		:SURFACE_INPUT_SOURCE = 1 ;
+		:SST_UPDATE = 0 ;
+		:GRID_FDDA = 0 ;
+		:GFDDA_INTERVAL_M = 0 ;
+		:GFDDA_END_H = 0 ;
+		:GRID_SFDDA = 0 ;
+		:SGFDDA_INTERVAL_M = 0 ;
+		:SGFDDA_END_H = 0 ;
+		:SF_URBAN_PHYSICS = 0 ;
+		:FEEDBACK = 1 ;
+		:SMOOTH_OPTION = 0 ;
+		:SWRAD_SCAT = 1.f ;
+		:W_DAMPING = 1 ;
+		:MOIST_ADV_OPT = 1 ;
+		:SCALAR_ADV_OPT = 1 ;
+		:TKE_ADV_OPT = 1 ;
+		:DIFF_6TH_OPT = 0 ;
+		:DIFF_6TH_FACTOR = 0.12f ;
+		:OBS_NUDGE_OPT = 0 ;
+		:BUCKET_MM = -1.f ;
+		:BUCKET_J = -1.f ;
+		:PREC_ACC_DT = 0.f ;
+		:OMLCALL = 0 ;
+		:ISFTCFLX = 0 ;
+		:ISHALLOW = 0 ;
+		:DFI_OPT = 0 ;
+		:SHCU_PHYSICS = 0 ;
+		:WEST-EAST_PATCH_START_UNSTAG = 1 ;
+		:WEST-EAST_PATCH_END_UNSTAG = 424 ;
+		:WEST-EAST_PATCH_START_STAG = 1 ;
+		:WEST-EAST_PATCH_END_STAG = 425 ;
+		:SOUTH-NORTH_PATCH_START_UNSTAG = 1 ;
+		:SOUTH-NORTH_PATCH_END_UNSTAG = 299 ;
+		:SOUTH-NORTH_PATCH_START_STAG = 1 ;
+		:SOUTH-NORTH_PATCH_END_STAG = 300 ;
+		:BOTTOM-TOP_PATCH_START_UNSTAG = 1 ;
+		:BOTTOM-TOP_PATCH_END_UNSTAG = 34 ;
+		:BOTTOM-TOP_PATCH_START_STAG = 1 ;
+		:BOTTOM-TOP_PATCH_END_STAG = 35 ;
+		:GRID_ID = 1 ;
+		:PARENT_ID = 0 ;
+		:I_PARENT_START = 0 ;
+		:J_PARENT_START = 0 ;
+		:PARENT_GRID_RATIO = 1 ;
+		:DT = 72.f ;
+		:CEN_LAT = 40.00001f ;
+		:CEN_LON = -98.f ;
+		:TRUELAT1 = 30.f ;
+		:TRUELAT2 = 60.f ;
+		:MOAD_CEN_LAT = 40.00001f ;
+		:STAND_LON = -98.f ;
+		:POLE_LAT = 0.f ;
+		:POLE_LON = 0.f ;
+		:GMT = 0.f ;
+		:JULYR = 2001 ;
+		:JULDAY = 297 ;
+		:MAP_PROJ = 1 ;
+		:MMINLU = "USGS" ;
+		:NUM_LAND_CAT = 24 ;
+		:ISWATER = 16 ;
+		:ISLAKE = -1 ;
+		:ISICE = 24 ;
+		:ISURBAN = 1 ;
+		:ISOILWATER = 14 ;
+}
+XDMOD***RESULT OF wrfout_d01_2001-10-25_03_00_00 ENDS
+XDMOD***FLOATING-POINT PERFORMANCE CONVERSION:
+$gflops=72.0/$T*0.418

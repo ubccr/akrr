@@ -1,0 +1,201 @@
+#!/bin/sh
+#SBATCH --partition=general-compute 
+#SBATCH --nodes=8
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=03:00:00
+#SBATCH --output=/panasas/scratch/arrdata_edge/xdmod.benchmark.io.mpi-tile-io.node/2013.11.07.03.00.00.664319/stdout
+#SBATCH --error=/panasas/scratch/arrdata_edge/xdmod.benchmark.io.mpi-tile-io.node/2013.11.07.03.00.00.664319/stderr
+#SBATCH --constraint="CPU-L5520|CPU-L5630"
+#SBATCH --exclusive
+
+
+. $MODULESHOME/init/sh
+
+#Common commands
+PATH=/projects/ccrstaff/general/appker/edge/execs/bin:/user/xdtas/bin:/usr/lib64/qt-3.3/bin:/util/Modules/3.2.8/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/kerberos/bin:/opt/dell/srvadmin/bin:/user/xdtas/bin; export PATH
+
+export ARR_NODES=8
+export ARR_CORES=64
+export ARR_CORES_PER_NODE=8
+export ARR_NETWORK_SCRATCH="/panasas/scratch"
+export ARR_LOCAL_SCRATCH="$SLURMTMPDIR"
+export ARR_TASK_WORKDIR="/panasas/scratch/arrdata_edge/xdmod.benchmark.io.mpi-tile-io.node/2013.11.07.03.00.00.664319"
+
+export ARR_APPKER_NAME="xdmod.benchmark.io.mpi-tile-io.node"
+export ARR_RESOURCE_NAME="edge"
+export ARR_TIMESTAMP="2013.11.07.03.00.00.664319"
+export ARR_APP_STDOUT_FILE=$ARR_TASK_WORKDIR/appstdout
+
+cd $ARR_TASK_WORKDIR
+
+
+#function to test that directory is writable
+testDirWritability () {
+    TESTFILE=`mktemp -q $1/testwritability.XXXXXX`
+    if [ "$TESTFILE" == "" ]
+    then
+        echo "ARR:ERROR: $2 is not writable ($1)"
+    else
+        if [ ! -f "$TESTFILE" ]
+        then
+            echo "ARR:ERROR: $2 is not writable ($1)"
+        else
+            echo "this is test" >> "$TESTFILE"
+            if [ "`cat "$TESTFILE"`" != "this is test" ]
+            then
+                echo "ARR:ERROR: $2 is not writable ($ARR_TASK_WORKDIR)"
+            fi
+            rm "$TESTFILE"
+        fi
+    fi
+}
+
+
+#System dependent variables
+_TASKS_PER_NODE=`echo $SLURM_TASKS_PER_NODE|sed 's/(x[0-9]*)//g'`
+export ARR_NODELIST=`scontrol show hostname $SLURM_NODELIST| awk "{for (i=0;i<$_TASKS_PER_NODE;++i)print}"`
+
+#Common Tests
+#Check that app kernel launcher exists and is executable
+if [ ! -e /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io ]
+then
+    echo "ARR:ERROR: App kernel executable does not exists (/projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io)"
+fi
+if [ ! -e /projects/ccrstaff/general/appker/edge/inputs ]
+then
+    echo "ARR:ERROR: App kernel input does not exists (/projects/ccrstaff/general/appker/edge/inputs)"
+fi
+#Test that all directories are writable
+testDirWritability "$ARR_TASK_WORKDIR" "Task working directory"
+testDirWritability "$ARR_NETWORK_SCRATCH" "Network scratch directory"
+testDirWritability "$ARR_LOCAL_SCRATCH" "local scratch directory"
+
+#Write down some info, JSON-Like object
+echo "\"startTime\":\""`date`"\"," > gen.info
+echo "\"nodeList\":\"\"\""$ARR_NODELIST\"\"\""," >> gen.info
+
+
+
+
+
+#Load application environment
+module load intel/13.0 intel-mpi/4.1.0
+module list
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+
+
+localMemUsageColl="200m"
+localMemUsageIndep="100m"
+exes="mpi-cube-io
+mpi-tile-io
+hdf_mpi-cube-io
+hdf_mpi-tile-io"
+
+#create working dir
+export ARR_TMP_WORKDIR=`mktemp -d /panasas/scratch/mpi_tile_io.XXXXXXXXX`
+echo "Temporary working directory: $ARR_TMP_WORKDIR"
+cd $ARR_TMP_WORKDIR
+
+export ARR_APPKER_EXEC_DIR=/projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src
+
+#Copy inputs
+#cp /projects/ccrstaff/general/appker/edge/inputs ./
+#INPUT=$(echo /projects/ccrstaff/general/appker/edge/inputs | xargs basename )
+
+#Generate AppKer signature
+for exe in $exes
+do
+    if [ ! -f /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/$exe ]
+    then
+        echo "mpi-tile-io: Cannot find /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/$exe"
+        exit 1
+    fi
+    appsigcheck.sh /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/$exe >> $ARR_APP_STDOUT_FILE
+done
+
+
+
+
+ulimit -s unlimited
+
+RUNMPI="srun"
+
+# MPI IO hints (optional)
+# MPI IO hints are environment variables in the following format:
+#
+# 'IOR_HINT__<layer>__<hint>=<value>', where <layer> is either 'MPI'
+# or 'GPFS', <hint> is the full name of the hint to be set, and <value>
+# is the hint value.  E.g., 'export IOR_HINT__MPI__IBM_largeblock_io=true'
+# 'export IOR_HINT__GPFS__hint=value' in mpi_io_hints
+
+
+echo "Using $ARR_TMP_WORKDIR for test...."
+
+
+# run the tests
+
+# randomize the order of tests
+#exes=`echo "$exes" | awk 'BEGIN{srand();}{print rand()"	"$0}' | sort -k1 -n | cut -f2 |cat -s`
+echo "\"appKerStartTime\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
+for exe in $exes
+do
+    cmdexe=${ARR_APPKER_EXEC_DIR}/${exe}
+    
+    if [[ !  "$exe" =~ "hdf" ]] ; then
+    testFile="$ARR_TMP_WORKDIR/test_${exe}_indep"
+    extraOpts="--filename ${testFile} --mem_usage ${localMemUsageIndep}"
+    unset IOR_HINT__MPI__panfs_concurrent_write
+    # write test
+    echo "Executing ${RUNMPI} ${cmdexe} --write_file ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"StartTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    eval "${RUNMPI} ${cmdexe} --write_file ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"EndTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    # read test
+    echo "Executing ${RUNMPI} ${cmdexe} ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"StartTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    [ -f $testFile ] && eval "${RUNMPI} ${cmdexe} ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"EndTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    rm -f $testFile
+    fi
+
+    # now collective IO
+    # use a new file name
+    testFile="$ARR_TMP_WORKDIR/test_${exe}_coll"
+    extraOpts="--filename ${testFile} --mem_usage ${localMemUsageColl} --collective"
+    export IOR_HINT__MPI__panfs_concurrent_write=1
+    # write test
+    echo "Executing ${RUNMPI} ${cmdexe} --write_file ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"StartTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    eval "${RUNMPI} ${cmdexe} --write_file ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"EndTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    # read test
+    echo "Executing ${RUNMPI} ${cmdexe} ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"StartTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    [ -f $testFile ] && eval "${RUNMPI} ${cmdexe} ${extraOpts}" >> $ARR_APP_STDOUT_FILE 2>&1
+    echo "\"EndTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
+    rm -f $testFile
+done
+echo "\"appKerEndTime\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
+echo "All Tests Done"
+
+
+mpdallexit
+
+
+#clean-up
+cd $ARR_TASK_WORKDIR
+if [ "${ARR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $ARR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $ARR_TMP_WORKDIR workdir
+        rm -rf $ARR_TMP_WORKDIR
+fi
+
+
+
+
+echo "\"endTime\":\""`date`"\"," >> gen.info
+

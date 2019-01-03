@@ -1,0 +1,1500 @@
+ 'charmm/c35b1r1-impi' load complete.
+Currently Loaded Modulefiles:
+  1) java/j2sdk/1.6.0_16   3) intel-mpi/4.0
+  2) intel/11.1            4) charmm/c35b1r1-impi
+MPD ring info:
+d13n01
+d13n07
+d13n06
+d13n03
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 11.1 (76 times, 648064 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.1 (18 times, 60096 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 12.0 (6 times, 20272 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 11.0 (5 times, 23232 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.1 (4 times, 23152 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.1.2 (2 times, 188 bytes)
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 11.0 (2 times, 176 bytes)
+===ExeBinSignature=== COMPILER: Intel Fortran Compiler 12.0 (2 times, 576 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 9.1 (1 times, 128 bytes)
+===ExeBinSignature=== COMPILER: Intel Compiler Suite 10.0 (1 times, 128 bytes)
+===ExeBinSignature=== DYNLIB: Intel MPI 4.0.0.025
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: c5e58581615055784cd16ac1174a964b */ifs/util/util64/charmm/c35b1r1-impi/exec/em64t/charmm
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: 578bea6053d7712e5d90a3c22cfec225 */util/intel/impi/4.0.0.025/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: 07a1ff59718e3c9f0e6e17279143654a */util/intel/impi/4.0.0.025/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: 4d25439e92493bcde3c87ed6e1fce63a */lib64/libm.so.6
+===ExeBinSignature=== MD5: e9d60136af010f0a461d4efb42241ef9 */lib64/libc.so.6
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+[0] MPI startup(): shm and ofa data transfer modes
+[3] MPI startup(): shm and ofa data transfer modes
+[1] MPI startup(): shm and ofa data transfer modes
+[2] MPI startup(): shm and ofa data transfer modes
+[5] MPI startup(): shm and ofa data transfer modes
+[4] MPI startup(): shm and ofa data transfer modes
+[7] MPI startup(): shm and ofa data transfer modes
+[6] MPI startup(): shm and ofa data transfer modes
+[8] MPI startup(): shm and ofa data transfer modes
+[10] MPI startup(): shm and ofa data transfer modes
+[9] MPI startup(): shm and ofa data transfer modes
+[12] MPI startup(): shm and ofa data transfer modes
+[11] MPI startup(): shm and ofa data transfer modes
+[14] MPI startup(): shm and ofa data transfer modes
+[13] MPI startup(): shm and ofa data transfer modes
+[15] MPI startup(): shm and ofa data transfer modes
+[16] MPI startup(): shm and ofa data transfer modes
+[21] MPI startup(): shm and ofa data transfer modes
+[18] MPI startup(): shm and ofa data transfer modes
+[17] MPI startup(): shm and ofa data transfer modes
+[20] MPI startup(): shm and ofa data transfer modes
+[25] MPI startup(): shm and ofa data transfer modes
+[19] MPI startup(): shm and ofa data transfer modes
+[22] MPI startup(): shm and ofa data transfer modes
+[23] MPI startup(): shm and ofa data transfer modes
+[24] MPI startup(): shm and ofa data transfer modes
+[28] MPI startup(): shm and ofa data transfer modes
+[27] MPI startup(): shm and ofa data transfer modes
+[31] MPI startup(): shm and ofa data transfer modes
+[30] MPI startup(): shm and ofa data transfer modes
+[29] MPI startup(): shm and ofa data transfer modes
+[26] MPI startup(): shm and ofa data transfer modes
+[0] MPI startup(): I_MPI_DEBUG=5
+[0] MPI startup(): I_MPI_FABRICS_LIST=ofa,dapl,tcp
+[0] MPI startup(): I_MPI_FALLBACK=enable
+[1] MPI startup(): process is pinned to CPU01 on node d13n01.ccr.buffalo.edu
+[2] MPI startup(): process is pinned to CPU02 on node d13n01.ccr.buffalo.edu
+[0] MPI startup(): process is pinned to CPU00 on node d13n01.ccr.buffalo.edu
+[3] MPI startup(): process is pinned to CPU03 on node d13n01.ccr.buffalo.edu
+[5] MPI startup(): process is pinned to CPU05 on node d13n01.ccr.buffalo.edu
+[4] MPI startup(): process is pinned to CPU04 on node d13n01.ccr.buffalo.edu
+[7] MPI startup(): process is pinned to CPU07 on node d13n01.ccr.buffalo.edu
+[6] MPI startup(): process is pinned to CPU06 on node d13n01.ccr.buffalo.edu
+[8] MPI startup(): process is pinned to CPU00 on node d13n07.ccr.buffalo.edu
+[11] MPI startup(): process is pinned to CPU03 on node d13n07.ccr.buffalo.edu
+[9] MPI startup(): process is pinned to CPU01 on node d13n07.ccr.buffalo.edu
+[12] MPI startup(): process is pinned to CPU04 on node d13n07.ccr.buffalo.edu
+[10] MPI startup(): process is pinned to CPU02 on node d13n07.ccr.buffalo.edu
+[14] MPI startup(): process is pinned to CPU06 on node d13n07.ccr.buffalo.edu
+[16] MPI startup(): process is pinned to CPU00 on node d13n06.ccr.buffalo.edu
+[13] MPI startup(): process is pinned to CPU05 on node d13n07.ccr.buffalo.edu
+[17] MPI startup(): process is pinned to CPU01 on node d13n06.ccr.buffalo.edu
+[18] MPI startup(): process is pinned to CPU02 on node d13n06.ccr.buffalo.edu
+[15] MPI startup(): process is pinned to CPU07 on node d13n07.ccr.buffalo.edu
+[20] MPI startup(): process is pinned to CPU04 on node d13n06.ccr.buffalo.edu
+[22] MPI startup(): process is pinned to CPU06 on node d13n06.ccr.buffalo.edu
+[21] MPI startup(): process is pinned to CPU05 on node d13n06.ccr.buffalo.edu
+[19] MPI startup(): process is pinned to CPU03 on node d13n06.ccr.buffalo.edu
+[23] MPI startup(): process is pinned to CPU07 on node d13n06.ccr.buffalo.edu
+[24] MPI startup(): process is pinned to CPU00 on node d13n03.ccr.buffalo.edu
+[27] MPI startup(): process is pinned to CPU03 on node d13n03.ccr.buffalo.edu
+[25] MPI startup(): process is pinned to CPU01 on node d13n03.ccr.buffalo.edu
+[28] MPI startup(): process is pinned to CPU04 on node d13n03.ccr.buffalo.edu
+[29] MPI startup(): process is pinned to CPU05 on node d13n03.ccr.buffalo.edu
+[26] MPI startup(): process is pinned to CPU02 on node d13n03.ccr.buffalo.edu
+[30] MPI startup(): process is pinned to CPU06 on node d13n03.ccr.buffalo.edu
+[31] MPI startup(): process is pinned to CPU07 on node d13n03.ccr.buffalo.edu
+[0] Rank    Pid      Node name               Pin cpu
+[0] 0       3629     d13n01.ccr.buffalo.edu  0
+[0] 1       3622     d13n01.ccr.buffalo.edu  1
+[0] 2       3623     d13n01.ccr.buffalo.edu  2
+[0] 3       3626     d13n01.ccr.buffalo.edu  3
+[0] 4       3624     d13n01.ccr.buffalo.edu  4
+[0] 5       3625     d13n01.ccr.buffalo.edu  5
+[0] 6       3627     d13n01.ccr.buffalo.edu  6
+[0] 7       3628     d13n01.ccr.buffalo.edu  7
+[0] 8       20964    d13n07.ccr.buffalo.edu  0
+[0] 9       20963    d13n07.ccr.buffalo.edu  1
+[0] 10      20965    d13n07.ccr.buffalo.edu  2
+[0] 11      20966    d13n07.ccr.buffalo.edu  3
+[0] 12      20967    d13n07.ccr.buffalo.edu  4
+[0] 13      20968    d13n07.ccr.buffalo.edu  5
+[0] 14      20969    d13n07.ccr.buffalo.edu  6
+[0] 15      20970    d13n07.ccr.buffalo.edu  7
+[0] 16      4469     d13n06.ccr.buffalo.edu  0
+[0] 17      4470     d13n06.ccr.buffalo.edu  1
+[0] 18      4471     d13n06.ccr.buffalo.edu  2
+[0] 19      4472     d13n06.ccr.buffalo.edu  3
+[0] 20      4473     d13n06.ccr.buffalo.edu  4
+[0] 21      4474     d13n06.ccr.buffalo.edu  5
+[0] 22      4475     d13n06.ccr.buffalo.edu  6
+[0] 23      4476     d13n06.ccr.buffalo.edu  7
+[0] 24      15130    d13n03.ccr.buffalo.edu  0
+[0] 25      15131    d13n03.ccr.buffalo.edu  1
+[0] 26      15132    d13n03.ccr.buffalo.edu  2
+[0] 27      15133    d13n03.ccr.buffalo.edu  3
+[0] 28      15134    d13n03.ccr.buffalo.edu  4
+[0] 29      15135    d13n03.ccr.buffalo.edu  5
+[0] 30      15136    d13n03.ccr.buffalo.edu  6
+[0] 31      15137    d13n03.ccr.buffalo.edu  7
+1
+                 Chemistry at HARvard Macromolecular Mechanics
+                   (CHARMM) - Developmental Version 35b1     August 15, 2008   
+       Copyright(c) 1984-2001  President and Fellows of Harvard College
+                              All Rights Reserved
+      Current operating system: Linux-2.6.32-220.23.1.el6.x86_64(x86_64)@d13[+ 31]
+                 Created on  2/14/13 at  3:56: 9 by user: xdtas       
+
+            Maximum number of ATOMS:    360720, and RESidues:      120240
+            Current HEAP size:        10240000, and STACK size:  10000000
+
+ RDTITL> *  BENCHMARK DYNAMICS FOR DHFR IN A CUBIC BOX OF
+ RDTITL> *  SOLVENT USING PBC W/ PME.  TOTAL SYSTEM CONTAINS 23,558 ATOMS,
+ RDTITL> *  21,069 ATOMS ASSOCIATED WITH WATER MOLECULES AND 2589 PROTEIN ATOMS.
+ RDTITL> *
+  
+ CHARMM>     
+  
+ CHARMM>    pref
+
+ KEYWORD LIST: Number of keys: 113.
+      GNU EM64T UNIX SCALAR INTEGER8 I4BINARY MPI PARALLEL PARAFULL   
+      FILEINPUT IA64_MPI XXLARGE EXPAND PUTFCM ACE ADUMB AFM ASPENER  
+      ASPMEMB BANBA BLOCK CFF CHEQ CMAP DIMB DMCONS DOCK DYNVV2 EMAP  
+      ESTATS FASTEW FLEXPARM FLUCQ FMA FOURD FSSHK GBBLCK GBFIXAT GBIM
+      GBINLINE GBMV GBMVFAST HDGB HQBM GBSW GBSWIT GCMC GENETIC       
+      GENBORN GOMODEL GRID GSBP HMCM IMCUBES LATTICE LDM LDLAN LDMGEN 
+      LONEPAIR LMC LRST LRVDW MC MEHMC MMFF MOLVIB MULTCAN NBIPS      
+      NEWTIMER OLDDYN OPLS OVERLAP PATHINT PBEQ PBOUND PERT PHMD POLAR
+      PSSP PM1 PMEPLSMA PNOE PRIMSH RCFFT RDFSOL REPLICA RGYCONS RPATH
+      RXNCOR SASAE SCPISM SGLD SHAPES SHELL SOFTVDW TNPACK TPS TRAVEL 
+      TSM TSALLIS FITCHG WCA CHEMPERT PROTO SMD COMP2 FACTS LOOKUP RMD
+      RXNCONS QCHEM RUSH NOGRAPHICS                                   
+
+  
+ CHARMM>     
+  
+ CHARMM>    open unit 1 read form name "top_all22_prot.inp"
+ VOPEN> Attempting to open::top_all22_prot.inp::
+ OPNLGU> Unit  1 opened for READONLY access to /scratch/3721372.d15n41.ccr.buffalo.edu/top_all22_prot.inp
+  
+ CHARMM>    read rtf card unit 1
+ MAINIO> Residue topology file being read from unit   1.
+ TITLE> *>>>>>>>>CHARMM22 ALL-HYDROGEN TOPOLOGY FILE FOR PROTEINS <<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>> AUGUST 1999 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>>>> DIRECT COMMENTS TO ALEXANDER D. MACKERELL JR. <<<<<<<<<
+ TITLE> *>>>>>> 410-706-7442 OR EMAIL: ALEX,MMIRIS.AB.UMD.EDU  <<<<<<<<<
+ TITLE> *
+  
+ CHARMM>    close unit 1
+ VCLOSE: Closing unit    1 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    open unit 1 read form name "par_all22_prot.inp"
+ VOPEN> Attempting to open::par_all22_prot.inp::
+ OPNLGU> Unit  1 opened for READONLY access to /scratch/3721372.d15n41.ccr.buffalo.edu/par_all22_prot.inp
+  
+ CHARMM>    read param card unit 1
+
+          PARAMETER FILE BEING READ FROM UNIT  1
+ TITLE> *>>>> CHARMM22 ALL-HYDROGEN PARAMETER FILE FOR PROTEINS <<<<<<<<<<
+ TITLE> *>>>>>>>>>>>>>>>>>>>>>> AUGUST 1999 <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+ TITLE> *>>>>>>> DIRECT COMMENTS TO ALEXANDER D. MACKERELL JR. <<<<<<<<<
+ TITLE> *>>>>>> 410-706-7442 OR EMAIL: ALEX,MMIRIS.AB.UMD.EDU  <<<<<<<<<
+ TITLE> *
+ PARMIO> NONBOND, HBOND lists and IMAGE atoms cleared.
+  
+ CHARMM>    close unit 1
+ VCLOSE: Closing unit    1 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    open unit 1 read form name "5dfr_minimized.crd"
+ VOPEN> Attempting to open::5dfr_minimized.crd::
+ OPNLGU> Unit  1 opened for READONLY access to /scratch/3721372.d15n41.ccr.buffalo.edu/5dfr_minimized.crd
+  
+ CHARMM>    read sequ coor unit 1
+ MAINIO> Sequence information being read from unit   1.
+ TITLE> *  COORDINATES FOR 5DFR AFTER MINIMIZATION W/ RESTRAINTS
+ TITLE> *  RMSD FROM ORIGINAL MODEL: 0.210674 A (BB); 0.230048 A (HEAVY)
+ TITLE> *  DATE:     1/25/97     11:24:43      CREATED BY USER: BROOKS
+ TITLE> *
+
+          RESIDUE SEQUENCE --   159 RESIDUES
+          MET ILE SER LEU ILE ALA ALA LEU ALA VAL ASP ARG VAL ILE GLY MET GLU ASN ALA MET 
+          PRO TRP ASN LEU PRO ALA ASP LEU ALA TRP PHE LYS ARG ASN THR LEU ASP LYS PRO VAL 
+          ILE MET GLY ARG HSD THR TRP GLU SER ILE GLY ARG PRO LEU PRO GLY ARG LYS ASN ILE 
+          ILE LEU SER SER GLN PRO GLY THR ASP ASP ARG VAL THR TRP VAL LYS SER VAL ASP GLU 
+          ALA ILE ALA ALA CYS GLY ASP VAL PRO GLU ILE MET VAL ILE GLY GLY GLY ARG VAL TYR 
+          GLU GLN PHE LEU PRO LYS ALA GLN LYS LEU TYR LEU THR HSD ILE ASP ALA GLU VAL GLU 
+          GLY ASP THR HSD PHE PRO ASP TYR GLU PRO ASP ASP TRP GLU SER VAL PHE SER GLU PHE 
+          HSD ASP ALA ASP ALA GLN ASN SER HSD SER TYR CYS PHE GLU ILE LEU GLU ARG ARG 
+ ***** Message from SEQRDR ***** THE SYSTEM CONTAINS 36 TITRATABLE GROUPS
+ THE USER MUST PREDETERMINE THE PROTONATION STATE THROUGH THE SEQUENCE AND RTF
+ HIS -  0  ASP - 14  GLU - 12  LYS -  6  TYR -  4
+  
+ CHARMM>    close unit 1
+ VCLOSE: Closing unit    1 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    generate 5dfr setup first nter last cter
+ THE PATCH 'NTER' WILL BE USED FOR THE FIRST RESIDUE
+ THE PATCH 'CTER' WILL BE USED FOR THE LAST  RESIDUE
+ GENPSF> Segment   1 has been generated. Its identifier is 5DFR.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        1   Number of residues   =      159
+         Number of atoms         =     2489   Number of groups     =      739
+         Number of bonds         =     2523   Number of angles     =     4561
+         Number of dihedrals     =     6701   Number of impropers  =      418
+         Number of cross-terms   =        0
+         Number of HB acceptors  =      245   Number of HB donors  =      263
+         Number of NB exclusions =        0   Total charge =  -11.00000
+  
+ CHARMM>     
+  
+ CHARMM>    read sequ tip3 7023
+  
+ CHARMM>    generate wat setup noangl nodihe
+ NO PATCHING WILL BE DONE ON THE FIRST RESIDUE
+ NO PATCHING WILL BE DONE ON THE LAST  RESIDUE
+ GENPSF> Segment   2 has been generated. Its identifier is WAT.
+ PSFSUM> PSF modified: NONBOND lists and IMAGE atoms cleared.
+ PSFSUM> Summary of the structure file counters :
+         Number of segments      =        2   Number of residues   =     7182
+         Number of atoms         =    23558   Number of groups     =     7762
+         Number of bonds         =    23592   Number of angles     =    11584
+         Number of dihedrals     =     6701   Number of impropers  =      418
+         Number of cross-terms   =        0
+         Number of HB acceptors  =     7268   Number of HB donors  =      263
+         Number of NB exclusions =        0   Total charge =  -11.00000
+  
+ CHARMM>     
+  
+ CHARMM>    open unit 1 read form name "5dfr_solv-cube_equil.pdb"
+ VOPEN> Attempting to open::5dfr_solv-cube_equil.pdb::
+ OPNLGU> Unit  1 opened for READONLY access to /scratch/3721372.d15n41.ccr.buffalo.edu/5dfr_solv-cube_equil.pdb
+  
+ CHARMM>    read coor pdb unit 1 resi
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+          SPATIAL COORDINATES BEING READ FROM UNIT  1
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+  read CHARMM-pdb format
+ TITLE>  
+ TITLE>  *
+  
+ CHARMM>    close unit 1
+ VCLOSE: Closing unit    1 with status "KEEP"
+  
+ CHARMM>     
+  
+ CHARMM>    ! Dimension of a box
+ CHARMM>    set size 62.23
+ Parameter: SIZE <- "62.23"
+  
+ CHARMM>    Calc 7 = @size
+ Parameter: SIZE -> "62.23"
+Evaluating: 62.23
+ Parameter: 7 <- "62.23"
+  
+ CHARMM>    set  theta = 90.0
+ Parameter: THETA <- "90.0"
+  
+ CHARMM>    Crystal define cubic @7 @7 @7 @theta @theta @theta
+ Parameter: 7 -> "62.23"
+ Parameter: 7 -> "62.23"
+ Parameter: 7 -> "62.23"
+ Parameter: THETA -> "90.0"
+ Parameter: THETA -> "90.0"
+ Parameter: THETA -> "90.0"
+ Crystal Parameters : Crystal Type = CUBI
+           A     =   62.23000 B    =   62.23000 C     =   62.23000
+           Alpha =   90.00000 Beta =   90.00000 Gamma =   90.00000
+  
+ CHARMM>    crystal build cutoff 11 noper 0
+ XBUILD> Building all transformations with a minimum atom-atom
+         contact distance of less than   11.00 Angstroms.
+
+ Range of Grid Search for Transformation     1 :
+ Lattice Vector A    -2 TO     2
+ Lattice Vector B    -2 TO     2
+ Lattice Vector C    -2 TO     2
+
+
+ The number of transformations generated =    26
+
+
+ Number  Symop   A   B   C   Distance
+
+      1      1  -1  -1  -1     6.2902
+      2      1  -1   0  -1     6.2510
+      3      1  -1   1  -1     7.0393
+      4      1   0  -1  -1     3.7995
+      5      1   0   0  -1     3.3431
+      6      1   0   1  -1     5.2314
+      7      1  -1  -1   0     1.8050
+      8      1  -1   0   0     2.6287
+      9      1  -1   1   0     3.1714
+     10      1   0  -1   0     3.5318
+     11      1   0   1   0     3.5318
+     12      1  -1  -1   1     5.5396
+     13      1  -1   0   1     1.8610
+     14      1  -1   1   1     4.0000
+     15      1   0  -1   1     5.2314
+     16      1   0   0   1     3.3431
+     17      1   0   1   1     3.7995
+     18      1   1   1   1     6.2902
+     19      1   1   0   1     6.2510
+     20      1   1  -1   1     7.0393
+     21      1   1   1   0     1.8050
+     22      1   1   0   0     2.6287
+     23      1   1  -1   0     3.1714
+     24      1   1   1  -1     5.5396
+     25      1   1   0  -1     1.8610
+     26      1   1  -1  -1     4.0000
+                     THERE ARE NO ROTATIONS FOR THIS TRANSFORMATION SET
+    26 Transformations have been processed.
+
+  
+ CHARMM>     
+  
+ CHARMM>    image byseg xcen 0.0 ycen 0.0 zcen 0.0 select segid 5dfr end
+ SELRPN>   2489 atoms have been selected out of  23558
+ IMAGE CENTERING ON FOR SOME ATOMS
+  
+ CHARMM>    image byres xcen 0.0 ycen 0.0 zcen 0.0 select segid wat end
+ SELRPN>  21069 atoms have been selected out of  23558
+ IMAGE CENTERING ON FOR SOME ATOMS
+  
+ CHARMM>    calc nwat = ?nsel / 3
+ RDCMND substituted energy or value "?NSEL" to "21069"
+Evaluating: 21069/3
+ Parameter: NWAT <- "7023"
+  
+ CHARMM>     
+  
+ CHARMM>    !  turn on faster options and set-up SHAKE
+ CHARMM>    faster on
+ MISCOM> FAST option: EXPANDED (limited fast routines)
+  
+ CHARMM>     
+  
+ CHARMM>    shake fast bonh tol 1.0e-8 para
+ SHKCOM> SHAKE parameters: TOL =   0.1000D-07 MXITer =    500
+
+             377 constraints will held by SHAKE.
+ FSSHKINI: Fast shake initialized with     377 bond contraints and        0 water constraints (3-center).
+ FSSHKINI:      377 constraints are in groups of:        0
+ FSSHKINI:    126 2-body (CH),     67 3-body(CH2),     39 4-body(CH3),      0 >4-body. 
+ FSSHKINI: Fast shake initialized with     377 bond contraints and        0 water constraints (3-center).
+ FSSHKINI:      377 constraints are in groups of:        0
+ FSSHKINI:    126 2-body (CH),     67 3-body(CH2),     39 4-body(CH3),      0 >4-body. 
+   ==== COLLCT_FSTSHK ====
+ FSSHKINI: =========== Totals for all nodes:   22290 total constraints
+ FSSHKINI: Fast shake initialized with    1221 bond contraints and     7023 water constraints (3-center).
+ FSSHKINI:    458 2-body (CH),    233 3-body(CH2),     99 4-body(CH3),      0 >4-body. 
+  
+ CHARMM>     
+  
+ CHARMM>    prnlev 5 node 0
+  
+ CHARMM>    ! Run dynamics in periodic box
+ CHARMM>    dynamics bycb leap start timestep 0.001 nstep 1000 nprint 100  iprfrq 100 -
+ CHARMM>         firstt 298 finalt 298 twindl -5.0 twindh 5.0 -
+ CHARMM>         ichecw 1 teminc 30.0 ihtfrq 200 ieqfrq 100 -
+ CHARMM>         iasors 1 iasvel 1 iscvel 0  -
+ CHARMM>         inbfrq -1 imgfrq -1 ilbfrq 0 -
+ CHARMM>         eps 1.0 cutnb 11 cutim 11 ctofnb 9 ctonnb 7.5 vswi -
+ CHARMM>         Ewald kappa 0.320 pmEwald order 4 fftx 64 ffty 64 fftz 64 ntrfq 200 - !PME
+ CHARMM>         hoover reft 298 tmass 250 tbath 298     ! Constant temperature
+  IUNREA = -1         IUNWRI = -1          IUNOS = -1
+  IUNCRD = -1         IUNVEL = -1          KUNIT = -1
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ <PME> Total heap storage needed =      673815
+ Fill Ewald table: Number of points=     10000 EWXmax=    3.040000
+ fill erfc table: linear inter has rms error = 0.592391D-08 maximum error = 0.111917D-07
+ fill erfc table: cubic spline has rms error = 0.156792D-11 maximum error = 0.396858D-11
+
+ NONBOND OPTION FLAGS: 
+     ELEC     VDW      ATOMs    CDIElec  SHIFt    VATOm    VSWItch 
+     BYCB     NOEXtnd  EWALd   
+ CUTNB  = 11.000 CTEXNB =999.000 CTONNB =  7.500 CTOFNB =  9.000
+ WMIN   =  1.500 WRNMXD =  0.500 E14FAC =  1.000 EPS    =  1.000
+ NBXMOD =      5
+ PME EWALD OPTIONS: KAPPA  =  0.320  QCOR =  0.000  Bspline order = 4
+ FFTX=  64  FFTY=  64  FFTZ=  64
+                Using Pub FFT
+                Real-to-Complex FFT
+ There are        0 atom  pairs and        0 atom  exclusions.
+ There are        0 group pairs and        0 group exclusions.
+ <MAKINB> with mode   5 found  28153 exclusions and   6556 interactions(1-4)
+ <MAKGRP> found   2149 group exclusions.
+Using Image CUBE search
+Using Image CUBE search
+   NSTEP =     1000    NSAVC =       10    NSAVV =       10
+  ISCALE =        0   ISCVEL =        0   IASORS =        1
+  IASVEL =        1   ICHECW =        1   NTRFRQ =      200
+  IHTFRQ =      200   IEQFRQ =      100   NPRINT =      100
+  INBFRQ =       -1   IHBFRQ =        0   IPRFRQ =      100
+  ILBFRQ =        0   IMGFRQ =       -1    ISEED =              314159
+  ISVFRQ =        0   NCYCLE =      100    NSNOS =       10
+  FIRSTT =   298.000  TEMINC =    30.000  TSTRUC =  -999.000
+  FINALT =   298.000  TWINDH =     5.000  TWINDL =    -5.000
+
+  TIME STEP =  2.04548E-02 AKMA       1.00000E-03 PS
+
+
+           SHAKE TOLERANCE =     0.10000E-07
+ NUMBER OF DEGREES OF FREEDOM =  48381
+
+          SEED FOR RANDOM NUMBER GENERATOR IS       314159
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    372.5000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.6634738        4.4177194       -3.3637570    
+     VELOCITY          :   2.16074770E-04  -2.55693625E-03   1.41550969E-03
+     ANGULAR MOMENTUM  :    10345.346       -6584.9165       -8179.8679    
+     KINETIC ENERGY    :   0.62055241    
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>        0      0.00000 -54032.34499  17903.71176 -71936.05676    372.44197
+DYNA PROP>         16.87271 -54020.78686  17938.42509     11.55814  13100.91385
+DYNA INTERN>      587.17584   1227.87650    156.01780    921.78016    101.45686
+DYNA EXTERN>     7655.57256 -65494.15366      0.00000      0.00000      0.00000
+DYNA IMAGES>      174.75527  -7203.15879      0.00000      0.00000      0.00000
+DYNA EWALD>       593.58653-454602.95090 443945.98507      0.00000      0.00000
+DYNA PRESS>      1028.84981  -9762.79238   -292.73572    624.86651 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step        14
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step        14
+Using Image CUBE search
+ UPDECI: Image update at step        32
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step        32
+Using Image CUBE search
+ UPDECI: Image update at step        50
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step        50
+Using Image CUBE search
+ UPDECI: Image update at step        69
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step        69
+Using Image CUBE search
+ UPDECI: Image update at step        86
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step        86
+Using Image CUBE search
+DYNA>      100      0.10000 -54025.47088  16046.42781 -70071.89869    333.80582
+DYNA PROP>         16.78529 -54013.47327  16085.42057     11.99761  12997.55669
+DYNA INTERN>      534.65465   1327.81020    166.99680    927.66698    103.81042
+DYNA EXTERN>     6545.35857 -62704.30181      0.00000      0.00000      0.00000
+DYNA IMAGES>      135.27884  -7141.87193      0.00000      0.00000      0.00000
+DYNA EWALD>       659.55698-454602.95090 443976.09250      0.00000      0.00000
+DYNA PRESS>      1654.79564 -10319.83343   -470.83431    114.88646 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.10000 -54026.46544  16362.68598 -70389.15142    340.38479
+AVER PROP>         16.90221 -54013.61711  16401.34545     12.84832  12322.35733
+AVER INTERN>      551.57193   1319.68412    165.39197    936.93342     95.57071
+AVER EXTERN>     7204.97534 -63760.74306      0.00000      0.00000      0.00000
+AVER IMAGES>      158.68738  -7067.39381      0.00000      0.00000      0.00000
+AVER EWALD>       630.97637-454602.95090 443978.14511      0.00000      0.00000
+AVER PRESS>       904.89875  -9119.80364   -257.46828    516.25367 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.10000      1.10957    353.35108    353.87408      7.35059
+FLUC PROP>          0.10852      0.11364    353.30166      1.13452   1994.09499
+FLUC INTERN>       35.73063     57.02792      8.52468      7.83034      8.55534
+FLUC EXTERN>      384.16127    695.68055      0.00000      0.00000      0.00000
+FLUC IMAGES>       20.47124     60.28726      0.00000      0.00000      0.00000
+FLUC EWALD>        18.23498      0.01353     10.49159      0.00000      0.00000
+FLUC PRESS>      1351.35273    721.61621    384.49656    222.86331      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -1.76510434E-03  -1.76510434E-03
+     E AT STEP 0            :    -54013.528       -54013.528    
+     CORR. COEFFICIENT      :   -0.44834940      -0.44834940    
+ UPDECI: Image update at step       104
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       104
+Using Image CUBE search
+ UPDECI: Image update at step       122
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       122
+Using Image CUBE search
+ UPDECI: Image update at step       139
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       139
+Using Image CUBE search
+ UPDECI: Image update at step       154
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       154
+Using Image CUBE search
+ UPDECI: Image update at step       172
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       172
+Using Image CUBE search
+ UPDECI: Image update at step       189
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       189
+Using Image CUBE search
+DYNA>      200      0.20000 -54026.67052  15903.20475 -69929.87527    330.82643
+DYNA PROP>         16.66382 -54013.53229  15940.77173     13.13823  10723.65634
+DYNA INTERN>      506.84657   1320.26811    159.79314    886.49310     94.93215
+DYNA EXTERN>     6244.10152 -62305.13370      0.00000      0.00000      0.00000
+DYNA IMAGES>       74.64330  -6913.91889      0.00000      0.00000      0.00000
+DYNA EWALD>       620.77271-454602.95090 443984.27761      0.00000      0.00000
+DYNA PRESS>      5068.22311 -12217.32734  -1442.04714   -452.43978 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.20000 -54026.04097  15948.91854 -69974.95950    331.77739
+AVER PROP>         16.68326 -54013.32525  15987.01103     12.71572   7775.89956
+AVER INTERN>      547.83251   1307.61593    164.05133    910.55462     91.92296
+AVER EXTERN>     6364.02389 -62474.31899      0.00000      0.00000      0.00000
+AVER IMAGES>       38.26735  -6930.31976      0.00000      0.00000      0.00000
+AVER EWALD>       625.48709-454602.95090 443982.87447      0.00000      0.00000
+AVER PRESS>      6606.54711 -11790.48015  -1879.74210   -322.21927 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.20000      0.42140     70.93859     71.14073      1.47570
+FLUC PROP>          0.04394      0.09315     70.80225      0.41702   3638.78830
+FLUC INTERN>       17.24738     26.50420      5.30485      6.29569      6.37843
+FLUC EXTERN>      124.59377    192.90727      0.00000      0.00000      0.00000
+FLUC IMAGES>       48.80765     95.24831      0.00000      0.00000      0.00000
+FLUC EWALD>        12.16382      0.01353      3.56893      0.00000      0.00000
+FLUC PRESS>      2877.08000    653.14469    818.60741    192.52589      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      200  steps:
+LAVE>      200      0.20000 -54026.25320  16155.80226 -70182.05546    336.08109
+LAVE PROP>         16.79274 -54013.47118  16194.17824     12.78202  10049.12845
+LAVE INTERN>      549.70222   1313.65002    164.72165    923.74402     93.74684
+LAVE EXTERN>     6784.49961 -63117.53103      0.00000      0.00000      0.00000
+LAVE IMAGES>       98.47737  -6998.85678      0.00000      0.00000      0.00000
+LAVE EWALD>       628.23173-454602.95090 443980.50979      0.00000      0.00000
+LAVE PRESS>      3755.72293 -10455.14189  -1068.60519     97.01720 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      200 steps:
+LFLC>      200      0.20000      0.86568    328.24611    328.68324      6.82834
+LFLC PROP>          0.13725      0.17914    328.38356      0.85727   3711.62594
+LFLC INTERN>       28.11709     44.87470      7.13128     14.98116      7.76309
+LFLC EXTERN>      508.28297    821.16627      0.00000      0.00000      0.00000
+LFLC IMAGES>       70.89341    105.12241      0.00000      0.00000      0.00000
+LFLC EWALD>        15.74070      0.01353      8.18518      0.00000      0.00000
+LFLC PRESS>      3630.29892   1502.26237   1032.91865    468.10934      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -1.95027499E-04   1.94405405E-03
+     E AT STEP 0            :    -54013.315       -54013.667    
+     CORR. COEFFICIENT      :   -6.04380581E-02   0.62653199    
+ ** INFO ** DYNAMICS CONTROL CHANGED FROM HEATING TO EQUILIBRATION AT STEP   200
+ EQUILIBRATION TEMPERATURE =    298.00
+
+          SEED FOR RANDOM NUMBER GENERATOR IS    389770947
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    298.0000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7255297        4.4487349       -3.3637756    
+     VELOCITY          :  -1.13626409E-03   3.07749119E-03  -2.20889458E-03
+     ANGULAR MOMENTUM  :    957.28352        2396.2486       -7614.5651    
+     KINETIC ENERGY    :    1.1301710    
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      200      0.20000 -55545.91073  14383.96454 -69929.87527    299.22243
+DYNA PROP>         16.66382 -55533.52820  14421.13257     12.38253  10057.08829
+DYNA INTERN>      506.84657   1320.26811    159.79314    886.49310     94.93215
+DYNA EXTERN>     6244.10152 -62305.13370      0.00000      0.00000      0.00000
+DYNA IMAGES>       74.64330  -6913.91889      0.00000      0.00000      0.00000
+DYNA EWALD>       620.77271-454602.95090 443984.27761      0.00000      0.00000
+DYNA PRESS>      5068.22311 -11772.94863  -1442.04714   -614.25438 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       214
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       214
+Using Image CUBE search
+ UPDECI: Image update at step       231
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       231
+Using Image CUBE search
+ UPDECI: Image update at step       249
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       249
+Using Image CUBE search
+ UPDECI: Image update at step       265
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       265
+Using Image CUBE search
+ UPDECI: Image update at step       283
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       283
+Using Image CUBE search
+DYNA>      300      0.30000 -55547.03083  15094.79837 -70641.82920    314.00955
+DYNA PROP>         16.70002 -55535.07487  15131.98130     11.95595   7667.25812
+DYNA INTERN>      536.35535   1256.61841    149.69594    890.05259     77.22839
+DYNA EXTERN>     6310.66272 -62994.45777      0.00000      0.00000      0.00000
+DYNA IMAGES>       36.42834  -6914.58921      0.00000      0.00000      0.00000
+DYNA EWALD>       629.77438-454602.95090 443983.35254      0.00000      0.00000
+DYNA PRESS>      7023.00623 -12134.51164  -1998.23603   -582.29170 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.30000 -55547.21875  15008.62563 -70555.84438    312.21694
+AVER PROP>         16.64340 -55535.03363  15045.16940     12.18512   7958.84838
+AVER INTERN>      520.31586   1256.31252    158.25160    884.25897     85.87596
+AVER EXTERN>     6173.22388 -62772.84071      0.00000      0.00000      0.00000
+AVER IMAGES>       34.22030  -6885.64683      0.00000      0.00000      0.00000
+AVER EWALD>       611.04056-454602.95090 443982.09441      0.00000      0.00000
+AVER PRESS>      7274.84544 -12580.74436  -2069.89113   -725.72392 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.30000      0.37173    165.52017    165.72382      3.44323
+FLUC PROP>          0.02859      0.13256    165.49989      0.36046   1615.59936
+FLUC INTERN>       14.25345     29.78922      4.56776     10.83923      5.60257
+FLUC EXTERN>       54.63098    166.13306      0.00000      0.00000      0.00000
+FLUC IMAGES>       18.77660     34.19150      0.00000      0.00000      0.00000
+FLUC EWALD>         8.52070      0.01353      4.76343      0.00000      0.00000
+FLUC PRESS>      1174.45348    551.75422    334.16392    138.27729      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -2.73777349E-03  -2.73777349E-03
+     E AT STEP 0            :    -55534.895       -55534.895    
+     CORR. COEFFICIENT      :   -0.59618546      -0.59618546    
+
+          SEED FOR RANDOM NUMBER GENERATOR IS   1092930159
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    298.0000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7100152        4.4487331       -3.3870477    
+     VELOCITY          :   9.53950488E-04  -3.49576044E-04   5.56929694E-04
+     ANGULAR MOMENTUM  :    4977.7155        4674.0694       -6441.6443    
+     KINETIC ENERGY    :   9.69957822E-02
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      300      0.30000 -56211.47987  14430.34933 -70641.82919    300.18735
+DYNA PROP>         16.70002 -56199.17861  14467.27290     12.30126   7359.35904
+DYNA INTERN>      536.35535   1256.61841    149.69594    890.05259     77.22839
+DYNA EXTERN>     6310.66272 -62994.45776      0.00000      0.00000      0.00000
+DYNA IMAGES>       36.42834  -6914.58921      0.00000      0.00000      0.00000
+DYNA EWALD>       629.77438-454602.95090 443983.35254      0.00000      0.00000
+DYNA PRESS>      7023.00622 -11929.24558  -1998.23603   -649.97299 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       310
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       310
+Using Image CUBE search
+ UPDECI: Image update at step       329
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       329
+Using Image CUBE search
+ UPDECI: Image update at step       347
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       347
+Using Image CUBE search
+Using Image CUBE search
+ VEHEAP> Expanding heap size by         3801088 words.
+Using Image CUBE search
+ UPDECI: Image update at step       365
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       365
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       384
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       384
+Using Image CUBE search
+DYNA>      400      0.40000 -56212.15034  14968.63062 -71180.78096    311.38495
+DYNA PROP>         16.79141 -56200.05137  15005.11271     12.09897  11599.73431
+DYNA INTERN>      521.70189   1291.32065    154.32173    868.03183     85.31768
+DYNA EXTERN>     6504.75940 -63563.07647      0.00000      0.00000      0.00000
+DYNA IMAGES>      111.38865  -7120.12036      0.00000      0.00000      0.00000
+DYNA EWALD>       588.12715-454602.95090 443980.39779      0.00000      0.00000
+DYNA PRESS>      4448.36712 -12181.52332  -1265.68127   -619.73284 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.40000 -56212.32852  14811.35696 -71023.68548    308.11326
+AVER PROP>         16.67966 -56200.22808  14847.68264     12.10044  11249.96191
+AVER INTERN>      511.23526   1256.20709    159.55603    880.47865     79.90204
+AVER EXTERN>     6329.74004 -63314.00078      0.00000      0.00000      0.00000
+AVER IMAGES>       63.83048  -6975.80777      0.00000      0.00000      0.00000
+AVER EWALD>       606.43905-454602.95090 443981.68534      0.00000      0.00000
+AVER PRESS>      4685.74582 -12185.72042  -1333.22196   -650.78912 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.40000      0.42828    119.21104    119.39118      2.47989
+FLUC PROP>          0.05052      0.11350    119.15055      0.41951   1826.05392
+FLUC INTERN>       16.25276     22.82429      3.79054     13.18189      5.45908
+FLUC EXTERN>       81.15299    119.50472      0.00000      0.00000      0.00000
+FLUC IMAGES>       32.32259     66.00387      0.00000      0.00000      0.00000
+FLUC EWALD>        11.68522      0.01353      2.72559      0.00000      0.00000
+FLUC PRESS>      1406.79895    539.60834    400.27251    151.03675      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -2.12587013E-04  -2.12587013E-04
+     E AT STEP 0            :    -56200.217       -56200.217    
+     CORR. COEFFICIENT      :   -5.40685717E-02  -5.40685717E-02
+
+          SEED FOR RANDOM NUMBER GENERATOR IS    585202137
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    298.0000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7177715        4.4564870       -3.3715329    
+     VELOCITY          :   1.49760306E-03   6.63624683E-04   6.03214378E-04
+     ANGULAR MOMENTUM  :   -9006.7124        4126.7541        5627.2837    
+     KINETIC ENERGY    :   0.22016902    
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      400      0.40000 -56890.36298  14290.41798 -71180.78096    297.27643
+DYNA PROP>         16.79141 -56878.24710  14326.73943     12.11588  11317.81343
+DYNA INTERN>      521.70189   1291.32065    154.32173    868.03183     85.31768
+DYNA EXTERN>     6504.75940 -63563.07647      0.00000      0.00000      0.00000
+DYNA IMAGES>      111.38865  -7120.12036      0.00000      0.00000      0.00000
+DYNA EWALD>       588.12715-454602.95090 443980.39779      0.00000      0.00000
+DYNA PRESS>      4448.36711 -11993.57607  -1265.68127   -694.93382 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       410
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       410
+Using Image CUBE search
+ UPDECI: Image update at step       427
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       427
+Using Image CUBE search
+ UPDECI: Image update at step       445
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       445
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       461
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       461
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       478
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       478
+Using Image CUBE search
+ UPDECI: Image update at step       496
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       496
+Using Image CUBE search
+DYNA>      500      0.50000 -56891.17665  14513.54314 -71404.71979    301.91799
+DYNA PROP>         16.70913 -56879.12377  14549.23137     12.05288   8354.57347
+DYNA INTERN>      533.98415   1203.44664    145.48367    862.63450     90.17874
+DYNA EXTERN>     6334.30399 -63697.75081      0.00000      0.00000      0.00000
+DYNA IMAGES>       54.76740  -6917.98821      0.00000      0.00000      0.00000
+DYNA EWALD>       607.86531-454602.95090 443981.30573      0.00000      0.00000
+DYNA PRESS>      7493.14068 -13062.85633  -2132.00206   -956.96977 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.50000 -56890.95269  14488.37389 -71379.32657    301.39441
+AVER PROP>         16.72218 -56879.00959  14524.23293     11.94310   7278.65385
+AVER INTERN>      513.38340   1234.13004    157.37621    867.99052     82.13572
+AVER EXTERN>     6428.87685 -63723.96820      0.00000      0.00000      0.00000
+AVER IMAGES>       61.14069  -6971.61282      0.00000      0.00000      0.00000
+AVER EWALD>       593.27735-454602.95090 443980.89455      0.00000      0.00000
+AVER PRESS>      7481.47866 -12333.91456  -2128.68389   -754.30786 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.50000      0.33256     63.96448     64.18055      1.33062
+FLUC PROP>          0.02817      0.08886     63.82081      0.31152   3622.27001
+FLUC INTERN>       16.59186     22.44363      4.60268      8.34385      5.60931
+FLUC EXTERN>       51.71702     94.65672      0.00000      0.00000      0.00000
+FLUC IMAGES>       30.54574     77.57304      0.00000      0.00000      0.00000
+FLUC EWALD>         8.11890      0.01353      4.27247      0.00000      0.00000
+FLUC PRESS>      2538.06382    379.46336    722.14810    100.50300      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -6.74892294E-05  -6.74892294E-05
+     E AT STEP 0            :    -56879.006       -56879.006    
+     CORR. COEFFICIENT      :   -2.19240121E-02  -2.19240121E-02
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      500      0.50000 -56891.17665  14513.54314 -71404.71979    301.91799
+DYNA PROP>         16.70913 -56881.37348  14549.23137      9.80317   8354.57347
+DYNA INTERN>      533.98415   1203.44664    145.48367    862.63450     90.17874
+DYNA EXTERN>     6334.30399 -63697.75081      0.00000      0.00000      0.00000
+DYNA IMAGES>       54.76740  -6917.98821      0.00000      0.00000      0.00000
+DYNA EWALD>       607.86531-454602.95090 443981.30573      0.00000      0.00000
+DYNA PRESS>      7493.14068 -13062.85633  -2132.00206   -956.96977 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       513
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       513
+Using Image CUBE search
+ UPDECI: Image update at step       531
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       531
+Using Image CUBE search
+ UPDECI: Image update at step       551
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       551
+Using Image CUBE search
+ UPDECI: Image update at step       570
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       570
+Using Image CUBE search
+ UPDECI: Image update at step       586
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       586
+Using Image CUBE search
+DYNA>      600      0.60000 -56890.93288  14626.01269 -71516.94557    304.25764
+DYNA PROP>         16.75482 -56879.08757  14662.26620     11.84531  12013.13881
+DYNA INTERN>      514.64177   1263.86985    161.23313    861.93305     77.30493
+DYNA EXTERN>     6491.18051 -63965.99608      0.00000      0.00000      0.00000
+DYNA IMAGES>      115.66954  -7039.96306      0.00000      0.00000      0.00000
+DYNA EWALD>       626.53617-454602.95090 443979.59552      0.00000      0.00000
+DYNA PRESS>      4091.13948 -12099.89869  -1164.04031   -661.54117 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.60000 -56891.00986  14599.05279 -71490.06265    303.69680
+AVER PROP>         16.72938 -56878.98878  14635.01585     12.02108   7982.08553
+AVER INTERN>      508.89870   1245.31204    159.84554    860.61291     82.28228
+AVER EXTERN>     6491.52717 -63923.86046      0.00000      0.00000      0.00000
+AVER IMAGES>       89.85066  -6996.40965      0.00000      0.00000      0.00000
+AVER EWALD>       611.52484-454602.95090 443983.30422      0.00000      0.00000
+AVER PRESS>      6814.92970 -12136.32005  -1939.03261   -677.07302 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.60000      0.36071     83.53874     83.70495      1.73781
+FLUC PROP>          0.03754      0.07278     83.47854      0.35755   3083.59435
+FLUC INTERN>       16.01882     23.97608      5.21124      5.73350      3.80193
+FLUC EXTERN>       70.57089    111.59030      0.00000      0.00000      0.00000
+FLUC IMAGES>       32.44120     61.87813      0.00000      0.00000      0.00000
+FLUC EWALD>         9.95406      0.01353      3.89040      0.00000      0.00000
+FLUC PRESS>      1913.71179    459.18190    544.50299    129.33474      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):    5.74779975E-04   5.74779975E-04
+     E AT STEP 0            :    -56879.018       -56879.018    
+     CORR. COEFFICIENT      :    0.22797452       0.22797452    
+
+          SEED FOR RANDOM NUMBER GENERATOR IS    331913007
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    298.0000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.6712170        4.4797634       -3.3560212    
+     VELOCITY          :  -1.80584409E-04   2.22075849E-04   8.03882937E-04
+     ANGULAR MOMENTUM  :    3969.3964        11512.941       -457.17907    
+     KINETIC ENERGY    :   5.26134602E-02
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      600      0.60000 -57157.08558  14359.85999 -71516.94557    298.72100
+DYNA PROP>         16.75482 -57145.04229  14395.96486     12.04329  11844.94737
+DYNA INTERN>      514.64177   1263.86985    161.23313    861.93305     77.30493
+DYNA EXTERN>     6491.18051 -63965.99608      0.00000      0.00000      0.00000
+DYNA IMAGES>      115.66954  -7039.96306      0.00000      0.00000      0.00000
+DYNA EWALD>       626.53617-454602.95090 443979.59552      0.00000      0.00000
+DYNA PRESS>      4091.13948 -11987.77106  -1164.04031   -680.15113 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       612
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       612
+Using Image CUBE search
+ UPDECI: Image update at step       627
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       627
+Using Image CUBE search
+ UPDECI: Image update at step       642
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       642
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       658
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       658
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       675
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       675
+Using Image CUBE search
+ UPDECI: Image update at step       691
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       691
+Using Image CUBE search
+DYNA>      700      0.70000 -57157.10482  14429.68468 -71586.78951    300.17352
+DYNA PROP>         16.72921 -57146.27505  14465.87488     10.82978  10006.72205
+DYNA INTERN>      522.07377   1239.83763    153.38459    844.07032     78.85602
+DYNA EXTERN>     6531.00504 -64069.24985      0.00000      0.00000      0.00000
+DYNA IMAGES>       64.27065  -6920.67420      0.00000      0.00000      0.00000
+DYNA EWALD>       584.02123-454602.95090 443988.56620      0.00000      0.00000
+DYNA PRESS>      5753.30947 -12424.45750  -1636.97282   -791.13942 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.70000 -57157.94795  14501.41406 -71659.36200    301.66567
+AVER PROP>         16.70101 -57146.14416  14536.82610     11.80378   9880.51310
+AVER INTERN>      496.80089   1228.83265    156.86346    865.39591     79.80135
+AVER EXTERN>     6501.96448 -64022.16590      0.00000      0.00000      0.00000
+AVER IMAGES>      105.10803  -7051.38116      0.00000      0.00000      0.00000
+AVER EWALD>       596.30919-454602.95090 443986.06001      0.00000      0.00000
+AVER PRESS>      5664.41887 -12251.42760  -1611.68103   -728.44935 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.70000      0.34154     60.00272     60.20691      1.24821
+FLUC PROP>          0.03538      0.16529     59.88746      0.32252   2688.29699
+FLUC INTERN>       17.51760     19.87719      6.35327     13.22508      4.19852
+FLUC EXTERN>       38.69813     86.70481      0.00000      0.00000      0.00000
+FLUC IMAGES>       27.23145     78.04278      0.00000      0.00000      0.00000
+FLUC EWALD>        12.01238      0.01353      2.24722      0.00000      0.00000
+FLUC PRESS>      1664.87283    311.50672    473.70154     88.35711      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -4.74385397E-03  -4.74385397E-03
+     E AT STEP 0            :    -57145.905       -57145.905    
+     CORR. COEFFICIENT      :   -0.82848213      -0.82848213    
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      700      0.70000 -57157.10482  14429.68468 -71586.78951    300.17352
+DYNA PROP>         16.72921 -57144.87297  14465.87488     12.23185  10006.72205
+DYNA INTERN>      522.07377   1239.83763    153.38459    844.07032     78.85602
+DYNA EXTERN>     6531.00504 -64069.24985      0.00000      0.00000      0.00000
+DYNA IMAGES>       64.27065  -6920.67420      0.00000      0.00000      0.00000
+DYNA EWALD>       584.02123-454602.95090 443988.56620      0.00000      0.00000
+DYNA PRESS>      5753.30947 -12424.45750  -1636.97282   -791.13942 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       710
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       710
+Using Image CUBE search
+ UPDECI: Image update at step       728
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       728
+Using Image CUBE search
+ UPDECI: Image update at step       745
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       745
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       761
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       761
+Using Image CUBE search
+ UPDECI: Image update at step       778
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       778
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       797
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       797
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+DYNA>      800      0.80000 -57158.17450  14516.10823 -71674.28273    301.97135
+DYNA PROP>         16.71183 -57146.21653  14551.23422     11.95798  13562.04296
+DYNA INTERN>      476.63669   1260.61698    155.08011    863.58906     68.84341
+DYNA EXTERN>     6591.22770 -64074.25862      0.00000      0.00000      0.00000
+DYNA IMAGES>       93.02114  -7074.15706      0.00000      0.00000      0.00000
+DYNA EWALD>       584.05413-454602.95090 443984.01462      0.00000      0.00000
+DYNA PRESS>      3020.85590 -12062.21787   -859.51556   -671.88103 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.80000 -57157.96997  14554.22926 -71712.19922    302.76436
+AVER PROP>         16.72132 -57146.14427  14589.62887     11.82570   9008.23075
+AVER INTERN>      499.83066   1219.44531    155.78604    867.03775     77.07261
+AVER EXTERN>     6624.51054 -64193.12705      0.00000      0.00000      0.00000
+AVER IMAGES>       76.34642  -7011.36237      0.00000      0.00000      0.00000
+AVER EWALD>       589.65563-454602.95090 443985.55613      0.00000      0.00000
+AVER PRESS>      5749.86855 -11755.35572  -1635.99378   -577.28754 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.80000      0.37853     72.07840     72.21215      1.49941
+FLUC PROP>          0.03495      0.11849     71.95999      0.38688   2941.26160
+FLUC INTERN>       14.52992     21.31487      4.37329     10.26261      5.18754
+FLUC EXTERN>       59.37458     98.57582      0.00000      0.00000      0.00000
+FLUC IMAGES>       32.54193     74.00384      0.00000      0.00000      0.00000
+FLUC EWALD>        13.21787      0.01353      4.06642      0.00000      0.00000
+FLUC PRESS>      2056.24321    302.68274    585.05705     83.66847      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):    7.84826667E-04   7.84826667E-04
+     E AT STEP 0            :    -57146.184       -57146.184    
+     CORR. COEFFICIENT      :    0.19120212       0.19120212    
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7022337        4.5030561       -3.3637899    
+     VELOCITY          :   6.54226307E-06   6.51595320E-06  -3.13477042E-06
+     ANGULAR MOMENTUM  :    1250.2428        7900.8127        9560.4246    
+     KINETIC ENERGY    :   6.87048261E-06
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      800      0.80000 -57158.17451  14516.10822 -71674.28273    301.97135
+DYNA PROP>         16.71183 -57146.45436  14551.23422     11.72015  13562.04288
+DYNA INTERN>      476.63669   1260.61698    155.08011    863.58906     68.84341
+DYNA EXTERN>     6591.22770 -64074.25862      0.00000      0.00000      0.00000
+DYNA IMAGES>       93.02114  -7074.15706      0.00000      0.00000      0.00000
+DYNA EWALD>       584.05413-454602.95090 443984.01462      0.00000      0.00000
+DYNA PRESS>      3020.85590 -12062.21782   -859.51556   -671.88102 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       815
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       815
+Using Image CUBE search
+ UPDECI: Image update at step       833
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       833
+Using Image CUBE search
+ UPDECI: Image update at step       850
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       850
+Using Image CUBE search
+ UPDECI: Image update at step       868
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       868
+Using Image CUBE search
+ UPDECI: Image update at step       886
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       886
+Using Image CUBE search
+DYNA>      900      0.90000 -57158.10030  14636.77647 -71794.87677    304.48155
+DYNA PROP>         16.73002 -57146.48682  14672.03790     11.61348  13436.53485
+DYNA INTERN>      493.37051   1273.11767    158.67142    869.63819     79.04923
+DYNA EXTERN>     6449.85394 -64100.33989      0.00000      0.00000      0.00000
+DYNA IMAGES>       67.80717  -7037.82753      0.00000      0.00000      0.00000
+DYNA EWALD>       570.41087-454602.95090 443984.32255      0.00000      0.00000
+DYNA PRESS>      3460.75333 -12418.44323   -984.67833   -750.32221 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      0.90000 -57158.02752  14575.82991 -71733.85743    303.21371
+AVER PROP>         16.71285 -57146.32186  14610.99909     11.70566   6348.23544
+AVER INTERN>      500.93281   1235.55052    158.63813    875.15669     79.19841
+AVER EXTERN>     6532.45806 -64072.59051      0.00000      0.00000      0.00000
+AVER IMAGES>       42.77775  -7043.50458      0.00000      0.00000      0.00000
+AVER EWALD>       579.66296-454602.95090 443980.81323      0.00000      0.00000
+AVER PRESS>      8183.78041 -12415.93737  -2328.50782   -761.18735 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      0.90000      0.31920     52.65758     52.88628      1.09541
+FLUC PROP>          0.02473      0.18531     52.47201      0.26141   4864.83252
+FLUC INTERN>       12.42710     19.34261      3.08336     11.33498      5.75908
+FLUC EXTERN>       42.84036     68.99301      0.00000      0.00000      0.00000
+FLUC IMAGES>       14.96588     34.62362      0.00000      0.00000      0.00000
+FLUC EWALD>         7.91225      0.01353      3.23261      0.00000      0.00000
+FLUC PRESS>      3271.60031    282.29101    930.85915     80.55173      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -4.55000362E-03  -4.55000362E-03
+     E AT STEP 0            :    -57146.092       -57146.092    
+     CORR. COEFFICIENT      :   -0.70878076      -0.70878076    
+
+          SEED FOR RANDOM NUMBER GENERATOR IS   1318910790
+          GAUSSIAN OPTION                  IS            1
+          VELOCITIES ASSIGNED AT TEMPERATURE =    298.0000
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7022342        4.4875390       -3.3405168    
+     VELOCITY          :  -5.90010516E-04  -3.13661410E-03  -3.29647686E-04
+     ANGULAR MOMENTUM  :    6430.4154        5583.6805        991.38136    
+     KINETIC ENERGY    :   0.74388204    
+DYNA DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+DYNA PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+DYNA INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+DYNA EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+DYNA IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+DYNA EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+DYNA PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+DYNA>      900      0.90000 -57461.51828  14333.35849 -71794.87677    298.16970
+DYNA PROP>         16.73002 -57449.77063  14368.59082     11.74765  13393.58679
+DYNA INTERN>      493.37051   1273.11767    158.67142    869.63819     79.04923
+DYNA EXTERN>     6449.85394 -64100.33989      0.00000      0.00000      0.00000
+DYNA IMAGES>       67.80717  -7037.82753      0.00000      0.00000      0.00000
+DYNA EWALD>       570.41087-454602.95090 443984.32255      0.00000      0.00000
+DYNA PRESS>      3460.75333 -12389.81119   -984.67833   -799.73490 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ UPDECI: Image update at step       913
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       913
+Using Image CUBE search
+ UPDECI: Image update at step       931
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       931
+Using Image CUBE search
+ UPDECI: Image update at step       948
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       948
+Using Image CUBE search
+Using Image CUBE search
+Using Image CUBE search
+ UPDECI: Image update at step       968
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       968
+Using Image CUBE search
+ UPDECI: Image update at step       985
+
+ SELECTED IMAGES ATOMS BEING CENTERED ABOUT  0.000000  0.000000  0.000000
+ UPDECI: Nonbond update at step       985
+Using Image CUBE search
+DYNA>     1000      1.00000 -57462.24986  14459.07660 -71921.32646    300.78495
+DYNA PROP>         16.67545 -57450.11600  14493.88272     12.13386   5732.99665
+DYNA INTERN>      475.09834   1256.06349    156.50263    871.70875     79.01831
+DYNA EXTERN>     6629.67321 -64286.18303      0.00000      0.00000      0.00000
+DYNA IMAGES>       49.55561  -7100.16760      0.00000      0.00000      0.00000
+DYNA EWALD>       570.99675-454602.95090 443979.35800      0.00000      0.00000
+DYNA PRESS>      7957.36124 -11779.35901  -2264.08542   -602.27871 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> Averages for the last      100  steps:
+AVER DYN: Step         Time      TOTEner        TOTKe       ENERgy  TEMPerature
+AVER PROP:             GRMS      HFCTote        HFCKe       EHFCor        VIRKe
+AVER INTERN:          BONDs       ANGLes       UREY-b    DIHEdrals    IMPRopers
+AVER EXTERN:        VDWaals         ELEC       HBONds          ASP         USER
+AVER IMAGES:        IMNBvdw       IMELec       IMHBnd       RXNField    EXTElec
+AVER EWALD:          EWKSum       EWSElf       EWEXcl       EWQCor       EWUTil
+AVER PRESS:            VIRE         VIRI       PRESSE       PRESSI       VOLUme
+ ----------       ---------    ---------    ---------    ---------    ---------
+AVER>      100      1.00000 -57462.01560  14412.55266 -71874.56826    299.81714
+AVER PROP>         16.71395 -57450.33579  14447.55000     11.67980   9024.77451
+AVER INTERN>      501.09587   1240.09665    155.28448    865.43600     77.44406
+AVER EXTERN>     6486.42258 -64093.39711      0.00000      0.00000      0.00000
+AVER IMAGES>       81.52117  -7151.47281      0.00000      0.00000      0.00000
+AVER EWALD>       584.05350-454602.95090 443981.89825      0.00000      0.00000
+AVER PRESS>      6514.78440 -12531.30074  -1853.63312   -825.01517 240990.21157
+ ----------       ---------    ---------    ---------    ---------    ---------
+ DYNAMC> RMS fluctuations for the last      100  steps:
+FLUC>      100      1.00000      0.26532     68.83992     68.98269      1.43204
+FLUC PROP>          0.02477      0.11064     68.80585      0.25730   2872.04258
+FLUC INTERN>       15.09713     19.54571      4.86400     15.23767      6.80099
+FLUC EXTERN>       77.89327    116.13951      0.00000      0.00000      0.00000
+FLUC IMAGES>       21.31130     68.48041      0.00000      0.00000      0.00000
+FLUC EWALD>         8.35567      0.01353      2.87969      0.00000      0.00000
+FLUC PRESS>      1891.17136    368.07032    538.08962    106.14445      0.01296
+ ----------       ---------    ---------    ---------    ---------    ---------
+
+     DRIFT/STEP (LAST-TOTAL):   -1.09875771E-05  -1.09875771E-05
+     E AT STEP 0            :    -57450.335       -57450.335    
+     CORR. COEFFICIENT      :   -2.86659435E-03  -2.86659435E-03
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7332673        4.4797807       -3.3327599    
+     VELOCITY          :  -2.06247319E-06   1.66040055E-07  -1.28212701E-06
+     ANGULAR MOMENTUM  :    7262.0278       -2046.5495       -11550.722    
+     KINETIC ENERGY    :   4.28130736E-07
+
+     DETAILS ABOUT CENTRE OF MASS
+     POSITION          :   -3.7332673        4.4797807       -3.3327599    
+     VELOCITY          :   1.02347524E-17  -1.80080016E-18   2.87559514E-18
+     ANGULAR MOMENTUM  :    7262.0278       -2046.5495       -11550.722    
+     KINETIC ENERGY    :   8.40060245E-30
+  
+ CHARMM>     
+  
+ CHARMM>    stop
+ Parallel load balance (sec.):
+ Node Eext      Eint   Wait    Comm    List   Integ   Total
+   0    15.9     2.3     0.1     9.7     3.2     0.3    31.5
+   1    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+   2    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+   3    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+   4    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+   5    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+   6    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+   7    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+   8    16.0     2.3     0.0     9.5     3.2     0.2    31.3
+   9    15.9     2.3     0.1     9.5     3.2     0.2    31.3
+  10    16.0     2.3     0.1     9.5     3.2     0.2    31.3
+  11    15.9     2.3     0.1     9.5     3.2     0.2    31.3
+  12    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  13    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  14    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  15    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  16    16.0     2.3     0.0     9.7     3.2     0.2    31.5
+  17    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+  18    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+  19    16.0     2.3     0.0     9.7     3.2     0.2    31.5
+  20    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+  21    16.0     2.3     0.1     9.8     3.2     0.2    31.6
+  22    16.0     2.3     0.1     9.8     3.2     0.2    31.6
+  23    15.9     2.3     0.1     9.8     3.2     0.2    31.6
+  24    16.0     2.3     0.1     9.6     3.2     0.2    31.4
+  25    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  26    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  27    15.9     2.3     0.1     9.6     3.2     0.2    31.4
+  28    16.0     2.2     0.1     9.7     3.2     0.2    31.5
+  29    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+  30    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+  31    16.0     2.2     0.1     9.7     3.2     0.2    31.5
+PARALLEL> Average timing for all nodes:
+  32    16.0     2.3     0.1     9.7     3.2     0.2    31.5
+
+      $$$$$$  New timer profile Local node$$$$$
+
+   Shake Setup                     0.02 Other:            0.00
+   First List                      0.24 Other:            0.00
+   Shake time                      0.03 Other:            0.00
+      Comm coords                     3.20 Other:            0.00
+      dynamc                          0.15 Other:            0.00
+   Dynamics total                  4.02 Other:            0.67
+      Image Update                    1.27 Other:            0.00
+      xdistm setup                    0.07 Other:            0.00
+      xdistm Build list               1.38 Other:            0.00
+   List time                       3.43 Other:            0.70
+            Direct Ewald time               8.94 Other:            0.00
+               Fill charge grid                1.55 Other:            0.00
+               Scalar sum                      0.50 Other:            0.00
+               Grad sum                        0.44 Other:            0.00
+                  FFTcomm                         3.55 Other:            0.00
+               FFT                             4.05 Other:            0.50
+            Recip Ewald time                6.82 Other:            0.29
+         Ewald time                     15.77 Other:            0.01
+      Nonbond force                  15.94 Other:            0.18
+         Bond energy                     0.13 Other:            0.00
+         Angle energy                    0.11 Other:            0.00
+         Dihedral energy                 0.08 Other:            0.00
+         Restraints energy               0.00 Other:            0.00
+      INTRNL energy                   1.55 Other:            1.22
+      Comm force                      6.20 Other:            0.00
+   Energy time                    25.22 Other:            1.52
+ Total time                     34.82 Other:            1.87
+
+         $$$$$$  Average   profile $$$$$
+
+   Shake Setup                     0.02 Other:            0.00
+   First List                      0.24 Other:            0.00
+   Shake time                      0.11 Other:            0.00
+      Comm coords                     3.16 Other:            0.00
+      dynamc                          0.12 Other:            0.00
+   Dynamics total                  3.89 Other:            0.54
+      Image Update                    1.29 Other:            0.00
+      xdistm setup                    0.09 Other:            0.00
+      xdistm Build list               1.41 Other:            0.00
+   List time                       3.47 Other:            0.75
+            Direct Ewald time               8.66 Other:            0.00
+               Fill charge grid                1.56 Other:            0.00
+               Scalar sum                      0.50 Other:            0.00
+               Grad sum                        0.43 Other:            0.00
+                  FFTcomm                         3.54 Other:            0.00
+               FFT                             4.03 Other:            0.48
+            Recip Ewald time                7.11 Other:            0.57
+         Ewald time                     15.77 Other:            0.01
+      Nonbond force                  15.95 Other:            0.19
+         Bond energy                     0.13 Other:            0.00
+         Angle energy                    0.10 Other:            0.00
+         Dihedral energy                 0.08 Other:            0.00
+         Restraints energy               0.00 Other:            0.00
+      INTRNL energy                   1.54 Other:            1.21
+      Comm force                      6.20 Other:            0.00
+   Energy time                    25.21 Other:            1.52
+ Total time                     34.81 Other:            1.86
+
+                    NORMAL TERMINATION BY NORMAL STOP
+                    MAXIMUM STACK SPACE USED IS 3541442
+                    STACK CURRENTLY IN USE IS         0
+                    NO WARNINGS WERE ISSUED
+                    HEAP PRINTOUT-  HEAP SIZE         10240000
+                    SPACE CURRENTLY IN USE IS                0
+                    MAXIMUM SPACE USED IS              6330390
+                    FREE LIST
+  PRINHP> ADDRESS:               1 LENGTH:        10240000 NEXT:  17479165863837
+  PRINHP> ADDRESS:  17479165863837 LENGTH:         3801088 NEXT:               0
+
+                    $$$$$ JOB ACCOUNTING INFORMATION $$$$$
+                     ELAPSED TIME:    34.86  SECONDS 
+                         CPU TIME:    33.00  SECONDS 

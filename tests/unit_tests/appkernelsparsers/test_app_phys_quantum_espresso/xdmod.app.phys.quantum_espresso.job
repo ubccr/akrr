@@ -1,0 +1,93 @@
+#!/bin/sh
+#PBS -l nodes=4:ppn=8:IB2
+#PBS -m n
+#PBS -S /bin/sh
+#PBS -e /user/xdtas/u2/arrdata/xdmod.app.phys.quantum_espresso/2013.02.14.02.15.00.747075/stderr
+#PBS -o /user/xdtas/u2/arrdata/xdmod.app.phys.quantum_espresso/2013.02.14.02.15.00.747075/stdout
+#PBS -l walltime=00:15:00
+#PBS -W x=NACCESSPOLICY:SINGLEJOB
+#PBS -M xdtas
+
+#Common commands
+PATH=/user/xdtas/u2/edge_appker//execs/bin:/user/xdtas/u2/arrdata/AppKerLaunchers/bin:/usr/lib64/qt-3.3/bin:/util/Modules/3.2.8/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/usr/kerberos/bin:/opt/dell/srvadmin/bin:/user/xdtas/u2/bin; export PATH
+
+export ARR_NODES=4
+export ARR_CORES=32
+export ARR_CORES_PER_NODE=8
+export ARR_NETWORK_SCRATCH="$SCRATCH"
+export ARR_LOCAL_SCRATCH="/tmp"
+export ARR_TASK_WORKDIR="/user/xdtas/u2/arrdata/xdmod.app.phys.quantum_espresso/2013.02.14.02.15.00.747075"
+
+export ARR_APPKER_NAME="xdmod.app.phys.quantum_espresso"
+export ARR_RESOURCE_NAME="edge"
+export ARR_TIMESTAMP="2013.02.14.02.15.00.747075"
+export ARR_APP_STDOUT_FILE=appstdout
+
+cd $ARR_TASK_WORKDIR
+
+
+#function to test that directory is writable
+testDirWritability () {
+    TESTFILE=`mktemp -q --tmpdir="$1" testwritability.XXXXXX`
+    if [ "$TESTFILE" == "" ]
+    then
+        echo "ARR:ERROR: $2 is not writable ($1)"
+    else
+        if [ ! -f "$TESTFILE" ]
+        then
+            echo "ARR:ERROR: $2 is not writable ($1)"
+        else
+            echo "this is test" >> "$TESTFILE"
+            if [ "`cat "$TESTFILE"`" != "this is test" ]
+            then
+                echo "ARR:ERROR: $2 is not writable ($ARR_TASK_WORKDIR)"
+            fi
+            rm "$TESTFILE"
+        fi
+    fi
+}
+
+
+#System dependent variables
+export ARR_NODELIST=`cat $PBS_NODEFILE`
+
+#INCA compatibility
+INSTALL_DIR=/user/xdtas/u2/arrdata/AppKerLaunchers; export INSTALL_DIR
+PERL5LIB=/user/xdtas/u2/arrdata/AppKerLaunchers/lib/perl; export PERL5LIB
+
+INCA_BATCHWRAPPER_NODES=4; export INCA_BATCHWRAPPER_NODES
+INCA_BATCHWRAPPER_CORES=32; export INCA_BATCHWRAPPER_CORES
+INCA_BATCHWRAPPER_CORES_PER_NODE=8; export INCA_BATCHWRAPPER_CORES_PER_NODE
+INCA_BATCHWRAPPER_NODELIST=`cat $PBS_NODEFILE | gzip -9 -n | base64 -w 0`; export INCA_BATCHWRAPPER_NODELIST
+INCA_BATCHWRAPPER_APP_STDOUT_FILE=/user/xdtas/u2/arrdata/xdmod.app.phys.quantum_espresso/2013.02.14.02.15.00.747075/appstdout; export INCA_BATCHWRAPPER_APP_STDOUT_FILE
+
+
+#Common Tests
+#Check that app kernel launcher exists and is executable
+if [ ! -f /user/xdtas/u2/edge_appker/quantum_espresso/run ]
+then
+    echo "ARR:ERROR: App kernel launcher does not exists (/user/xdtas/u2/edge_appker/quantum_espresso/run)"
+fi
+
+if [ ! -x /user/xdtas/u2/edge_appker/quantum_espresso/run ]
+then
+    echo "ARR:ERROR: App kernel launcher is not executable (/user/xdtas/u2/edge_appker/quantum_espresso/run)"
+fi
+
+#Test that all directories are writable
+testDirWritability "$ARR_TASK_WORKDIR" "Task working directory"
+testDirWritability "$ARR_NETWORK_SCRATCH" "Network scratch directory"
+testDirWritability "$ARR_LOCAL_SCRATCH" "local scratch directory"
+
+#Write down some info, JSON-Like object
+echo "\"startTime\":\""`date`"\"," > gen.info
+echo "\"nodeList\":\"\"\""$ARR_NODELIST\"\"\""," >> gen.info
+
+
+
+
+/user/xdtas/u2/edge_appker/quantum_espresso/run input01 >& $ARR_APP_STDOUT_FILE
+
+
+echo "\"endTime\":\""`date`"\"," >> gen.info
+

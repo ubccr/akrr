@@ -1,0 +1,358 @@
+===ExeBinSignature=== COMPILER: GCC 4.4.x (1 times, 54 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.4.3 (1 times, 54 bytes)
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: eddaea4acaa71a5d7fd95bbd831acae8 */panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge12core/execs/mpi-tile-io/src/mpi-cube-io
+===ExeBinSignature=== MD5: 9ccd2e0e3a99fd961aea7a5daab724ad */usr/lib64/libcr_run.so
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5d00c19c4e51348575b5ea267dfeff4b */util/intel/impi/4.1.0.024/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: d2e4382e548f75125f29a44b07eb896b */util/intel/impi/4.1.0.024/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 3e6345d3e6cf002dcc4f70d74ee3064f */lib64/libm.so.6
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 531aa9b923b87cc2087d57e578245d1b */lib64/libc.so.6
+===ExeBinSignature=== COMPILER: GCC 4.4.x (1 times, 54 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.4.3 (1 times, 54 bytes)
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: c54d6979212f616f2a2ef4d2f288d040 */panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge12core/execs/mpi-tile-io/src/mpi-tile-io
+===ExeBinSignature=== MD5: 9ccd2e0e3a99fd961aea7a5daab724ad */usr/lib64/libcr_run.so
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5d00c19c4e51348575b5ea267dfeff4b */util/intel/impi/4.1.0.024/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: d2e4382e548f75125f29a44b07eb896b */util/intel/impi/4.1.0.024/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 3e6345d3e6cf002dcc4f70d74ee3064f */lib64/libm.so.6
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 531aa9b923b87cc2087d57e578245d1b */lib64/libc.so.6
+===ExeBinSignature=== COMPILER: GCC 4.4.x (1 times, 54 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.4.3 (1 times, 54 bytes)
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: a37d90fa4b519c67689af0246691e553 */panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge12core/execs/mpi-tile-io/src/hdf_mpi-cube-io
+===ExeBinSignature=== MD5: 9ccd2e0e3a99fd961aea7a5daab724ad */usr/lib64/libcr_run.so
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: d5b3f733158c7adceffc0d3525d65e34 */lib64/libz.so.1
+===ExeBinSignature=== MD5: 3e6345d3e6cf002dcc4f70d74ee3064f */lib64/libm.so.6
+===ExeBinSignature=== MD5: 5d00c19c4e51348575b5ea267dfeff4b */util/intel/impi/4.1.0.024/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: d2e4382e548f75125f29a44b07eb896b */util/intel/impi/4.1.0.024/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 531aa9b923b87cc2087d57e578245d1b */lib64/libc.so.6
+===ExeBinSignature=== COMPILER: GCC 4.4.x (1 times, 54 bytes)
+===ExeBinSignature=== COMPILER: GCC 4.4.3 (1 times, 54 bytes)
+===ExeBinSignature=== DYNLIB: Glibc 2.12
+===ExeBinSignature=== DYNLIB: GCC Runtime Support Library 4.3.0
+===ExeBinSignature=== MD5: 7753730adc9ce9a635146318cbbd8207 */panfs/panfs.ccr.buffalo.edu/projects/ccrstaff/general/appker/edge12core/execs/mpi-tile-io/src/hdf_mpi-tile-io
+===ExeBinSignature=== MD5: 9ccd2e0e3a99fd961aea7a5daab724ad */usr/lib64/libcr_run.so
+===ExeBinSignature=== MD5: 0a45eff701e366f551b431ded93e145e */lib64/libdl.so.2
+===ExeBinSignature=== MD5: d5b3f733158c7adceffc0d3525d65e34 */lib64/libz.so.1
+===ExeBinSignature=== MD5: 3e6345d3e6cf002dcc4f70d74ee3064f */lib64/libm.so.6
+===ExeBinSignature=== MD5: 5d00c19c4e51348575b5ea267dfeff4b */util/intel/impi/4.1.0.024/intel64/lib/libmpi.so.4
+===ExeBinSignature=== MD5: d2e4382e548f75125f29a44b07eb896b */util/intel/impi/4.1.0.024/intel64/lib/libmpigf.so.4
+===ExeBinSignature=== MD5: 451e43913769d6b754e7c212083f5b30 */lib64/librt.so.1
+===ExeBinSignature=== MD5: d5bf2e0ff6974cc04b31ebc7d2709f86 */lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 3a9cc3e372a4e42ffa37c1073b1262e9 */lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 531aa9b923b87cc2087d57e578245d1b */lib64/libc.so.6
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-cube-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_indep --mem_usage 100m
+"StartTime":"Thu Nov 7 03:01:08 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_indep
+# collective IO: no
+# header size: 0 bytes
+# global dataset topology: 800x1024x1024 elements
+# processes topology: 4x4x4
+# local dataset topology: 200x256x256 elements
+# local dataset memory usage: 104857600 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.022050 max=0.034026 mean=0.026028 var=0.000010
+# Write: min=182.498984 max=235.520903 mean=214.976382 var=129.429124
+# Close: min=0.000192 max=0.032183 mean=0.003486 var=0.000086
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 28493804.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:05:06 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-cube-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_indep --mem_usage 100m
+"StartTime":"Thu Nov 7 03:05:06 EST 2013",
+# Process 0: Before Read test, purging 2884 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_indep
+# collective IO: no
+# header size: 0 bytes
+# global dataset topology: 800x1024x1024 elements
+# processes topology: 4x4x4
+# local dataset topology: 200x256x256 elements
+# local dataset memory usage: 104857600 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.023603 max=0.054999 mean=0.035107 var=0.000071
+# Read: min=17.355851 max=19.280986 mean=18.709723 var=0.167180
+# Close: min=0.000180 max=0.000288 mean=0.000222 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 348057216.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:05:30 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-cube-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:05:30 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 1024x1280x1280 elements
+# processes topology: 4x4x4
+# local dataset topology: 256x320x320 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.037284 max=0.037431 mean=0.037365 var=0.000000
+# Write: min=38.090499 max=38.093237 mean=38.090992 var=0.000001
+# Close: min=0.000478 max=0.191116 mean=0.022930 var=0.003573
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 352340032.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:06:10 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-cube-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:06:10 EST 2013",
+# Process 0: Before Read test, purging 2884 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-cube-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 1024x1280x1280 elements
+# processes topology: 4x4x4
+# local dataset topology: 256x320x320 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.071324 max=0.071459 mean=0.071397 var=0.000000
+# Read: min=19.623367 max=19.629641 mean=19.625633 var=0.000002
+# Close: min=0.000264 max=0.000405 mean=0.000326 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 683750272.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:06:37 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_indep --mem_usage 100m
+"StartTime":"Thu Nov 7 03:06:37 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_indep
+# collective IO: no
+# header size: 0 bytes
+# global dataset topology: 25600x32768 elements
+# processes topology: 8x8
+# local dataset topology: 3200x4096 elements
+# local dataset memory usage: 104857600 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.032954 max=0.041617 mean=0.036729 var=0.000005
+# Write: min=264.022769 max=298.168902 mean=283.772647 var=87.803483
+# Close: min=0.000050 max=0.032696 mean=0.003366 var=0.000078
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 22506996.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:11:37 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_indep --mem_usage 100m
+"StartTime":"Thu Nov 7 03:11:37 EST 2013",
+# Process 0: Before Read test, purging 2885 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_indep
+# collective IO: no
+# header size: 0 bytes
+# global dataset topology: 25600x32768 elements
+# processes topology: 8x8
+# local dataset topology: 3200x4096 elements
+# local dataset memory usage: 104857600 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.002054 max=0.030526 mean=0.009467 var=0.000051
+# Read: min=10.485785 max=11.810843 mean=11.210714 var=0.091749
+# Close: min=0.000043 max=0.000081 mean=0.000057 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 568197056.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:12:02 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:12:02 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 40960x40960 elements
+# processes topology: 8x8
+# local dataset topology: 5120x5120 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.048998 max=0.049139 mean=0.049071 var=0.000000
+# Write: min=44.598582 max=44.598627 mean=44.598597 var=0.000000
+# Close: min=0.000119 max=0.181099 mean=0.022178 var=0.003453
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 300945888.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:12:49 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/mpi-tile-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:12:49 EST 2013",
+# Process 0: Before Read test, purging 2884 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_mpi-tile-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 40960x40960 elements
+# processes topology: 8x8
+# local dataset topology: 5120x5120 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.086420 max=0.086550 mean=0.086489 var=0.000000
+# Read: min=20.625727 max=20.630113 mean=20.628372 var=0.000002
+# Close: min=0.000117 max=0.000261 mean=0.000140 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 650591360.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:13:17 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/hdf_mpi-cube-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-cube-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:13:18 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-cube-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 1024x1280x1280 elements
+# processes topology: 4x4x4
+# local dataset topology: 256x320x320 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# HDF5 Version: 1.8.11 (Parallel)
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.048270 max=0.049155 mean=0.048841 var=0.000000
+# Write: min=40.264430 max=40.264685 mean=40.264608 var=0.000000
+# Close: min=0.653508 max=0.841222 mean=0.675959 var=0.003571
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 333338592.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:14:01 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/hdf_mpi-cube-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-cube-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:14:01 EST 2013",
+# Process 0: Before Read test, purging 2884 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-cube-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 1024x1280x1280 elements
+# processes topology: 4x4x4
+# local dataset topology: 256x320x320 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# HDF5 Version: 1.8.11 (Parallel)
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.058148 max=0.061011 mean=0.059629 var=0.000001
+# Read: min=20.101169 max=20.101474 mean=20.101389 var=0.000000
+# Close: min=0.000577 max=0.000653 mean=0.000619 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 667700928.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:14:25 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/hdf_mpi-tile-io --write_file --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-tile-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:14:26 EST 2013",
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-tile-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 40960x40960 elements
+# processes topology: 8x8
+# local dataset topology: 5120x5120 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# HDF5 Version: 1.8.11 (Parallel)
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.036369 max=0.037127 mean=0.036835 var=0.000000
+# Write: min=38.745023 max=38.745263 mean=38.745183 var=0.000000
+# Close: min=0.589058 max=0.772100 mean=0.611174 var=0.003471
+# Note: bandwidth values based on max (worst case)
+# Write bandwidth: 346410688.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:15:07 EST 2013",
+Executing srun /projects/ccrstaff/general/appker/edge/execs/mpi-tile-io/src/hdf_mpi-tile-io --filename /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-tile-io_coll --mem_usage 200m --collective
+"StartTime":"Thu Nov 7 03:15:07 EST 2013",
+# Process 0: Before Read test, purging 2885 MB of memory
+# Process 0: Done memory purging
+# mpi-tile-io run on d09n19s02
+# processes available: 64
+# processes used: 64
+# filename: /panasas/scratch/mpi_tile_io.X8GKH83X1/test_hdf_mpi-tile-io_coll
+# collective IO: yes
+# header size: 0 bytes
+# global dataset topology: 40960x40960 elements
+# processes topology: 8x8
+# local dataset topology: 5120x5120 elements
+# local dataset memory usage: 209715200 bytes
+# local dataset ghost zone: 0x0
+# element size: 8 bytes
+# mpiio hints: panfs_concurrent_write=1;
+# HDF5 Version: 1.8.11 (Parallel)
+# filesystem: panfs (panfs://panfs.ccr.buffalo.edu:global)
+# Times are total for all operations of the given type
+# Open: min=0.074938 max=0.078241 mean=0.076388 var=0.000001
+# Read: min=19.579973 max=19.580366 mean=19.580268 var=0.000000
+# Close: min=0.000642 max=0.000697 mean=0.000666 var=0.000000
+# Note: bandwidth values based on max (worst case)
+# Read bandwidth: 685470976.000 bytes/sec
+##############################################
+"EndTime":"Thu Nov 7 03:15:32 EST 2013",
