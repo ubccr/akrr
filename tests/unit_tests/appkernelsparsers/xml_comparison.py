@@ -57,6 +57,11 @@ def print_params_or_stats_for_comparisons(elm: xml.etree.ElementTree):
         record_id = record.find('ID').text
         record_value = record.find('value').text
         elm_name = "params" if record_tag == "parameter" else "stats"
+
+        if record_value is None:
+            print('# '+record_id+' is None!')
+            continue
+
         record_type = "s"
         if is_float(record_value):
             record_type = "f"
