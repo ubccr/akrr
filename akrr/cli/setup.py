@@ -9,8 +9,6 @@ import string
 
 from akrr.util import log
 
-from pprint import pprint
-
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.
 
