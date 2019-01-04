@@ -232,7 +232,7 @@ def create_scheduled_tasks():
         task_id = sch.add_task(params['time_to_start'], params['repeat_in'], params['resource'], params['app'],
                                params['resource_param'], params['app_param'], params['task_param'],
                                params['group_id'], None)
-    except Exception as e:
+    except Exception:
         raise bottle.HTTPError(400, 'Can not submit task to scheduled_tasks queue:' + traceback.format_exc())
     del sch
 

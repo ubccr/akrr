@@ -1,3 +1,4 @@
 [report]
-omit = */akrr/pexpect/*
-
+omit =
+    */akrr/pexpect/*
+    */akrr/bottle_api_json_formatting.py

@@ -1,7 +1,7 @@
 import datetime
 import re
 
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 
 def to_time(time):
@@ -39,11 +39,12 @@ def time_stamp_to_datetime_str(time_stamp: str):
     return datetime.datetime.strptime(time_stamp, "%Y.%m.%d.%H.%M.%S.%f").strftime("%Y-%m-%d %H:%M:%S")
 
 
-def get_formatted_repeat_in(repeat_in, raise_on_fail=False):
+def get_formatted_repeat_in(repeat_in: Union[None, str], raise_on_fail: bool=False):
     """
     Return  formatted repeat_in with following formatting:
     "%01d-%02d-%03d %02d:%02d:%02d" % (years,months,days,hours,minutes,seconds)
     :param repeat_in:
+    :param raise_on_fail:
     :return: formatted repeat_in
     """
     repeat_in_formatted = None
@@ -205,12 +206,12 @@ def calculate_random_start_time(start_time, periodicity, time_start, time_end):
     :type time_start str
     :type time_end str
 
-    :param start_time  a string in the format 'YYYY-MM-DD HH24:MI:SS'
-    :param periodicity a string in the format ''
-    :param time_start  a string in the format 'HH24:MI'
-    :param time_end    a string in the format 'HH24:MI'
+    :param start_time: - a string in the format 'YYYY-MM-DD HH24:MI:SS'
+    :param periodicity: a string in the format ''
+    :param time_start: a string in the format 'HH24:MI'
+    :param time_end: a string in the format 'HH24:MI'
 
-    :return a new datetime.datetime with a randomized day / time constrained by
+    :return: a new datetime.datetime with a randomized day / time constrained by
             the provided periodicity and time_start / time_end
     """
     import random

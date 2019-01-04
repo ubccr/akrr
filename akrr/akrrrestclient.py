@@ -10,7 +10,7 @@ which might change
 from . import cfg
 import random
 import json
-from socket import error as SocketError
+from socket import error as socket_error
 import errno
 import time
 import warnings
@@ -56,7 +56,7 @@ def get_token():
             global token
             token = r.json()['data']['token']
             break
-        except SocketError as e:
+        except socket_error as e:
             if e.errno != errno.ECONNRESET:
                 raise  # Not 104 error
             time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
@@ -76,7 +76,7 @@ def get(url, **kwargs):
                 get_token()
                 r = requests.get(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
-        except SocketError as e:
+        except socket_error as e:
             if e.errno != errno.ECONNRESET:
                 raise  # Not 104 error
             time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
@@ -101,7 +101,7 @@ def post(url, **kwargs):
                 get_token()
                 r = requests.post(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
-        except SocketError as e:
+        except socket_error as e:
             if e.errno != errno.ECONNRESET:
                 raise  # Not 104 error
             time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
@@ -126,7 +126,7 @@ def put(url, **kwargs):
                 get_token()
                 r = requests.put(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
-        except SocketError as e:
+        except socket_error as e:
             if e.errno != errno.ECONNRESET:
                 raise  # Not 104 error
             time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
@@ -151,7 +151,7 @@ def delete(url, **kwargs):
                 get_token()
                 r = requests.delete(restapi_host + url, auth=(token, ""), verify=ssl_verify, cert=ssl_cert, **kwargs)
             break
-        except SocketError as e:
+        except socket_error as e:
             if e.errno != errno.ECONNRESET:
                 raise  # Not 104 error
             time.sleep(waitingTimeOnBusyServer * random.uniform(0.0, 1.0))
