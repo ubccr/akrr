@@ -332,8 +332,8 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             match_obj = m_wait_expr[1](rege, msg, m_wait_expr[3])
             if match_obj:
                 print("Still in queue. Either waiting or running")
-                if datetime.datetime.today() - self.TimeJobSubmetedToRemoteQueue > self.taskParam.get('MaxTimeInQueue',
-                        cfg.max_time_in_queue):
+                if datetime.datetime.today() - self.TimeJobSubmetedToRemoteQueue > self.taskParam.get(
+                        'MaxTimeInQueue', cfg.max_time_in_queue):
                     print("ERROR:")
                     print("Job exceeds the maximal time in queue (%s). And will be terminated." % (
                         str(self.taskParam.get('MaxTimeInQueue', cfg.max_time_in_queue))))
@@ -361,9 +361,9 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             else:
                 print("Not in queue. Either exited with error or executed successfully.")
                 print("copying files from remote machine")
-                msg = scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
+                scp_from_resource(self.resource, os.path.join(self.remoteTaskDir, "*"),
                                         os.path.join(self.taskDir, "jobfiles"), "-r")
-                # print msg
+
                 print("Deleting all files from remote machine")
                 self.delete_remote_folder()
                 self.status = "Not in queue. Either exited with error or executed successfully. " \
@@ -444,8 +444,8 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             if os.path.isfile(os.path.join(self.taskDir, "proc", "log")):
                 taskexeclog_file = os.path.join(self.taskDir, "proc", "log")
         if batch_job_dir is None or stdout_file is None or stderr_file is None:
-            if raise_error: raise IOError(
-                "Error: standard files is not present among job-files copied from remote resource.")
+            if raise_error:
+                raise IOError("Error: standard files is not present among job-files copied from remote resource.")
         return batch_job_dir, stdout_file, stderr_file, appstdout_file, taskexeclog_file
 
     def check_if_subtasks_done_proccessing_results(self):
@@ -612,7 +612,8 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
                                                            [self.resource, self.app, self.resourceParam, self.appParam])
 
-            if hasattr(self, "RemoteJobID"): job_id = self.RemoteJobID
+            if hasattr(self, "RemoteJobID"):
+                job_id = self.RemoteJobID
 
         # Process XML file
         try:

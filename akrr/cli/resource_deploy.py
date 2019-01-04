@@ -757,7 +757,7 @@ def resource_deploy(args):
     del rsh
     if resource['batchScheduler'].lower() == "openstack":
         # delete instance if it is cloud
-        openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
+        akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
         resource['remoteAccessNode'] = None
 
