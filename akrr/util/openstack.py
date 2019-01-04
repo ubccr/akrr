@@ -97,7 +97,7 @@ class OpenStackServer:
             self.network = network
             self.security_group = security_group
             self.key_name = key_name
-            self.ssh_username = resource["ssh_username"]
+            self.ssh_username = ssh_username
             self.ssh_private_key_file = ssh_private_key_file
             self.name = name
             self.floating_ip_attach = floating_ip_attach

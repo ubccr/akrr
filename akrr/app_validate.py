@@ -72,7 +72,7 @@ def app_validate(resource, appkernel, nnodes):
     # now we can load akrr
     from . import cfg
     from . import akrrrestclient
-    from .cli.resource_deploy import  make_results_summary
+    from .cli.resource_deploy import make_results_summary
 
     resource = cfg.find_resource_by_name(resource_name)
     log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
@@ -88,33 +88,32 @@ def app_validate(resource, appkernel, nnodes):
     # check if AK is in DB
     if True:
         # add entry to mod_appkernel.resource
-        dbAK, curAK = akrr.db.get_ak_db(True)
+        db_ak, cur_ak = akrr.db.get_ak_db(True)
 
-        curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
-        ak_in_AKDB = curAK.fetchall()
-        if len(ak_in_AKDB) == 0:
-            curAK.execute('''INSERT INTO app_kernel_def (name,ak_base_name,processor_unit,enabled, description, visible)
-                        VALUES(%s,%s,'node',0,%s,0);''',
-                          (app_name, app_name, app_name))
-            dbAK.commit()
-        curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
-        ak_in_AKDB = curAK.fetchall()[0]
+        cur_ak.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
+        ak_in_akdb = cur_ak.fetchall()
+        if len(ak_in_akdb) == 0:
+            cur_ak.execute('''INSERT INTO app_kernel_def (name,ak_base_name,processor_unit,enabled, description, visible)
+                        VALUES(%s,%s,'node',0,%s,0);''', (app_name, app_name, app_name))
+            db_ak.commit()
+        cur_ak.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
+        ak_in_akdb = cur_ak.fetchall()[0]
         # add entry to mod_akrr.resource
         db, cur = akrr.db.get_akrr_db(True)
 
         cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
-        ak_in_DB = cur.fetchall()
-        if len(ak_in_DB) == 0:
+        ak_in_db = cur.fetchall()
+        if len(ak_in_db) == 0:
             cur.execute('''INSERT INTO app_kernels (id,name,enabled,nodes_list)
                         VALUES(%s,%s,0,'1,2,4,8');''',
-                        (ak_in_AKDB['ak_def_id'], app_name))
+                        (ak_in_akdb['ak_def_id'], app_name))
             db.commit()
 
     ###############################################################################################
     # connect to resource
     log.info("#" * 80)
     log.info("Validating resource accessibility. Connecting to %s." % (resource['name']))
-    if resource['ssh_private_key_file'] != None and os.path.isfile(resource['ssh_private_key_file']) == False:
+    if resource['ssh_private_key_file'] is not None and os.path.isfile(resource['ssh_private_key_file']) is False:
         log.error("Can not access ssh private key (%s)""" % (resource['ssh_private_key_file'],))
         exit(1)
 
@@ -130,9 +129,10 @@ def app_validate(resource, appkernel, nnodes):
         msg2 += "\n" + traceback.format_exc()
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
-        log.error("Can not connect to """ + resource['name'] + "\n" +
-                  "Probably invalid credential, see full error report below", msg2)
-        exit(1)
+        msg = "Can not connect to """ + resource['name'] + "\n" + \
+              "Probably invalid credential, see full error report below", msg2
+        log.error(msg)
+        raise e
     print("=" * 80)
     log.info("Successfully connected to %s\n\n" % (resource['name']))
 
@@ -152,26 +152,26 @@ def app_validate(resource, appkernel, nnodes):
     d = resource['networkScratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
-    if status == True:
+    if status is True:
         log.info(msg)
     else:
         log.warning(msg)
         log.warning(
-            "WARNING %d: network scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warning_count + 1))
+            ("WARNING %d: network scratch might be have a different location " +
+             "on head node, so if it is by design it is ok") % (warning_count + 1))
         warning_count += 1
     log.info("")
 
     d = resource['local_scratch']
     log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
-    if status == True:
+    if status is True:
         log.info(msg)
     else:
         log.warning(msg)
         log.warning(
-            "WARNING %d: local scratch might be have a different location on head node, so if it is by design it is ok" % (
-                        warning_count + 1))
+            ("WARNING %d: local scratch might be have a different location " +
+             "on head node, so if it is by design it is ok") % (warning_count + 1))
         warning_count += 1
     log.info("")
 
@@ -192,7 +192,7 @@ def app_validate(resource, appkernel, nnodes):
             log.error("Can not get token for AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                       "See server response below", json.dumps(r.json(), indent=4))
             exit(1)
-    except Exception as e:
+    except Exception:
         log.error("Can not connect to AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                   "Is it running?\n" +
                   "See full error report below", traceback.format_exc())
@@ -216,7 +216,7 @@ def app_validate(resource, appkernel, nnodes):
             warning_count += 1
         # check how old is it
     # submit test job
-    if task_id == None:
+    if task_id is None:
         try:
             payload = {'resource': resource_name,
                        'app': app_name,
@@ -229,7 +229,7 @@ def app_validate(resource, appkernel, nnodes):
                           "See server response below", json.dumps(r.json(), indent=4))
                 exit(1)
             task_id = r.json()['data']['data']['task_id']
-        except Exception as e:
+        except Exception:
             log.error("Can not submit task through AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                       "Is it still running?\n" +
                       "See full error report below", traceback.format_exc())
@@ -241,16 +241,11 @@ def app_validate(resource, appkernel, nnodes):
         log.info("\nSubmitted test job to AKRR, task_id is " + str(task_id) + "\n")
     # now wait till job is done
     msg_body0 = ""
-    msg_body = ""
-
-    # response_json0={}
-    # response_json=r.json()
     while True:
         t = datetime.datetime.now()
         # try:
         r = akrrrestclient.get('/tasks/' + str(task_id))
 
-        response_json = r.json()
         if r.status_code == 200:
             response_json = r.json()
 
@@ -268,7 +263,6 @@ def app_validate(resource, appkernel, nnodes):
                 msg_body += "Task is completed!\n"
                 completed_tasks = r.json()['data']['data']['completed_tasks']
                 akrr_xdmod_instanceinfo = r.json()['data']['data']['akrr_xdmod_instanceinfo']
-                akrr_errmsg = r.json()['data']['data']['akrr_errmsg']
                 if verbose:
                     msg_body += "completed_tasks table entry:\n" + pp.pformat(completed_tasks) + "\n"
                     msg_body += "akrr_xdmod_instanceinfo table entry:\n" + pp.pformat(akrr_xdmod_instanceinfo) + "\n"
@@ -298,8 +292,8 @@ def app_validate(resource, appkernel, nnodes):
         # try to update:
         try:
             payload = {'next_check_time': ''}
-            r = akrrrestclient.put('/active_tasks/' + str(task_id), data=payload)
-        except:
+            akrrrestclient.put('/active_tasks/' + str(task_id), data=payload)
+        except Exception:
             pass
         time.sleep(5)
     ###############################################################################################
@@ -341,14 +335,14 @@ def app_validate(resource, appkernel, nnodes):
         exit(1)
     # see what is in report
     elm_perf = XMLElementTree.fromstring(akrr_xdmod_instanceinfo['body'])
-    elm_parameters = elm_perf.find('benchmark').find('parameters')
-    elm_statistics = elm_perf.find('benchmark').find('statistics')
+    elm_perf.find('benchmark').find('parameters')
+    elm_perf.find('benchmark').find('statistics')
 
     log.info("\nTest kernel execution summary:")
     print(results_summary)
     print()
     # log.info("\nThe output looks good.\n")
-    if (error_count == 0):
+    if error_count == 0:
         # enabling resource for execution
         log.info("\nEnabling %s on %s for execution\n" % (app_name, resource_name))
         try:
@@ -358,43 +352,43 @@ def app_validate(resource, appkernel, nnodes):
             if result.status_code == 200:
                 log.info("Successfully enabled %s on %s" % (app_name, resource_name))
             else:
-                if result != None:
+                if result is not None:
                     log.error("Can not turn-on %s on %s" % (app_name, resource_name), result.text)
                 else:
                     log.error("Can not turn-on %s on %s" % (app_name, resource_name))
                 exit(1)
             if True:
                 # add entry to mod_appkernel.resource
-                dbAK, curAK = akrr.db.get_ak_db(True)
+                db_ak, cur_ak = akrr.db.get_ak_db(True)
 
-                curAK.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
-                ak_in_AKDB = curAK.fetchall()
-                if len(ak_in_AKDB) == 0:
-                    curAK.execute('''INSERT INTO app_kernel_def (name,ak_base_name,processor_unit,enabled, description, visible)
-                                VALUES(%s,%s,'node',0,%s,0);''',
-                                  (app_name, app_name, app_name))
-                    dbAK.commit()
-                curAK.execute('''UPDATE app_kernel_def SET enabled=1,visible=1  WHERE ak_base_name=%s''', (app_name,))
-                dbAK.commit()
+                cur_ak.execute('''SELECT * FROM app_kernel_def WHERE ak_base_name=%s''', (app_name,))
+                ak_in_akdb = cur_ak.fetchall()
+                if len(ak_in_akdb) == 0:
+                    cur_ak.execute(
+                        "INSERT INTO app_kernel_def (name,ak_base_name,processor_unit,enabled, description, visible)"
+                        "VALUES(%s,%s,'node',0,%s,0);", (app_name, app_name, app_name))
+                    db_ak.commit()
+                cur_ak.execute('''UPDATE app_kernel_def SET enabled=1,visible=1  WHERE ak_base_name=%s''', (app_name,))
+                db_ak.commit()
                 # add entry to mod_akrr.resource
                 db, cur = akrr.db.get_akrr_db(True)
 
                 cur.execute('''SELECT * FROM app_kernels WHERE name=%s''', (app_name,))
-                ak_in_DB = cur.fetchall()
-                if len(ak_in_DB) == 0:
+                ak_in_db = cur.fetchall()
+                if len(ak_in_db) == 0:
                     cur.execute('''INSERT INTO app_kernels (id,name,enabled,nodes_list)
                                 VALUES(%s,%s,0,'1,2,4,8');''',
-                                (ak_in_AKDB['ak_def_id'], app_name))
+                                (ak_in_akdb['ak_def_id'], app_name))
                     db.commit()
                 cur.execute('''UPDATE app_kernels SET enabled=1  WHERE name=%s''', (app_name,))
                 db.commit()
-        except:
+        except Exception:
             log.exception("Can not turn-on %s on %s", app_name, resource_name)
             exit(1)
 
-    if (error_count > 0):
+    if error_count > 0:
         log.error("There are %d errors, fix them.", error_count)
-    if (warning_count > 0):
+    if warning_count > 0:
         log.warning(
             "\nThere are %d warnings.\nif warnings have sense (highlighted in yellow), you can move to next step!\n" %
             warning_count)

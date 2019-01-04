@@ -98,11 +98,6 @@ def _cursor_execute(cur, query, args=None):
     cursor_execute(cur, query, args=args, dry_run=dry_run)
 
 
-def _create_user_if_not_exists(cur, query, args=None):
-    """"""
-    pass
-
-
 def _make_dirs(path):
     """Recursively create directories if not in dry run mode"""
     if not dry_run:
@@ -189,7 +184,7 @@ class AKRRSetup:
         stand_alone
         update - update current akrr installation
         old_akrr_conf_dir
-        db_update_only
+        generate_db_only
         """
 
         self.old_akrr_conf = None
@@ -218,7 +213,7 @@ class AKRRSetup:
                     self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
                     self.old_akrr_conf['akrr_db_name'])
             if xd_db is None:
-                xd_db =  set_user_password_host_port_db(
+                xd_db = set_user_password_host_port_db(
                     self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
                     self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
                     self.old_akrr_conf['akrr_db_name'])
@@ -302,8 +297,6 @@ class AKRRSetup:
         log.empty_line()
 
         # check if user, db already there
-
-        user_exists = False
         db_exists = False
         user_rights_are_correct = False
         try:
@@ -328,7 +321,7 @@ class AKRRSetup:
         # ask for su user on this machine if needed
         if not user_exists or not db_exists or not user_rights_are_correct:
             self.akrr_db_su_user_name, \
-            self.akrr_db_su_user_password = _read_sql_su_credentials(self.akrr_db_host, self.akrr_db_port)
+                self.akrr_db_su_user_password = _read_sql_su_credentials(self.akrr_db_host, self.akrr_db_port)
         log.empty_line()
         ###
         # mod_appkernel
@@ -346,7 +339,6 @@ class AKRRSetup:
         log.empty_line()
 
         # ask for su user on this machine
-        user_exists = False
         db_exists = False
         user_rights_are_correct = False
         try:
@@ -362,7 +354,7 @@ class AKRRSetup:
                 log.debug(
                     "User {} doesn't have right privelege on {}, should be ALL".format(
                         self.ak_db_user_name, self.ak_db_name))
-        except Exception as e:
+        except Exception:
             user_exists = False
             log.debug("User ({}) does not exists on {}".format(self.akrr_db_user_name, self.akrr_db_host))
 
@@ -371,17 +363,16 @@ class AKRRSetup:
             self.ak_db_su_user_password = self.akrr_db_su_user_password
             try:
                 get_con_to_db(self.ak_db_su_user_name, self.ak_db_su_user_password, self.ak_db_host, self.ak_db_port)
-            except:
+            except Exception:
                 self.ak_db_su_user_name, \
-                self.ak_db_su_user_password = _read_sql_su_credentials(self.ak_db_host, self.ak_db_port)
+                    self.ak_db_su_user_password = _read_sql_su_credentials(self.ak_db_host, self.ak_db_port)
         log.empty_line()
 
         ##
         # modw
         same_host_as_xd = self.xd_db_host == self.ak_db_host and self.xd_db_port == self.ak_db_port
 
-        self.xd_db_user_name, \
-        self.xd_db_user_password = _read_username_password(
+        self.xd_db_user_name, self.xd_db_user_password = _read_username_password(
             "Please specify the user that will be connecting to the XDMoD database (modw):",
             self.xd_db_user_name,
             self.xd_db_user_password,
@@ -391,7 +382,6 @@ class AKRRSetup:
         log.empty_line()
 
         # ask for su user on this machine
-        user_exists = False
         db_exists = False
         user_rights_are_correct = False
         try:
@@ -408,7 +398,7 @@ class AKRRSetup:
                 log.debug(
                     "User {} doesn't have right privelege on {}, should be at least SELECT".format(
                         self.xd_db_user_name, self.xd_db_name))
-        except Exception as e:
+        except Exception:
             user_exists = False
             log.debug("User ({}) does not exists on {}".format(self.xd_db_user_name, self.xd_db_host))
 
@@ -417,9 +407,9 @@ class AKRRSetup:
             self.xd_db_su_user_password = self.ak_db_su_user_password
             try:
                 get_con_to_db(self.xd_db_su_user_name, self.xd_db_su_user_password, self.xd_db_host, self.xd_db_port)
-            except:
+            except Exception:
                 self.ak_db_su_user_name, \
-                self.ak_db_su_user_password = _read_sql_su_credentials(self.xd_db_host, self.xd_db_port)
+                    self.ak_db_su_user_password = _read_sql_su_credentials(self.xd_db_host, self.xd_db_port)
         log.empty_line()
 
     def get_akrr_db(self, su=False, dbname=""):
@@ -444,7 +434,8 @@ class AKRRSetup:
             self.xd_db_host, self.xd_db_port,
             self.xd_db_name if dbname == "" else dbname)
 
-    def get_random_password(self):
+    @staticmethod
+    def get_random_password():
         length = 16
         chars = string.ascii_letters + string.digits
         # + '@#$%^&*'
@@ -456,7 +447,8 @@ class AKRRSetup:
             password += chars[ord(i) % len(chars)]
         return password
 
-    def init_dir(self):
+    @staticmethod
+    def init_dir():
         try:
             log.info("Creating directories structure.")
             if not os.path.isdir(akrr_home):
@@ -515,7 +507,8 @@ class AKRRSetup:
             log.error("Can not execute the sql setup script: " + str(e))
             exit(1)
 
-    def generate_self_signed_certificate(self):
+    @staticmethod
+    def generate_self_signed_certificate():
         log.info("Generating self-signed certificate for REST-API")
 
         cmd = """
@@ -602,13 +595,14 @@ class AKRRSetup:
         akrr_inp = akrr_inp_template.format(**var)
         if not dry_run:
             with open(akrr_cfg, 'w') as f:
-                akrr_inp_template = f.write(akrr_inp)
+                f.write(akrr_inp)
             log.info("Settings written to: {0}".format(akrr_cfg))
         else:
             log.dry_run("New config should be written to: {}".format(akrr_cfg))
             log.debug2(akrr_inp)
 
-    def set_permission_on_files(self):
+    @staticmethod
+    def set_permission_on_files():
         log.info(
             "Removing access for group members and everybody for all files as it might contain sensitive information.")
         if not dry_run:
@@ -619,7 +613,8 @@ class AKRRSetup:
 
     def db_check(self):
         log.info("Checking acces to DBs.")
-        if dry_run: return
+        if dry_run:
+            return
 
         from . import db_check
         if not db_check.db_check(mod_appkernel=not self.stand_alone, modw=not self.stand_alone):
@@ -642,105 +637,115 @@ class AKRRSetup:
         if not self.stand_alone:
             create_and_populate_mod_appkernel_tables(dry_run, not self.update)
 
-    def start_daemon(self):
+    @staticmethod
+    def start_daemon():
         """Start the daemon"""
         log.info("Starting AKRR daemon")
-        if dry_run: return
+        if dry_run:
+            return
 
         akrr_cli = os.path.join(akrr_bin_dir, 'akrr')
         status = subprocess.call(akrr_cli + " daemon start", shell=True)
-        if status != 0: exit(status)
+        if status != 0:
+            exit(status)
 
-    def check_daemon(self):
+    @staticmethod
+    def check_daemon():
         """Check that the daemon is running"""
         log.info("Checking that AKRR daemon is running")
-        if dry_run: return
+        if dry_run:
+            return
 
         akrr_cli = os.path.join(akrr_bin_dir, 'akrr')
         status = subprocess.call(akrr_cli + " daemon check", shell=True)
-        if status != 0: exit(status)
+        if status != 0:
+            exit(status)
 
     def ask_cron_email(self):
         """ask_cron_email."""
         try:
-            crontanContent = subprocess.check_output("crontab -l", shell=True)
-            crontanContent = crontanContent.decode("utf-8").splitlines(True)
-        except:
+            crontan_content = subprocess.check_output("crontab -l", shell=True)
+            crontan_content = crontan_content.decode("utf-8").splitlines(True)
+        except Exception:
             # probably no crontab was setup yet
-            crontanContent = []
-        for l in crontanContent:
+            crontan_content = []
+        for l in crontan_content:
             if len(l.strip()) > 1 and l.strip()[0] != "#":
                 m = re.match(r'^MAILTO\s*=\s*(.*)', l.strip())
                 if m:
                     self.cron_email = m.group(1)
                     self.cron_email = self.cron_email.replace('"', '')
-        if self.cron_email == None:
+        if self.cron_email is None:
             log.log_input("Please enter the e-mail where cron will send messages (leave empty to opt out):")
             self.cron_email = input()
         else:
             log.log_input("Please enter the e-mail where cron will send messages:")
             cron_email = input('[{0}] '.format(self.cron_email))
-            if cron_email != "": self.cron_email = cron_email
-        if self.cron_email == "": self.cron_email = None
+            if cron_email != "":
+                self.cron_email = cron_email
+        if self.cron_email == "":
+            self.cron_email = None
 
     def install_cron_scripts(self):
         """Install cron scripts."""
         log.info("Installing cron entries")
-        if dry_run: return
+        if dry_run:
+            return
 
         if self.cron_email:
             mail = "MAILTO = " + self.cron_email
         else:
             mail = None
         restart = "50 23 * * * " + akrr_bin_dir + "/akrr daemon -cron restart"
-        checknrestart = "33 * * * * " + akrr_bin_dir + "/akrr daemon -cron checknrestart"
+        check_and_restart = "33 * * * * " + akrr_bin_dir + "/akrr daemon -cron checknrestart"
 
         try:
-            crontanContent = subprocess.check_output("crontab -l", shell=True)
-            crontanContent = crontanContent.decode("utf-8").splitlines(True)
-        except:
+            crontan_content = subprocess.check_output("crontab -l", shell=True)
+            crontan_content = crontan_content.decode("utf-8").splitlines(True)
+        except Exception:
             log.info("Crontab does not have user's crontab yet")
-            crontanContent = []
+            crontan_content = []
 
-        mailUpdated = False
-        mailThere = False
-        restartThere = False
-        checknrestartThere = False
+        mail_updated = False
+        mail_there = False
+        restart_there = False
+        check_and_restart_there = False
 
-        for i in range(len(crontanContent)):
-            l = crontanContent[i]
-            if len(l.strip()) > 1 and l.strip()[0] != "#":
-                m = re.match(r'^MAILTO\s*=\s*(.*)', l.strip())
+        for i in range(len(crontan_content)):
+            tmpstr = crontan_content[i]
+            if len(tmpstr.strip()) > 1 and tmpstr.strip()[0] != "#":
+                m = re.match(r'^MAILTO\s*=\s*(.*)', tmpstr.strip())
                 if m:
                     cron_email = m.group(1)
-                    cron_email = self.cron_email.replace('"', '')
-                    mailThere = True
+                    cron_email = cron_email.replace('"', '')
+                    mail_there = True
                     if self.cron_email != cron_email:
                         if mail:
-                            crontanContent[i] = mail
+                            crontan_content[i] = mail
                         else:
-                            crontanContent[i] = "#" + crontanContent[i]
-                        mailUpdated = True
-                if l.count("akrr") and l.count("daemon") and l.count("restart") > 0:
-                    restartThere = True
-                if l.count("akrr") and l.count("daemon") and l.count("checknrestart") > 0:
-                    checknrestartThere = True
-        if mailUpdated:
+                            crontan_content[i] = "#" + crontan_content[i]
+                        mail_updated = True
+                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("restart") > 0:
+                    restart_there = True
+                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("checknrestart") > 0:
+                    check_and_restart_there = True
+        if mail_updated:
             log.info("Cron's MAILTO was updated")
-        if ((self.cron_email != None and mailThere) or (
-                self.cron_email == None and mailThere == False)) and restartThere and checknrestartThere and mailUpdated == False:
+        if ((self.cron_email is not None and mail_there) or (
+                self.cron_email is None and mail_there is False)) and restart_there and check_and_restart_there \
+                and mail_updated is False:
             log.warning("All AKRR crond entries found. No modifications necessary.")
             return
-        if self.cron_email != None and mailThere == False:
-            crontanContent.insert(0, mail + "\n")
-        if restartThere == False:
-            crontanContent.append(restart + "\n")
-        if checknrestartThere == False:
-            crontanContent.append(checknrestart + "\n")
+        if self.cron_email is not None and mail_there is False:
+            crontan_content.insert(0, mail + "\n")
+        if restart_there is False:
+            crontan_content.append(restart + "\n")
+        if check_and_restart_there is False:
+            crontan_content.append(check_and_restart + "\n")
 
         with open(os.path.expanduser('.crontmp'), 'w') as f:
-            for l in crontanContent:
-                f.write(l)
+            for tmpstr in crontan_content:
+                f.write(tmpstr)
         subprocess.call("crontab .crontmp", shell=True)
         os.remove(".crontmp")
         log.info("Cron Scripts Processed!")
@@ -761,33 +766,37 @@ class AKRRSetup:
         log.info("Reading old AKRR configuration from: " + old_akrr_conf_file)
         self.old_akrr_conf = exec_files_to_dict(old_akrr_conf_file)
 
-    def update_bashrc(self):
+    @staticmethod
+    def update_bashrc():
         """Add AKRR enviroment variables to .bashrc"""
         log.info("Updating .bashrc")
 
-        bashcontentNew = []
-        akrrHeader = '#AKRR Server Environment Variables'
+        bash_content_new = []
+        akrr_header = '#AKRR Server Environment Variables'
         if os.path.exists(os.path.expanduser("~/.bashrc")):
             log.info("Updating AKRR record in $HOME/.bashrc, backing to $HOME/.bashrc_akrrbak")
             if not dry_run:
                 subprocess.call("cp ~/.bashrc ~/.bashrcakrr", shell=True)
             with open(os.path.expanduser('~/.bashrc'), 'r') as f:
                 bashcontent = f.readlines()
-                inAKRR = False
+                in_akrr = False
                 for l in bashcontent:
-                    if l.count(akrrHeader + ' [Start]') > 0: inAKRR = True
-                    if not inAKRR: bashcontentNew.append(l)
-                    if l.count(akrrHeader + ' [End]') > 0: inAKRR = False
-        bashcontentNew.append("\n" + akrrHeader + " [Start]\n")
-        bashcontentNew.append("export PATH=\"{0}/bin:$PATH\"\n".format(akrr_home))
-        bashcontentNew.append(akrrHeader + " [End]\n\n")
+                    if l.count(akrr_header + ' [Start]') > 0:
+                        in_akrr = True
+                    if not in_akrr:
+                        bash_content_new.append(l)
+                    if l.count(akrr_header + ' [End]') > 0:
+                        in_akrr = False
+        bash_content_new.append("\n" + akrr_header + " [Start]\n")
+        bash_content_new.append("export PATH=\"{0}/bin:$PATH\"\n".format(akrr_home))
+        bash_content_new.append(akrr_header + " [End]\n\n")
         if not dry_run:
             with open(os.path.expanduser('~/.bashrc'), 'w') as f:
-                for l in bashcontentNew:
+                for l in bash_content_new:
                     f.write(l)
             log.info("Appended AKRR records to $HOME/.bashrc")
         else:
-            log.debug("New .bashrc should be like" + "\n".join(bashcontentNew))
+            log.debug("New .bashrc should be like" + "\n".join(bash_content_new))
 
     def run(self):
         # check

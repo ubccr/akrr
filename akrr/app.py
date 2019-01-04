@@ -27,7 +27,8 @@ def app_add(resource, appkernel, dry_run=False):
     cfg_template_filename = os.path.join(cfg.templates_dir, appkernel + ".app.conf")
 
     if os.path.isfile(cfg_filename):
-        msg = "Configuration file for %s on %s already exist. For regeneration delete it, %s" % (appkernel, resource,cfg_filename)
+        msg = "Configuration file for %s on %s already exist. For regeneration delete it, %s" % (appkernel, resource,
+                                                                                                 cfg_filename)
         log.error(msg)
         log.info("Application kernel configuration for %s on %s is in: \n\t%s", appkernel, resource, cfg_filename)
         raise AkrrValueException(msg)
@@ -125,5 +126,5 @@ def off_parsed(args):
 
 
 def resource_app_enable(resource=None, appkernel=None, dry_run=False):
-    pass
-
+    print(resource, appkernel, dry_run)
+    raise NotImplemented("resource_app_enable is not implemented yet!")

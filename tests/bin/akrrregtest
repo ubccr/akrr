@@ -5,15 +5,15 @@ if __name__ == '__main__':
     import os
     import sys
     
-    #determin is it global or local installation
+    # determin is it global or local installation
     curdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-    akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(curdir)),"akrr"))
+    akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(curdir)), "akrr"))
     akrrtests_mod_dir = os.path.abspath(os.path.dirname(curdir))
     
     if os.path.isdir(akrrtests_mod_dir):
-        sys.path.insert(0,os.path.abspath(os.path.dirname(akrr_mod_dir)))
-        sys.path.insert(0,os.path.abspath(akrrtests_mod_dir))
-    
+        sys.path.insert(0, os.path.abspath(os.path.dirname(akrr_mod_dir)))
+        sys.path.insert(0, os.path.abspath(akrrtests_mod_dir))
+
     from akrrregtest.cli import CLI
     
     CLI().run()
