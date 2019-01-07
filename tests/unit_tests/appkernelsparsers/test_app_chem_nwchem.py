@@ -1,5 +1,5 @@
 def test_parser(datadir):
-    from akrr.appkernelsparsers.app_chem_nwchem import process_appker_output
+    from akrr.appkernelsparsers.nwchem_parser import process_appker_output
     import xml.etree.ElementTree as ElementTree
     from akrr.util import floats_are_close
 
