@@ -1,0 +1,3 @@
+"""
+Testing of configuration subsystem
+"""
