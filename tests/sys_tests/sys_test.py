@@ -81,12 +81,12 @@ def add_app_to_resource(resource, app, caplog):
 
 @pytest.mark.dependency()
 def test_add_gromacs_micro(caplog):
-    add_app_to_resource("localhost", "xdmod.app.md.gromacs.micro ", caplog)
+    add_app_to_resource("localhost", "gromacs_micro ", caplog)
 
 
 @pytest.mark.dependency(depends=["test_deploy_localhost2"])
 def test_add_gromacs_micro_on_localhost2(caplog):
-    add_app_to_resource("localhost2", "xdmod.app.md.gromacs.micro ", caplog)
+    add_app_to_resource("localhost2", "gromacs_micro ", caplog)
 
 
 @pytest.mark.dependency(depends=["test_add_gromacs_micro", "test_add_gromacs_micro_on_localhost2"])
@@ -97,13 +97,13 @@ def test_use_gromacs_micro(caplog):
     # check that resources and apps are installed
     assert run_akrr("resource list", "localhost", caplog) is not None
     assert run_akrr("resource list", "localhost2", caplog) is not None
-    assert run_akrr("app list", "xdmod.app.md.gromacs.micro", caplog) is not None
+    assert run_akrr("app list", "gromacs_micro", caplog) is not None
 
     # @todo check that they are on
 
     # add task to execute right now
     m = run_akrr(
-        "task new -r localhost -a xdmod.app.md.gromacs.micro -n 1",
+        "task new -r localhost -a gromacs_micro -n 1",
         r'Successfully submitted new task. The task id is ([0-9]+)', caplog)
     assert m is not None
     task_id = m.group(1)
@@ -117,13 +117,13 @@ def test_use_gromacs_micro(caplog):
 
     # add tasks for future execution
     m = run_akrr(
-        "task new -r localhost -a xdmod.app.md.gromacs.micro -n 1 -s tomorrow",
+        "task new -r localhost -a gromacs_micro -n 1 -s tomorrow",
         r'Successfully submitted new task. The task id is ([0-9]+)', caplog)
     assert m is not None
     task_id_1 = m.group(1)
 
     m = run_akrr(
-        "task new -r localhost2 -a xdmod.app.md.gromacs.micro -n 1 -s tomorrow",
+        "task new -r localhost2 -a gromacs_micro -n 1 -s tomorrow",
         r'Successfully submitted new task. The task id is ([0-9]+)', caplog)
     assert m is not None
     task_id_2 = m.group(1)
