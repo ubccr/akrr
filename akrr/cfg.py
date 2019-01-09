@@ -9,10 +9,10 @@ from akrr import get_akrr_dirs
 
 from .util import log
 
-from .akrrerror import *
+from .akrrerror import AkrrError
 
 # load default values
-from .cfg_default import *
+from .cfg_default import *  # pylint: disable=wildcard-import
 
 # get directories locations for this installation
 akrr_dirs = get_akrr_dirs()
@@ -51,7 +51,7 @@ def verify_akrr_conf():
 
 def verify_resource_params(resource: dict) -> dict:
     """
-    Perform simplistic resource parameters validation
+    Perform simplistic resource.py parameters validation
     raises TypeError or NameError on problems
     """
 
@@ -75,6 +75,7 @@ def verify_resource_params(resource: dict) -> dict:
         ('autoWalltimeLimit', 'auto_walltime_limit'),
         ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
         ('appkernelOnResource', 'appkernel_on_resource'),
+        ('networkScratch', 'network_scratch'),
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -83,7 +84,7 @@ def verify_resource_params(resource: dict) -> dict:
             warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
 
     # @todo check string templates for deprecated variables
-    
+
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types = {
@@ -92,7 +93,7 @@ def verify_resource_params(resource: dict) -> dict:
         'batchJobTemplate': [str, False, True],
         'name': [str, False, False],
         'akrrCommonCommandsTemplate': [str, False, True],
-        'networkScratch': [str, False, True],
+        'network_scratch': [str, False, True],
         'ppn': [int, False, True],
         'remote_copy_method': [str, False, True],
         'ssh_username': [str, False, True],
@@ -135,6 +136,17 @@ def verify_resource_params(resource: dict) -> dict:
             raise TypeError("Syntax error in " + resource['name'] +
                             "\nVariable %s should be %s" % (variable, str(m_type)) +
                             ". But it is " + str(type(resource[variable])))
+
+    # mapped parameters which still uses internally different name
+    # these eventually should be renamed
+    renamed_parameters = [
+        ('networkScratch', 'network_scratch'),
+    ]
+
+    for old_key, new_key in renamed_parameters:
+        if old_key in resource:
+            resource[new_key] = resource[old_key]
+
     return resource
 
 
@@ -142,7 +154,7 @@ def load_resource(resource_name: str):
     """
     load resource configuration file, do minimalistic validation
     return dict with resource parameters
-    
+
     raises error if can not load
     """
     import warnings
@@ -192,7 +204,7 @@ def load_all_resources():
     """
     load all resources from configuration directory
     """
-    global resources
+    global resources  # pylint: disable=global-statement
     for resource_name in os.listdir(cfg_dir + "/resources"):
         if resource_name not in ['notactive', 'templates']:
             log.debug2("loading "+resource_name)
@@ -207,10 +219,10 @@ def find_resource_by_name(resource_name):
     """
     return resource parameters
     if resource configuration file was modified will reload it
-    
+
     raises error if can not find
     """
-    global resources
+    global resources  # pylint: disable=global-statement
     if resource_name not in resources:
         resource = load_resource(resource_name)
         resources[resource_name] = resource
@@ -228,12 +240,24 @@ def find_resource_by_name(resource_name):
 # App Kernels Config Routines
 
 
-def verify_app_params(app):
+def verify_app_params(app: dict) -> dict:
     """
-    Perform simplistic app parameters validation
-    
+    Perform simplistic app.py parameters validation
+
     raises error
     """
+
+    import warnings
+    # mapped renamed parameters
+    renamed_parameters = [
+        ('input', 'input_param'),
+    ]
+
+    for old_key, new_key in renamed_parameters:
+        if old_key in app:
+            app[new_key] = app[old_key]
+            warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
+
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types = [
@@ -256,15 +280,26 @@ def verify_app_params(app):
                             "\nVariable %s should be %s" % (variable, str(m_type)) +
                             ". But it is " + str(type(app[variable])))
 
+    # mapped parameters which still uses internally different name
+    # these eventually should be renamed
+    renamed_parameters = [
+        ('input', 'input_param'),
+    ]
+
+    for old_key, new_key in renamed_parameters:
+        if old_key in app:
+            app[old_key] = app[new_key]
+    return app
+
 
 def load_app(app_name):
     """
     load app configuration file, do minimalistic validation
     return dict with app parameters
-    
+
     raises error if can not load
     """
-    from .util import exec_files_to_dict
+    from akrr.util import exec_files_to_dict
     try:
         default_app_cfg_filename = os.path.join(default_dir, "default.app.conf")
         app_cfg_filename = os.path.join(default_dir, app_name + ".app.conf")
@@ -280,15 +315,15 @@ def load_app(app_name):
         # load resource specific parameters
         for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
             if resource_name not in ['notactive', 'templates']:
-                resource_specific_app_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
-                                                                  app_name + ".app.conf")
-                if os.path.isfile(resource_specific_app_cfg_filename):
+                app_on_resource_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
+                                                            app_name + ".app.conf")
+                if os.path.isfile(app_on_resource_cfg_filename):
                     app['appkernel_on_resource'][resource_name] = exec_files_to_dict(
-                        resource_specific_app_cfg_filename, var_in=app['appkernel_on_resource']['default'])
+                        app_on_resource_cfg_filename, var_in=app['appkernel_on_resource']['default'])
                     app['appkernel_on_resource'][resource_name][
-                        'resource_specific_app_cfg_filename'] = resource_specific_app_cfg_filename
+                        'resource_specific_app_cfg_filename'] = app_on_resource_cfg_filename
                     app['appkernel_on_resource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] = \
-                        os.path.getmtime(resource_specific_app_cfg_filename)
+                        os.path.getmtime(app_on_resource_cfg_filename)
 
         # mapped options in app input file to those used in AKRR
         if 'name' not in app:
@@ -303,7 +338,7 @@ def load_app(app_name):
         app['app_cfg_file_last_mod_time'] = os.path.getmtime(app_cfg_filename)
 
         # here should be validation
-        verify_app_params(app)
+        app = verify_app_params(app)
 
         return app
     except Exception:
@@ -316,12 +351,11 @@ def load_all_app():
     load all resources from configuration directory
     """
     global apps
-    for fl in os.listdir(os.path.join(akrr_mod_dir, 'default_conf')):
-        if fl == "default.app.conf":
+    for filename in os.listdir(os.path.join(akrr_mod_dir, 'default_conf')):
+        if filename == "default.app.conf":
             continue
-        if fl.endswith(".app.conf"):
-            app_name = re.sub('.app.conf$', '', fl)
-            # log("loading "+app_name)
+        if filename.endswith(".app.conf"):
+            app_name = re.sub('.app.conf$', '', filename)
             try:
                 app = load_app(app_name)
                 apps[app_name] = app
@@ -333,10 +367,10 @@ def find_app_by_name(app_name):
     """
     return apps parameters
     if resource configuration file was modified will reload it
-    
+
     raises error if can not find
     """
-    global apps
+    global apps  # pylint: disable=global-statement
     if app_name not in apps:
         app = load_app(app_name)
         apps[app_name] = app
@@ -381,7 +415,7 @@ def print_out_resource_and_app_summary():
 
     msg = msg + "Resources:\n"
     for _, r in resources.items():
-        msg = msg + "    "+r['name']
+        msg = msg + "    " + r['name']
 
     msg = msg + "Applications:"
     for _, a in apps.items():
