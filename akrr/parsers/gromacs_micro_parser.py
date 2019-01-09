@@ -8,7 +8,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.md.gromacs.micro',
+        name='gromacs_micro',
         version=1,
         description="GROMACS: micro-benchmark for testing purposes",
         url='http://www.gromacs.org/',

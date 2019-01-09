@@ -355,7 +355,7 @@ INSERT INTO `akrr_err_regexp` VALUES
             (27,'xdmod.benchmark.io.ior','1;2;4;8'),
             (28,'xdmod.benchmark.graph.graph500','1;2;4;8'),
             (29,'xdmod.app.astro.enzo','1;2;4;8'),
-            (30,'xdmod.app.md.gromacs.micro','1')
+            (30,'gromacs_micro','1')
         ON DUPLICATE KEY UPDATE id=VALUES(id);
         """)
     )
@@ -876,7 +876,7 @@ INSERT INTO `app_kernel_def` VALUES
 (30, 'HPCG', 'xdmod.benchmark.hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" """
          """alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort"""
          """to create a new metric for ranking HPC systems.', 0,NULL),
-(31, 'GROMACS-micro', 'xdmod.app.md.gromacs.micro', 'node', 0, '<a href="http://www.gromacs.org/" target="_blank" """
+(31, 'GROMACS-micro', 'gromacs_micro', 'node', 0, '<a href="http://www.gromacs.org/" target="_blank" """
          """alt="GROMACS">GROMACS:</a> based micro-benchmark for testing purposes\r\n<p>', 0,NULL)
 ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
 """),
