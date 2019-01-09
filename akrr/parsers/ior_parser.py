@@ -7,7 +7,7 @@
 import re
 import os
 import sys
-from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 
 
 def get_MiB(val, units):

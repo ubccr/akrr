@@ -1,5 +1,5 @@
 def test_appkeroutputparser(datadir):
-    from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
+    from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
     import xml.etree.ElementTree as ElementTree
 
     parser = AppKerOutputParser(
