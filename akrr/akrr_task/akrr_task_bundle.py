@@ -10,7 +10,7 @@ import re
 import copy
 import random
 
-from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 
 from ..akrrerror import AkrrError
 
@@ -479,7 +479,7 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 self.get_result_files(raise_error=True)
 
             # get the performance data
-            parser_filename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
+            parser_filename = os.path.join(cfg.akrr_mod_dir, "parsers", self.app['parser'])
 
             import importlib.machinery
             this_appker_parser = importlib.machinery.SourceFileLoader(

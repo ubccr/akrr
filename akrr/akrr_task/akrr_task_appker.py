@@ -18,7 +18,7 @@ from ..util import log
 from .akrr_task_base import AkrrTaskHandlerBase, submit_commands, job_id_extract_patterns, wait_expressions, \
     active_task_default_attempt_repeat, kill_expressions
 
-from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 
 from ..akrrerror import AkrrError
 
@@ -513,7 +513,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 raise_error=True)
 
             # get the performance data
-            parser_filename = os.path.join(cfg.akrr_mod_dir, "appkernelsparsers", self.app['parser'])
+            parser_filename = os.path.join(cfg.akrr_mod_dir, "parsers", self.app['parser'])
 
             import importlib.machinery
             this_appker_parser = importlib.machinery.SourceFileLoader(

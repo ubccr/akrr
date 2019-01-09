@@ -2,7 +2,7 @@ import re
 import os
 import sys
 
-from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 
 
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):

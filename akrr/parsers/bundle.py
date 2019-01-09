@@ -11,8 +11,8 @@ import traceback
 import akrr
 import akrr.db
 import akrr.cfg
-import akrr.appkernelsparsers.akrrappkeroutputparser
-from akrr.appkernelsparsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
+import akrr.parsers.akrrappkeroutputparser
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 
 
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):

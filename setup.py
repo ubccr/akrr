@@ -20,7 +20,7 @@ setup(
     scripts=['bin/akrr'],
     packages=[
         'akrr',
-        'akrr/appkernelsparsers',
+        'akrr/parsers',
         'akrr/akrr_task',
         'akrr/cli',
         'akrr/pexpect',
