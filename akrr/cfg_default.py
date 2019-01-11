@@ -1,3 +1,8 @@
+"""
+Initial and default configuration parameters for AKRR
+"""
+
+
 import datetime
 
 ###############################################################################
