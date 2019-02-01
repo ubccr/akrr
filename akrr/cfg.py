@@ -6,8 +6,6 @@ import os
 import re
 
 from akrr import get_akrr_dirs
-from akrr.cfg_util import verify_akrr_conf, load_resource, load_app
-
 from akrr.util import log, clear_from_build_in_var
 
 # load default values
@@ -26,6 +24,8 @@ cfg_dir = akrr_dirs['cfg_dir']
 templates_dir = akrr_dirs['templates_dir']
 default_dir = akrr_dirs['default_dir']
 appker_repo_dir = akrr_dirs['appker_repo_dir']
+
+from akrr.cfg_util import load_resource, load_app
 
 # Resource configurations are stored here
 resources = {}
