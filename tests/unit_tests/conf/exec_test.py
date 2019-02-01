@@ -15,7 +15,8 @@ import inspect
 
 cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-specific_conf_filename = os.path.join(cur_dir, "exec_test", "sample_conf")
+default_conf_filename = os.path.join(cur_dir, "exec_test", "default.conf")
+sample_conf_filename = os.path.join(cur_dir, "exec_test", "sample.conf")
 
 # Exec vs runpy.run_path
 #
@@ -29,14 +30,14 @@ specific_conf_filename = os.path.join(cur_dir, "exec_test", "sample_conf")
 # so we stick with exec
 
 # load default
-# pylint: disable=wildcard-import,unused-wildcard-import,relative-beyond-top-level,wrong-import-position
-from .default_conf import *
+with open(default_conf_filename, "r") as file_in:
+    exec(file_in.read())  # pylint: disable=exec-used
 
 assert fruit == "apple"
 assert color == "red"
 
 # load specific parameters
-with open(specific_conf_filename, "r") as file_in:
+with open(sample_conf_filename, "r") as file_in:
     exec(file_in.read())  # pylint: disable=exec-used
 
 
