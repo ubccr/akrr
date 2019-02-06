@@ -6,8 +6,14 @@ toc:
   - title: Download
     subfolderitems:
       - page: AKRR Download
-        url: /akrr_download.html
+        url: /akrr-download.html
   - title: Documentation
     subfolderitems:
       - page: Install
+        url: /akrr-install.html
+  - title: Using
+    subfolderitems:
+      - page: Adding New Resource
+        url: /akrr-install.html
+      - page: Adding New Application
         url: /akrr-install.html
