@@ -2,7 +2,8 @@
 
 AKRR support two installation ways: 
 1) Global installation from RPM (on CentOS system) and 
-2) In-source installation from source code. 
+2) In-source installation from source code.
+
 
 ## Prerequisites
 
@@ -20,7 +21,7 @@ yum -y install python34 python34-libs python34-bottle python34-requests \
 ```
 
 If AKRR will use MariaDB/MySQL on the local machine install it:
-``` 
+```bash 
 yum -y install mariadb-server  
 ```
 
@@ -28,7 +29,7 @@ yum -y install mariadb-server
 
 Download in install AKRR RPM
 ```bash
-yum install akrr_VERSION.rpm
+yum install akrr-{{ page.sw_version }}-1.noarch.rpm
 ```
 
 ## In Source Installation
@@ -38,17 +39,5 @@ Download tar.gz archive and uncompress it in desired installation location:
 tar zxvf akrr-{{ page.sw_version }}.tar.gz
 ``` 
 
-
-# Configuration
-
-```bash
-akrr setup
-```
-
-
-
-
-
-
-
-
+You can add bin directory from AKRR to you PATH environment variable or 
+call AKRR commands with full pathname.
