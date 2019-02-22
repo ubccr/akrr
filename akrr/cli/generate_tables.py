@@ -20,14 +20,13 @@ from akrr.util import log
 # UTILITY FUNCTIONS
 ###############################################################################
 def create_and_populate_tables(
-        default_tables, 
-        population_statements, 
+        default_tables,
+        population_statements,
         starting_comment, ending_comment,
         connection_function,
         host=None, user=None, password=None, db=None,
         drop_if_needed=True,
-        dry_run=False
-        ):
+        dry_run=False):
     """
     create and populate tables
     """
@@ -45,11 +44,11 @@ def create_and_populate_tables(
                 for (table_name, table_script) in default_tables:
                     if not drop_if_needed and table_script[:4].upper() == "DROP":
                         continue
-                    log.info("CREATING: %s" % table_name)
+                    log.debug("CREATING: %s" % table_name)
                     try:
                         result = cursor.execute(table_script)
                         log.debug("Result of: %s -> %d" % (table_name, result))
-                        log.info("CREATED: %s SUCCESSFULLY!" % table_name)
+                        log.debug("CREATED: %s SUCCESSFULLY!" % table_name)
                     except MySQLdb.Warning:
                         pass
 
@@ -897,7 +896,7 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     )
 
 
-def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, orderby=None, table2=None, cols2=None, at_once=True):
+def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, order_by=None, table2=None, cols2=None, at_once=True):
     log.debug("Copying: "+table)
 
     if table2 is None:
@@ -907,8 +906,8 @@ def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, orderby=None, table
         cols2 = cols
 
     sql1 = "select " + cols + " from " + table
-    if orderby is not None:
-        sql1 += "ORDER BY " + orderby
+    if order_by is not None:
+        sql1 += "ORDER BY " + order_by
 
     v = ",".join(["%s"]*(cols2.count(",")+1))
     sql2 = "insert into " + table2 + " ("+cols2+") values ("+v+")"
@@ -931,8 +930,8 @@ def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, orderby=None, table
 
 def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
     from akrr.util.sql import get_con_to_db2
-    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
-    db_akrr2, cur_akrr2 = get_con_to_db2(mod_akrr2, dict_cursor=False)
+    _, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+    _, cur_akrr2 = get_con_to_db2(mod_akrr2, dict_cursor=False)
 
     # active_tasks - should be empty
     # ak_on_nodes - not used
@@ -1014,7 +1013,7 @@ def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
 
 def copy_mod_akrr_tables(mod_akrr):
     from akrr.util.sql import get_con_to_db2
-    db_akrr, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
+    _, cur_akrr = get_con_to_db2(mod_akrr, dict_cursor=False)
 
     copy_table_with_rename(
         cur_akrr, cur_akrr,
