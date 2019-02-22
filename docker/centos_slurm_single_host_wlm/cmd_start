@@ -92,6 +92,10 @@ do
         start_process_w_confirm slurmd /usr/sbin/slurmd /run/slurmd.pid \
             /var/log/slurm/slurmd.log started
         ;;
+    httpd)
+        echo "Launching httpd"
+        httpd
+        ;;
     self_contained_slurm_wlm)
         cmd_start munged sshd mysqld slurmdbd slurmctld slurmd
         ;;
