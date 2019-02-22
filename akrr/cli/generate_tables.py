@@ -30,7 +30,7 @@ def create_and_populate_tables(
     """
     create and populate tables
     """
-    log.info(starting_comment)
+    log.debug(starting_comment)
 
     try:
         if not dry_run:
@@ -53,18 +53,18 @@ def create_and_populate_tables(
                         pass
 
                 for (description, statement) in population_statements:
-                    log.info("EXECUTING: %s" % description)
+                    log.debug("EXECUTING: %s" % description)
 
                     result = cursor.execute(statement)
                     log.debug("Result of: %s -> %d" % (description, result))
-                    log.info("EXECUTED: %s SUCCESSFULLY!" % description)
+                    log.debug("EXECUTED: %s SUCCESSFULLY!" % description)
         else:
             for (table_name, table_script) in default_tables:
                 log.dry_run("CREATING: %s" % table_name)
 
             for (description, statement) in population_statements:
                 log.dry_run("EXECUTING: %s" % description)
-        log.info(ending_comment)
+        log.debug(ending_comment)
     except MySQLdb.Error as e:
         log.critical("Error %d: %s" % (e.args[0], e.args[1]))
         sys.exit(1)
@@ -138,10 +138,6 @@ def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
         UNIQUE KEY `task_id` (`task_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
-        ('DROP akrr_err_regexp',
-         """
-         DROP TABLE IF EXISTS `akrr_err_regexp`;
-         """),
         ('akrr_err_regexp', '''
         CREATE TABLE IF NOT EXISTS `akrr_err_regexp` (
         `id` INT(8) NOT NULL AUTO_INCREMENT,
@@ -156,10 +152,6 @@ def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM AUTO_INCREMENT=1000002 DEFAULT CHARSET=latin1;
         '''),
-        ('DROP akrr_internal_failure_code',
-         """
-         DROP TABLE IF EXISTS `akrr_internal_failure_codes`;
-         """),
         ('akrr_internal_failure_code', '''
         CREATE TABLE IF NOT EXISTS `akrr_internal_failure_codes` (
         `id` INT(11) NOT NULL,
