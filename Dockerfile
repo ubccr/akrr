@@ -10,4 +10,4 @@ VOLUME /root/src/github.com/ubccr/akrr
 ENV REPO_FULL_NAME=ubccr/akrr
 
 ENTRYPOINT ["/sbin/cmd_start"]
-CMD ["-set-no-exit-on-fail", "/root/src/github.com/ubccr/akrr/tests/regtest1/run_test_on_shippable.sh", "bash"]
+CMD ["-set-no-exit-on-fail", "self_contained_slurm_wlm", "bash"]
