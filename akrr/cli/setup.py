@@ -7,18 +7,14 @@ import getpass
 import subprocess
 import string
 
-from akrr.util import log
-
 # Since AKRR setup is the first script to execute
 # Lets check python version and proper library presence.
-
 # check presence of MySQLdb
 try:
     import MySQLdb
     import MySQLdb.cursors
-
-except ModuleNotFoundError:
-    log.critical("""python module MySQLdb is not available. Install it!
+except ImportError:
+    print("""python module MySQLdb is not available. Install it!
         For example by running on
             RedHat or CentOS from EPEL:
                 #instale EPEL repo information
@@ -28,9 +24,10 @@ except ModuleNotFoundError:
                 """)
     exit(1)
 except Exception as _e:
-    log.critical("""Can not import module MySQLdb!""")
+    print("""Can not import module MySQLdb!""")
     raise _e
 
+from akrr.util import log
 from akrr.util.sql import get_con_to_db
 from akrr.util.sql import get_user_password_host_port_db
 from akrr.util.sql import set_user_password_host_port_db
@@ -160,6 +157,9 @@ def _read_sql_su_credentials(host, port):
 
 
 class AKRRSetup:
+    """
+    AKRRSetup class handles AKRR setup
+    """
     default_akrr_user = 'akrruser'
 
     def __init__(
@@ -254,6 +254,9 @@ class AKRRSetup:
         self.generate_db_only = generate_db_only
 
     def check_previous_installation(self):
+        """
+        check that AKRR is not already installed
+        """
         if os.path.exists(akrr_cfg):
             if self.update:
                 return
@@ -270,6 +273,9 @@ class AKRRSetup:
 
     @staticmethod
     def check_utils():
+        """
+        check that ssh and openssl already installed
+        """
         from distutils.spawn import find_executable
 
         errmsg = ""
@@ -283,7 +289,9 @@ class AKRRSetup:
             exit(1)
 
     def read_db_user_credentials(self):
-        ###
+        """
+        Get DB access user credential
+        """
         # mod_akrr
         log.info("Before Installation continues we need to setup the database.")
 
@@ -412,7 +420,9 @@ class AKRRSetup:
         log.empty_line()
 
     def get_akrr_db(self, su=False, dbname=""):
-
+        """
+        get connector and cursor to mod_akrr DB
+        """
         return get_con_to_db(
             self.akrr_db_user_name if not su else self.akrr_db_su_user_name,
             self.akrr_db_user_password if not su else self.akrr_db_su_user_password,
@@ -420,6 +430,9 @@ class AKRRSetup:
             self.akrr_db_name if dbname == "" else dbname)
 
     def get_ak_db(self, su=False, dbname=""):
+        """
+        get connector and cursor to mod_appkernel DB
+        """
         return get_con_to_db(
             self.ak_db_user_name if not su else self.ak_db_su_user_name,
             self.ak_db_user_password if not su else self.ak_db_su_user_password,
@@ -427,6 +440,9 @@ class AKRRSetup:
             self.ak_db_name if dbname == "" else dbname)
 
     def get_xd_db(self, su=False, dbname=""):
+        """
+        get connector and cursor to XDMoD's modw DB
+        """
         return get_con_to_db(
             self.xd_db_user_name if not su else self.xd_db_su_user_name,
             self.xd_db_user_password if not su else self.xd_db_su_user_password,
@@ -680,7 +696,9 @@ class AKRRSetup:
 
         akrr_cli = os.path.join(akrr_bin_dir, 'akrr')
         status = subprocess.call(akrr_cli + " daemon start", shell=True)
+
         if status != 0:
+            log.critical("AKRR daemon didn't start.")
             exit(status)
 
     @staticmethod

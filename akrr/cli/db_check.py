@@ -19,7 +19,7 @@ def check_rw_db(connection_func, pre_msg, post_msg):
     :return: true if the database is available / the provided user has the correct privileges.
     """
     success = False
-    log.info(pre_msg)
+    log.debug(pre_msg)
 
     try:
         connection, cursor = connection_func()
@@ -30,11 +30,12 @@ def check_rw_db(connection_func, pre_msg, post_msg):
                 success = True if result == 0 else False
 
                 if success:
-                    log.info(post_msg, success)
+                    log.debug(post_msg, success)
                 else:
                     log.error(post_msg, success)
 
         except MySQLdb.Error as e:
+            log.error("Error during: " + pre_msg)
             log.error('Unable to create a table w/ the provided username. %s: %s', e.args[0], e.args[1])
 
         connection, cursor = connection_func()
@@ -42,9 +43,11 @@ def check_rw_db(connection_func, pre_msg, post_msg):
             with connection:
                 cursor.execute("DROP TABLE CREATE_ME;")
         except MySQLdb.Error as e:
+            log.error("Error during: " + pre_msg)
             log.error('Unable to drop the table created to check permissions. %s: %s', e.args[0], e.args[1])
 
     except MySQLdb.Error as e:
+        log.error("Error during: " + pre_msg)
         log.error('Unable to connect to Database. %s: %s', e.args[0], e.args[1])
 
     return success
@@ -66,7 +69,7 @@ def check_r_db(connection_func, pre_msg, post_msg):
     :return: true if the database is available / the provided user has the correct privileges.
     """
     success = False
-    log.info(pre_msg)
+    log.debug(pre_msg)
 
     try:
         connection, cursor = connection_func()
@@ -77,14 +80,17 @@ def check_r_db(connection_func, pre_msg, post_msg):
                 success = True if result >= 0 else False
 
                 if success:
-                    log.info(post_msg, success)
+                    log.debug(post_msg, success)
                 else:
+                    log.error("Error during: " + pre_msg)
                     log.error(post_msg, success)
 
         except MySQLdb.Error as e:
+            log.error("Error during: " + pre_msg)
             log.error('Unable to select from `modw`.`resourcefact`. %s: %s', e.args[0], e.args[1])
 
     except MySQLdb.Error as e:
+        log.error("Error during: " + pre_msg)
         log.error('Unable to connect to Database. %s: %s', e.args[0], e.args[1])
 
     return success
