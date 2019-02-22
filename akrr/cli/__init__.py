@@ -82,11 +82,30 @@ def wall_time_parsed(args):
 
 
 class CLI:
+    """
+    AKRR command line interface
+    """
     def __init__(self):
-        log.basicConfig(
-            level=log.INFO,
-            format="[%(asctime)s - %(levelname)s] %(message)s"
-        )
+        import sys
+
+        short_log_prefix = True
+        if len(sys.argv) >= 3:
+            i = 1
+            while i+1 < len(sys.argv):
+                if sys.argv[i] == "daemon" and sys.argv[i+1] in ("start", "startdeb"):
+                    short_log_prefix = False
+                i = i + 1
+
+        if short_log_prefix:
+            log.basicConfig(
+                level=log.INFO,
+                format="[%(levelname)s] %(message)s"
+            )
+        else:
+            log.basicConfig(
+                level=log.INFO,
+                format="[%(asctime)s - %(levelname)s] %(message)s"
+            )
 
         self.root_parser = argparse.ArgumentParser(description='command line interface to AKRR')
         self.root_parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
@@ -114,6 +133,9 @@ class CLI:
         self.verbose = False
 
     def process_common_args(self, cli_args):
+        """
+        Process arguments common for all commands. Currently only verbose.
+        """
         if "verbose" in cli_args and cli_args.verbose:
             log.verbose = True
             log.basicConfig(level=log.DEBUG)
@@ -132,3 +154,4 @@ class CLI:
             return cli_args.func(cli_args)
 
         log.error("There is no command specified!")
+        return None

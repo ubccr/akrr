@@ -186,7 +186,6 @@ class AKRRSetup:
         old_akrr_conf_dir
         generate_db_only
         """
-
         self.old_akrr_conf = None
         if update:
             self.read_old_akrr_conf_dir(old_akrr_conf_dir)
@@ -436,6 +435,9 @@ class AKRRSetup:
 
     @staticmethod
     def get_random_password():
+        """
+        Pseudo-random password generator
+        """
         length = 16
         chars = string.ascii_letters + string.digits
         # + '@#$%^&*'
@@ -449,6 +451,9 @@ class AKRRSetup:
 
     @staticmethod
     def init_dir():
+        """
+        Make directories for configuration and logging
+        """
         try:
             log.info("Creating directories structure.")
             if not os.path.isdir(akrr_home):
@@ -472,14 +477,23 @@ class AKRRSetup:
             exit(1)
 
     def init_mysql_dbs(self):
+        """
+        Create AKRR database and access user, set the user access rights
+        """
         try:
-
-            def _create_db_user_gran_priv_if_needed(con_fun, user, password, db, priv):
-                log.info("Creating %s and user to access it if needed" % (db,))
+            def _create_db_user_gran_priv_if_needed(con_fun, user, password, db, priv, create):
+                """
+                Helping function to create db and user
+                """
+                if create:
+                    log.info("Creating %s and user to access it" % (db,))
+                else:
+                    log.info("Setting user to access %s" % (db,))
                 su_con, su_cur = con_fun(True, None)
                 client_host = get_db_client_host(su_cur)
 
-                _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
+                if create:
+                    _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
 
                 create_user_if_not_exists(su_cur, user, password, client_host, dry_run=dry_run)
                 _cursor_execute(su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
@@ -487,19 +501,22 @@ class AKRRSetup:
                 su_con.commit()
 
             # During self.read_db_creds db and user was checked and
-            # if they do not  exist or not good enough super user credentials
+            # if they do not exist or not good enough super user credentials
             # was asked so if they not None that means that
             # either user or db or user priv needed to be set
             if self.akrr_db_su_user_name is not None:
                 _create_db_user_gran_priv_if_needed(
-                    self.get_akrr_db, self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_name, "ALL")
+                    self.get_akrr_db, self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_name,
+                    "ALL", True)
             if not self.stand_alone:
                 if self.ak_db_su_user_name is not None:
                     _create_db_user_gran_priv_if_needed(
-                        self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name, "ALL")
+                        self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name,
+                        "ALL", True)
                 if self.xd_db_su_user_name is not None:
                     _create_db_user_gran_priv_if_needed(
-                        self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name, "SELECT")
+                        self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name,
+                        "SELECT", False)
 
         except Exception as e:
             import traceback
@@ -509,6 +526,9 @@ class AKRRSetup:
 
     @staticmethod
     def generate_self_signed_certificate():
+        """
+        Generate self signed certificate for AKRR Rest API
+        """
         log.info("Generating self-signed certificate for REST-API")
 
         cmd = """
@@ -525,14 +545,17 @@ class AKRRSetup:
             cat {akrr_cfg_dir}/server.cert >> {akrr_cfg_dir}/server.pem
             """.format(akrr_cfg_dir=os.path.join(akrr_home, 'etc'))
         if not dry_run:
-            output = subprocess.check_output(cmd, shell=True)
-            log.info(output.decode("utf-8"))
-            log.info("New self-signed certificate have been generated")
+            output = subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+            log.debug(output.decode("utf-8"))
+            log.info("    new self-signed certificate have been generated")
         else:
             log.dry_run("run command: " + cmd)
 
     def generate_settings_file(self):
-        log.info("Generating Settings File...")
+        """
+        Generate configuration (akrr.conf) file
+        """
+        log.info("Generating configuration file ...")
         with open(os.path.join(akrr_mod_dir, 'templates', 'akrr.conf'), 'r') as f:
             akrr_inp_template = f.read()
         restapi_rw_password = self.get_random_password()
@@ -596,15 +619,18 @@ class AKRRSetup:
         if not dry_run:
             with open(akrr_cfg, 'w') as f:
                 f.write(akrr_inp)
-            log.info("Settings written to: {0}".format(akrr_cfg))
+            log.info("Configuration is written to: {0}".format(akrr_cfg))
         else:
             log.dry_run("New config should be written to: {}".format(akrr_cfg))
             log.debug2(akrr_inp)
 
     @staticmethod
     def set_permission_on_files():
+        """
+        Remove access for group members and everybody for all files.
+        """
         log.info(
-            "Removing access for group members and everybody for all files as it might contain sensitive information.")
+            "Removing access for group members and everybody for all files.")
         if not dry_run:
             subprocess.check_output("""
                 chmod -R g-rwx {akrr_home}
@@ -612,7 +638,10 @@ class AKRRSetup:
                 """.format(akrr_home=akrr_home), shell=True)
 
     def db_check(self):
-        log.info("Checking acces to DBs.")
+        """
+        Check DB access
+        """
+        log.info("Checking access to DBs.")
         if dry_run:
             return
 
@@ -621,6 +650,9 @@ class AKRRSetup:
             exit(1)
 
     def generate_tables(self):
+        """
+        Create and populate AKRR tables
+        """
         log.info("Creating tables and populating them with initial values.")
 
         from .generate_tables import create_and_populate_mod_akrr_tables, create_and_populate_mod_appkernel_tables
@@ -639,7 +671,9 @@ class AKRRSetup:
 
     @staticmethod
     def start_daemon():
-        """Start the daemon"""
+        """
+        Start the daemon
+        """
         log.info("Starting AKRR daemon")
         if dry_run:
             return
@@ -651,7 +685,9 @@ class AKRRSetup:
 
     @staticmethod
     def check_daemon():
-        """Check that the daemon is running"""
+        """
+        Check that the daemon is running
+        """
         log.info("Checking that AKRR daemon is running")
         if dry_run:
             return
@@ -662,7 +698,9 @@ class AKRRSetup:
             exit(status)
 
     def ask_cron_email(self):
-        """ask_cron_email."""
+        """
+        ask for cron e-mail.
+        """
         try:
             crontan_content = subprocess.check_output("crontab -l", shell=True)
             crontan_content = crontan_content.decode("utf-8").splitlines(True)
@@ -687,7 +725,9 @@ class AKRRSetup:
             self.cron_email = None
 
     def install_cron_scripts(self):
-        """Install cron scripts."""
+        """
+        Install cron scripts.
+        """
         log.info("Installing cron entries")
         if dry_run:
             return
