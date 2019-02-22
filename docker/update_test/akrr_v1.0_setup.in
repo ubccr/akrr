@@ -1,0 +1,23 @@
+# [INPUT]: Please specify a path to the python binary you want to use:
+# [/usr/bin/python]
+
+# [INPUT]: Please specify a database user for AKRR (This user will be created if it does not already exist):
+# [akrruser]
+
+# [INPUT]: Please specify a password for the AKRR database user:
+# Password:
+akrruser
+# [INPUT]: Please reenter password:
+# Password:
+akrruser
+# [INPUT]: Please specify the user that will be connecting to the XDMoD database (modw):
+# [akrruser]
+
+# [INPUT]: Please provide an administrative database user under which the installation sql script should
+# run (This user must have privileges to create users and databases):
+root
+# [INPUT]: Please provide the password for the the user which you previously entered:
+# Password:
+
+# [INPUT]: Please enter the e-mail where cron will send messages (leave empty to opt out):
+nikolays@buffalo.edu
