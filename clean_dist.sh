@@ -19,4 +19,5 @@ find . -name '*.pyc' -type f -delete
 rm ./tests/.coverage
 rm ./tests/regtest1/.crontmp
 rm ./.coverage
+rm -rf ./build ./dist
 
