@@ -1,0 +1,125 @@
+# 1) General Settings
+1
+# Site Address: [http://localhost:8080/]
+
+# Email Address:
+root@localhost
+# Java Path: [/usr/bin/java]
+
+# Javac Path: [/usr/bin/javac]
+
+# PhantomJS Path:
+/root/phantomjs-2.1.1-linux-x86_64/bin/phantomjs
+# Center Logo Path:
+
+# Overwrite config file '/etc/xdmod/portal_settings.ini' (yes, no)? [yes]
+
+# Press ENTER to continue.
+
+# 2) Database Settings
+2
+# DB Hostname or IP: [localhost]
+
+# DB Port: [3306]
+
+# DB Username: [xdmod]
+
+# DB Password:
+xdmod
+# (confirm) DB Password:
+xdmod
+# DB Admin Username: [root]
+
+# DB Admin Password:
+
+# (confirm) DB Admin Password:
+
+# Overwrite config file '/etc/xdmod/portal_settings.ini' (yes, no)? [yes]
+
+# Acl Database Setup
+# Do you want to see the output (yes, no)? [no]
+
+# Acl Database Configuration
+# Do you want to see the output (yes, no)? [no]
+
+# Acl Database Import
+# Do you want to see the output (yes, no)? [no]
+
+# 3) Organization
+3
+# Organization Name:
+UB
+# Organization Abbreviation:
+UB
+# Overwrite config file '/etc/xdmod/organization.json' (yes, no)? [yes]
+
+# Press ENTER to continue.
+
+# 4) Resources
+4
+# 1) Add a new resource
+1
+# Resource Name:
+UBHPC
+# Formal Name:
+UBHPC
+# Resource Type (cloud, dic, disk, grid, hpc, htc, stgrid, tape, us, vm, vis): [hpc]
+
+# How many nodes does this resource have?
+798
+# How many total processors (cpu cores) does this resource have?
+11408
+# s) Save (and return to main menu)
+s
+# Overwrite config file '/etc/xdmod/resources.json' (yes, no)? [yes]
+
+# Press ENTER to continue.
+
+# Overwrite config file '/etc/xdmod/resource_specs.json' (yes, no)? [yes]
+
+#Press ENTER to continue.
+
+# 5) Create Admin User
+5
+# Username:
+xdmod
+# Password:
+xdmod
+# (confirm) Password:
+xdmod
+# First name:
+XD
+# Last name:
+Mod
+# Email address:
+root@localhost
+# Press ENTER to continue.
+
+# 6) Hierarchy
+6
+# Top Level Name: [Hierarchy Top Level]
+
+# Top Level Description:
+
+# Middle Level Name: [Hierarchy Middle Level]
+
+# Middle Level Description:
+
+# Bottom Level Name: [Hierarchy Bottom Level]
+
+# Bottom Level Description:
+
+# Overwrite config file '/etc/xdmod/hierarchy.json' (yes, no)? [yes]
+
+# Press ENTER to continue.
+
+# 7) Automatically Check for Updates
+7
+# Enable automatic update check (yes, no)? [yes]
+no
+# Overwrite config file '/etc/xdmod/update_check.json' (yes, no)? [yes]
+
+# Press ENTER to continue.
+
+# q) Quit
+q
