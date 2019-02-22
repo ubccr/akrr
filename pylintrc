@@ -92,8 +92,8 @@ max-nested-blocks=5
 
 [BASIC]
 
-# Naming hint for argument names
-argument-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
+# Naming hint for argument names [default: (([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$]
+argument-name-hint=(([a-z][a-z0-9_]{1,30})|(_[a-z0-9_]*))$
 
 # Regular expression matching correct argument names
 argument-rgx=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
@@ -150,11 +150,11 @@ inlinevar-name-hint=[A-Za-z_][A-Za-z0-9_]*$
 # Regular expression matching correct inline iteration names
 inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
 
-# Naming hint for method names
-method-name-hint=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
+# Naming hint for method names [default: (([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$]
+method-name-hint=(([a-z][a-z0-9_]{2,40})|(_[a-z0-9_]*))$
 
-# Regular expression matching correct method names
-method-rgx=(([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$
+# Regular expression matching correct method names [default: (([a-z][a-z0-9_]{2,30})|(_[a-z0-9_]*))$]
+method-rgx=(([a-z][a-z0-9_]{2,40})|(_[a-z0-9_]*))$
 
 # Naming hint for module names
 module-name-hint=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
@@ -358,11 +358,11 @@ valid-metaclass-classmethod-first-arg=mcs
 
 [DESIGN]
 
-# Maximum number of arguments for function / method
-max-args=5
+# Maximum number of arguments for function / method [default: 5]
+max-args=16
 
-# Maximum number of attributes for a class (see R0902).
-max-attributes=7
+# Maximum number of attributes for a class (see R0902). [default: 7]
+max-attributes=32
 
 # Maximum number of boolean expressions in a if statement
 max-bool-expr=5
@@ -376,8 +376,8 @@ max-locals=15
 # Maximum number of parents for a class (see R0901).
 max-parents=7
 
-# Maximum number of public methods for a class (see R0904).
-max-public-methods=20
+# Maximum number of public methods for a class (see R0904). [default: 20]
+max-public-methods=32
 
 # Maximum number of return / yield for function / method body
 max-returns=6
