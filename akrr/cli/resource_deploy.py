@@ -734,7 +734,7 @@ def resource_deploy(args):
     resource = validate_resource_parameter_file(resource_name)
 
     # connect to resource
-    if resource['batchScheduler'].lower() == "openstack":
+    if resource['batch_scheduler'].lower() == "openstack":
         # Start instance if it is cloud
         openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'] = openstack_server
@@ -755,7 +755,7 @@ def resource_deploy(args):
     # close connection we don't need it any more
     rsh.close(force=True)
     del rsh
-    if resource['batchScheduler'].lower() == "openstack":
+    if resource['batch_scheduler'].lower() == "openstack":
         # delete instance if it is cloud
         akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()

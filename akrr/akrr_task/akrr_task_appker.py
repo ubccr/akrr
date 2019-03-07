@@ -42,13 +42,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         self.openstack_server_ip = None  # type: Optional[str]
 
     def first_step(self):
-        if self.resource['batchScheduler'].lower() == "openstack":
+        if self.resource['batch_scheduler'].lower() == "openstack":
             return self.start_openstack_server()
         else:
             return self.create_batch_job_script_and_submit_it()
 
     def start_openstack_server(self):
-        if self.resource['batchScheduler'].lower() == "openstack":
+        if self.resource['batch_scheduler'].lower() == "openstack":
             # Start instance if it is cloud
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.create()
@@ -181,7 +181,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrrPPN']
 
             if 'nodeListSetterTemplate' not in batch_vars:
-                batch_vars['nodeListSetterTemplate'] = batch_vars['nodeListSetter'][batch_vars['batchScheduler']]
+                batch_vars['nodeListSetterTemplate'] = batch_vars['nodeListSetter'][batch_vars['batch_scheduler']]
 
             # process templates
             batch_vars['akrrCommonCommands'] = akrr.util.format_recursively(
@@ -192,14 +192,14 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write
             if batch_vars['requestTwoNodesForOneNodeAppKer'] is True and batch_vars['akrrNNodes'] == 1 and \
-                    'batchJobHeaderTemplate' in batch_vars:
+                    'batch_job_header_template' in batch_vars:
                 batch_vars2 = copy.deepcopy(batch_vars)
                 batch_vars2['akrrNCores'] = 2 * batch_vars['akrrNCores']
                 batch_vars2['akrrNNodes'] = 2 * batch_vars['akrrNNodes']
                 batch_vars2['akrrNCoresToBorder'] = 2 * batch_vars['akrrNCoresToBorder']
                 batch_vars2['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrrPPN']
-                batch_vars['batchJobHeaderTemplate'] = akrr.util.format_recursively(
-                    batch_vars2['batchJobHeaderTemplate'], batch_vars2)
+                batch_vars['batch_job_header_template'] = akrr.util.format_recursively(
+                    batch_vars2['batch_job_header_template'], batch_vars2)
 
             # do parameters adjustment
             if 'process_params' in batch_vars:
@@ -251,10 +251,10 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             job_id = 0
             if 'masterTaskID' not in self.taskParam:
                 # i.e. submit to queue only if task is independent
-                send_to_queue = Template(submit_commands[self.resource['batchScheduler']]).substitute(
+                send_to_queue = Template(submit_commands[self.resource['batch_scheduler']]).substitute(
                     scriptPath=self.JobScriptName)
                 msg = ssh.ssh_command(sh, send_to_queue)
-                match_obj = re.search(job_id_extract_patterns[self.resource['batchScheduler']], msg, re.M | re.S)
+                match_obj = re.search(job_id_extract_patterns[self.resource['batch_scheduler']], msg, re.M | re.S)
 
                 if match_obj:
                     try:
@@ -358,7 +358,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     log.error("Can not get remote job ID: %s", str(e))
                     self.RemoteJobID = 0
 
-            m_wait_expression = wait_expressions[self.resource['batchScheduler']]
+            m_wait_expression = wait_expressions[self.resource['batch_scheduler']]
             cmd = Template(m_wait_expression[0]).substitute(jobId=str(self.RemoteJobID))
             rege = Template(m_wait_expression[2]).substitute(jobId=str(self.RemoteJobID))
 
@@ -988,7 +988,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                          taskexeclog_file_content))
 
     def task_is_complete(self):
-        if self.resource['batchScheduler'].lower() == "openstack":
+        if self.resource['batch_scheduler'].lower() == "openstack":
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.delete()
         log.info("Done", self.taskDir)
@@ -1009,7 +1009,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         if can_be_safely_removed:
             # remove remote directory
             pass
-        if self.resource['batchScheduler'].lower() == "openstack":
+        if self.resource['batch_scheduler'].lower() == "openstack":
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.delete()
         return can_be_safely_removed
@@ -1018,7 +1018,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         sh = None
         try:
             from string import Template
-            m_kill_expression = kill_expressions[self.resource['batchScheduler']]
+            m_kill_expression = kill_expressions[self.resource['batch_scheduler']]
             cmd = Template(m_kill_expression[0]).substitute(jobId=str(self.RemoteJobID))
             msg = ssh.ssh_resource(self.resource, cmd)
             log.debug(msg)

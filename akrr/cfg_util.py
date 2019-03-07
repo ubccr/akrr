@@ -30,7 +30,8 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         ('sshPrivateKeyFile', 'ssh_private_key_file'),
         ('sshPrivateKeyPassword', 'ssh_private_key_password'),
         ('remoteAccessMethod', 'remote_access_method'),
-        # ('batchScheduler', 'batch_scheduler'),
+        ('batchScheduler', 'batch_scheduler'),
+        ('batchJobHeaderTemplate', 'batch_job_header_template'),
         # ('appKerDir', 'appkernel_dir'),
         ('appKerDir', 'AppKerDir'),
         # ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_tTemplate'),
@@ -68,7 +69,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         'ssh_password': [str, True, False],
         'ssh_private_key_file': [str, True, False],
         'ssh_private_key_password': [str, True, False],
-        'batchScheduler': [str, False, True],
+        'batch_scheduler': [str, False, True],
         'remote_access_method': [str, False, True],
         'appKerDir': [str, False, True],
         'akrrCommonCleanupTemplate': [str, False, True],
@@ -90,7 +91,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types_2 = {
-        'remote_access_node': [str, True if resource['batchScheduler'].lower() == "openstack" else False, True]
+        'remote_access_node': [str, True if resource['batch_scheduler'].lower() == "openstack" else False, True]
     }
 
     for variable, (m_type, nullable, must) in parameters_types_2.items():
