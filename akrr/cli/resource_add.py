@@ -41,7 +41,7 @@ ssh_password4thisSession = None
 ssh_private_key_file = None
 ssh_private_key_password = None
 
-networkScratch = None
+network_scratch = None
 local_scratch = "/tmp"
 akrr_data = None
 appKerDir = None
@@ -105,7 +105,7 @@ def create_resource_config(file_path, queuing_system):
     template = update_template(template, 'ppn', in_quotes=False)
     for v in ['remote_access_node', 'remote_access_method', 'remote_copy_method',
               'ssh_username', 'ssh_password', 'ssh_private_key_file', 'ssh_private_key_password',
-              'networkScratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
+              'network_scratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
         template = update_template(template, v)
     template += "\n\n"
 
@@ -536,7 +536,7 @@ def get_system_characteristics():
 
 def get_file_system_access_points():
     global resource_name
-    global networkScratch
+    global network_scratch
     global local_scratch
     global akrr_data
     global appKerDir
@@ -562,7 +562,7 @@ def get_file_system_access_points():
             log.empty_line()
             break
     local_scratch = akrr.util.ssh.ssh_command(rsh, "echo %s" % (local_scratch,)).strip()
-    # networkScratch
+    # network_scratch
     network_scratch_default = ""
     if scratch_network_dir != "":
         network_scratch_default = scratch_network_dir
@@ -572,17 +572,17 @@ def get_file_system_access_points():
             "Enter location of network scratch (visible only to all nodes),"
             "used for temporary storage of app kernel input/output:")
         if network_scratch_default != "":
-            networkScratch = input("[%s]" % network_scratch_default)
-            if networkScratch.strip() == "":
-                networkScratch = network_scratch_default
+            network_scratch = input("[%s]" % network_scratch_default)
+            if network_scratch.strip() == "":
+                network_scratch = network_scratch_default
         else:
-            networkScratch = input("")
+            network_scratch = input("")
 
-        if networkScratch == "":
-            log.error("Incorrect value for networkScratch, try again")
+        if network_scratch == "":
+            log.error("Incorrect value for network_scratch, try again")
             continue
 
-        status, msg = check_dir(rsh, networkScratch, exit_on_fail=False, try_to_create=True)
+        status, msg = check_dir(rsh, network_scratch, exit_on_fail=False, try_to_create=True)
         if status:
             log.info(msg)
             network_scratch_visible = True
@@ -591,7 +591,7 @@ def get_file_system_access_points():
         else:
             log.warning(msg)
             break
-    networkScratch = akrr.util.ssh.ssh_command(rsh, "echo %s" % (networkScratch,)).strip()
+    network_scratch = akrr.util.ssh.ssh_command(rsh, "echo %s" % (network_scratch,)).strip()
     # appKerDir
     appker_dir_default = os.path.join(home_dir, "appker", resource_name)
     while True:
@@ -610,7 +610,7 @@ def get_file_system_access_points():
     # akrr_data
     akrr_data_default = os.path.join(home_dir, "akrr_data", resource_name)
     if network_scratch_visible:
-        akrr_data_default = os.path.join(networkScratch, "akrr_data", resource_name)
+        akrr_data_default = os.path.join(network_scratch, "akrr_data", resource_name)
     while True:
         log.log_input(
             "Enter future locations for app kernels working directories (can or even should be on scratch space):")
@@ -645,7 +645,7 @@ def resource_add(config):
     global ssh_password
     global ssh_private_key_file
     global ssh_private_key_password
-    global networkScratch
+    global network_scratch
     global local_scratch
     global akrr_data
     global appKerDir
@@ -727,7 +727,7 @@ def resource_add(config):
               "ssh_password: {}".format(ssh_password) +
               "ssh_private_key_file: {}".format(ssh_private_key_file) +
               "ssh_private_key_password: {}".format(ssh_private_key_password) +
-              "networkScratch: {}".format(networkScratch) +
+              "network_scratch: {}".format(network_scratch) +
               "local_scratch: {}".format(local_scratch) +
               "akrr_data: {}".format(akrr_data) +
               "appKerDir: {}".format(appKerDir) +

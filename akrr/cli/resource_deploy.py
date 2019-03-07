@@ -151,7 +151,7 @@ def check_create_dirs(rsh, resource):
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
 
-    d = resource['networkScratch']
+    d = resource['network_scratch']
     log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
 
@@ -635,7 +635,7 @@ fi''')
         out = akrr.util.ssh.ssh_command(rsh, '''
 echo "Appending AKRR records to $HOME/.bashrc"
 echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
-echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['networkScratch'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['network_scratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_APPKER_DIR=\\"''' + resource['appKerDir'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc

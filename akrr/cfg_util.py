@@ -22,9 +22,9 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     renamed_parameters = [
         ('localScratch', 'local_scratch'),
         # ('batchJobTemplate', 'batch_job_template'),
-        # ('remote_access_node', 'remote_access_node'),
+        ('remoteAccessNode', 'remote_access_node'),
         # ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
-        # ('networkScratch', 'network_scratch'),
+        # ('network_scratch', 'network_scratch'),
         ('sshUserName', 'ssh_username'),
         ('sshPassword', 'ssh_password'),
         ('sshPrivateKeyFile', 'ssh_private_key_file'),
@@ -32,12 +32,14 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         ('remoteAccessMethod', 'remote_access_method'),
         # ('batchScheduler', 'batch_scheduler'),
         # ('appKerDir', 'appkernel_dir'),
+        ('appKerDir', 'AppKerDir'),
         # ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_tTemplate'),
-        # ('akrrData', 'akrr_data')
+        # ('akrrData', 'akrr_data'),
+        ('akrrData', 'akrr_data'),
         ('autoWalltimeLimit', 'auto_walltime_limit'),
         ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
         ('appkernelOnResource', 'appkernel_on_resource'),
-        ('networkScratch', 'network_scratch'),
+        ('networkScratch', 'network_scratch')
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -106,7 +108,6 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     # mapped parameters which still uses internally different name
     # these eventually should be renamed
     renamed_parameters = [
-        ('networkScratch', 'network_scratch'),
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -219,16 +220,6 @@ def load_resource(resource_name: str):
         # mapped options in resource input file to those used in AKRR
         if 'name' not in resource:
             resource['name'] = resource_name
-
-        # here should be depreciated options and renames
-        if 'akrrData' in resource:
-            warnings.warn("Rename akrrData to akrr_data", DeprecationWarning)
-            resource['akrr_data'] = resource['akrrData']
-        if 'remoteAccessNode' in resource:
-            warnings.warn("Rename remoteAccessNode to remote_access_node", DeprecationWarning)
-            resource['remote_access_node'] = resource['remoteAccessNode']
-        if 'appKerDir' in resource:
-            resource['AppKerDir'] = resource['appKerDir']
 
         # last modification time for future reloading
         resource['default_resource_cfg_filename'] = default_resource_cfg_filename
