@@ -78,14 +78,14 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             if len(raw) > 0:
                 (resource, app, resource_param, app_param) = raw[0]
 
-                cur.execute("""SELECT walllimit
+                cur.execute("""SELECT walltime_limit
                     FROM akrr_default_walllimit
                     WHERE resource=%s AND app=%s AND resource_param=%s AND app_param=%s """,
                             (resource, app, resource_param, app_param))
                 raw = cur.fetchall()
 
                 if len(raw) > 0:
-                    db_defaults['walllimit'] = raw[0][0]
+                    db_defaults['walltime_limit'] = raw[0][0]
 
             # db.commit()
             cur.close()
@@ -141,9 +141,9 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                         else:
                             log.error(
                                 "Max walltime was %.1f s, will change walltime limit from %.1f minutes to %d minutes" %
-                                (max_walltime, batch_vars['walllimit'],
+                                (max_walltime, batch_vars['walltime_limit'],
                                  int(auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99)))
-                            batch_vars['walllimit'] = int((auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99))
+                            batch_vars['walltime_limit'] = int((auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99))
                     cur.close()
                     del db
             except Exception as e:
@@ -163,22 +163,22 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             assert isinstance(tmp_num_nodes, int)
             assert isinstance(tmp_num_cores, int)
 
-            batch_vars['akrrNCores'] = tmp_num_cores
-            batch_vars['akrrNNodes'] = tmp_num_nodes
+            batch_vars['akrr_num_of_cores'] = tmp_num_cores
+            batch_vars['akrr_num_of_nodes'] = tmp_num_nodes
 
             # Set batch_vars remaps
-            batch_vars['akrrPPN'] = batch_vars['ppn']
-            batch_vars['akrrNCoresToBorder'] = batch_vars['akrrPPN'] * batch_vars['akrrNNodes']
-            batch_vars['akrrTaskWorkingDir'] = self.remoteTaskDir
-            batch_vars['akrrWallTimeLimit'] = "%02d:%02d:00" % (
-                int(batch_vars['walllimit']) / 60, int(batch_vars['walllimit']) % 60)
-            batch_vars['akrrAppKerName'] = self.app['name']
-            batch_vars['akrrResourceName'] = self.resource['name']
-            batch_vars['akrrTimeStamp'] = self.timeStamp
-            if batch_vars['akrrNNodes'] == 1:
-                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrrNCores']
+            batch_vars['akrr_ppn'] = batch_vars['ppn']
+            batch_vars['akrrNCoresToBorder'] = batch_vars['akrr_ppn'] * batch_vars['akrr_num_of_nodes']
+            batch_vars['akrr_task_work_dir'] = self.remoteTaskDir
+            batch_vars['akrr_walltime_limit'] = "%02d:%02d:00" % (
+                int(batch_vars['walltime_limit']) / 60, int(batch_vars['walltime_limit']) % 60)
+            batch_vars['akrr_appkernel_name'] = self.app['name']
+            batch_vars['akrr_resource_name'] = self.resource['name']
+            batch_vars['akrr_time_stamp'] = self.timeStamp
+            if batch_vars['akrr_num_of_nodes'] == 1:
+                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_num_of_cores']
             else:
-                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrrPPN']
+                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_ppn']
 
             if 'nodeListSetterTemplate' not in batch_vars:
                 batch_vars['nodeListSetterTemplate'] = batch_vars['nodeListSetter'][batch_vars['batch_scheduler']]
@@ -191,13 +191,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars['akrr_common_cleanup_template'], batch_vars, keep_double_brackets=True)
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write
-            if batch_vars['requestTwoNodesForOneNodeAppKer'] is True and batch_vars['akrrNNodes'] == 1 and \
+            if batch_vars['requestTwoNodesForOneNodeAppKer'] is True and batch_vars['akrr_num_of_nodes'] == 1 and \
                     'batch_job_header_template' in batch_vars:
                 batch_vars2 = copy.deepcopy(batch_vars)
-                batch_vars2['akrrNCores'] = 2 * batch_vars['akrrNCores']
-                batch_vars2['akrrNNodes'] = 2 * batch_vars['akrrNNodes']
+                batch_vars2['akrr_num_of_cores'] = 2 * batch_vars['akrr_num_of_cores']
+                batch_vars2['akrr_num_of_nodes'] = 2 * batch_vars['akrr_num_of_nodes']
                 batch_vars2['akrrNCoresToBorder'] = 2 * batch_vars['akrrNCoresToBorder']
-                batch_vars2['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrrPPN']
+                batch_vars2['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_ppn']
                 batch_vars['batch_job_header_template'] = akrr.util.format_recursively(
                     batch_vars2['batch_job_header_template'], batch_vars2)
 

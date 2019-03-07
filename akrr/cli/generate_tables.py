@@ -118,7 +118,7 @@ def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
         `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `resource` TEXT,
         `app` TEXT,
-        `walllimit` INT(11) DEFAULT NULL COMMENT 'wall time limit in minutes',
+        `walltime_limit` INT(11) DEFAULT NULL COMMENT 'wall time limit in minutes',
         `resource_param` TEXT,
         `app_param` TEXT,
         `last_update` DATETIME NOT NULL,
@@ -930,7 +930,7 @@ def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
     copy_table_with_rename(
         cur_akrr, cur_akrr2,
         "akrr_default_walllimit",
-        "id,resource,app,walllimit,resource_param,app_param,last_update,comments")
+        "id,resource,app,walltime_limit,resource_param,app_param,last_update,comments")
 
     copy_table_with_rename(
         cur_akrr, cur_akrr2,
