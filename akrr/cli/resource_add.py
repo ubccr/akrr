@@ -45,8 +45,8 @@ network_scratch = None
 local_scratch = "/tmp"
 akrr_data = None
 appKerDir = None
-batchScheduler = None
-batchJobHeaderTemplate = None
+batch_scheduler = None
+batch_job_header_template = None
 
 resource_cfg_filename = None
 
@@ -105,7 +105,7 @@ def create_resource_config(file_path, queuing_system):
     template = update_template(template, 'ppn', in_quotes=False)
     for v in ['remote_access_node', 'remote_access_method', 'remote_copy_method',
               'ssh_username', 'ssh_password', 'ssh_private_key_file', 'ssh_private_key_password',
-              'network_scratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
+              'network_scratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batch_scheduler']:
         template = update_template(template, v)
     template += "\n\n"
 
@@ -649,8 +649,8 @@ def resource_add(config):
     global local_scratch
     global akrr_data
     global appKerDir
-    global batchScheduler
-    global batchJobHeaderTemplate
+    global batch_scheduler
+    global batch_job_header_template
 
     if config.verbose:
         verbose = True
@@ -710,7 +710,7 @@ def resource_add(config):
         else:
             log.error("Incorrect queuing_system try again")
 
-    batchScheduler = queuing_system
+    batch_scheduler = queuing_system
     log.empty_line()
 
     if minimalistic is False:
@@ -731,13 +731,13 @@ def resource_add(config):
               "local_scratch: {}".format(local_scratch) +
               "akrr_data: {}".format(akrr_data) +
               "appKerDir: {}".format(appKerDir) +
-              "batchScheduler: {}".format(batchScheduler) +
-              "batchJobHeaderTemplate: {}".format(batchJobHeaderTemplate) + "\n")
+              "batch_scheduler: {}".format(batch_scheduler) +
+              "batch_job_header_template: {}".format(batch_job_header_template) + "\n")
     
     generate_resource_config(resource_id, resource_name, queuing_system)
     log.info(
         "Initiation of new resource is completed.\n"
-        "    Edit batchJobHeaderTemplate variable in {}\n"
+        "    Edit batch_job_header_template variable in {}\n"
         "    and move to resource validation and deployment step.\n"
         "    i.e. execute:\n"
         "        akrr resource deploy -r {}".format(resource_cfg_filename, resource_name))

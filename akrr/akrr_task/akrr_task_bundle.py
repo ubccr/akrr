@@ -197,7 +197,7 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             else:
                 batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrrPPN']
             if 'nodeListSetterTemplate' not in batchvars:
-                batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batchScheduler']]
+                batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batch_scheduler']]
 
             # process templates
             batchvars['akrrCommonCommands'] = akrr.util.format_recursively(
@@ -221,10 +221,10 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
 
             # send to queue
             from string import Template
-            send_to_queue = Template(submit_commands[self.resource['batchScheduler']]).substitute(
+            send_to_queue = Template(submit_commands[self.resource['batch_scheduler']]).substitute(
                 scriptPath=self.JobScriptName)
             msg = ssh_command(sh, send_to_queue)
-            match_obj = re.search(job_id_extract_patterns[self.resource['batchScheduler']], msg, re.M | re.S)
+            match_obj = re.search(job_id_extract_patterns[self.resource['batch_scheduler']], msg, re.M | re.S)
 
             if match_obj:
                 try:
@@ -318,7 +318,7 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
         try:
             print("### Checking the job status on remote machine")
             from string import Template
-            m_wait_expr = wait_expressions[self.resource['batchScheduler']]
+            m_wait_expr = wait_expressions[self.resource['batch_scheduler']]
             cmd = Template(m_wait_expr[0]).substitute(jobId=str(self.RemoteJobID))
             rege = Template(m_wait_expr[2]).substitute(jobId=str(self.RemoteJobID))
 
@@ -827,7 +827,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         sh = None
         try:
             from string import Template
-            kill_expr = kill_expressions[self.resource['batchScheduler']]
+            kill_expr = kill_expressions[self.resource['batch_scheduler']]
             cmd = Template(kill_expr[0]).substitute(jobId=str(self.RemoteJobID))
             msg = ssh_resource(self.resource, cmd)
             print(msg)

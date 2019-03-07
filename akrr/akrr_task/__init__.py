@@ -149,7 +149,7 @@ def get_task_handler_from_pkl(pickle_filename: str) -> AkrrTaskHandlerBase:
     th.app = cfg.find_app_by_name(th.appName)
 
     # if openstack set remote_access_node to instance ip
-    if th.resource['batchScheduler'].lower() == "openstack" and getattr(th, "openstack_server_ip", None) is not None:
+    if th.resource['batch_scheduler'].lower() == "openstack" and getattr(th, "openstack_server_ip", None) is not None:
             th.resource['remote_access_node'] = getattr(th, "openstack_server_ip", None)
 
     return th
