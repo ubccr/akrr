@@ -21,10 +21,9 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     # mapped renamed parameters
     renamed_parameters = [
         ('localScratch', 'local_scratch'),
-        # ('batchJobTemplate', 'batch_job_template'),
+        ('batchJobTemplate', 'batch_job_template'),
         ('remoteAccessNode', 'remote_access_node'),
-        # ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
-        # ('network_scratch', 'network_scratch'),
+        ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
         ('sshUserName', 'ssh_username'),
         ('sshPassword', 'ssh_password'),
         ('sshPrivateKeyFile', 'ssh_private_key_file'),
@@ -32,10 +31,9 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         ('remoteAccessMethod', 'remote_access_method'),
         ('batchScheduler', 'batch_scheduler'),
         ('batchJobHeaderTemplate', 'batch_job_header_template'),
-        # ('appKerDir', 'appkernel_dir'),
-        ('appKerDir', 'AppKerDir'),
-        # ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_tTemplate'),
-        # ('akrrData', 'akrr_data'),
+        ('appKerDir', 'appkernel_dir'),
+        ('AppKerDir', 'appkernel_dir'),
+        ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_template'),
         ('akrrData', 'akrr_data'),
         ('autoWalltimeLimit', 'auto_walltime_limit'),
         ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
@@ -59,9 +57,9 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     parameters_types = {
         'info': [str, False, False],
         'local_scratch': [str, False, True],
-        'batchJobTemplate': [str, False, True],
+        'batch_job_template': [str, False, True],
         'name': [str, False, False],
-        'akrrCommonCommandsTemplate': [str, False, True],
+        'akrr_common_commands_template': [str, False, True],
         'network_scratch': [str, False, True],
         'ppn': [int, False, True],
         'remote_copy_method': [str, False, True],
@@ -71,8 +69,8 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         'ssh_private_key_password': [str, True, False],
         'batch_scheduler': [str, False, True],
         'remote_access_method': [str, False, True],
-        'appKerDir': [str, False, True],
-        'akrrCommonCleanupTemplate': [str, False, True],
+        'appkernel_dir': [str, False, True],
+        'akrr_common_cleanup_template': [str, False, True],
         'akrr_data': [str, False, True]
     }
 

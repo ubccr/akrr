@@ -146,7 +146,7 @@ def check_create_dirs(rsh, resource):
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
 
-    d = resource['appKerDir']
+    d = resource['appkernel_dir']
     log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
@@ -189,56 +189,56 @@ def copy_exec_sources_and_inputs(rsh, resource):
         "    HPCC, IMB, IOR and Graph500 source code to remote resource\n")
 
     try:
-        akrr.util.ssh.ssh_command(rsh, "cd %s" % resource['appKerDir'])
-        out = akrr.util.ssh.ssh_command(rsh, "ls " + resource['appKerDir'])
+        akrr.util.ssh.ssh_command(rsh, "cd %s" % resource['appkernel_dir'])
+        out = akrr.util.ssh.ssh_command(rsh, "ls " + resource['appkernel_dir'])
         files_in_appker_dir = out.strip().split()
 
         if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
-            log.info("Copying app. kernel input tarball to %s", resource['appKerDir'])
+            log.info("Copying app. kernel input tarball to %s", resource['appkernel_dir'])
             if not akrr.dry_run:
-                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appkernel_dir'])
 
-            log.info("Unpacking app. kernel input files to %s/inputs", resource['appKerDir'])
+            log.info("Unpacking app. kernel input files to %s/inputs", resource['appkernel_dir'])
             if not akrr.dry_run:
-                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/inputs.tar.gz" % resource['appkernel_dir'])
                 log.debug(out)
 
-                out = akrr.util.ssh.ssh_command(rsh, "du -h %s/inputs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "du -h %s/inputs" % resource['appkernel_dir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
-                    log.info("App. kernel input files are in %s/inputs\n", resource['appKerDir'])
+                    log.info("App. kernel input files are in %s/inputs\n", resource['appkernel_dir'])
                 else:
                     raise Exception("files are not copied!")
         else:
             log.warning_count += 1
             log.warning("WARNING %d: App. kernel inputs directory %s/inputs is present, assume they are correct.\n",
-                        log.warning_count, resource['appKerDir'])
+                        log.warning_count, resource['appkernel_dir'])
 
         if not ("execs" in files_in_appker_dir or "execs/" in files_in_appker_dir):
             log.info(
-                "Copying app. kernel execs tarball to %s\n" % (resource['appKerDir']) +
+                "Copying app. kernel execs tarball to %s\n" % (resource['appkernel_dir']) +
                 "It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
             if not akrr.dry_run:
-                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appKerDir'])
+                akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appkernel_dir'])
             log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs",
-                     resource['appKerDir'])
+                     resource['appkernel_dir'])
             if not akrr.dry_run:
-                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appkernel_dir'])
                 log.debug(out)
 
-                out = akrr.util.ssh.ssh_command(rsh, "df -h %s/execs" % resource['appKerDir'])
+                out = akrr.util.ssh.ssh_command(rsh, "df -h %s/execs" % resource['appkernel_dir'])
                 log.debug(out)
 
                 if out.count("No such file or directory") == 0:
                     log.info("HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in %s/execs\n",
-                             resource['appKerDir'])
+                             resource['appkernel_dir'])
                 else:
                     raise Exception("files are not copied!")
         else:
             log.warning_count += 1
             log.warning("WARNING %d: App. kernel executables directory %s/execs is present, assume they are correct.",
-                        log.warning_count, resource['appKerDir'])
+                        log.warning_count, resource['appkernel_dir'])
             log.warning("It should contain HPCC,IMB,IOR and Graph500 source code and app.signature calculator\n")
 
         akrr.util.ssh.ssh_command(rsh, "rm execs.tar.gz  inputs.tar.gz")
@@ -249,7 +249,7 @@ def copy_exec_sources_and_inputs(rsh, resource):
 
 def check_appsig(rsh, resource):
     log.info("Testing app.signature calculator on headnode\n")
-    out = akrr.util.ssh.ssh_command(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appKerDir'],))
+    out = akrr.util.ssh.ssh_command(rsh, "%s/execs/bin/appsigcheck.sh `which md5sum`" % (resource['appkernel_dir'],))
     if out.count("===ExeBinSignature===") > 0 and out.count("MD5:") > 0:
         log.info("App.signature calculator is working on headnode\n")
     else:
@@ -537,7 +537,7 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
 
     # test the nodes, log to headnode and ping them
     if parameters['RunEnv:Nodes'] == '':
-        log.error("Nodes are not detected, check batchJobTemplate and setup of AKRR_NODELIST variable")
+        log.error("Nodes are not detected, check batch_job_template and setup of AKRR_NODELIST variable")
         log.error_count += 1
 
     nodes = parameters['RunEnv:Nodes'].split()
@@ -565,7 +565,7 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
         if number_of_unknown_hosts > 0:
             log.error("ERROR %d: Can not ping compute nodes from head node\n" % (log.error_count + 1) +
                       "Nodes on which test job was executed detected as " + parameters['RunEnv:Nodes'] + "\n" +
-                      "If these names does not have sense check batchJobTemplate and setup of AKRR_NODELIST "
+                      "If these names does not have sense check batch_job_template and setup of AKRR_NODELIST "
                       "variable in resource configuration file")
             log.error_count += 1
     except Exception as e:
@@ -637,7 +637,7 @@ echo "Appending AKRR records to $HOME/.bashrc"
 echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
 echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['network_scratch'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_APPKER_DIR=\\"''' + resource['appKerDir'] + '''\\"" >> $HOME/.bashrc
+echo "export AKRR_APPKER_DIR=\\"''' + resource['appkernel_dir'] + '''\\"" >> $HOME/.bashrc
 echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc
 echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
 ''')
