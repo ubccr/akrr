@@ -185,10 +185,10 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             # process templates
             batch_vars['akrrCommonCommands'] = akrr.util.format_recursively(
-                batch_vars['akrrCommonCommandsTemplate'], batch_vars, keep_double_brackets=True)
+                batch_vars['akrr_common_commands_template'], batch_vars, keep_double_brackets=True)
 
             batch_vars['akrrCommonCleanup'] = akrr.util.format_recursively(
-                batch_vars['akrrCommonCleanupTemplate'], batch_vars, keep_double_brackets=True)
+                batch_vars['akrr_common_cleanup_template'], batch_vars, keep_double_brackets=True)
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write
             if batch_vars['requestTwoNodesForOneNodeAppKer'] is True and batch_vars['akrrNNodes'] == 1 and \
@@ -206,7 +206,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars['process_params'](batch_vars)
 
             # generate job script
-            job_script = akrr.util.format_recursively(self.resource["batchJobTemplate"], batch_vars)
+            job_script = akrr.util.format_recursively(self.resource["batch_job_template"], batch_vars)
             job_script_full_path = os.path.join(self.taskDir, "jobfiles", self.JobScriptName)
             fout = open(job_script_full_path, "w")
             fout.write(job_script)

@@ -144,7 +144,7 @@ def app_validate(resource, appkernel, nnodes):
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")
 
-    d = resource['appKerDir']
+    d = resource['appkernel_dir']
     log.info("Checking: %s:%s" % (resource['remote_access_node'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")

@@ -201,15 +201,15 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
 
             # process templates
             batchvars['akrrCommonCommands'] = akrr.util.format_recursively(
-                batchvars['akrrCommonCommandsTemplate'], batchvars, keep_double_brackets=True)
+                batchvars['akrr_common_commands_template'], batchvars, keep_double_brackets=True)
             batchvars['akrrCommonCleanup'] = akrr.util.format_recursively(
-                batchvars['akrrCommonCleanupTemplate'], batchvars, keep_double_brackets=True)
+                batchvars['akrr_common_cleanup_template'], batchvars, keep_double_brackets=True)
 
             # do parameters adjustment
             if 'process_params' in batchvars:
                 batchvars['process_params'](batchvars)
             # generate job script
-            job_script = akrr.util.format_recursively(self.resource["batchJobTemplate"], batchvars)
+            job_script = akrr.util.format_recursively(self.resource["batch_job_template"], batchvars)
             fout = open(os.path.join(self.taskDir, "jobfiles", self.JobScriptName), "w")
             fout.write(job_script)
             fout.close()
