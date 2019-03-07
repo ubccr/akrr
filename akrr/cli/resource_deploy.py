@@ -142,17 +142,17 @@ def check_create_dirs(rsh, resource):
     log.info("Checking directory locations\n")
 
     d = resource['akrr_data']
-    log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
+    log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
 
     d = resource['appKerDir']
-    log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
+    log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg)
 
     d = resource['networkScratch']
-    log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
+    log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
 
     if status is True:
@@ -166,7 +166,7 @@ def check_create_dirs(rsh, resource):
             log.warning_count)
 
     d = resource['local_scratch']
-    log.info("Checking: %s:%s", resource['remoteAccessNode'], d)
+    log.info("Checking: %s:%s", resource['remote_access_node'], d)
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status is True:
         log.info(msg)
@@ -739,7 +739,7 @@ def resource_deploy(args):
         openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'] = openstack_server
         openstack_server.create()
-        resource['remoteAccessNode'] = openstack_server.ip
+        resource['remote_access_node'] = openstack_server.ip
     rsh = connect_to_resource(resource)
 
     # do tests
@@ -759,7 +759,7 @@ def resource_deploy(args):
         # delete instance if it is cloud
         akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
-        resource['remoteAccessNode'] = None
+        resource['remote_access_node'] = None
 
     # run test job to queue
     run_test_job(resource, app_name, nodes)
