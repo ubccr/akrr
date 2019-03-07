@@ -134,7 +134,9 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
         ('akrrAppKerName akrr', 'appkernel_name'),
         ('akrrResourceName akrr', 'resource_name'),
         ('akrrTimeStamp', 'akrr_time_stamp'),
-        ('akrrWallTimeLimit', 'akrr_walltime_limit')
+        ('akrrWallTimeLimit', 'akrr_walltime_limit'),
+        ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
+        ('akrrRunAppKernelTemplate', 'akrr_run_appkernel_template')
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -150,7 +152,7 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
     parameters_types = [
         ['parser', str, False, True],
         ['executable', str, True, True],
-        ['input', str, True, True],
+        ['input_param', str, True, True],
         ['walltime_limit', int, False, True],
         ['runScript', dict, False, False]
     ]
@@ -170,7 +172,6 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
     # mapped parameters which still uses internally different name
     # these eventually should be renamed
     renamed_parameters = [
-        ('input', 'input_param'),
     ]
 
     for old_key, new_key in renamed_parameters:

@@ -1,4 +1,4 @@
 "startTime":"""Tue Dec 18 04:01:52 EST 2018""",
 "nodeList":"""cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 cpn-u22-20 """,
-"input":"""inputs/enzo/ReionizationRadHydro128""",
+"input_param":"""inputs/enzo/ReionizationRadHydro128""",
 "endTime":"""Tue Dec 18 04:07:28 EST 2018""",
