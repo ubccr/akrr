@@ -127,6 +127,14 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
     # mapped renamed parameters
     renamed_parameters = [
         ('input', 'input_param'),
+        ('akrrNNodes akrr', 'num_of_nodes'),
+        ('akrrNCores akrr', 'num_of_cores'),
+        ('akrrPPN', 'akrr_ppn'),
+        ('akrrTaskWorkingDir', 'akrr_task_work_dir'),
+        ('akrrAppKerName akrr', 'appkernel_name'),
+        ('akrrResourceName akrr', 'resource_name'),
+        ('akrrTimeStamp', 'akrr_time_stamp'),
+        ('akrrWallTimeLimit', 'akrr_walltime_limit')
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -143,7 +151,7 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
         ['parser', str, False, True],
         ['executable', str, True, True],
         ['input', str, True, True],
-        ['walllimit', int, False, True],
+        ['walltime_limit', int, False, True],
         ['runScript', dict, False, False]
     ]
 
@@ -188,7 +196,7 @@ def print_resource_and_app_summary(resources=None, apps=None) -> None:
 
     msg = msg + "Applications:"
     for _, a in apps.items():
-        msg = msg + "    {} {}".format(a['name'], a['walllimit'])
+        msg = msg + "    {} {}".format(a['name'], a['walltime_limit'])
     log.info(msg)
 
 

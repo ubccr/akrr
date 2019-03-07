@@ -126,14 +126,14 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 raw = cur.fetchall()
                 (resource, app, resource_param, app_param) = raw[0]
 
-                cur.execute("""SELECT walllimit
+                cur.execute("""SELECT walltime_limit
                     FROM akrr_default_walllimit
                     WHERE resource=%s AND app=%s AND resource_param=%s AND app_param=%s """,
                             (resource, app, resource_param, app_param))
                 raw = cur.fetchall()
 
                 if len(raw) > 0:
-                    dbdefaults['walllimit'] = raw[0][0]
+                    dbdefaults['walltime_limit'] = raw[0][0]
 
                 # db.commit()
                 cur.close()
@@ -179,23 +179,23 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 else:
                     tmp_num_nodes = (tmp_num_cores / batchvars['ppn']) + 1
 
-            batchvars['akrrNCores'] = tmp_num_cores
-            batchvars['akrrNNodes'] = tmp_num_nodes
+            batchvars['akrr_num_of_cores'] = tmp_num_cores
+            batchvars['akrr_num_of_nodes'] = tmp_num_nodes
 
             # Set batchvars remaps
-            batchvars['akrrPPN'] = batchvars['ppn']
-            batchvars['akrrNCoresToBorder'] = batchvars['akrrPPN'] * batchvars['akrrNNodes']
-            batchvars['akrrTaskWorkingDir'] = self.remoteTaskDir
-            batchvars['akrrWallTimeLimit'] = "%02d:%02d:00" % (
-                int(batchvars['walllimit']) / 60, int(batchvars['walllimit']) % 60)
+            batchvars['akrr_ppn'] = batchvars['ppn']
+            batchvars['akrrNCoresToBorder'] = batchvars['akrr_ppn'] * batchvars['akrr_num_of_nodes']
+            batchvars['akrr_task_work_dir'] = self.remoteTaskDir
+            batchvars['akrr_walltime_limit'] = "%02d:%02d:00" % (
+                int(batchvars['walltime_limit']) / 60, int(batchvars['walltime_limit']) % 60)
             batchvars['localPATH'] = ssh_command(sh, "echo $PATH").strip()
-            batchvars['akrrAppKerName'] = self.app['name']
-            batchvars['akrrResourceName'] = self.resource['name']
-            batchvars['akrrTimeStamp'] = self.timeStamp
-            if batchvars['akrrNNodes'] == 1:
-                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrrNCores']
+            batchvars['akrr_appkernel_name'] = self.app['name']
+            batchvars['akrr_resource_name'] = self.resource['name']
+            batchvars['akrr_time_stamp'] = self.timeStamp
+            if batchvars['akrr_num_of_nodes'] == 1:
+                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_num_of_cores']
             else:
-                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrrPPN']
+                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_ppn']
             if 'nodeListSetterTemplate' not in batchvars:
                 batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batch_scheduler']]
 

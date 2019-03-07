@@ -1329,7 +1329,7 @@ def get_walltime_all():
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
             cursor.execute(
-                "SELECT id,resource,app,walllimit,resource_param,app_param,"
+                "SELECT id,resource,app,walltime_limit,resource_param,app_param,"
                 "last_update,comments FROM akrr_default_walllimit")
 
             # RETRIEVE: the results and save them for returning.
@@ -1361,7 +1361,7 @@ def get_walltime(walltime_id):
         with connection:
             # Make sure we execute the correct query with the correct parametersresources
             cursor.execute(
-                "SELECT resource,app,walllimit,resource_param,app_param,"
+                "SELECT resource,app,walltime_limit,resource_param,app_param,"
                 "last_update,comments FROM akrr_default_walllimit WHERE id=%s",
                 (walltime_id,))
             results = cursor.fetchall()
@@ -1425,7 +1425,7 @@ def upsert_walltime(resource, m_app):
             results = cursor.fetchall()
             if len(results) > 0:
                 cursor.execute('''UPDATE akrr_default_walllimit 
-                    SET walllimit=%s,
+                    SET walltime_limit=%s,
                         last_update=NOW(),
                         comments=%s
                     WHERE
@@ -1435,7 +1435,7 @@ def upsert_walltime(resource, m_app):
                 return {'updated': True}
             else:
                 cursor.execute(
-                    "INSERT INTO akrr_default_walllimit (resource,app,walllimit,"
+                    "INSERT INTO akrr_default_walllimit (resource,app,walltime_limit,"
                     "resource_param,app_param,last_update,comments)"
                     "VALUES(%s,%s,%s,%s,%s,NOW(),%s)", (
                         resource, m_app, params['walltime'], params['resource_param'],
@@ -1549,7 +1549,7 @@ def update_walltime_by_id(walltime_id):
             results = cursor.fetchall()
             if len(results) > 0:
                 cursor.execute('''UPDATE akrr_default_walllimit 
-                    SET walllimit=%s,
+                    SET walltime_limit=%s,
                         last_update=NOW(),
                         comments=%s
                     WHERE id = %s''',
