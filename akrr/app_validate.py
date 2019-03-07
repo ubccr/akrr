@@ -140,17 +140,17 @@ def app_validate(resource, appkernel, nnodes):
     log.info("Checking directory locations\n")
 
     d = resource['akrr_data']
-    log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
+    log.info("Checking: %s:%s" % (resource['remote_access_node'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")
 
     d = resource['appKerDir']
-    log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
+    log.info("Checking: %s:%s" % (resource['remote_access_node'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=True, try_to_create=True)
     log.info(msg + "\n")
 
     d = resource['networkScratch']
-    log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
+    log.info("Checking: %s:%s" % (resource['remote_access_node'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status is True:
         log.info(msg)
@@ -163,7 +163,7 @@ def app_validate(resource, appkernel, nnodes):
     log.info("")
 
     d = resource['local_scratch']
-    log.info("Checking: %s:%s" % (resource['remoteAccessNode'], d))
+    log.info("Checking: %s:%s" % (resource['remote_access_node'], d))
     status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
     if status is True:
         log.info(msg)

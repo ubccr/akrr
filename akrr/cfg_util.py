@@ -22,7 +22,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     renamed_parameters = [
         ('localScratch', 'local_scratch'),
         # ('batchJobTemplate', 'batch_job_template'),
-        # ('remoteAccessNode', 'remote_access_node'),
+        # ('remote_access_node', 'remote_access_node'),
         # ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
         # ('networkScratch', 'network_scratch'),
         ('sshUserName', 'ssh_username'),
@@ -88,7 +88,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types_2 = {
-        'remoteAccessNode': [str, True if resource['batchScheduler'].lower() == "openstack" else False, True]
+        'remote_access_node': [str, True if resource['batchScheduler'].lower() == "openstack" else False, True]
     }
 
     for variable, (m_type, nullable, must) in parameters_types_2.items():
@@ -224,6 +224,9 @@ def load_resource(resource_name: str):
         if 'akrrData' in resource:
             warnings.warn("Rename akrrData to akrr_data", DeprecationWarning)
             resource['akrr_data'] = resource['akrrData']
+        if 'remoteAccessNode' in resource:
+            warnings.warn("Rename remoteAccessNode to remote_access_node", DeprecationWarning)
+            resource['remote_access_node'] = resource['remoteAccessNode']
         if 'appKerDir' in resource:
             resource['AppKerDir'] = resource['appKerDir']
 

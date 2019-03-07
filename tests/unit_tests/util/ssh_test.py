@@ -25,7 +25,7 @@ def prep_resource_dict(testconfig):
 
     resource = {
         'name': sshcfg['host'],
-        'remoteAccessNode': sshcfg['host'],
+        'remote_access_node': sshcfg['host'],
         'remote_access_method': 'ssh',
         'ssh_username': sshcfg['user'],
         'ssh_password': sshcfg['password'],

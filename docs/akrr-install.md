@@ -51,8 +51,7 @@ akrr setup
 
 
 
-Example input output
-
+Example of output from `akrr setup` execution:
 ```text
 [INFO] AKRR configuration will be in /root/akrr/etc/akrr.conf
 [INFO] Before Installation continues we need to setup the database.
@@ -93,21 +92,21 @@ Password:
 [INFO] All Databases / User privileges check out!
 [INFO] Creating tables and populating them with initial values.
 [INFO] Starting AKRR daemon
-[2019-02-22 21:59:41,351 - INFO] Directory /root/akrr/log/data/srv does not exist, creating it.
-[2019-02-22 21:59:41,352 - INFO] Writing logs to:
-        /root/akrr/log/data/srv/2019.02.22_21.59.352211.log
-[2019-02-22 21:59:41,603 - INFO] following log: /root/akrr/log/data/srv/2019.02.22_21.59.352211.log
-[2019-02-22 21:59:41,545 - INFO] Starting Application Remote Runner
- [2019-02-22 21:59:41,568 - INFO] AKRR Scheduler PID is 258.
- [2019-02-22 21:59:41,592 - INFO] Starting REST-API Service
- [2019-02-22 21:59:41,595 - INFO] ####################################################################################################
- [2019-02-22 21:59:41,596 - INFO] Got into the running loop on 2019-02-22 21:59:41
- [2019-02-22 21:59:41,596 - INFO] ####################################################################################################
+[2019-03-01 18:03:11,274 - INFO] Directory /root/akrr/log/data/srv does not exist, creating it.
+[2019-03-01 18:03:11,275 - INFO] Writing logs to:
+        /root/akrr/log/data/srv/2019.03.01_18.03.275007.log
+[2019-03-01 18:03:11,526 - INFO] following log: /root/akrr/log/data/srv/2019.03.01_18.03.275007.log
+[2019-03-01 18:03:11,467 - INFO] Starting Application Remote Runner
+ [2019-03-01 18:03:11,484 - INFO] AKRR Scheduler PID is 257.
+ [2019-03-01 18:03:11,496 - INFO] Starting REST-API Service
+ [2019-03-01 18:03:11,498 - INFO] ####################################################################################################
+ [2019-03-01 18:03:11,498 - INFO] Got into the running loop on 2019-03-01 18:03:11
+ [2019-03-01 18:03:11,498 - INFO] ####################################################################################################
  
  Starting REST-API Service
  Bottle v0.12.13 server starting up (using SSLWSGIRefServer())...
  Listening on http://localhost:8091/
-[2019-02-22 21:59:41,607 - INFO] 
+[2019-03-01 18:03:11,528 - INFO] 
 AKRR Server successfully reached the loop.
  [INFO] Checking that AKRR daemon is running
 [INFO] Beginning check of the AKRR Rest API...

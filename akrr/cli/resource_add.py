@@ -32,7 +32,7 @@ rsh = None
 # variables for template with default values
 info = None
 ppn = None
-remoteAccessNode = None
+remote_access_node = None
 remote_access_method = 'ssh'
 remote_copy_method = 'scp'
 ssh_username = None
@@ -103,7 +103,7 @@ def create_resource_config(file_path, queuing_system):
         return "\n".join(out)
 
     template = update_template(template, 'ppn', in_quotes=False)
-    for v in ['remoteAccessNode', 'remote_access_method', 'remote_copy_method',
+    for v in ['remote_access_node', 'remote_access_method', 'remote_copy_method',
               'ssh_username', 'ssh_password', 'ssh_private_key_file', 'ssh_private_key_password',
               'networkScratch', 'local_scratch', 'akrr_data', 'appKerDir', 'batchScheduler']:
         template = update_template(template, v)
@@ -230,7 +230,7 @@ def validate_queuing_system(queuing_system):
 
 def check_connection_to_resource():
     """check the connection to remote resource."""
-    global remoteAccessNode
+    global remote_access_node
     global remote_access_method
     global remote_copy_method
     global ssh_username
@@ -248,7 +248,7 @@ def check_connection_to_resource():
         try:
             sys.stdout = sys.stderr = str_io
             akrr.util.ssh.ssh_access(
-                remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                remote_access_node, ssh=remote_access_method, username=ssh_username, password=ssh_password,
                 private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password, logfile=str_io,
                 command='ls')
 
@@ -292,13 +292,13 @@ def check_connection_to_resource():
                     try:
                         authorize_key_count += 1
                         log.log_input("Enter password for %s@%s (will be used only during this session):" % (
-                            ssh_username, remoteAccessNode))
+                            ssh_username, remote_access_node))
                         ssh_password4thisSession = getpass.getpass("")
                         log.empty_line()
                         str_io = io.StringIO()
                         sys.stdout = sys.stderr = str_io
                         akrr.util.ssh.ssh_access(
-                            remoteAccessNode, ssh='ssh-copy-id', username=ssh_username,
+                            remote_access_node, ssh='ssh-copy-id', username=ssh_username,
                             password=ssh_password4thisSession,
                             private_key_file=ssh_private_key_file, private_key_password=None, logfile=str_io,
                             command='')
@@ -333,7 +333,7 @@ def check_connection_to_resource():
 
 def get_remote_access_method():
     global resource_name
-    global remoteAccessNode
+    global remote_access_node
     global remote_access_method
     global remote_copy_method
     global ssh_username
@@ -344,22 +344,22 @@ def get_remote_access_method():
     global rsh
     global no_ping
 
-    # set remoteAccessNode
+    # set remote_access_node
     while True:
         log.log_input("Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):")
-        remoteAccessNode = input("[%s] " % resource_name)
-        if remoteAccessNode.strip() == "":
-            remoteAccessNode = resource_name
+        remote_access_node = input("[%s] " % resource_name)
+        if remote_access_node.strip() == "":
+            remote_access_node = resource_name
 
-        response = os.system("ping -c 1 -w2 " + remoteAccessNode + " > /dev/null 2>&1")
+        response = os.system("ping -c 1 -w2 " + remote_access_node + " > /dev/null 2>&1")
 
         if response == 0:
             break
         else:
             if no_ping:
-                log.warning("Can not ping %s, but asked to ignore it.", remoteAccessNode)
+                log.warning("Can not ping %s, but asked to ignore it.", remote_access_node)
                 break
-            log.error("Incorrect head node name (can not ping %s), try again", remoteAccessNode)
+            log.error("Incorrect head node name (can not ping %s), try again", remote_access_node)
 
     # set ssh_username
     current_user = getpass.getuser()
@@ -431,7 +431,7 @@ def get_remote_access_method():
             if action_list[action][0] == "TryAgain":
                 continue
             if action_list[action][0] == "UsePassword":
-                log.log_input("Enter password for %s@%s:" % (ssh_username, remoteAccessNode))
+                log.log_input("Enter password for %s@%s:" % (ssh_username, remote_access_node))
                 ssh_password = getpass.getpass("")
                 ask_for_user_name = not ask_for_user_name
                 continue
@@ -456,7 +456,7 @@ def get_remote_access_method():
                 count = 0
                 while True:
                     log.log_input("Enter password for %s@%s (will be used only during this session):" % (
-                        ssh_username, remoteAccessNode))
+                        ssh_username, remote_access_node))
                     ssh_password4thisSession = getpass.getpass("")
                     ssh_password = ssh_password4thisSession
 
@@ -486,7 +486,7 @@ def get_remote_access_method():
                         ssh_private_key_password = None
                     # copy keys
                     akrr.util.ssh.ssh_access(
-                        remoteAccessNode, ssh='ssh-copy-id', username=ssh_username, password=ssh_password4thisSession,
+                        remote_access_node, ssh='ssh-copy-id', username=ssh_username, password=ssh_password4thisSession,
                         private_key_file=ssh_private_key_file, private_key_password=None, logfile=sys.stdout,
                         command='')
                     ask_for_user_name = not ask_for_user_name
@@ -505,7 +505,7 @@ def get_remote_access_method():
         try:
             sys.stdout = sys.stderr = str_io
             rsh = akrr.util.ssh.ssh_access(
-                remoteAccessNode, ssh=remote_access_method, username=ssh_username, password=ssh_password,
+                remote_access_node, ssh=remote_access_method, username=ssh_username, password=ssh_password,
                 private_key_file=ssh_private_key_file, private_key_password=ssh_private_key_password,
                 logfile=sys.stdout,
                 command=None)
@@ -638,7 +638,7 @@ def resource_add(config):
     global no_ping
     global minimalistic
     global resource_name
-    global remoteAccessNode
+    global remote_access_node
     global remote_access_method
     global remote_copy_method
     global ssh_username
@@ -720,7 +720,7 @@ def resource_add(config):
 
     log.debug("Summary of parameters" +
               "resource_name: {}".format(resource_name) +
-              "remoteAccessNode: {}".format(remoteAccessNode) +
+              "remote_access_node: {}".format(remote_access_node) +
               "remote_access_method: {}".format(remote_access_method) +
               "remote_copy_method: {}".format(remote_copy_method) +
               "ssh_username: {}".format(ssh_username) +

@@ -224,7 +224,7 @@ def ssh_access_multytry(remote_machine, ssh='ssh', username=None, password=None,
 
 def ssh_resource(resource, command=None):
     name = resource['name']
-    headnode = resource.get('remoteAccessNode', name)
+    headnode = resource.get('remote_access_node', name)
     remote_access_method = resource.get('remote_access_method', 'ssh')
     username = resource.get('ssh_username', None)
     ssh_password = resource.get('ssh_password', None)
@@ -242,7 +242,7 @@ def ssh_resource(resource, command=None):
 
 def scp_from_resource(resource, pwd1, pwd2, opt=""):
     name = resource['name']
-    remote_machine = resource.get('remoteAccessNode', name)
+    remote_machine = resource.get('remote_access_node', name)
     remote_invocation_method = resource.get('remote_copy_method', 'scp') + " " + opt + " "
     username = resource.get('ssh_username', None)
     ssh_password = resource.get('ssh_password', None)
@@ -268,7 +268,7 @@ def scp_to_resource(resource, pwd1, pwd2, opt="", logfile=None):
     if logfile is None:
         logfile = sys.stdout
     name = resource['name']
-    remote_machine = resource.get('remoteAccessNode', name)
+    remote_machine = resource.get('remote_access_node', name)
     remote_invocation_method = resource.get('remote_copy_method', 'scp') + " " + opt + " "
     username = resource.get('ssh_username', None)
     ssh_password = resource.get('ssh_password', None)
