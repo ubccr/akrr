@@ -418,7 +418,7 @@ def cli_task_new(parent_parser):
     parser.add_argument(
         '--dry-run', action='store_true', help="Dry Run, just show the changes without doing them")
     parser.add_argument(
-        '--show-batch-job', action='store_true',
+        '--gen-batch-job-only', action='store_true',
         help="Generate batch job script file without actually submitting task, if dry-run is on it will only print it")
 
     def handler(args):
