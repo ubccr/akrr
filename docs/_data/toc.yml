@@ -2,18 +2,24 @@ toc:
   - title: About
     subfolderitems:
       - page: Overview
-        url: /akrr-overview.html
+        url: /AKRR_Overview.html
   - title: Download
     subfolderitems:
-      - page: AKRR Download
-        url: /akrr-download.html
-  - title: Documentation
+      - page: Download
+        url: /AKRR_Download.html
+  - title: Install
     subfolderitems:
       - page: Install
-        url: /akrr-install.html
-  - title: Using
+        url: /AKRR_Install.html
+  - title: Use
     subfolderitems:
-      - page: Adding New Resource
-        url: /akrr-install.html
+      - page: Use
+        url: /AKRR_Usage.html
+      - page: Add New Resource
+        url: /AKRR_Add_Resource.html
       - page: Adding New Application
         url: /akrr-install.html
+  - title: Details
+    subfolderitems:
+      - page: Batch Job Script Generation
+        url: /AKRR_Batch_Job_Script_Generation.html
