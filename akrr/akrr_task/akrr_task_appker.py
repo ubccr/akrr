@@ -180,8 +180,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             else:
                 batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_ppn']
 
-            if 'nodeListSetterTemplate' not in batch_vars:
-                batch_vars['nodeListSetterTemplate'] = batch_vars['nodeListSetter'][batch_vars['batch_scheduler']]
+            if 'node_list_setter_template' not in batch_vars:
+                batch_vars['node_list_setter_template'] = batch_vars['node_list_setter'][batch_vars['batch_scheduler']]
 
             # process templates
             batch_vars['akrrCommonCommands'] = akrr.util.format_recursively(
@@ -191,7 +191,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars['akrr_common_cleanup_template'], batch_vars, keep_double_brackets=True)
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write
-            if batch_vars['requestTwoNodesForOneNodeAppKer'] is True and batch_vars['akrr_num_of_nodes'] == 1 and \
+            if batch_vars['appkernel_requests_two_nodes_for_one'] is True and batch_vars['akrr_num_of_nodes'] == 1 and \
                     'batch_job_header_template' in batch_vars:
                 batch_vars2 = copy.deepcopy(batch_vars)
                 batch_vars2['akrr_num_of_cores'] = 2 * batch_vars['akrr_num_of_cores']

@@ -78,10 +78,10 @@ def app_validate(resource, appkernel, nnodes):
     log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
 
     cfg.find_app_by_name(app_name)
-    # check the presence of runScript[resource]
-    # if resource_name not in app['runScript'] and 'default' not in app['runScript']:
+    # check the presence of run_script[resource]
+    # if resource_name not in app['run_script'] and 'default' not in app['run_script']:
     #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
-    #           "runScript['%s'] is not set"%(resource_name,))
+    #           "run_script['%s'] is not set"%(resource_name,))
     #    exit(1)
     log.info("Syntax of %s is correct and all necessary parameters are present." % app_ker_param_filename)
 
