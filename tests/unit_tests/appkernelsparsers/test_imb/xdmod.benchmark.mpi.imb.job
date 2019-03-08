@@ -38,11 +38,11 @@ export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
 cd "$AKRR_TASK_WORKDIR"
 
 #run common tests
-akrrPerformCommonTests
+akrr_perform_common_tests
 
 #Write some info to gen.info, JSON-Like file
-writeToGenInfo "startTime" "`date`"
-writeToGenInfo "nodeList" "$AKRR_NODELIST"
+akrr_write_to_gen_info "startTime" "`date`"
+akrr_write_to_gen_info "nodeList" "$AKRR_NODELIST"
 
 
 #create working dir
@@ -74,10 +74,10 @@ appsigcheck.sh /projects/ccrstaff/general/appker/UBHPC/execs/imb/src/IMB-EXT  $A
 echo "Checking that running one process per node (for debugging)"
 ${RUNMPI} hostname
 
-writeToGenInfo "appKerStartTime" "`date`"
+akrr_write_to_gen_info "appKerStartTime" "`date`"
 ${RUNMPI} ${AKRR_APPKER_EXEC_DIR}/IMB-MPI1 -multi 0 -npmin 8 -iter 1000 >> $AKRR_APP_STDOUT_FILE 2>&1
 ${RUNMPI} ${AKRR_APPKER_EXEC_DIR}/IMB-EXT  -multi 0 -npmin 8 -iter 1000 >> $AKRR_APP_STDOUT_FILE 2>&1
-writeToGenInfo "appKerEndTime" "`date`"
+akrr_write_to_gen_info "appKerEndTime" "`date`"
 
 
 
@@ -92,4 +92,4 @@ fi
 
 
 
-writeToGenInfo "endTime" "`date`"
+akrr_write_to_gen_info "endTime" "`date`"

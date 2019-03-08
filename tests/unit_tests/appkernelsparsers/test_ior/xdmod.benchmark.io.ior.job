@@ -38,11 +38,11 @@ export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
 cd "$AKRR_TASK_WORKDIR"
 
 #run common tests
-akrrPerformCommonTests
+akrr_perform_common_tests
 
 #Write some info to gen.info, JSON-Like file
-writeToGenInfo "startTime" "`date`"
-writeToGenInfo "nodeList" "$AKRR_NODELIST"
+akrr_write_to_gen_info "startTime" "`date`"
+akrr_write_to_gen_info "nodeList" "$AKRR_NODELIST"
 
 
 
@@ -131,10 +131,10 @@ echo "Using $AKRR_TMP_WORKDIR for test...." >> $AKRR_APP_STDOUT_FILE 2>&1
 canonicalFilename=`readlink -f $AKRR_TMP_WORKDIR`
 filesystem=`awk -v canonical_path="$canonicalFilename" '{if ($2!="/" && 1==index(canonical_path, $2)) print $3 " " $1 " " $2;}' /proc/self/mounts`
 echo "File System To Test: $filesystem" >> $AKRR_APP_STDOUT_FILE 2>&1
-writeToGenInfo "fileSystem" "$filesystem"
+akrr_write_to_gen_info "fileSystem" "$filesystem"
 
 #start the tests
-writeToGenInfo "appKerStartTime" "`date`"
+akrr_write_to_gen_info "appKerStartTime" "`date`"
 
 #do write first
 for TEST_PARAM in "${TESTS_LIST[@]}"
@@ -159,7 +159,7 @@ do
     $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
 done
 
-writeToGenInfo "appKerEndTime" "`date`"
+akrr_write_to_gen_info "appKerEndTime" "`date`"
 
 
 
@@ -180,4 +180,4 @@ fi
 
 
 
-writeToGenInfo "endTime" "`date`"
+akrr_write_to_gen_info "endTime" "`date`"

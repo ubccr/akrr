@@ -38,11 +38,11 @@ export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
 cd "$AKRR_TASK_WORKDIR"
 
 #run common tests
-akrrPerformCommonTests
+akrr_perform_common_tests
 
 #Write some info to gen.info, JSON-Like file
-writeToGenInfo "startTime" "`date`"
-writeToGenInfo "nodeList" "$AKRR_NODELIST"
+akrr_write_to_gen_info "startTime" "`date`"
+akrr_write_to_gen_info "nodeList" "$AKRR_NODELIST"
 
 
 #create working dir
@@ -91,7 +91,7 @@ appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. > $AKRR_APP_STDOUT_FILE
 
 
 #Execute AppKer
-writeToGenInfo "appKerStartTime" "`date`"
+akrr_write_to_gen_info "appKerStartTime" "`date`"
 
 echo "#Testing single directory" >> $AKRR_APP_STDOUT_FILE 2>&1
 $RUNMPI $EXE -v -I 32 -z 0 -b 0 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
@@ -105,7 +105,7 @@ $RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
 echo "#Testing single tree directory per process" >> $AKRR_APP_STDOUT_FILE 2>&1
 $RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER -u >> $AKRR_APP_STDOUT_FILE 2>&1
 
-writeToGenInfo "appKerEndTime" "`date`"
+akrr_write_to_gen_info "appKerEndTime" "`date`"
 
 
 
@@ -125,4 +125,4 @@ fi
 
 
 
-writeToGenInfo "endTime" "`date`"
+akrr_write_to_gen_info "endTime" "`date`"
