@@ -461,7 +461,7 @@ writeToGenInfo "nodeList" "$AKRR_NODELIST"
 
 
 
-#normally in runScriptPreRun
+#normally in run_script_pre_run
 #create working dir
 export AKRR_TMP_WORKDIR=`mktemp -d /user/nikolays/akrr_tmp/test.XXXXXXXXX`
 echo "Temporary working directory: $AKRR_TMP_WORKDIR"
@@ -474,7 +474,7 @@ echo "Checking that the shell is BASH"
 echo $BASH 
 
 
-#normally in runScriptPostRun
+#normally in run_script_post_run
 #clean-up
 cd $AKRR_TASK_WORKDIR
 if [ "${AKRR_DEBUG=no}" = "no" ]
@@ -550,20 +550,20 @@ $AKRR_HOME/src/default.resource.inp.py):
 
 ```python
 #Node list setter
-nodeListSetter={
+node_list_setter={
     'pbs':"""export AKRR_NODELIST=\`cat $PBS_NODEFILE\`""",
     'slurm':"""export AKRR_NODELIST=\`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{{printf "%s ",$2}}' \`"""
 }
 ```
 
-To modify the behavior nodeListSetterTemplate can be define in specific resource 
+To modify the behavior node_list_setter_template can be define in specific resource 
 configuration file ($AKRR_HOME/cfg/resources/$RESOURCE/resource.inp.py):
 
 **portion of $AKRR_HOME/cfg/resources/$RESOURCE/resource.inp.py**
 
 ```python
 #Node list setter
-nodeListSetterTemplate="""export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{{printf "%s ",$2}}' `"""
+node_list_setter_template="""export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{{printf "%s ",$2}}' `"""
 ```
 
 For SLURM alternative to srun can be:
@@ -572,7 +572,7 @@ For SLURM alternative to srun can be:
 
 ```python
 #Node list setter
-nodeListSetterTemplate="""_TASKS_PER_NODE=`echo $SLURM_TASKS_PER_NODE|sed "s/(x[0-9]*)//g"`
+node_list_setter_template="""_TASKS_PER_NODE=`echo $SLURM_TASKS_PER_NODE|sed "s/(x[0-9]*)//g"`
 export AKRR_NODELIST=`scontrol show hostname $SLURM_NODELIST| awk "{{for (i=0;i<$_TASKS_PER_NODE;++i)print}}"
 """
 ```

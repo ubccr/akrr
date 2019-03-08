@@ -38,7 +38,14 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         ('autoWalltimeLimit', 'auto_walltime_limit'),
         ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
         ('appkernelOnResource', 'appkernel_on_resource'),
-        ('networkScratch', 'network_scratch')
+        ('networkScratch', 'network_scratch'),
+        ('nodeListSetterTemplate', 'node_list_setter_template'),
+        ('nodeListSetter', 'node_list_setter'),
+        ('runScriptPreRun', 'run_script_pre_run'),
+        ('runScriptPostRun', 'run_script_post_run'),
+        ('akrrRunAppKer', 'akrr_run_appkernel'),
+        ('requestTwoNodesForOneNodeAppKer', 'appkernel_requests_two_nodes_for_one'),
+        ('runScript', 'run_script'),
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -136,7 +143,7 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
         ('akrrTimeStamp', 'akrr_time_stamp'),
         ('akrrWallTimeLimit', 'akrr_walltime_limit'),
         ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
-        ('akrrRunAppKernelTemplate', 'akrr_run_appkernel_template')
+        ('akrr_run_appkernelnelTemplate', 'akrr_run_appkernel_template')
     ]
 
     for old_key, new_key in renamed_parameters:
@@ -154,7 +161,7 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
         ['executable', str, True, True],
         ['input_param', str, True, True],
         ['walltime_limit', int, False, True],
-        ['runScript', dict, False, False]
+        ['run_script', dict, False, False]
     ]
 
     for variable, m_type, nullable, must in parameters_types:

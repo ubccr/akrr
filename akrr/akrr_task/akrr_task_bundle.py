@@ -196,8 +196,8 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
                 batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_num_of_cores']
             else:
                 batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_ppn']
-            if 'nodeListSetterTemplate' not in batchvars:
-                batchvars['nodeListSetterTemplate'] = batchvars['nodeListSetter'][batchvars['batch_scheduler']]
+            if 'node_list_setter_template' not in batchvars:
+                batchvars['node_list_setter_template'] = batchvars['node_list_setter'][batchvars['batch_scheduler']]
 
             # process templates
             batchvars['akrrCommonCommands'] = akrr.util.format_recursively(
