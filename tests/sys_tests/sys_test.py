@@ -70,7 +70,7 @@ def add_app_to_resource(resource, app, caplog):
 
     # check that batch-job script can be generated, mimicing checking script by user
     assert run_akrr(
-        "-v task new -r {} -a {} -n 1 --dry-run --show-batch-job".format(resource, app),
+        "-v task new -r {} -a {} -n 1 --dry-run --gen-batch-job-only".format(resource, app),
         "Below is content of generated batch job script", caplog) is not None
     # validate its run-ability
     CLI().run("app validate -r {} -a {} -n 1".format(resource, app).split())
