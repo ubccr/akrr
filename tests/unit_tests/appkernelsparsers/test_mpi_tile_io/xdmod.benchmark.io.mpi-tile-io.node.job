@@ -30,7 +30,7 @@ cd $ARR_TASK_WORKDIR
 
 
 #function to test that directory is writable
-testDirWritability () {
+akrr_test_dir_writability () {
     TESTFILE=`mktemp -q $1/testwritability.XXXXXX`
     if [ "$TESTFILE" == "" ]
     then
@@ -66,9 +66,9 @@ then
     echo "ARR:ERROR: App kernel input does not exists (/projects/ccrstaff/general/appker/edge/inputs)"
 fi
 #Test that all directories are writable
-testDirWritability "$ARR_TASK_WORKDIR" "Task working directory"
-testDirWritability "$ARR_NETWORK_SCRATCH" "Network scratch directory"
-testDirWritability "$ARR_LOCAL_SCRATCH" "local scratch directory"
+akrr_test_dir_writability "$ARR_TASK_WORKDIR" "Task working directory"
+akrr_test_dir_writability "$ARR_NETWORK_SCRATCH" "Network scratch directory"
+akrr_test_dir_writability "$ARR_LOCAL_SCRATCH" "local scratch directory"
 
 #Write down some info, JSON-Like object
 echo "\"startTime\":\""`date`"\"," > gen.info
