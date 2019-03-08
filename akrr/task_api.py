@@ -10,7 +10,7 @@ from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 
 def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
              time_window_start=None, time_window_end=None, test_run=False,
-             dry_run=False, show_batch_job=False):
+             dry_run=False, gen_batch_job_only=False):
     """
     Handles the appropriate execution of a 'New Task' mode request
     given the provided command line arguments.
@@ -48,10 +48,10 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
         if dry_run:
             log.dry_run("Should submit following to REST API (POST to scheduled_tasks) %s" % data)
 
-        if show_batch_job:
+        if gen_batch_job_only:
             generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=dry_run)
 
-        if dry_run or show_batch_job:
+        if dry_run or gen_batch_job_only:
             continue
 
         try:
@@ -81,6 +81,9 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
 
 
 def generate_batch_job_for_testing(resource, appkernel, nodes, dry_run=False):
+    """
+    Generate batch job script for testing purposes
+    """
     from akrr import cfg
     from akrr.util.log import verbose
 
