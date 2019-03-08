@@ -127,12 +127,12 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
     # mapped renamed parameters
     renamed_parameters = [
         ('input', 'input_param'),
-        ('akrrNNodes akrr', 'num_of_nodes'),
-        ('akrrNCores akrr', 'num_of_cores'),
+        ('akrrNNodes', 'akrr_num_of_nodes'),
+        ('akrrNCores', 'akrr_num_of_cores'),
         ('akrrPPN', 'akrr_ppn'),
         ('akrrTaskWorkingDir', 'akrr_task_work_dir'),
-        ('akrrAppKerName akrr', 'appkernel_name'),
-        ('akrrResourceName akrr', 'resource_name'),
+        ('akrrAppKerName', 'akrr_appkernel_name'),
+        ('akrrResourceName', 'akrr_resource_name'),
         ('akrrTimeStamp', 'akrr_time_stamp'),
         ('akrrWallTimeLimit', 'akrr_walltime_limit'),
         ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
