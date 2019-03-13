@@ -541,8 +541,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                     "push_to_db",
                     "Output was processed and found that kernel either exited with error or executed successfully.",
                     "Done")
-                if hasattr(performance, 'nodeList'):
-                    self.nodesList = performance.nodeList
+                if hasattr(performance, 'node_list'):
+                    self.nodesList = performance.node_list
                 else:
                     self.nodesList = None
             return datetime.timedelta(seconds=3)
@@ -878,8 +878,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         if os.path.isfile(nodes_filename):
             parser = AppKerOutputParser()
             parser.parse_common_params_and_stats(geninfo=nodes_filename)
-            if hasattr(parser, 'geninfo') and 'nodeList' in parser.geninfo:
-                nodes_list = parser.geninfo['nodeList'].split()
+            if hasattr(parser, 'geninfo') and 'node_list' in parser.geninfo:
+                nodes_list = parser.geninfo['node_list'].split()
                 nodes = ";"
                 for line in nodes_list:
                     line = line.strip()

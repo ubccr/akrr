@@ -80,8 +80,8 @@ akrr_test_dir_writability "$ARR_NETWORK_SCRATCH" "Network scratch directory"
 akrr_test_dir_writability "$ARR_LOCAL_SCRATCH" "local scratch directory"
 
 #Write down some info, JSON-Like object
-echo "\"startTime\":\""`date`"\"," > gen.info
-echo "\"nodeList\":\"\"\""$ARR_NODELIST\"\"\""," >> gen.info
+echo "\"start_time\":\""`date`"\"," > gen.info
+echo "\"node_list\":\"\"\""$ARR_NODELIST\"\"\""," >> gen.info
 
 
 
@@ -89,5 +89,5 @@ echo "\"nodeList\":\"\"\""$ARR_NODELIST\"\"\""," >> gen.info
 /user/xdtas/u2/edge_appker/quantum_espresso/run input01 >& $ARR_APP_STDOUT_FILE
 
 
-echo "\"endTime\":\""`date`"\"," >> gen.info
+echo "\"end_time\":\""`date`"\"," >> gen.info
 
