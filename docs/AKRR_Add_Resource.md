@@ -79,26 +79,25 @@ Below is sample output:
 
 **'akrr resource add' Sample Output**
 ```text
-[INFO] Beginning Initiation of New Resource...                                                                       
-[INFO] Retrieving Resources from XDMoD Database...                                                                   
-[INFO] Found following resources from XDMoD Database:                                                                
-    resource_id  name                                                                                                
-              1  ub-hpc                                                                                              
-                                                                                                                     
-[INPUT]: Enter resource_id for import (enter 0 for no match):                                                        
-1                                                                                                                    
-                                                                                                                     
-[INPUT]: Enter AKRR resource name, hit enter to use same name as in XDMoD Database [ub-hpc]:                         
-                                                                                                                     
-                                                                                                                     
-[INPUT]: Enter queuing system on resource (slurm or pbs):                                                            
-slurm                                                                                                                
-                                                                                                                     
-[INPUT]: Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):                             
-[ub-hpc] vortex
+[INFO] Beginning Initiation of New Resource...
+[INFO] Retrieving Resources from XDMoD Database...
+[INFO] Found following resources from XDMoD Database:
+    resource_id  name
+              1  ub-hpc                                  
+
+[INPUT]: Enter resource_id for import (enter 0 for no match):
+1
+
+[INPUT]: Enter AKRR resource name, hit enter to use same name as in XDMoD Database [ub-hpc]:
+
+
+[INPUT]: Enter queuing system on resource (slurm or pbs): 
+slurm
+
+[INPUT]: Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):
+[ub-hpc] huey
 [INPUT]: Enter username for resource access:
-[root] nikolays
-[INFO] Checking for password-less access
+[akrruser] nikolays
 [INFO] Can not access resource without password
 
 [INFO] Select authentication method:
@@ -116,9 +115,9 @@ slurm
 
 Generating public/private rsa key pair.
 Your identification has been saved in /root/.ssh/id_rsa_ub-hpc.
-Your public key has been saved in /root/.ssh/id_rsa_ub-hpc.pub.
+Your public key has been saved in /home/akrruser/.ssh/id_rsa_ub-hpc.pub.
 The key fingerprint is:
-SHA256:imFr7yAbg56+ebMHDKkfjSSSBzA4MasEGMV3H+DaTHQ root@xdmod
+SHA256:imFr7yAbg56+ebMHDKkfjSSSBzA4MasEGMV3H+DaTHQ nikolays@huey
 The key's randomart image is:
 +---[RSA 2048]----+
 |o  o= o.E        |
@@ -131,7 +130,7 @@ The key's randomart image is:
 |oO.o.o           |
 |Bo .+o+.         |
 +----[SHA256]-----+
-/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/root/.ssh/id_rsa_ub-hpc.pub"
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/akrruser/.ssh/id_rsa_ub-hpc.pub"
 /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
 /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
 UPDATED: March 6, 2015
@@ -143,7 +142,7 @@ Password:
 
 Number of key(s) added: 1
 
-Now try logging into the machine, with:   "ssh 'nikolays@vortex'"
+Now try logging into the machine, with:   "ssh 'nikolays@huey'"
 and check to make sure that only the key(s) you wanted were added.
 
 [INFO] Checking for password-less access
@@ -153,30 +152,33 @@ and check to make sure that only the key(s) you wanted were added.
 [INFO]               Done
 
 [INPUT]: Enter processors (cores) per node count:
-12
+8 
 [INPUT]: Enter location of local scratch (visible only to single node):
 [/tmp]
 [INFO] Directory exist and accessible for read/write
 
 [INPUT]: Enter location of network scratch (visible only to all nodes),used for temporary storage of app kernel input/output:
-/user/nikolays/akrr_tmp
+/user/nikolays/tmp
 [INFO] Directory exist and accessible for read/write
 
 [INPUT]: Enter future location of app kernels input and executable files:
 [/user/nikolays/appker/ub-hpc]
+[INFO] Directory huey:/user/nikolays/appker/ub-hpc does not exists, will try to create it
 [INFO] Directory exist and accessible for read/write
 
 [INPUT]: Enter future locations for app kernels working directories (can or even should be on scratch space):
-[/user/nikolays/akrr_tmp/akrr_data/ub-hpc]
+[/user/nikolays/tmp/akrr_data/ub-hpc]
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc does not exists, will try to create it
 [INFO] Directory exist and accessible for read/write
 
 [INFO] Initiating ub-hpc at AKRR
-[INFO] Resource configuration is in /root/akrr/etc/resources/ub-hpc/resource.conf
+[INFO] Resource configuration is in /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
 [INFO] Initiation of new resource is completed.
-    Edit batch_job_header_template variable in /root/akrr/etc/resources/ub-hpc/resource.conf
+    Edit batch_job_header_template variable in /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
     and move to resource validation and deployment step.
     i.e. execute:
         akrr resource deploy -r ub-hpc
+        
 ```
 
 > **Tips and Tricks**
@@ -208,10 +210,10 @@ Below is example of the resource configuration file:
 # Resource parameters
 
 # Processors (cores) per node
-ppn = 12
+ppn = 8
 
 # head node for remote access
-remote_access_node = "vortex"
+remote_access_node = "huey"
 # Remote access method to the resource (default ssh)
 remote_access_method = "ssh"
 # Remote copy method to the resource (default scp)
@@ -220,15 +222,15 @@ remote_copy_method = "scp"
 # Access authentication
 ssh_username = "nikolays"
 ssh_password = None
-ssh_private_key_file = "/root/.ssh/id_rsa_ub-hpc"
+ssh_private_key_file = None
 ssh_private_key_password = None
 
 # Scratch visible across all nodes (absolute path or/and shell environment variable)
-network_scratch = "/user/nikolays/akrr_tmp"
+network_scratch = "/user/nikolays/tmp"
 # Local scratch only locally visible (absolute path or/and shell environment variable)
 local_scratch = "/tmp"
 # Locations for app. kernels working directories (can or even should be on scratch space)
-akrr_data = "/user/nikolays/akrr_tmp/akrr_data/ub-hpc"
+akrr_data = "/user/nikolays/tmp/akrr_data/ub-hpc"
 # Location of executables and input for app. kernels
 appkernel_dir = "/user/nikolays/appker/ub-hpc"
 
@@ -238,6 +240,7 @@ batch_scheduler = "slurm"
 # job script header
 batch_job_header_template = """#!/bin/bash
 #SBATCH --partition=normal
+#SBATCH --qos=normal
 #SBATCH --nodes={akrr_num_of_nodes}
 #SBATCH --ntasks-per-node={akrr_ppn}
 #SBATCH --time={akrr_walltime_limit}
@@ -319,7 +322,7 @@ the parameters and their default values:
 | batch_job_header_template             | N        | Header for batch job script. Describe the resources requests and set AKRR_NODELIST environment variable containing list of all nodes.See below for more detailed information.                   | Must be set   |
 
 
-## How to set _batchJobHeaderTemplate_
+## How to set _batch_job_header_template_
 
 _batch_job_header_template _is a template used in the generation of batch job 
 scripts. It specifies the resources (e.g. number of nodes) and other parameters 
@@ -333,13 +336,13 @@ Below is a batch script which execute NAMD application on resorch which use Slur
 ```bash
 #!/bin/bash
 #SBATCH --partition=general-compute 
-#SBATCH --qos=normal
+#SBATCH --qos=general-compute
 #SBATCH --nodes=2
-#SBATCH --ntasks-per-node=12
+#SBATCH --ntasks-per-node=8
 #SBATCH --time=01:00:00
 #SBATCH --output=output.stdout
 #SBATCH --error=output.stderr
-#SBATCH --constraint="CPU-E5645,IB"
+#SBATCH --constraint="CPU-L5520"
 #SBATCH --exclusive
 
 module load namd
@@ -352,15 +355,15 @@ _batch_job_header_template _variable, and replace the requested resources with
 suitable template variables:
 
 ```python
-batch_job_header_template="""#!/bin/bash
+batch_job_header_template = """#!/bin/bash
 #SBATCH --partition=general-compute 
-#SBATCH --qos=normal
+#SBATCH --qos=general-compute
 #SBATCH --nodes={akrr_num_of_nodes}
 #SBATCH --ntasks-per-node={akrr_ppn}
 #SBATCH --time={akrr_walltime_limit}
 #SBATCH --output={akrr_task_work_dir}/stdout
 #SBATCH --error={akrr_task_work_dir}/stderr
-#SBATCH --constraint="CPU-E5645,IB"
+#SBATCH --constraint="CPU-L5520"
 #SBATCH --exclusive
 """
 ```
@@ -401,43 +404,43 @@ This command will generate batch job script and output it to standard output.
 Below is example of the output
 
 ```text
-DryRun: Should submit following to REST API (POST to scheduled_tasks) {'repeat_in': None, 'resource': 'ub-hpc', 'time_to_start': None, 'app': 'test', 'resource_param': "{'nnodes':2}"}
-[INFO] Directory /root/akrr/log/data/ub-hpc does not exist, creating it.
-[INFO] Directory /root/akrr/log/data/ub-hpc/test does not exist, creating it.
-[INFO] Directory /root/akrr/log/comptasks/ub-hpc does not exist, creating it.
-[INFO] Directory /root/akrr/log/comptasks/ub-hpc/test does not exist, creating it.
-[INFO] Creating task directory: /root/akrr/log/data/ub-hpc/test/2019.03.08.16.47.48.990154
+DryRun: Should submit following to REST API (POST to scheduled_tasks) {'repeat_in': None, 'resource_param': "{'nnodes':2}", 'time_to_start': None, 'app': 'test', 'resource': 'ub-hpc'}
+[INFO] Directory /home/akrruser/akrr/log/data/ub-hpc does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/data/ub-hpc/test does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc/test does not exist, creating it.
+[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451
 [INFO] Creating task directories: 
-        /root/akrr/log/data/ub-hpc/test/2019.03.08.16.47.48.990154/jobfiles
-        /root/akrr/log/data/ub-hpc/test/2019.03.08.16.47.48.990154/proc
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451/proc
 [INFO] auto_walltime_limit is on, trying to estimate walltime limit...
 [WARNING] There are only %d previous run, need at least 5 for walltime limit autoset
 [INFO] Below is content of generated batch job script:
 #!/bin/bash
 #SBATCH --partition=general-compute 
-#SBATCH --qos=normal
+#SBATCH --qos=general-compute
 #SBATCH --nodes=2
-#SBATCH --ntasks-per-node=12
+#SBATCH --ntasks-per-node=8
 #SBATCH --time=00:02:00
-#SBATCH --output=/user/nikolays/akrr_tmp/akrr_data/ub-hpc/test/2019.03.08.16.47.48.990154/stdout
-#SBATCH --error=/user/nikolays/akrr_tmp/akrr_data/ub-hpc/test/2019.03.08.16.47.48.990154/stderr
-#SBATCH --constraint="CPU-E5645,IB"
+#SBATCH --output=/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451/stdout
+#SBATCH --error=/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451/stderr
+#SBATCH --constraint="CPU-L5520"
 #SBATCH --exclusive
 
 
 #Common commands
 export AKRR_NODES=2
-export AKRR_CORES=24
-export AKRR_CORES_PER_NODE=12
-export AKRR_NETWORK_SCRATCH="/user/nikolays/akrr_tmp"
+export AKRR_CORES=16
+export AKRR_CORES_PER_NODE=8
+export AKRR_NETWORK_SCRATCH="/user/nikolays/tmp"
 export AKRR_LOCAL_SCRATCH="/tmp"
-export AKRR_TASK_WORKDIR="/user/nikolays/akrr_tmp/akrr_data/ub-hpc/test/2019.03.08.16.47.48.990154"
+export AKRR_TASK_WORKDIR="/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451"
 export AKRR_APPKER_DIR="/user/nikolays/appker/ub-hpc"
-export AKRR_AKRR_DIR="/user/nikolays/akrr_tmp/akrr_data/ub-hpc"
+export AKRR_AKRR_DIR="/user/nikolays/tmp/akrr_data/ub-hpc"
 
 export AKRR_APPKER_NAME="test"
 export AKRR_RESOURCE_NAME="ub-hpc"
-export AKRR_TIMESTAMP="2019.03.08.16.47.48.990154"
+export AKRR_TIMESTAMP="2019.03.13.17.28.28.816451"
 export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
 
 export AKRR_APPKERNEL_INPUT="/user/nikolays/appker/ub-hpc/inputs"
@@ -453,17 +456,17 @@ export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
 cd "$AKRR_TASK_WORKDIR"
 
 #run common tests
-akrrPerformCommonTests
+akrr_perform_common_tests
 
 #Write some info to gen.info, JSON-Like file
-writeToGenInfo "startTime" "`date`"
-writeToGenInfo "nodeList" "$AKRR_NODELIST"
+akrr_write_to_gen_info "startTime" "`date`"
+akrr_write_to_gen_info "nodeList" "$AKRR_NODELIST"
 
 
 
 #normally in run_script_pre_run
 #create working dir
-export AKRR_TMP_WORKDIR=`mktemp -d /user/nikolays/akrr_tmp/test.XXXXXXXXX`
+export AKRR_TMP_WORKDIR=`mktemp -d /user/nikolays/tmp/test.XXXXXXXXX`
 echo "Temporary working directory: $AKRR_TMP_WORKDIR"
 cd $AKRR_TMP_WORKDIR
 
@@ -488,7 +491,7 @@ else
 fi
 
 
-writeToGenInfo "endTime" "`date`"
+akrr_write_to_gen_info "endTime" "`date`"
 
 [INFO] Removing generated files from file-system as only batch job script printing was requested
 ```
