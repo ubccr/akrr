@@ -36,7 +36,7 @@ yum -y install mariadb-server
 
 Download in install AKRR RPM
 ```bash
-yum install akrr-{{ page.sw_version }}-1.noarch.rpm
+sudo yum install akrr-{{ page.sw_version }}-1.noarch.rpm
 ```
 
 ### In Source Installation
@@ -70,7 +70,7 @@ akrr setup
 Example of output from `akrr setup` execution:
 
 ```text
-[INFO] AKRR configuration will be in /root/akrr/etc/akrr.conf
+[INFO] AKRR configuration will be in /home/akrruser/akrr/etc/akrr.conf
 [INFO] Before Installation continues we need to setup the database.
 [INPUT]: Please specify a database user to access mod_akrr database (Used by AKRR)(This user will be created if it does not already exist):
 [akrruser] 
@@ -94,8 +94,9 @@ Password:
 [INFO] Password already entered.
 
 
+no crontab for akrruser
 [INPUT]: Please enter the e-mail where cron will send messages (leave empty to opt out):
-
+nikolays@buffalo.edu
 [INFO] Creating mod_akrr and user to access it
 [INFO] Creating mod_appkernel and user to access it
 [INFO] Setting user to access modw
@@ -103,33 +104,33 @@ Password:
 [INFO] Generating self-signed certificate for REST-API
 [INFO]     new self-signed certificate have been generated
 [INFO] Generating configuration file ...
-[INFO] Configuration is written to: /root/akrr/etc/akrr.conf
+[INFO] Configuration is written to: /home/akrruser/akrr/etc/akrr.conf
 [INFO] Removing access for group members and everybody for all files.
 [INFO] Checking access to DBs.
 [INFO] All Databases / User privileges check out!
 [INFO] Creating tables and populating them with initial values.
 [INFO] Starting AKRR daemon
-[2019-03-01 18:03:11,274 - INFO] Directory /root/akrr/log/data/srv does not exist, creating it.
-[2019-03-01 18:03:11,275 - INFO] Writing logs to:
-        /root/akrr/log/data/srv/2019.03.01_18.03.275007.log
-[2019-03-01 18:03:11,526 - INFO] following log: /root/akrr/log/data/srv/2019.03.01_18.03.275007.log
-[2019-03-01 18:03:11,467 - INFO] Starting Application Remote Runner
- [2019-03-01 18:03:11,484 - INFO] AKRR Scheduler PID is 257.
- [2019-03-01 18:03:11,496 - INFO] Starting REST-API Service
- [2019-03-01 18:03:11,498 - INFO] ####################################################################################################
- [2019-03-01 18:03:11,498 - INFO] Got into the running loop on 2019-03-01 18:03:11
- [2019-03-01 18:03:11,498 - INFO] ####################################################################################################
+[2019-03-12 15:04:46,393 - INFO] Directory /home/akrruser/akrr/log/data/srv does not exist, creating it.
+[2019-03-12 15:04:46,393 - INFO] Writing logs to:
+        /home/akrruser/akrr/log/data/srv/2019.03.12_15.04.393317.log
+[2019-03-12 15:04:46,644 - INFO] following log: /home/akrruser/akrr/log/data/srv/2019.03.12_15.04.393317.log
+[2019-03-12 15:04:46,511 - INFO] Starting Application Remote Runner
+ [2019-03-12 15:04:46,527 - INFO] AKRR Scheduler PID is 261.
+ [2019-03-12 15:04:46,538 - INFO] Starting REST-API Service
+ [2019-03-12 15:04:46,540 - INFO] ####################################################################################################
+ [2019-03-12 15:04:46,541 - INFO] Got into the running loop on 2019-03-12 15:04:46
+ [2019-03-12 15:04:46,541 - INFO] ####################################################################################################
  
  Starting REST-API Service
  Bottle v0.12.13 server starting up (using SSLWSGIRefServer())...
  Listening on http://localhost:8091/
-[2019-03-01 18:03:11,528 - INFO] 
+[2019-03-12 15:04:46,646 - INFO] 
 AKRR Server successfully reached the loop.
  [INFO] Checking that AKRR daemon is running
 [INFO] Beginning check of the AKRR Rest API...
 [INFO] REST API is up and running!
 [INFO] Installing cron entries
-no crontab for root
+no crontab for akrruser
 [INFO] Crontab does not have user's crontab yet
 [INFO] Cron Scripts Processed!
 [INFO] AKRR is set up and is running.
