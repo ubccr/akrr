@@ -140,8 +140,8 @@ class AppKerOutputParser:
                     d = d.replace('NodeList', 'nodeList')
                     d = d.replace('StartTime', 'startTime')
                     d = d.replace('EndTime', 'endTime')
-                    d = d.replace('appKerstartTime', 'appKerStartTime')
-                    d = d.replace('appKerendTime', 'appKerEndTime')
+                    d = d.replace('appKerstartTime', 'appkernel_start_time')
+                    d = d.replace('appKerendTime', 'appkernel_end_time')
 
                     gi = eval("{" + d + "}")
                     if 'nodeList' in gi:
@@ -152,9 +152,9 @@ class AppKerOutputParser:
                         self.endTime = self.get_datetime_local(gi['endTime'])
                     if 'startTime' in gi and 'endTime' in gi:
                         self.wallClockTime = self.endTime - self.startTime
-                    if 'appKerStartTime' in gi and 'appKerEndTime' in gi:
-                        self.appKerWallClockTime = AppKerOutputParser.get_datetime_local(gi['appKerEndTime']) - \
-                                                   AppKerOutputParser.get_datetime_local(gi['appKerStartTime'])
+                    if 'appkernel_start_time' in gi and 'appkernel_end_time' in gi:
+                        self.appKerWallClockTime = AppKerOutputParser.get_datetime_local(gi['appkernel_end_time']) - \
+                                                   AppKerOutputParser.get_datetime_local(gi['appkernel_start_time'])
                     self.geninfo = gi
         except:
             log.exception("ERROR: Can not process gen.info file\n"+traceback.format_exc())

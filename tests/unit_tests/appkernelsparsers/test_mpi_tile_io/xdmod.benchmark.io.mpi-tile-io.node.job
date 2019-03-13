@@ -136,7 +136,7 @@ echo "Using $ARR_TMP_WORKDIR for test...."
 
 # randomize the order of tests
 #exes=`echo "$exes" | awk 'BEGIN{srand();}{print rand()"	"$0}' | sort -k1 -n | cut -f2 |cat -s`
-echo "\"appKerStartTime\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
+echo "\"appkernel_start_time\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
 for exe in $exes
 do
     cmdexe=${ARR_APPKER_EXEC_DIR}/${exe}
@@ -175,7 +175,7 @@ do
     echo "\"EndTime\":\""`date`"\"," >> $ARR_APP_STDOUT_FILE 2>&1
     rm -f $testFile
 done
-echo "\"appKerEndTime\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
+echo "\"appkernel_end_time\":\""`date`"\"," >> $ARR_TASK_WORKDIR/gen.info
 echo "All Tests Done"
 
 

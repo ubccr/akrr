@@ -91,7 +91,7 @@ appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. > $AKRR_APP_STDOUT_FILE
 
 
 #Execute AppKer
-akrr_write_to_gen_info "appKerStartTime" "`date`"
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
 
 echo "#Testing single directory" >> $AKRR_APP_STDOUT_FILE 2>&1
 $RUNMPI $EXE -v -I 32 -z 0 -b 0 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
@@ -105,7 +105,7 @@ $RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER >> $AKRR_APP_STDOUT_FILE 2>&1
 echo "#Testing single tree directory per process" >> $AKRR_APP_STDOUT_FILE 2>&1
 $RUNMPI $EXE -v -I 4 -z 4 -b 2 -i $ITER -u >> $AKRR_APP_STDOUT_FILE 2>&1
 
-akrr_write_to_gen_info "appKerEndTime" "`date`"
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
 
 
 
