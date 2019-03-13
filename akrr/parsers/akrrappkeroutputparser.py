@@ -136,21 +136,45 @@ class AppKerOutputParser:
                 if os.path.isfile(geninfo):
                     with open(geninfo, "r") as fin:
                         d = fin.read()
-                    # replace old names for compatibility
-                    d = d.replace('NodeList', 'nodeList')
-                    d = d.replace('StartTime', 'startTime')
-                    d = d.replace('EndTime', 'endTime')
-                    d = d.replace('appKerstartTime', 'appkernel_start_time')
-                    d = d.replace('appKerendTime', 'appkernel_end_time')
 
                     gi = eval("{" + d + "}")
-                    if 'nodeList' in gi:
-                        self.nodesList = os.popen('echo "%s"|gzip -9|base64 -w 0' % (gi['nodeList'])).read()
-                    if 'startTime' in gi:
-                        self.startTime = self.get_datetime_local(gi['startTime'])
-                    if 'endTime' in gi:
-                        self.endTime = self.get_datetime_local(gi['endTime'])
-                    if 'startTime' in gi and 'endTime' in gi:
+
+                    import warnings
+                    warnings_as_exceptions = False
+                    # mapped renamed parameters
+                    renamed_parameters = [
+                        ('NodeList', 'node_list'),
+                        ('StartTime', 'start_time'),
+                        ('EndTime', 'end_time'),
+                        ('appKerstartTime', 'appkernel_start_time'),
+                        ('appKerendTime', 'appkernel_end_time'),
+                        ('appKerStartTime', 'appkernel_start_time'),
+                        ('appKerEndTime', 'appkernel_end_time'),
+                        ('fileSystem', 'file_system'),
+                        ('cpuSpeed', 'cpu_speed'),
+                        ('startTime', 'start_time'),
+                        ('endTime', 'end_time'),
+                        ('nodeList', 'node_list')
+                    ]
+
+                    for old_key, new_key in renamed_parameters:
+                        if old_key in gi:
+                            gi[new_key] = gi[old_key]
+
+                            if not warnings_as_exceptions:
+                                warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key),
+                                              DeprecationWarning)
+                            else:
+                                raise DeprecationWarning(
+                                    "Resource parameter {} was renamed to {}".format(old_key, new_key))
+                    
+                    if 'node_list' in gi:
+                        self.nodesList = os.popen('echo "%s"|gzip -9|base64 -w 0' % (gi['node_list'])).read()
+                    if 'start_time' in gi:
+                        self.startTime = self.get_datetime_local(gi['start_time'])
+                    if 'end_time' in gi:
+                        self.endTime = self.get_datetime_local(gi['end_time'])
+                    if 'start_time' in gi and 'end_time' in gi:
                         self.wallClockTime = self.endTime - self.startTime
                     if 'appkernel_start_time' in gi and 'appkernel_end_time' in gi:
                         self.appKerWallClockTime = AppKerOutputParser.get_datetime_local(gi['appkernel_end_time']) - \

@@ -459,8 +459,8 @@ cd "$AKRR_TASK_WORKDIR"
 akrr_perform_common_tests
 
 #Write some info to gen.info, JSON-Like file
-akrr_write_to_gen_info "startTime" "`date`"
-akrr_write_to_gen_info "nodeList" "$AKRR_NODELIST"
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
 
 
 
@@ -491,7 +491,7 @@ else
 fi
 
 
-akrr_write_to_gen_info "endTime" "`date`"
+akrr_write_to_gen_info "end_time" "`date`"
 
 [INFO] Removing generated files from file-system as only batch job script printing was requested
 ```

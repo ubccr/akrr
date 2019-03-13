@@ -101,8 +101,8 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
             continue
         parser.set_statistic(k, val, v[1])
     
-    if "cpuSpeed" in parser.geninfo:
-        ll = parser.geninfo["cpuSpeed"].splitlines()
+    if "cpu_speed" in parser.geninfo:
+        ll = parser.geninfo["cpu_speed"].splitlines()
         cpu_speed_max = 0.0
         for l in ll:
             m = re.search(r'([\d.]+)$', l)
