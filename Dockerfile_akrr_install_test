@@ -1,0 +1,18 @@
+# Run regtest1 in docker
+FROM nsimakov/centos_akrr_install_test:1
+
+LABEL description="image to run tests manually"
+
+RUN usermod -a -G wheel akrruser
+USER akrruser
+WORKDIR /home/akrruser
+
+COPY --chown=akrruser docker/centos_slurm_single_host_wlm/user_cmd_start /home/akrruser/
+
+# copy repo
+VOLUME /home/akrruser/src/github.com/ubccr/akrr
+
+ENV REPO_FULL_NAME=ubccr/akrr
+
+ENTRYPOINT ["/home/akrruser/user_cmd_start"]
+CMD ["-set-no-exit-on-fail", "self_contained_slurm_wlm", "httpd", "bash"]
