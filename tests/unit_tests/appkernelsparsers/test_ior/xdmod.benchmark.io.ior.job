@@ -134,7 +134,7 @@ echo "File System To Test: $filesystem" >> $AKRR_APP_STDOUT_FILE 2>&1
 akrr_write_to_gen_info "fileSystem" "$filesystem"
 
 #start the tests
-akrr_write_to_gen_info "appKerStartTime" "`date`"
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
 
 #do write first
 for TEST_PARAM in "${TESTS_LIST[@]}"
@@ -159,7 +159,7 @@ do
     $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
 done
 
-akrr_write_to_gen_info "appKerEndTime" "`date`"
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
 
 
 
