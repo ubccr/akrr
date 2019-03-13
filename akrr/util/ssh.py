@@ -72,7 +72,7 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
 
         if mode == 'ssh' and command is None and password is None and private_key_password is None:
             # i.e. expecting passwordless access
-            expect.append('[#\$>]\s*')
+            expect.append(r'[#\$>]\s*')
 
         on_headnode = False
 
@@ -91,7 +91,7 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
                     # add prompts
                     if count_passes == 0:
                         if password is None and private_key_password is None:
-                            expect.append('[#\$>]\s*')
+                            expect.append(r'[#\$>]\s*')
                             ssh_timeout_new = ssh_timeout
                         i = 6
                     else:
@@ -116,7 +116,7 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
                     time.sleep(ssh_time_sleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(password)
                     # add prompt search since password already asked
-                    expect.append('[#\$>]\s*')
+                    expect.append(r'[#\$>]\s*')
                     password_count += 1
                 else:
                     rsh.sendcontrol('c')
@@ -135,7 +135,7 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
                     time.sleep(ssh_time_sleep)  # so that the remote host have some time to turn off echo
                     rsh.sendline(private_key_password)
                     # add prompt search since password already asked
-                    expect.append('[#\$>]\s*')
+                    expect.append(r'[#\$>]\s*')
                     private_key_password_count += 1
                 else:
                     rsh.sendcontrol('c')
@@ -173,9 +173,12 @@ def ssh_access(remote_machine, ssh='ssh', username=None, password=None,
         executed_successfully = False
         if command is not None:
             ll = rsh.before.splitlines(False)
-            if len(ll) > 1:
-                if ll[-1].endswith(ssh_command_end_echo) or ll[-2].endswith(ssh_command_end_echo):
+            if len(ll) > 1 and ll[-1].endswith(ssh_command_end_echo):
                     executed_successfully = True
+            if len(ll) > 2 and ll[-2].endswith(ssh_command_end_echo):
+                    executed_successfully = True
+            if len(ll) > 3 and ll[-3].endswith(ssh_command_end_echo):
+                executed_successfully = True
             if len(ll) > 0:
                 if ll[-1].endswith(ssh_command_end_echo):
                     executed_successfully = True
