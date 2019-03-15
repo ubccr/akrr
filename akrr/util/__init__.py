@@ -177,3 +177,16 @@ def get_float_or_int(a: Union[str, float, int]) -> Union[int, float]:
         else:
             return float(a)
     raise ValueError("Unknown type")
+
+
+def pid_alive(pid):
+    """
+    Check for the existence of process wirh pid
+    """
+    import os
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    else:
+        return True
