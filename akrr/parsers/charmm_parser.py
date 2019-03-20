@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.md.charmm',
+        name='charmm',
         version=1,
         description="CHARMM: Chemistry at Harvard Macromolecular Mechanics",
         url='http://www.charmm.org',

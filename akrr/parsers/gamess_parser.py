@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_second
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.chem.gamess',
+        name='gamess',
         version=1,
         description="Gamess: General Atomic and Molecular Electronic Structure System",
         url='http://www.msg.ameslab.gov',

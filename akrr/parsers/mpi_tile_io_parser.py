@@ -13,7 +13,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.benchmark.io.mpi-tile-io',
+        name='mpi-tile-io',
         version=1,
         description="MPI-Tile-IO Benchmark",
         url='http://www.mcs.anl.gov/research/projects/pio-benchmark',

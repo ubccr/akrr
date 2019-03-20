@@ -14,7 +14,7 @@ from akrr.util import get_float_or_int
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.benchmark.mpi.imb',
+        name='imb',
         version=1,
         description="Intel MPI Benchmarks",
         url='http://www.intel.com/software/imb',

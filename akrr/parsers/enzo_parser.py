@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.astro.enzo',
+        name='enzo',
         version=1,
         description="Enzo: an Adaptive Mesh Refinement Code for Astrophysics",
         url='http://enzo-project.org',

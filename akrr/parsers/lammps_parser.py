@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.md.lammps',
+        name='lammps',
         version=1,
         description="LAMMPS: Large-scale Atomic/Molecular Massively Parallel Simulator",
         url='http://lammps.sandia.gov',
