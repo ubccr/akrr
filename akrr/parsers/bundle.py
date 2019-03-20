@@ -18,7 +18,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_second
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.bundle',
+        name='bundle',
         version=1,
         description='bundled tasks',
         url='https://xdmod.ccr.buffalo.edu',

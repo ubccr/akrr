@@ -8,7 +8,7 @@ from akrr.util import get_float_or_int
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.benchmark.hpcc',
+        name='hpcc',
         version=1,
         description="HPC Challenge Benchmarks",
         url='http://icl.cs.utk.edu/hpcc/',

@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.phys.quantum_espresso',
+        name='quantum_espresso',
         version=1,
         description="Quantum ESPRESSO (PWSCF)",
         url='http://www.quantum-espresso.org',

@@ -7,7 +7,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.app.md.namd',
+        name='namd',
         version=1,
         description="NAMD: Scalable Molecular Dynamics Package",
         url='http://www.ks.uiuc.edu/Research/namd/',

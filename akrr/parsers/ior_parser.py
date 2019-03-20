@@ -22,7 +22,7 @@ def get_MiB(val, units):
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='xdmod.benchmark.io.ior',
+        name='ior',
         version=1,
         description="IOR (Interleaved-Or-Random) Benchmark",
         url='http://freshmeat.net/projects/ior',

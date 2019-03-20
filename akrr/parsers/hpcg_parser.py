@@ -13,11 +13,11 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_second
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
-        name='HPCG',
+        name='hpcg',
         version=1,
         description="HPCG Benchmark",
         url='http://www.hpcg-benchmark.org/index.html',
-        measurement_name='xdmod.benchmark.hpcg'
+        measurement_name='HPCG'
     )
     # set obligatory parameters and statistics
     # set common parameters and statistics

@@ -8,7 +8,7 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_second
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
     # initiate parser
     parser = AppKerOutputParser(
-        name='xdmod.benchmark.io.mdtest'
+        name='mdtest'
     )
     # set obligatory parameters and statistics
     # set common parameters and statistics (App:ExeBinSignature and RunEnv:Nodes)
