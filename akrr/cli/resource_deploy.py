@@ -417,6 +417,7 @@ def monitor_test_job(task_id):
                 raise e
 
         time.sleep(checking_frequency)
+    print("\n\n")
     return completed_tasks, akrr_xdmod_instance_info, akrr_errmsg
 
 
