@@ -338,14 +338,14 @@ INSERT INTO `akrr_err_regexp` VALUES
 '''),
         ('POPULATE app_kernels', """
         INSERT INTO `app_kernels` (id,name,nodes_list) VALUES
-            (7,'xdmod.benchmark.mpi.imb','2;4;8;16'),
-            (22,'xdmod.app.chem.gamess','1;2;4;8'),
-            (23,'xdmod.app.md.namd','1;2;4;8'),
-            (24,'xdmod.app.chem.nwchem','1;2;4;8'),
-            (25,'xdmod.benchmark.hpcc','1;2;4;8;16'),
-            (27,'xdmod.benchmark.io.ior','1;2;4;8'),
-            (28,'xdmod.benchmark.graph.graph500','1;2;4;8'),
-            (29,'xdmod.app.astro.enzo','1;2;4;8'),
+            (7,'imb','2;4;8;16'),
+            (22,'gamess','1;2;4;8'),
+            (23,'namd','1;2;4;8'),
+            (24,'nwchem','1;2;4;8'),
+            (25,'hpcc','1;2;4;8;16'),
+            (27,'ior','1;2;4;8'),
+            (28,'graph500','1;2;4;8'),
+            (29,'enzo','1;2;4;8'),
             (30,'gromacs_micro','1')
         ON DUPLICATE KEY UPDATE id=VALUES(id);
         """)
@@ -816,24 +816,24 @@ CREATE TABLE IF NOT EXISTS `control_regions` (
         ('POPULATE app_kernel_def',
          """
 INSERT INTO `app_kernel_def` VALUES
-(7, 'IMB', 'xdmod.benchmark.mpi.imb', 'node', 0, '<a href="http://www.intel.com/software/imb/" target="_blank" """
+(7, 'IMB', 'imb', 'node', 0, '<a href="http://www.intel.com/software/imb/" target="_blank" """
          """alt="imb">Intel MPI Benchmark</a> (formally Pallas MPI Benchmark) suite. The suite measures the """
          """interconnect''s latency, bandwidth, bidirectional bandwidth, and various MPI collective operations'' """
          """latencies (Broadcast, AllToAll, AllGather, AllReduce, etc). It also measures the MPI-2 Remote Direct """
          """Memory Access (RDMA) performance.\r\n<p>\r\nThe benchmarks are run with one process """
          """(single-threaded mode) per node.', 0,NULL),
-(22, 'GAMESS', 'xdmod.app.chem.gamess', 'node', 0, '<a href="http://www.msg.chem.iastate.edu/gamess/" """
+(22, 'GAMESS', 'gamess', 'node', 0, '<a href="http://www.msg.chem.iastate.edu/gamess/" """
          """target="_blank" alt="gamess">GAMESS</a> is an ab initio computational chemistry software package"""
          """developed by Professor Mark Gordon''s research group at Iowa State University.\r\n<p>\r\nThe input"""
          """to the benchmark runs is restricted Hartree-Fock energy calculation of C8H10 with MP2"""
          """correction.\r\n<p>\r\nThe version of GAMESS being benchmarked is 1 MAY 2012 (R1).\r\n', 0,NULL),
-(23, 'NAMD', 'xdmod.app.md.namd', 'node', 0, '<a href="http://www.ks.uiuc.edu/Research/namd/" target="_blank" """
+(23, 'NAMD', 'namd', 'node', 0, '<a href="http://www.ks.uiuc.edu/Research/namd/" target="_blank" """
          """alt="namd">NAMD</a> is a molecular dynamics simulation package developed by the Theoretical and """
          """Computational Biophysics Group in the Beckman Institute for Advanced Science and Technology at """
          """the University of Illinois at Urbana-Champaign.\r\n<p>\r\nThe input to the benchmark runs is the """
          """Apolipoprotein A1 benchmark input, which consists of 92,224 atoms, uses 2 fs step size, 0,200 steps, """
          """and uses the NVE ensemble.\r\n<p>\r\nThe version of NAMD being benchmarked is 2.7b2', 0,NULL),
-(24, 'NWChem', 'xdmod.app.chem.nwchem', 'node', 0, '<a href="http://www.nwchem-sw.org" target="_blank" """
+(24, 'NWChem', 'nwchem', 'node', 0, '<a href="http://www.nwchem-sw.org" target="_blank" """
          """alt="nwchem">NWChem</a> is an ab initio computational chemistry software package developed by """
          """Pacific Northwest National Laboratory.\r\n<p>\r\nThe input to the benchmark runs is the """
          """Hartree-Fock energy calculation of Au+ with MP2 and Coupled Cluster corrections.\r\n<p>\r\n"""
@@ -843,28 +843,28 @@ INSERT INTO `app_kernel_def` VALUES
          """three basic operations: Get (fetch values from remote memory), Put (store values to remote memory), """
          """and Accumulate (update values in remote memory). NWChem measures the numbers of these operations """
          """and the amount of data affected by them.', 0,NULL),
-(25, 'HPCC', 'xdmod.benchmark.hpcc', 'node', 0, '<a href="http://icl.cs.utk.edu/hpcc/" target="_blank" """
+(25, 'HPCC', 'hpcc', 'node', 0, '<a href="http://icl.cs.utk.edu/hpcc/" target="_blank" """
          """alt="hpcc">HPC Challenge Benchmark</a> suite. It consists of a) High Performance LINPACK, which solves """
          """a linear system of equations and measures the floating-point performance, b) Parallel Matrix """
          """Transpose (PTRANS), which measures total communications capacity of the interconnect, c) """
          """MPI Random Access, which measures the rate of random updates of remote memory, d) """
          """Fast Fourier Transform, which measures the floating-point performance of """
          """double-precision complex one-dimensional Discrete Fourier Transform. ', 0,NULL),
-(27, 'IOR', 'xdmod.benchmark.io.ior', 'node', 0, """
+(27, 'IOR', 'ior', 'node', 0, """
          """'IOR (Interleaved-Or-Random) measures the performance of a storage system under simple access patterns. """
          """It uses four different I/O interfaces: POSIX, MPI IO, HDF (Hierarchical Data Format), and """
          """Parallel NetCDF (Network Common Data Form) to read and write contiguous chunks of data against either """
          """a single file (N-to-1 mode) or N files (N-to-N mode), and it reports the aggregate I/O throughput.', 0,NULL),
-(28, 'Graph500', 'xdmod.benchmark.graph.graph500', 'node', 0, '<a href="http://www.graph500.org" target="_blank" """
+(28, 'Graph500', 'graph500', 'node', 0, '<a href="http://www.graph500.org" target="_blank" """
          """alt="graph500">Graph 500</a> is a benchmark designed to measure the performance of graph algorithms, an """
          """increasingly important workload in the data-intensive analytics applications.\r\n<p>\r\nCurrently """
          """Graph 500 benchmark contains one computational kernel: the breadth-first search. The input is a """
          """pre-generated graph created with the following parameters:  SCALE=16 and edgefactor=16. These """
          """translate to, on a per MPI process basis,  2^SCALE=65536 vertices and """
          """65536*edgefactor=1.04 million edges.', 0,NULL),
-(29, 'Enzo', 'xdmod.app.astro.enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" """
+(29, 'Enzo', 'enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" """
          """alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>', 0,NULL),
-(30, 'HPCG', 'xdmod.benchmark.hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" """
+(30, 'HPCG', 'hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" """
          """alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort"""
          """to create a new metric for ranking HPC systems.', 0,NULL),
 (31, 'GROMACS-micro', 'gromacs_micro', 'node', 0, '<a href="http://www.gromacs.org/" target="_blank" """
