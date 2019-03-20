@@ -524,8 +524,131 @@ must be rerun until successful execution. Below is example of successful
 execution:
 
 ```text
+[INFO] Validating ub-hpc parameters from /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
+[INFO] Syntax of /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf is correct and all necessary parameters are present.
 
+[INFO] Validating resource accessibility. Connecting to ub-hpc.
+[INFO] Successfully connected to ub-hpc
+
+
+[INFO] Checking if shell is BASH
+
+[INFO] Shell is BASH
+
+[INFO] Checking directory locations
+
+[INFO] Checking: huey:/user/nikolays/tmp/akrr_data/ub-hpc
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/user/nikolays/appker/ub-hpc
+[INFO] Directory huey:/user/nikolays/appker/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/user/nikolays/tmp
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/tmp
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Preparing to copy application signature calculator,
+    app. kernel input files and 
+    HPCC, IMB, IOR and Graph500 source code to remote resource
+
+[INFO] Copying app. kernel input tarball to /user/nikolays/appker/ub-hpc
+UPDATED: March 6, 2015
+
+inputs.tar.gz                                 100% 5715KB  40.7MB/s   00:00    
+[INFO] Unpacking app. kernel input files to /user/nikolays/appker/ub-hpc/inputs
+[INFO] App. kernel input files are in /user/nikolays/appker/ub-hpc/inputs
+
+[INFO] Copying app. kernel execs tarball to /user/nikolays/appker/ub-hpc
+It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator
+UPDATED: March 6, 2015
+
+execs.tar.gz                                  100% 4362   684.0KB/s   00:00    
+[INFO] Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to /user/nikolays/appker/ub-hpc/execs
+[INFO] HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in /user/nikolays/appker/ub-hpc/execs
+
+[INFO] Testing app.signature calculator on headnode
+
+[INFO] App.signature calculator is working on headnode
+
+[INFO] Will send test job to queue, wait till it executed and will analyze the output
+[INFO] 
+Submitted test job to AKRR, task_id is 3144529
+
+
+
+Test status:
+Task is in scheduled_tasks queue.
+It schedule to be started on2019-03-20T15:21:22
+
+time: 2019-03-20 15:21:22 
+
+Test status:
+Task is in active_tasks queue.
+Status: None
+Status info:
+None
+
+time: 2019-03-20 15:21:32 
+
+Test status:
+Task is in active_tasks queue.
+Status: Created batch job script and have submitted it to remote queue.
+Status info:
+Remote job ID is 10833
+
+time: 2019-03-20 15:21:39 
+
+Test status:
+Task is in active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+time: 2019-03-20 15:21:46 
+
+Test status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+time: 2019-03-20 15:21:51
+
+[INFO] Test job is completed analyzing output
+
+[INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory for this task: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006
+Location of some important generated files:
+        Batch job script: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/test.job
+        Application kernel output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/appstdout
+        Batch job standard output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/stdout
+        Batch job standard error output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/stderr
+        XML processing results: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/result.xml
+        Task execution logs: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/proc/log
+
+[INFO] 
+The output looks good.
+
+[INFO] 
+Adding AKRR enviroment variables to resource's .bashrc!
+
+[INFO] Enabled ub-hpc in mod_appkernel.resource for tasks execution and made it visible to XDMoD UI.
+[INFO] Successfully enabled ub-hpc
+
+[INFO] Result:
+[INFO] 
+DONE, you can move to next step!
 ```
+
+Now AKRR can submit jobs to that resource
+
+Next: [AKRR: Deployment of Application Kernel on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)
+
 
 # Troubleshooting
 
@@ -616,8 +739,6 @@ test.job
 
 Now log into resource, go to the task working directory and manually submit to 
 queue, check the output and determine the problem.  
-  
 
-Now AKRR can submit jobs to that resource
 
 Next: [AKRR: Deployment of Application Kernel on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)
