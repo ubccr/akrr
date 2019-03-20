@@ -134,7 +134,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                             max_walltime = r['walltime']
                         i += 1
                     if i < 5:
-                        log.warning("There are only %d previous run, need at least 5 for walltime limit autoset")
+                        log.warning("There are only %d previous run, need at least 5 for walltime limit autoset" % i)
                     else:
                         if not last_five_runs_successfull:
                             log.error("One of last 5 runs have failed. Would not use autoset.")
