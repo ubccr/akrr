@@ -153,7 +153,7 @@ def check_create_dirs(rsh, resource):
 
     d = resource['network_scratch']
     log.info("Checking: %s:%s", resource['remote_access_node'], d)
-    status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=False)
+    status, msg = check_dir(rsh, d, exit_on_fail=False, try_to_create=True)
 
     if status is True:
         log.info(msg)
@@ -373,7 +373,7 @@ def monitor_test_job(task_id):
                 msg_body += "Task is completed!\n"
                 completed_tasks = r.json()['data']['data']['completed_tasks']
                 akrr_xdmod_instance_info = r.json()['data']['data']['akrr_xdmod_instanceinfo']
-                akrr_errmsg = r.json()['data']['data']['akrr_errmsg']
+                akrr_errmsg = r.json()['data']['data'].get('akrr_errmsg', "None")
                 if log.verbose:
                     msg_body += "completed_tasks table entry:\n" + pp.pformat(completed_tasks) + "\n"
                     msg_body += "akrr_xdmod_instanceinfo table entry:\n" + pp.pformat(akrr_xdmod_instance_info) + "\n"
@@ -434,7 +434,7 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
 
     completed_tasks = r.json()['data']['data']['completed_tasks']
     akrr_xdmod_instance_info = r.json()['data']['data']['akrr_xdmod_instanceinfo']
-    akrr_errmsg = r.json()['data']['data']['akrr_errmsg']
+    akrr_errmsg = r.json()['data']['data'].get('akrr_errmsg', "None")
 
     results_summary = make_results_summary(
         resource['name'], app_name, completed_tasks, akrr_xdmod_instance_info, akrr_errmsg)
