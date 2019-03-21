@@ -622,7 +622,9 @@ def append_to_bashrc(resource):
         rsh = akrr.util.ssh.ssh_resource(resource)
         akrr_header = 'AKRR Remote Resource Environment Variables'
 
-        out = akrr.util.ssh.ssh_command(rsh, '''if [ -e $HOME/.bashrc ]
+        out = akrr.util.ssh.ssh_command(
+            rsh,
+            '''if [ -e $HOME/.bashrc ]
 then
    if [[ `grep "\#''' + akrr_header + ''' \[Start\]" $HOME/.bashrc` == *"''' + akrr_header + ''' [Start]"* ]]
    then
@@ -632,19 +634,23 @@ then
        tail -n "+$(( $(grep -n '\#''' + akrr_header + ''' \[End\]' $HOME/.bashrc_akrrbak | head -n 1 | cut -d ":" -f 1) + 1 ))" $HOME/.bashrc_akrrbak  >> $HOME/.bashrc
    fi
 fi''')
-        log.debug2(out)
-        out = akrr.util.ssh.ssh_command(rsh, '''
-echo "Appending AKRR records to $HOME/.bashrc"
-echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc
-echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['network_scratch'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_APPKER_DIR=\\"''' + resource['appkernel_dir'] + '''\\"" >> $HOME/.bashrc
-echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc
-echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc
-''')
-        log.debug2(out)
+        log.debug(out)
+        cmds = (
+            '''echo "Appending AKRR records to $HOME/.bashrc"''',
+            '''echo "#''' + akrr_header + ''' [Start]" >> $HOME/.bashrc''',
+            '''echo "export AKRR_NETWORK_SCRATCH=\\"''' + resource['network_scratch'] + '''\\"" >> $HOME/.bashrc''',
+            '''echo "export AKRR_LOCAL_SCRATCH=\\"''' + resource['local_scratch'] + '''\\"" >> $HOME/.bashrc''',
+            '''echo "export AKRR_APPKER_DIR=\\"''' + resource['appkernel_dir'] + '''\\"" >> $HOME/.bashrc''',
+            '''echo "export AKRR_AKRR_DIR=\\"''' + resource['akrr_data'] + '''\\"" >> $HOME/.bashrc''',
+            '''echo "#''' + akrr_header + ''' [End]" >> $HOME/.bashrc''',
+            '''echo "Appending AKRR records to $HOME/.bashrc"'''
+        )
+        for cmd in cmds:
+            out = akrr.util.ssh.ssh_command(rsh, cmd)
+            log.debug(out)
         rsh.close(force=True)
         del rsh
+
 
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
