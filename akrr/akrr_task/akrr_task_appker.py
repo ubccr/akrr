@@ -134,16 +134,21 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                             max_walltime = r['walltime']
                         i += 1
                     if i < 5:
-                        log.warning("There are only %d previous run, need at least 5 for walltime limit autoset" % i)
+                        log.info("There are only %d previous run, need at least 5 for walltime limit autoset" % i)
                     else:
                         if not last_five_runs_successfull:
-                            log.error("One of last 5 runs have failed. Would not use autoset.")
+                            log.warning("One of last 5 runs have failed. Would not use autoset.")
                         else:
-                            log.error(
-                                "Max walltime was %.1f s, will change walltime limit from %.1f minutes to %d minutes" %
-                                (max_walltime, batch_vars['walltime_limit'],
-                                 int(auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99)))
-                            batch_vars['walltime_limit'] = int((auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99))
+                            if max_walltime < 120:
+                                log.info("Previous walltime was less than 2 minutes, will set walltime limit to 2 minutes")
+                                max_walltime = 120
+                                batch_vars['walltime_limit'] = 2
+                            else:
+                                log.info(
+                                    "Max walltime was %.1f s, will change walltime limit from %.1f minutes to %d minutes" %
+                                    (max_walltime, batch_vars['walltime_limit'],
+                                    int(auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99)))
+                                batch_vars['walltime_limit'] = int((auto_walltime_limit_overhead * max_walltime / 60.0 + 0.99))
                     cur.close()
                     del db
             except Exception as e:
