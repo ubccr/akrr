@@ -795,11 +795,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             if completed is not None:
                 if completed:
                     body_et = root.find('body').find('performance')
-                    body = xml.etree.ElementTree.tostring(body_et)
+                    body = xml.etree.ElementTree.tostring(body_et, encoding="unicode")
                     import xml.dom.minidom
                     xml = xml.dom.minidom.parseString(body)
-                    body = xml.toprettyxml()
+                    body = xml.toprettyxml(indent="    ")
                     body = body.replace("""<?xml version="1.0" ?>\n""", "")
+
+                    body = akrr.util.strip_empty_lines(body)
 
                     statistics_et = root.find('body').find('performance').find('benchmark').find('statistics')
                     for e in statistics_et:

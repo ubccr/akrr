@@ -190,3 +190,14 @@ def pid_alive(pid):
         return False
     else:
         return True
+
+
+def strip_empty_lines(m_str):
+    """
+    remove empty lines
+    """
+    out = ""
+    for line in m_str.split('\n'):
+        if not line.strip() == '':
+            out += line + "\n"
+    return out
