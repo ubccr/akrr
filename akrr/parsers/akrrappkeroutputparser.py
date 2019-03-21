@@ -250,10 +250,10 @@ class AppKerOutputParser:
                 self.set_statistic(k + " accessible", int(v))
 
         if resource_appker_vars is not None:
-            if 'resource' in resource_appker_vars:
-                self.set_parameter("resource", resource_appker_vars["resource"])
-            if 'app' in resource_appker_vars:
-                self.set_parameter("app", resource_appker_vars["app"])
+            if 'resource' in resource_appker_vars and 'name' in resource_appker_vars["resource"]:
+                self.set_parameter("resource", resource_appker_vars["resource"]['name'])
+            if 'app' in resource_appker_vars and 'name' in resource_appker_vars["app"]:
+                self.set_parameter("app", resource_appker_vars["app"]['name'])
 
     def parsing_complete(self, verbose=False):
         """i.e. app output was having all mandatory parameters and statistics"""
