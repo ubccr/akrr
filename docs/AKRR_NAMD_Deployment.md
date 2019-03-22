@@ -1,14 +1,14 @@
 # Deployment of NAMD Applications Kernels on a Resource
 
-Here the deployment of namd application kernel is described. This application kernel is 
-based on NAMD application.
+NAMD is biomolecules simulation software which one of the mostly used application in academic clusters. 
+Here the deployment of namd application kernel is described.
 
 For simplicity lets define APPKER and RESOURCE enviroment varible which will contain the HPC 
 resource name:
 
 ```bash
-export RESOURCE=rush
-export APPKER=xdmod.app.md.namd
+export RESOURCE=<resource_name>
+export APPKER=namd
 ```
 
 ## Install Application or Identify where it is Installed
@@ -47,7 +47,7 @@ Generate Initiate Configuration File:
 akrr app add -a $APPKER -r $RESOURCE
 ```
 Sample output:
-```tetxt
+```text
 [INFO] Generating application kernel configuration for namd on ub-hpc
 [INFO] Application kernel configuration for namd on ub-hpc is in: 
         /home/akrruser/akrr/etc/resources/ub-hpc/namd.app.conf
