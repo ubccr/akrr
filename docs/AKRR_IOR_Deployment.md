@@ -799,7 +799,7 @@ Now this application kernel can be submitted for regular execution:
 
 ```bash
 #Perform a test run on all nodes count
-python $AKRR_HOME/src/akrrctl.py new_task -r $RESOURCE -a $APPKER -n 1,2,4,8
+akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8
 
 #Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00
 akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
@@ -826,4 +826,4 @@ Or rerun configuration with corrected LIBS (correct configure option for your n
 ./configure --with-hdf5=no --with-ncmpi=no  LIBS="-lgpsf"
 ```
 
-Next [IMB Deployment](AKRR_IMB_Deployment.md)
+Next [HPCC Deployment](AKRR_HPCC_Deployment.md)

@@ -505,7 +505,7 @@ Now this application kernel can be submitted for regular execution:
 
 ```bash
 #Perform a test run on all nodes count
-python $AKRR_HOME/src/akrrctl.py new_task -r $RESOURCE -a $APPKER -n 1,2,4,8
+akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8
 
 #Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00
 akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
@@ -514,4 +514,4 @@ akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
 see [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md) and 
 [Setup Walltime Limit](AKRR_Walltimelimit_Setting.md) for more details.
 
-Next [IOR Deployment](AKRR_IOR_Deployment.md)
+Next [IOR Deployment](AKRR_IMB_Deployment.md)
