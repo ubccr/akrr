@@ -276,17 +276,16 @@ class AppKerOutputParser:
                     print(("Must have statistic, %s, is not present" % (v,)))
                 complete = False
         if self.completeOnPartialMustHaveStatistics and complete is False:
-
             if 'Number of Tests Passed' in self.mustHaveStatistics and \
                     'Number of Tests Started' in self.mustHaveStatistics:
-                if self.get_statistic('Number of Tests Passed') is None or \
-                        self.get_statistic('Number of Tests Started') is None:
-                    complete = False
-                else:
-                    if self.get_statistic('Number of Tests Passed') > 0:
+                if isinstance(self.get_statistic('Number of Tests Passed'), str) and \
+                        isinstance(self.get_statistic('Number of Tests Started'), str) and \
+                        self.get_statistic('Number of Tests Passed').isdigit() and\
+                        self.get_statistic('Number of Tests Started').isdigit():
+                    if int(self.get_statistic('Number of Tests Passed')) > 0:
                         complete = True
-            else:
-                complete = True
+                else:
+                    complete = False
 
         return complete
 
