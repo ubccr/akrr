@@ -86,7 +86,7 @@ def test_parser(datadir):
     assert floats_are_close(parstat_val_f(stats, "MPIIO N-to-N Read Aggregate Throughput"), 927.21)
     assert floats_are_close(parstat_val_f(stats, "MPIIO N-to-N Write Aggregate Throughput"), 701.60)
     assert parstat_val_i(stats, "Number of Tests Passed") == 10
-    assert parstat_val_i(stats, "Number of Tests Started") == 20
+    assert parstat_val_i(stats, "Number of Tests Started") == 10
     assert floats_are_close(parstat_val_f(stats, "POSIX N-to-1  File Close Time (Read)"), 22.47)
     assert floats_are_close(parstat_val_f(stats, "POSIX N-to-1  File Close Time (Write)"), 13.50)
     assert floats_are_close(parstat_val_f(stats, "POSIX N-to-1  File Open Time (Read)"), 0.082365)

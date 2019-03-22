@@ -28,46 +28,50 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         url='http://freshmeat.net/projects/ior',
         measurement_name='IOR'
     )
+    app_vars = None
+    if resource_appker_vars is not None and 'app' in resource_appker_vars:
+        app_vars = resource_appker_vars['app']
+
     # set obligatory parameters and statistics
     # set common parameters and statistics
     parser.add_common_must_have_params_and_stats()
     # set app kernel custom sets
     parser.add_must_have_parameter('App:Version')
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testHDF5' in resource_appker_vars and
-            resource_appker_vars['testHDF5'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testHDF5' in app_vars and
+            app_vars['testHDF5'] is True):
         parser.add_must_have_parameter('HDF Version')
         parser.add_must_have_parameter('HDF5 Collective N-to-1 Test File System')
         parser.add_must_have_parameter('HDF5 Independent N-to-1 Test File System')
         parser.add_must_have_parameter('HDF5 N-to-N Test File System')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testMPIIO' in resource_appker_vars and
-            resource_appker_vars['testMPIIO'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testMPIIO' in app_vars and
+            app_vars['testMPIIO'] is True):
         parser.add_must_have_parameter('MPIIO Collective N-to-1 Test File System')
         parser.add_must_have_parameter('MPIIO Independent N-to-1 Test File System')
         parser.add_must_have_parameter('MPIIO N-to-N Test File System')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testPOSIX' in resource_appker_vars and
-            resource_appker_vars['testPOSIX'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testPOSIX' in app_vars and
+            app_vars['testPOSIX'] is True):
         parser.add_must_have_parameter('POSIX N-to-1 Test File System')
         parser.add_must_have_parameter('POSIX N-to-N Test File System')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testNetCDF' in resource_appker_vars and
-            resource_appker_vars['testNetCDF'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testNetCDF' in app_vars and
+            app_vars['testNetCDF'] is True):
         parser.add_must_have_parameter('Parallel NetCDF Collective N-to-1 Test File System')
         parser.add_must_have_parameter('Parallel NetCDF Independent N-to-1 Test File System')
-    parser.add_must_have_parameter('Parallel NetCDF Version')
-    parser.add_must_have_parameter('Per-Process Data Size')
-    parser.add_must_have_parameter('Per-Process I/O Block Size')
-    parser.add_must_have_parameter('RunEnv:Nodes')
-    parser.add_must_have_parameter('Transfer Size Per I/O')
+        parser.add_must_have_parameter('Parallel NetCDF Version')
+        parser.add_must_have_parameter('Per-Process Data Size')
+        parser.add_must_have_parameter('Per-Process I/O Block Size')
+        parser.add_must_have_parameter('RunEnv:Nodes')
+        parser.add_must_have_parameter('Transfer Size Per I/O')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testHDF5' in resource_appker_vars and
-            resource_appker_vars['testHDF5'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testHDF5' in app_vars and
+            app_vars['testHDF5'] is True):
         parser.add_must_have_statistic('HDF5 Collective N-to-1 Read Aggregate Throughput')
         parser.add_must_have_statistic('HDF5 Collective N-to-1 Write Aggregate Throughput')
         parser.add_must_have_statistic('HDF5 Independent N-to-1 Read Aggregate Throughput')
@@ -75,9 +79,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         parser.add_must_have_statistic('HDF5 N-to-N Read Aggregate Throughput')
         parser.add_must_have_statistic('HDF5 N-to-N Write Aggregate Throughput')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testMPIIO' in resource_appker_vars and
-            resource_appker_vars['testMPIIO'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testMPIIO' in app_vars and
+            app_vars['testMPIIO'] is True):
         parser.add_must_have_statistic('MPIIO Collective N-to-1 Read Aggregate Throughput')
         parser.add_must_have_statistic('MPIIO Collective N-to-1 Write Aggregate Throughput')
         parser.add_must_have_statistic('MPIIO Independent N-to-1 Read Aggregate Throughput')
@@ -85,17 +89,17 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         parser.add_must_have_statistic('MPIIO N-to-N Read Aggregate Throughput')
         parser.add_must_have_statistic('MPIIO N-to-N Write Aggregate Throughput')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testPOSIX' in resource_appker_vars and
-            resource_appker_vars['testPOSIX'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testPOSIX' in app_vars and
+            app_vars['testPOSIX'] is True):
         parser.add_must_have_statistic('POSIX N-to-1 Read Aggregate Throughput')
         parser.add_must_have_statistic('POSIX N-to-1 Write Aggregate Throughput')
         parser.add_must_have_statistic('POSIX N-to-N Read Aggregate Throughput')
         parser.add_must_have_statistic('POSIX N-to-N Write Aggregate Throughput')
 
-    if resource_appker_vars is None or (
-            resource_appker_vars is not None and 'testNetCDF' in resource_appker_vars and
-            resource_appker_vars['testNetCDF'] is True):
+    if app_vars is None or (
+            app_vars is not None and 'testNetCDF' in app_vars and
+            app_vars['testNetCDF'] is True):
         parser.add_must_have_statistic('Parallel NetCDF Collective N-to-1 Read Aggregate Throughput')
         parser.add_must_have_statistic('Parallel NetCDF Collective N-to-1 Write Aggregate Throughput')
         parser.add_must_have_statistic('Parallel NetCDF Independent N-to-1 Read Aggregate Throughput')
@@ -418,6 +422,14 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
                 input_summary = {}
                 # filesystem=None
             i += 1
+    if app_vars is not None and 'doAllWritesFirst' in app_vars:
+        if app_vars['doAllWritesFirst']:
+            # i.e. separate read and write
+            total_number_of_tests = total_number_of_tests // 2
+    else:
+        # by default separate read and write
+        total_number_of_tests = total_number_of_tests // 2
+
     parser.set_statistic('Number of Tests Passed', tests_passed)
     parser.set_statistic('Number of Tests Started', total_number_of_tests)
 
