@@ -53,7 +53,7 @@ Sample output:
         /home/akrruser/akrr/etc/resources/ub-hpc/namd.app.conf
 ```
 
-# Edit Configuration File
+## Edit Configuration File
 
 Below is listing of generated configuration file located at ~/akrr/etc/resources/$RESOURCE/namd.app.conf
 
@@ -130,7 +130,7 @@ RUN_APPKERNEL="mpirun -n $AKRR_CORES -hostfile $PBS_NODEFILE $EXE ./input.namd"
 """
 ```
 
-# Generate Batch Job Script and Execute it Manually (Optional) 
+## Generate Batch Job Script and Execute it Manually (Optional) 
 
 The purpose of this step is to ensure that the configuration lead to correct workable batch job 
 script. Here first batch job script is generated with 'akrr task new --gen-batch-job-only'
@@ -375,7 +375,7 @@ WallClock: 149.040894  CPUTime: 148.148071  Memory: 320.507812 MB
 
 If it looks ok you can move to the next step
 
-# Perform Validation Run
+## Perform Validation Run
 
 On this step _akrr app validate_ command is used to validate application kernel installation on 
 particular resource. It execute application kernel and analyses its' results. If it fails the 
