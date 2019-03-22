@@ -28,7 +28,7 @@ def test_appkeroutputparser(datadir):
     # parse common parameters and statistics
     parser.parse_common_params_and_stats(
         str(datadir / 'appstdout'),  str(datadir / 'stdout'), str(datadir / 'stderr'), str(datadir / 'gen.info'),
-        resource_appker_vars={'resource': 'HPC', 'app': 'test'})
+        resource_appker_vars={'resource': {'name': 'HPC-Cluster'}, 'app': {'name': 'test'}})
 
     # set statistics
     if parser.wallClockTime is not None:

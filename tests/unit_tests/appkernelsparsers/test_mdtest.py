@@ -9,7 +9,7 @@ def test_parser(datadir):
         stdout=str(datadir / 'stdout'),
         stderr=str(datadir / 'stderr'),
         geninfo=str(datadir / 'gen.info'),
-        resource_appker_vars={'resource': 'HPC-Cluster'}
+        resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
     )
     # check resulting xml
     xml_out = ElementTree.fromstring(results)
