@@ -514,4 +514,4 @@ akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
 see [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md) and 
 [Setup Walltime Limit](AKRR_Walltimelimit_Setting.md) for more details.
 
-Next [IOR Deployment](AKRR_IMB_Deployment.md)
+Up: [Deployment of Application Kernels on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)

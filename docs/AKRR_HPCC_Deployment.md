@@ -309,7 +309,8 @@ sbatch hpcc.job
 
 ```
 
-Examine appstdout file, which contains application kernel output ([appstdout sample](AKRR_HPCC_appsout_sample.md)). If it looks ok you can move to the next step
+Examine appstdout file, which contains application kernel output ([appstdout sample](AKRR_HPCC_appsout_sample.md)). 
+If it looks ok you can move to the next step
 
 
 # Perform Validation Run
@@ -340,3 +341,5 @@ akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
 see [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md) and 
 [Setup Walltime Limit](AKRR_Walltimelimit_Setting.md) for more details.
 
+
+Up: [Deployment of Application Kernels on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)

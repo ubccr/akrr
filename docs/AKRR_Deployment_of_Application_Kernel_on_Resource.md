@@ -72,10 +72,14 @@ regular execution on that resource.
 # Details on the Individual Application Kernels Deployment
 
 * [NAMD Deployment](AKRR_NAMD_Deployment.md)
-* [IOR Deployment](AKRR_IOR_Deployment.md)
-* [IMB Deployment](AKRR_IMB_Deployment.md)
-* [NWChem Deployment](AKRR_NWChem_Deployment.md)
 * [HPCC Deployment](AKRR_HPCC_Deployment.md)
+* [IMB Deployment](AKRR_IMB_Deployment.md)
+* [IOR Deployment](AKRR_IOR_Deployment.md)
+* [HPCG Deployment](AKRR_NWChem_Deployment.md)
+* [NWChem Deployment](AKRR_NWChem_Deployment.md)
+* [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
+* [Enzo Deployment](AKRR_Enzo_Deployment.md)
+
 * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
 
 
