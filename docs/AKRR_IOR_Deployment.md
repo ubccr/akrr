@@ -826,4 +826,4 @@ Or rerun configuration with corrected LIBS (correct configure option for your n
 ./configure --with-hdf5=no --with-ncmpi=no  LIBS="-lgpsf"
 ```
 
-Next [HPCC Deployment](AKRR_HPCC_Deployment.md)
+Up: [Deployment of Application Kernels on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)

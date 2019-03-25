@@ -10,7 +10,11 @@
     * [IMB Deployment](AKRR_IMB_Deployment.md)
     * [IOR Deployment](AKRR_IOR_Deployment.md)
     * [HPCC Deployment](AKRR_HPCC_Deployment.md)
+    * [HPCG Deployment](AKRR_NWChem_Deployment.md)
     * [NWChem Deployment](AKRR_NWChem_Deployment.md)
+    * [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
+    * [Enzo Deployment](AKRR_Enzo_Deployment.md)
+    
     
     * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
   * [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md)
