@@ -561,7 +561,7 @@ First generate the script to standard output and examine it:
 akrr task new --dry-run --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER
 ```
 
-**Sample output of $AKRR_HOME/bin/akrr_ctl.sh batch_job -p -r $RESOURCE -a $APPKER -n 2**
+**Sample output of akrr task new --dry-run --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER**
 ```bash
 [INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495
 [INFO] Creating task directories: 
