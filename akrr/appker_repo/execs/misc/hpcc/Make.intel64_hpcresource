@@ -93,10 +93,12 @@ MPlib        =
 # header files,  LAlib  is defined  to be the name of  the library to be 
 # used. The variable LAdir is only used for defining LAinc and LAlib.
 #
-MKLROOT=/user/akrr/appker/Rush-debug/execs/lib/mkl
+# Use MKLROOT from environment
+# MKLROOT=/user/akrr/appker/Rush-debug/execs/lib/mkl
+MKL_INTERFACE_LIB_DIR = $(AKRR_APPKER_DIR)/execs/libs/lib
 LAdir        = $(MKLROOT)/lib/intel64
 LAinc        = -I$(MKLROOT)/include -I$(MKLROOT)/include/fftw
-LAlib        = -Wl,--start-group $(LAdir)/libfftw2x_cdft_DOUBLE_ilp64.a $(LAdir)/libfftw2xc_double_intel.a $(LAdir)/libmkl_intel_lp64.a $(LAdir)/libmkl_sequential.a $(LAdir)/libmkl_core.a $(LAdir)/libmkl_blacs_intelmpi_lp64.a $(LAdir)/libmkl_cdft_core.a -Wl, --end-group -lpthread -lm
+LAlib        = -Wl,--start-group $(MKL_INTERFACE_LIB_DIR)/libfftw2x_cdft_DOUBLE_ilp64.a $(MKL_INTERFACE_LIB_DIR)/libfftw2xc_double_intel.a $(LAdir)/libmkl_intel_lp64.a $(LAdir)/libmkl_sequential.a $(LAdir)/libmkl_core.a $(LAdir)/libmkl_blacs_intelmpi_lp64.a $(LAdir)/libmkl_cdft_core.a -Wl, --end-group -lpthread -lm
 #
 # ----------------------------------------------------------------------
 # - F77 / C interface --------------------------------------------------
@@ -169,8 +171,8 @@ HPL_DEFS     = $(F2CDEFS) $(HPL_OPTS) $(HPL_INCLUDES)
 # ----------------------------------------------------------------------
 #
 CC           = mpiicc
-CCNOOPT      = $(HPL_DEFS) 
-CCFLAGS      = $(HPL_DEFS) -O3  
+CCNOOPT      = $(HPL_DEFS) -restrict
+CCFLAGS      = $(HPL_DEFS) -restrict -O3  
 #
 LINKER       = mpiicc
 LINKFLAGS    = 
