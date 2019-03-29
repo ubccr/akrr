@@ -364,7 +364,7 @@ def monitor_test_job(task_id):
 
             if response_json["data"]["queue"] == "scheduled_tasks":
                 msg_body += "Task is in scheduled_tasks queue.\n"
-                msg_body += "It schedule to be started on" + response_json["data"]["data"]['time_to_start'] + "\n"
+                msg_body += "It schedule to be started on " + response_json["data"]["data"]['time_to_start'] + "\n"
             elif response_json["data"]["queue"] == "active_tasks":
                 msg_body += "Task is in active_tasks queue.\n"
                 msg_body += "Status: " + str(response_json["data"]["data"]['status']) + "\n"

@@ -1,0 +1,15 @@
+ The Intel 18.3 compilers are in your path. This is adequate for compiling and
+running most codes. Source compilervars.sh for more features including the
+debugger. 
+ Intel-MPI is in your path. This is adequate for compiling and running most
+codes. Source the
+/util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/bin/mpivars.sh
+file for more features. 
+ The MKL Libraries are in your library path. This is adequate for compiling and
+running most codes. Source $MKL/bin/mklvars.sh" for more features. 
+
+Currently Loaded Modules:
+  1) intel/18.3   2) intel-mpi/2018.3   3) mkl/2018.3
+
+ 
+
