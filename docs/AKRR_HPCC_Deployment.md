@@ -8,7 +8,7 @@ For simplicity lets define APPKER and RESOURCE environment variables which will 
 resource name:
 
 ```bash
-export RESOURCE=rush
+export RESOURCE=<resource_name>
 export APPKER=hpcc
 ```
 
@@ -36,21 +36,21 @@ module load mkl/2018.3
 mkdir -p $AKRR_APPKER_DIR/execs/libs
 mkdir -p $AKRR_APPKER_DIR/execs/libs/lib
 
-#make fftw2x_cdft interface to mkl
+# make fftw2x_cdft interface to mkl
 cd $AKRR_APPKER_DIR/execs/libs
 cp -r $MKLROOT/interfaces/fftw2x_cdft ./
 cd fftw2x_cdft
 make libintel64 PRECISION=MKL_DOUBLE interface=ilp64 MKLROOT=$MKLROOT INSTALL_DIR=$AKRR_APPKER_DIR/execs/libs/lib
 
 
-#make FFTW C wrapper library
+# make FFTW C wrapper library
 cd $AKRR_APPKER_DIR/execs/libs
 cp -r $MKLROOT/interfaces/fftw2xc ./
 cd fftw2xc
 make libintel64 PRECISION=MKL_DOUBLE MKLROOT=$MKLROOT INSTALL_DIR=$AKRR_APPKER_DIR/execs/libs/lib
 
  
-#get the code
+# get the code
 cd $AKRR_APPKER_DIR/execs
 wget http://icl.cs.utk.edu/projectsfiles/hpcc/download/hpcc-1.5.0.tar.gz
 tar xvzf hpcc-1.5.0.tar.gz
@@ -67,19 +67,19 @@ wget https://raw.githubusercontent.com/ubccr/akrr/master/akrr/appker_repo/execs/
 # if you have intel based system with intel compilers and intel-mpi
 # most likely you don't need to change it
  
-#compile hpcc in hpcc-1.4.2 root directory
+# compile hpcc in hpcc-1.4.2 root directory
 cd ..
 make arch=intel64_hpcresource
-#if it is compiled successfully hpcc binary should appear in hpcc-1.4.2 directory
+# if it is compiled successfully hpcc binary should appear in hpcc-1.4.2 directory
 
 
-#create a link to hpcc
+# create hpcc link to hpcc-1.5.0
 cd ..
 ln -s hpcc-1.5.0 hpcc
  
 
  
-#now we can test it on headnode (optional)
+# now we can test it on headnode (optional)
 cd hpcc
 mv _hpccinf.txt hpccinf.txt
 
@@ -269,7 +269,7 @@ akrr_write_to_gen_info "end_time" "`date`"
 Next generate the script on resource:
 
 ```bash
-akrr task new --dry-run --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER
+akrr task new --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER
 ```
 
 **Output of "_akrr task new --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER_"**

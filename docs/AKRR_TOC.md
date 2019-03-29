@@ -10,7 +10,7 @@
     * [IMB Deployment](AKRR_IMB_Deployment.md)
     * [IOR Deployment](AKRR_IOR_Deployment.md)
     * [HPCC Deployment](AKRR_HPCC_Deployment.md)
-    * [HPCG Deployment](AKRR_NWChem_Deployment.md)
+    * [HPCG Deployment](AKRR_HPCG_Deployment.md)
     * [NWChem Deployment](AKRR_NWChem_Deployment.md)
     * [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
     * [Enzo Deployment](AKRR_Enzo_Deployment.md)

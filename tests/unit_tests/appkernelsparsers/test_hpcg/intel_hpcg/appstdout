@@ -1,0 +1,154 @@
+===ExeBinSignature=== MD5: 5b516c03c0fa3b890ed486faf51bca30 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mkl/benchmarks/hpcg/bin/xhpcg_skx
+===ExeBinSignature=== MD5: 071ea8658daf96a77a828111b40261de /util/academic/intel/18.3/lib/intel64/libiomp5.so
+===ExeBinSignature=== MD5: feab72427f8b450080810684189d30e6 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mkl/lib/intel64/libmkl_intel_lp64.so
+===ExeBinSignature=== MD5: e247ad6304a22dd21b69e1203889f6df /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mkl/lib/intel64/libmkl_intel_thread.so
+===ExeBinSignature=== MD5: 8d910a2a99c55892275240801efe5adc /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mkl/lib/intel64/libmkl_core.so
+===ExeBinSignature=== MD5: ebc6518301d43233b1de262f6cfdbfcc /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpicxx.so.12
+===ExeBinSignature=== MD5: 0f65391c22de4d15744ea80ec857419a /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: d9196e5f82db2befd02eb55c78747724 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: b06038960f153e36545ed9ea947f80f6 /lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
+HPCG result is VALID with a GFLOP/s rating of 2.360854
+====== n104-4p-1t-V3.0_2019.03.27.09.42.12.yaml Start ======
+n104-4p-1t version: V3.0
+Release date: November 11, 2015
+Machine Summary: 
+  Distributed Processes: 4
+  Threads per processes: 1
+Global Problem Dimensions: 
+  Global nx: 208
+  Global ny: 208
+  Global nz: 104
+Processor Dimensions: 
+  npx: 2
+  npy: 2
+  npz: 1
+Local Domain Dimensions: 
+  nx: 104
+  ny: 104
+  nz: 104
+########## Problem Summary  ##########: 
+Setup Information: 
+  Setup Time: 1.4719
+Linear System Information: 
+  Number of Equations: 4499456
+  Number of Nonzero Terms: 119934040
+Multigrid Information: 
+  Number of coarse grid levels: 3
+  Coarse Grids: 
+    Grid Level: 1
+    Number of Equations: 562432
+    Number of Nonzero Terms: 14799400
+    Number of Presmoother Steps: 1
+    Number of Postsmoother Steps: 1
+    Grid Level: 2
+    Number of Equations: 70304
+    Number of Nonzero Terms: 1802416
+    Number of Presmoother Steps: 1
+    Number of Postsmoother Steps: 1
+    Grid Level: 3
+    Number of Equations: 8788
+    Number of Nonzero Terms: 213712
+    Number of Presmoother Steps: 1
+    Number of Postsmoother Steps: 1
+########## Memory Use Summary  ##########: 
+Memory Use Information: 
+  Total memory used for data (Gbytes): 3.21765
+  Memory used for OptimizeProblem data (Gbytes): 0
+  Bytes per equation (Total memory / Number of Equations): 715.12
+  Memory used for linear system and CG (Gbytes): 2.83155
+  Coarse Grids: 
+    Grid Level: 1
+    Memory used: 0.338437
+    Grid Level: 2
+    Memory used: 0.042358
+    Grid Level: 3
+    Memory used: 0.00530879
+########## V&V Testing Summary  ##########: 
+Spectral Convergence Tests: 
+  Result: PASSED
+  Unpreconditioned: 
+    Maximum iteration count: 11
+    Expected iteration count: 12
+  Preconditioned: 
+    Maximum iteration count: 2
+    Expected iteration count: 2
+Departure from Symmetry |x'Ay-y'Ax|/(2*||x||*||A||*||y||)/epsilon: 
+  Result: PASSED
+  Departure for SpMV: 1.4635e-09
+  Departure for MG: 1.09763e-09
+########## Iterations Summary  ##########: 
+Iteration Count Information: 
+  Result: PASSED
+  Reference CG iterations per set: 50
+  Optimized CG iterations per set: 50
+  Total number of reference iterations: 50
+  Total number of optimized iterations: 50
+########## Reproducibility Summary  ##########: 
+Reproducibility Information: 
+  Result: PASSED
+  Scaled residual mean: 3.82521e-05
+  Scaled residual variance: 0
+########## Performance Summary (times in sec) ##########: 
+Benchmark Time Summary: 
+  Optimization phase: 1.56294
+  DDOT: 0.0746362
+  WAXPBY: 0.141174
+  SpMV: 6.35678
+  MG: 26.608
+  ALL_reduce: 1.78338
+  Total: 34.9641
+Floating Point Operations Summary: 
+  Raw DDOT: 1.35884e+09
+  Raw WAXPBY: 1.35884e+09
+  Raw SpMV: 1.22333e+10
+  Raw MG: 6.83107e+10
+  Total: 8.32616e+10
+  Total with convergence overhead: 8.32616e+10
+GB/s Summary: 
+  Raw Read B/W: 14.6723
+  Raw Write B/W: 3.3908
+  Raw Total B/W: 18.0631
+  Total with convergence and optimization phase overhead: 17.9076
+GFLOP/s Summary: 
+  Raw DDOT: 18.2061
+  Raw WAXPBY: 9.62525
+  Raw SpMV: 1.92444
+  Raw MG: 2.5673
+  Raw Total: 2.38135
+  Total with convergence overhead: 2.38135
+  Total with convergence and optimization phase overhead: 2.36085
+User Optimization Overheads: 
+  Problem setup time (sec): 1.4719
+  Optimization phase time (sec): 1.56294
+  Optimization phase time vs reference SpMV+MG time: 1.44009
+DDOT Timing Variations: 
+  Min DDOT MPI_Allreduce time: 1.53856
+  Max DDOT MPI_Allreduce time: 2.06754
+  Avg DDOT MPI_Allreduce time: 1.77421
+__________ Final Summary __________: 
+  HPCG result is VALID with a GFLOP/s rating of: 2.36085
+      HPCG 2.4 Rating (for historical value) is: 2.37075
+  Reference version of ComputeDotProduct used: Performance results are most likely suboptimal
+  Results are valid but execution time (sec) is: 34.9641
+       You have selected the QuickPath option: Results are official for legacy installed systems with confirmation from the HPCG Benchmark leaders.
+       After confirmation please upload results from the YAML file contents to: http://hpcg-benchmark.org
+====== n104-4p-1t-V3.0_2019.03.27.09.42.12.yaml End   ======
+====== hpcg_log_2019.03.27.09.39.54.txt Start ======
+WARNING: PERFORMING UNPRECONDITIONED ITERATIONS OPT
+Call [0] Number of Iterations [11] Scaled Residual [1.20488e-14]
+WARNING: PERFORMING UNPRECONDITIONED ITERATIONS OPT
+Call [1] Number of Iterations [11] Scaled Residual [1.20488e-14]
+Call [0] Number of Iterations [2] Scaled Residual [2.09719e-17]
+Call [1] Number of Iterations [2] Scaled Residual [2.09719e-17]
+Departure from symmetry (scaled) for SpMV abs(x'*A*y - y'*A*x) = 1.4635e-09
+Departure from symmetry (scaled) for MG abs(x'*Minv*y - y'*Minv*x) = 1.09763e-09
+SpMV call [0] Residual [0]
+SpMV call [1] Residual [0]
+Call [0] Scaled Residual [3.82521e-05]
+====== hpcg_log_2019.03.27.09.39.54.txt End   ======

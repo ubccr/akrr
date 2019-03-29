@@ -346,7 +346,8 @@ INSERT INTO `akrr_err_regexp` VALUES
             (27,'ior','1;2;4;8'),
             (28,'graph500','1;2;4;8'),
             (29,'enzo','1;2;4;8'),
-            (30,'gromacs_micro','1')
+            (30,'hpcg','1;2;4;8'),
+            (31,'gromacs_micro','1')
         ON DUPLICATE KEY UPDATE id=VALUES(id);
         """)
     )
