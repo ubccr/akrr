@@ -5,10 +5,10 @@ def test_parser(datadir):
     from .xml_comparison import parstat_val, parstat_val_f, parstat_val_i
 
     results = process_appker_output(
-        appstdout=str(datadir / 'appstdout'),
-        stdout=str(datadir / 'stdout'),
-        stderr=str(datadir / 'stderr'),
-        geninfo=str(datadir / 'gen.info'),
+        appstdout=str(datadir / 'v1' / 'appstdout'),
+        stdout=str(datadir / 'v1' / 'stdout'),
+        stderr=str(datadir / 'v1' / 'stderr'),
+        geninfo=str(datadir / 'v1' / 'gen.info'),
         resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
     )
     # check resulting xml

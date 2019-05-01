@@ -90,7 +90,8 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         m = re.match(r'^#Testing (.+)', lines[j])
         if m:
             testname = " (" + m.group(1).strip() + ")"
-        m = re.match(r'^SUMMARY:', lines[j])
+
+        m = re.match(r'^SUMMARY.*:', lines[j])
         if m:
             j = j + 3
             while j < len(lines):

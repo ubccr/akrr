@@ -26,7 +26,7 @@ export APPKER=ior
 
 In this section the IOR installation process will be described, see also IOR benchmark documentation 
 for installation details ( 
-[http://sourceforge.net/projects/ior-sio/](http://sourceforge.net/projects/ior-sio/) ).
+[https://github.com/hpc/ior](https://github.com/hpc/ior) ).
 
 
 
@@ -122,11 +122,9 @@ rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/parallel-netcdf-1.3.1\*
 
 ## Installing IOR
 
-Now we need to install IOR. Below is a sample listing of commands for IOR installation, note that we 
-download a version of the IOR code from our github repository (we made some minor modification to 
-the IOR mainly stdout flushes to prevent race for output from multiple parallel processes). Refer to 
+Now we need to install IOR. Below is a sample listing of commands for IOR installation. Refer to 
 IOR benchmark documentation for more installation details ( 
-[http://sourceforge.net/projects/ior-sio/](http://sourceforge.net/projects/ior-sio/) ).
+[https://github.com/hpc/ior](https://github.com/hpc/ior) ).
 
 Following is done on HPC resource.
 
@@ -138,9 +136,10 @@ rm -rf ior
 
 
 #obtain latest version of IOR from our repository
-git clone https://github.com/nsimakov/ior.git
+wget https://github.com/hpc/ior/releases/download/3.2.0/ior-3.2.0.tar.gz
+tar -xzf ior-3.2.0.tar.gz
 #make configuration scripts
-cd ior
+cd ior-3.2.0
 ./bootstrap
 
 #load proper compilers and libs 
@@ -162,10 +161,15 @@ Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):
 
 Compilation:
 ```bash
-#compile
+# Compile
 make
- 
-#the binary should be src/ior
+```
+
+Post installation
+```bash
+# Create ior sym-link
+ln -s ior-3.2.0 ior
+# The binary should be src/ior
 ls $AKRR_APPKER_DIR/execs/ior/src/ior
 ```
 
