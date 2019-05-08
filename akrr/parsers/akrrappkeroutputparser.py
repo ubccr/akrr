@@ -341,6 +341,30 @@ class AppKerOutputParser:
         for par in pars:
             print(("parser.add_must_have_statistic('%s')" % (par[0],)))
 
+    def print_template_for_pytest(self):
+        """
+        Print template for regrassion value checking in pytest
+        """
+        from akrr.util import is_int, is_float
+        pars = self.get_unique_parameters()
+        for par in pars:
+            if is_int(par[1]):
+                print('assert parstat_val_i(params, "%s") == %s' % (par[0], par[1]))
+            elif is_float(par[1]):
+                print('assert floats_are_close(parstat_val_f(params, "%s"), %s)' % (par[0], par[1]))
+            else:
+                print('assert parstat_val(params, "%s") == "%s"' % (par[0], par[1]))
+        print()
+        pars = self.get_unique_statistic()
+        for par in pars:
+            if is_int(par[1]):
+                print('assert parstat_val_i(stats, "%s") == %s' % (par[0], par[1]))
+            elif is_float(par[1]):
+                print('assert floats_are_close(parstat_val_f(stats, "%s"), %s)' % (par[0], par[1]))
+            else:
+                print('assert parstat_val(stats, "%s") == "%s"' % (par[0], par[1]))
+        print()
+
     @staticmethod
     def get_datetime_local(datestr):
         """Return local datatime, will convert the other zones to local. If original datestr does not have

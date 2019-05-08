@@ -1,0 +1,924 @@
+===ExeBinSignature=== MD5: 4de1f2240b44da11eefabfd032a3ef09 /projects/ccrstaff/general/nikolays/huey/appker/execs/ior-3.2.0/src/ior
+===ExeBinSignature=== MD5: 3d995fdd54f6dff0498d7b1b657eb3e7 /projects/ccrstaff/general/nikolays/huey/appker/execs/libs/hdf5-1.8.21/lib/libhdf5.so.10
+===ExeBinSignature=== MD5: 4ef6c623f4537579f2f40215476cee06 /lib64/libz.so.1
+===ExeBinSignature=== MD5: d74b2178e51775912ac0a754ada35608 /lib64/libgpfs.so
+===ExeBinSignature=== MD5: 0f65391c22de4d15744ea80ec857419a /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: d9196e5f82db2befd02eb55c78747724 /util/academic/intel/18.3/compilers_and_libraries_2018.3.222/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
+===ExeBinSignature=== MD5: 879875537a6e6b1c0a2b26e038574044 /util/academic/intel/18.3/lib/intel64/libimf.so
+===ExeBinSignature=== MD5: f3a577b2173ff1dc3799a089a17e3580 /util/academic/intel/18.3/lib/intel64/libsvml.so
+===ExeBinSignature=== MD5: 0bee0569c925248576a85e4fcdb01e7a /util/academic/intel/18.3/lib/intel64/libirng.so
+===ExeBinSignature=== MD5: a10f02660cfd32742934081b0ec32791 /util/academic/intel/18.3/lib/intel64/libintlc.so.5
+Using /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1 for test....
+File System To Test: nfs ifs-x410.cbls.ccr.buffalo.edu:/ifs/projects /projects
+# Starting Test: -a POSIX 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:52:03 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.02 sec
+TestID              : 0
+StartTime           : Fri May  3 10:52:03 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:52:03 2019
+ior WARNING: inconsistent file size by different tasks.
+WARNING: Expected aggregate file size       = 3355443200.
+WARNING: Stat() of aggregate file size      = 3335618560.
+WARNING: Using actual aggregate bytes moved = 3355443200.
+write     91.52      204800     20480      0.554965   1.52       34.82      34.97      0   
+Max Write: 91.52 MiB/sec (95.96 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          91.52      91.52      91.52       0.00       4.58       4.58       4.58       0.00   34.96647     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Fri May  3 10:52:38 2019
+# Starting Test: -a POSIX -F 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX -F  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:52:39 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -F -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:52:39 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:52:39 2019
+write     228.30     204800     20480      0.115553   0.365658   13.85      14.02      0   
+Max Write: 228.30 MiB/sec (239.39 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         228.30     228.30     228.30       0.00      11.42      11.42      11.42       0.00   14.01636     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Fri May  3 10:52:53 2019
+# Starting Test: -a MPIIO 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:52:55 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:52:55 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:52:55 2019
+write     83.63      204800     20480      0.145597   38.12      6.63       38.26      0   
+Max Write: 83.63 MiB/sec (87.69 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          83.63      83.63      83.63       0.00       4.18       4.18       4.18       0.00   38.26279     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:53:33 2019
+# Starting Test: -a MPIIO -c 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -c  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:53:35 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -c -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:53:35 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:53:35 2019
+write     88.23      204800     20480      0.021469   36.25      3.17       36.27      0   
+Max Write: 88.23 MiB/sec (92.52 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          88.23      88.23      88.23       0.00       4.41       4.41       4.41       0.00   36.26725     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:54:11 2019
+# Starting Test: -a MPIIO -F 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -F  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:54:12 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -F -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:54:12 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:54:13 2019
+write     225.65     204800     20480      0.290233   14.18      1.46       14.18      0   
+Max Write: 225.65 MiB/sec (236.61 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         225.65     225.65     225.65       0.00      11.28      11.28      11.28       0.00   14.18131     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:54:27 2019
+# Starting Test: -a HDF5 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:54:28 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:54:28 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:54:28 2019
+write     82.61      204800     20480      0.056971   38.67      4.76       38.74      0   
+Max Write: 82.61 MiB/sec (86.62 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          82.61      82.61      82.61       0.00       4.13       4.13       4.13       0.00   38.73703     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 10:55:07 2019
+# Starting Test: -a HDF5 -c 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -c  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:55:09 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -c -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:55:09 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:55:09 2019
+write     30.94      204800     20480      0.011664   103.40     0.026462   103.44     0   
+Max Write: 30.94 MiB/sec (32.44 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          30.94      30.94      30.94       0.00       1.55       1.55       1.55       0.00  103.43968     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 10:56:52 2019
+# Starting Test: -a HDF5 -F 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -F  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:56:54 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -F -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:56:54 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri May  3 10:56:54 2019
+write     232.32     204800     20480      0.129497   13.73      1.01       13.77      0   
+Max Write: 232.32 MiB/sec (243.60 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         232.32     232.32     232.32       0.00      11.62      11.62      11.62       0.00   13.77423     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 10:57:07 2019
+# Starting Test: -a NCMPI 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:57:09 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:57:09 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.1 of 12 Apr 2019
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+Commencing write performance test: Fri May  3 10:57:09 2019
+write     87.93      204800     20480      0.007681   36.38      6.11       36.39      0   
+Max Write: 87.93 MiB/sec (92.21 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          87.93      87.93      87.93       0.00       4.40       4.40       4.40       0.00   36.39078     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 NCMPI      0
+Finished            : Fri May  3 10:57:45 2019
+# Starting Test: -a NCMPI -c 
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI -c  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:57:47 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -c -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+Machine             : Linux cpn-d13-16.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:57:47 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.1 of 12 Apr 2019
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+File write only not implemented in NCMPI
+Commencing write performance test: Fri May  3 10:57:47 2019
+write     92.22      204800     20480      0.008537   34.69      0.000259   34.70      0   
+Max Write: 92.22 MiB/sec (96.70 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          92.22      92.22      92.22       0.00       4.61       4.61       4.61       0.00   34.70027     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 NCMPI      0
+Finished            : Fri May  3 10:58:21 2019
+# Starting Test: -a POSIX 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:58:23 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:58:23 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:58:23 2019
+read      261.32     204800     20480      0.041881   12.24      3.64       12.25      0   
+remove    -          -          -          -          -          -          0.202178   0   
+Max Read:  261.32 MiB/sec (274.02 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          261.32     261.32     261.32       0.00      13.07      13.07      13.07       0.00   12.24547     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Fri May  3 10:58:35 2019
+# Starting Test: -a POSIX -F 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX -F  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:58:37 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -F -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:58:37 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_POSIX__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:58:37 2019
+read      268.57     204800     20480      0.178423   11.91      2.17       11.91      0   
+remove    -          -          -          -          -          -          0.209933   0   
+Max Read:  268.57 MiB/sec (281.62 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          268.57     268.57     268.57       0.00      13.43      13.43      13.43       0.00   11.91499     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Fri May  3 10:58:49 2019
+# Starting Test: -a MPIIO 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:58:50 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:58:50 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:58:50 2019
+read      231.93     204800     20480      0.006738   13.79      1.95       13.80      0   
+remove    -          -          -          -          -          -          0.007416   0   
+Max Read:  231.93 MiB/sec (243.20 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          231.93     231.93     231.93       0.00      11.60      11.60      11.60       0.00   13.79715     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:59:04 2019
+# Starting Test: -a MPIIO -c 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -c  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:59:06 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -c -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:59:06 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:59:06 2019
+read      98.98      204800     20480      0.007683   32.32      0.002445   32.33      0   
+remove    -          -          -          -          -          -          0.003715   0   
+Max Read:  98.98 MiB/sec (103.79 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read           98.98      98.98      98.98       0.00       4.95       4.95       4.95       0.00   32.32853     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:59:38 2019
+# Starting Test: -a MPIIO -F 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -F  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:59:39 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -F -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:59:39 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_MPIIO__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:59:39 2019
+read      260.99     204800     20480      0.009436   12.26      1.88       12.26      0   
+remove    -          -          -          -          -          -          0.179759   0   
+Max Read:  260.99 MiB/sec (273.67 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          260.99     260.99     260.99       0.00      13.05      13.05      13.05       0.00   12.26090     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 MPIIO      0
+Finished            : Fri May  3 10:59:52 2019
+# Starting Test: -a HDF5 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 10:59:53 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 10:59:53 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 10:59:54 2019
+read      227.80     204800     20480      0.249513   13.81      1.97       14.05      0   
+remove    -          -          -          -          -          -          0.014961   0   
+Max Read:  227.80 MiB/sec (238.86 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          227.80     227.80     227.80       0.00      11.39      11.39      11.39       0.00   14.04756     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 11:00:07 2019
+# Starting Test: -a HDF5 -c 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -c  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 11:00:09 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -c -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 11:00:09 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 11:00:09 2019
+read      129.41     204800     20480      0.046134   24.69      0.000979   24.73      0   
+remove    -          -          -          -          -          -          0.005514   0   
+Max Read:  129.41 MiB/sec (135.70 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          129.41     129.41     129.41       0.00       6.47       6.47       6.47       0.00   24.72726     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 11:00:33 2019
+# Starting Test: -a HDF5 -F 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -F  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 11:00:35 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -F -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 11:00:35 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.8.21 (Parallel)
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_HDF5__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 11:00:35 2019
+read      260.06     204800     20480      0.120476   12.28      1.94       12.30      0   
+remove    -          -          -          -          -          -          0.185358   0   
+Max Read:  260.06 MiB/sec (272.69 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          260.06     260.06     260.06       0.00      13.00      13.00      13.00       0.00   12.30482     0     16   8    1   1     0        1         1    0      1 209715200 20971520    3200.0 HDF5      0
+Finished            : Fri May  3 11:00:47 2019
+# Starting Test: -a NCMPI 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 11:00:49 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 11:00:49 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.1 of 12 Apr 2019
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 11:00:49 2019
+read      193.72     204800     20480      0.259060   16.26      2.47       16.52      0   
+remove    -          -          -          -          -          -          0.009693   0   
+Max Read:  193.72 MiB/sec (203.14 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          193.72     193.72     193.72       0.00       9.69       9.69       9.69       0.00   16.51829     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 NCMPI      0
+Finished            : Fri May  3 11:01:05 2019
+# Starting Test: -a NCMPI -c 
+executing: mpiexec -n 16 -f all_nodes_offset /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI -c  -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Fri May  3 11:01:07 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -c -r -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+Machine             : Linux cpn-d13-17.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri May  3 11:01:07 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.1 of 12 Apr 2019
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.T6Bzgebs1/ior_test_file__a_NCMPI__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results: 
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing read performance test: Fri May  3 11:01:07 2019
+read      213.89     204800     20480      0.210366   14.75      0.114754   14.96      0   
+remove    -          -          -          -          -          -          0.033175   0   
+Max Read:  213.89 MiB/sec (224.28 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+read          213.89     213.89     213.89       0.00      10.69      10.69      10.69       0.00   14.96116     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 NCMPI      0
+Finished            : Fri May  3 11:01:22 2019
