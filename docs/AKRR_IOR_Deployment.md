@@ -41,31 +41,33 @@ installed parallel HDF5 library than you might want to skip it.
 Bellow are brief notes on parallel hdf5 installation,  
 [http://www.hdfgroup.org/HDF5/](http://www.hdfgroup.org/HDF5/) for HDF5 installation details.
 
+ior-3.2.0 does not work yet with hdf5-1.10.5, so use hdf5-1.8.*.
+
 **On target resource:**
 ```bash
 #get to application kernel executable directory
 cd $AKRR_APPKER_DIR/execs
 
 #create lib directory if needed and temporary directory for compilation
-mkdir -p lib
-mkdir -p lib\tmp
-cd lib\tmp
+mkdir -p libs
+mkdir -p libs\tmp
+cd libs\tmp
 
 #obtain parallel-netcdf source code
-wget http://www.hdfgroup.org/ftp/HDF5/current/src/hdf5-1.8.14.tar.gz
-tar xvzf hdf5-1.8.14.tar.gz
-cd hdf5-1.8.14
+wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.gz
+tar xvzf hdf5-1.8.21.tar.gz
+cd hdf5-1.8.21
 
 #configure hdf5
-./configure --prefix=$AKRR_APPKER_DIR/execs/lib/hdf5-1.8.14 --enable-parallel CC=`which mpiicc` CXX=`which mpiicpc`
-make
+./configure --prefix=$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21 --enable-parallel CC=`which mpiicc` CXX=`which mpiicpc`
+make -j 4
 
 #install
 make install
 cd $AKRR_APPKER_DIR/execs
 
 #optionally clean-up
-rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/hdf5-1.8.14
+rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/hdf5-1.8.21
 ```
 
 ### Installing Parallel NetCDF (optional)
@@ -76,7 +78,7 @@ Therefore, if you know that parallel NetCDF is used on your system and you want 
 performance then go ahead and add it. If you use system-wide installed library, check that it is 
 parallel. Regular  serial NetCDF will not work (IOR needs the parallel version). Bellow is brief 
 note on parallel-netcdf installation, refer to 
-[http://trac.mcs.anl.gov/projects/parallel-netcdf](http://trac.mcs.anl.gov/projects/parallel-netcdf) 
+[https://parallel-netcdf.github.io/](https://parallel-netcdf.github.io/) 
 for more details - note that currently IOR needs the linked version of parallel NetCDF, not the 
 (unfortunately incompatible) NetCDF-4 parallel API.
 
@@ -89,25 +91,18 @@ Bellow are brief notes on parallel NetCDF installation,  
 cd $AKRR_APPKER_DIR/execs
 
 #create lib directory if needed and temporary directory for compilation
-mkdir -p lib
-mkdir -p lib/tmp
-cd lib/tmp
+mkdir -p libs
+mkdir -p libs/tmp
+cd libs/tmp
 
 #obtain parallel-netcdf source code
-wget http://ftp.mcs.anl.gov/pub/parallel-netcdf/parallel-netcdf-1.3.1.tar.gz
-tar xvzf parallel-netcdf-1.3.1.tar.gz
-cd parallel-netcdf-1.3.1
-
-
-#check the location of mpi compilers
-which mpicc
-MPI_TOP_DIR=$(dirname $(dirname \`which mpicc\`))
-#sample output:
-#/usr/local/packages/mvapich2/2.0/INTEL-14.0.2/bin/mpicc
+wget https://parallel-netcdf.github.io/Release/pnetcdf-1.11.1.tar.gz
+tar xvzf pnetcdf-1.11.1.tar.gz
+cd pnetcdf-1.11.1
 
 
 #configure parallel-netcdf, specify installation location and which mpi compiler to use
-./configure --prefix=$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.3.1 --with-mpi=$MPI_TOP_DIR
+./configure --prefix=$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1
 
 #compile (do not use parallel compilation i.e. -j option)
 make
@@ -117,7 +112,7 @@ make install
 cd $AKRR_APPKER_DIR/execs
 
 #optionally clean-up
-rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/parallel-netcdf-1.3.1\*
+rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/pnetcdf-1.11.1
 ```
 
 ## Installing IOR
@@ -140,7 +135,6 @@ wget https://github.com/hpc/ior/releases/download/3.2.0/ior-3.2.0.tar.gz
 tar -xzf ior-3.2.0.tar.gz
 #make configuration scripts
 cd ior-3.2.0
-./bootstrap
 
 #load proper compilers and libs 
 module intel intel-mpi
@@ -148,7 +142,7 @@ module intel intel-mpi
 
 Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):
 ```bash
-./configure
+./configure MPICC=mpiicc
 ```
 > Optionally, IOR configuration with POSIX, MPIIO HDF5 and NetCDF:
 > ```bash
@@ -156,7 +150,9 @@ Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):
 > module load hdf5
 > #configure IOR, note the specification of netcdf and hdf include and lib directories
 > ./configure --with-hdf5=yes --with-ncmpi=yes \
->     CPPFLAGS="-I$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.3.1/include -I/usr/local/packages/netcdf/4.2.1.1/INTEL-140-MVAPICH2-2.0/include" LDFLAGS="-L/usr/local/packages/hdf5/1.8.12/INTEL-140-MVAPICH2-2.0/lib -L$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.3.1/lib"
+>     CPPFLAGS="-I$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1/include -I$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21/include" \
+>     LDFLAGS="-L$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1/lib -L$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21/lib " \
+>     MPICC=mpiicc
 > ```
 
 Compilation:
