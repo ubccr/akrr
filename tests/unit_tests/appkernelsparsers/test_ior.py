@@ -5,10 +5,10 @@ def test_parser_v30(datadir):
     from .xml_comparison import parstat_val, parstat_val_f, parstat_val_i
 
     results = process_appker_output(
-        appstdout=str(datadir / 'v1' / 'appstdout'),
-        stdout=str(datadir / 'v1' / 'stdout'),
-        stderr=str(datadir / 'v1' / 'stderr'),
-        geninfo=str(datadir / 'v1' / 'gen.info'),
+        appstdout=str(datadir / 'v30' / 'appstdout'),
+        stdout=str(datadir / 'v30' / 'stdout'),
+        stderr=str(datadir / 'v30' / 'stderr'),
+        geninfo=str(datadir / 'v30' / 'gen.info'),
         resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
     )
     # check resulting xml
@@ -126,10 +126,10 @@ def test_parser_v32(datadir):
     from .xml_comparison import parstat_val, parstat_val_f, parstat_val_i
 
     results = process_appker_output(
-        appstdout=str(datadir / 'v1' / 'appstdout'),
-        stdout=str(datadir / 'v1' / 'stdout'),
-        stderr=str(datadir / 'v1' / 'stderr'),
-        geninfo=str(datadir / 'v1' / 'gen.info'),
+        appstdout=str(datadir / 'v32' / 'appstdout'),
+        stdout=str(datadir / 'v32' / 'stdout'),
+        stderr=str(datadir / 'v32' / 'stderr'),
+        geninfo=str(datadir / 'v32' / 'gen.info'),
         resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
     )
     # check resulting xml
@@ -142,6 +142,7 @@ def test_parser_v32(datadir):
     # Compare parameters to reference
     assert len(parstat_val(params, "App:ExeBinSignature")) > 5
     assert len(parstat_val(params, "RunEnv:Nodes")) > 5
+    assert parstat_val(params, "App:Version") == "3.2.0"
     assert parstat_val(params, "HDF Version") == "1.8.21 (Parallel)"
     assert parstat_val(params,
                        "HDF5 Collective N-to-1 Test File System") == "nfs ifs-x410.cbls.ccr.buffalo.edu:/ifs/projects /projects"
