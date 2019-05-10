@@ -418,61 +418,51 @@ $RUNMPI $EXE -vv
 
 **Sample of $RUNMPI $EXE -vv output**
 ```text
-Machine: Linux cpn-d13-16.int.ccr.buffalo.edu 3.10.0-957.1.3.el7.x86_64 #1 SMP Thu Nov 29 14:49:43 UTC 2018 x86_64
-Using synchronized MPI timer
+Using /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G for test....
+File System To Test: nfs ifs-x410.cbls.ccr.buffalo.edu:/ifs/projects /projects
+# Starting Test: -a POSIX
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Wed May  8 14:30:14 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+Machine             : Linux cpn-d13-06.int.ccr.buffalo.edu
 Start time skew across all tasks: 0.00 sec
-
-Test 0 started: Fri Mar 22 12:28:11 2019
-Path: /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495
-FS: 1704.7 TiB   Used FS: 48.3%   Inodes: 2635486.5 Mi   Used Inodes: 35.2%
+TestID              : 0
+StartTime           : Wed May  8 14:30:14 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
 Participating tasks: 16
-task 0 on cpn-d13-16.int.ccr.buffalo.edu
-task 1 on cpn-d13-16.int.ccr.buffalo.edu
-task 10 on cpn-d13-17.int.ccr.buffalo.edu
-task 11 on cpn-d13-17.int.ccr.buffalo.edu
-task 12 on cpn-d13-16.int.ccr.buffalo.edu
-task 13 on cpn-d13-16.int.ccr.buffalo.edu
-task 14 on cpn-d13-17.int.ccr.buffalo.edu
-task 15 on cpn-d13-17.int.ccr.buffalo.edu
-task 2 on cpn-d13-17.int.ccr.buffalo.edu
-task 3 on cpn-d13-17.int.ccr.buffalo.edu
-task 4 on cpn-d13-16.int.ccr.buffalo.edu
-task 5 on cpn-d13-16.int.ccr.buffalo.edu
-task 6 on cpn-d13-17.int.ccr.buffalo.edu
-task 7 on cpn-d13-17.int.ccr.buffalo.edu
-task 8 on cpn-d13-16.int.ccr.buffalo.edu
-task 9 on cpn-d13-16.int.ccr.buffalo.edu
-Summary:
-        api                = POSIX
-        test filename      = testFile
-        access             = single-shared-file
-        pattern            = segmented (1 segment)
-        ordering in a file = sequential offsets
-        ordering inter file= no tasks offsets
-        clients            = 16 (8 per node)
-        repetitions        = 1
-        xfersize           = 262144 bytes
-        blocksize          = 1 MiB
-        aggregate filesize = 16 MiB
-Using Time Stamp 1553272091 (0x5c950d1b) for Data Signature
+
+Options:
+api                 : POSIX
+apiVersion          :
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results:
 
 access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
 ------    ---------  ---------- ---------  --------   --------   --------   --------   ----
-Commencing write performance test: Fri Mar 22 12:28:11 2019
-write     143.22     1024.00    256.00     0.085481   0.086161   0.108553   0.111720   0   
-Commencing read performance test: Fri Mar 22 12:28:11 2019
-read      9049       1024.00    256.00     0.001146   0.001161   0.000643   0.001768   0   
-remove    -          -          -          -          -          -          0.002378   0   
-
-Max Write: 143.22 MiB/sec (150.17 MB/sec)
-Max Read:  9049.20 MiB/sec (9488.77 MB/sec)
+Commencing write performance test: Wed May  8 14:30:14 2019
+write     104.26     204800     20480      0.309660   1.37       30.57      30.69      0
+Max Write: 104.26 MiB/sec (109.33 MB/sec)
 
 Summary of all tests:
-Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt blksiz xsize aggsize API RefNum
-write         143.22     143.22     143.22       0.00    0.11172 0 16 8 1 0 0 1 0 0 1 1048576 262144 16777216 POSIX 0
-read         9049.20    9049.20    9049.20       0.00    0.00177 0 16 8 1 0 0 1 0 0 1 1048576 262144 16777216 POSIX 0
-
-Finished: Fri Mar 22 12:28:11 2019
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         104.26     104.26     104.26       0.00       5.21       5.21       5.21       0.00   30.69206     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Wed May  8 14:30:45 2019
 ```
 
 If it is not working modify the executed commands and copy the good ones to 
