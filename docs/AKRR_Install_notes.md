@@ -11,3 +11,8 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 
 	- Eventual fix: just change all the setup things to python36 instead of python34 and no error
 	- Also changed the Install file to have python36 in it
+
+- For whatever reason, there was trouble with finding the modules when running 'akrr setup'
+	- When typing akrr in terminal, it went to /usr/bin/akrr
+	- Had to end up appending the entire akrr repository to the sys path with sys.append
+	- That seems to have fixed the problem

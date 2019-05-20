@@ -5,6 +5,9 @@ if __name__ == '__main__':
     import os
     import sys
     
+    import platform
+    print(platform.python_version())
+ 
     # Determine is it global or local installation
     cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(cur_dir), "akrr"))
