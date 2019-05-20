@@ -22,8 +22,8 @@ The following dependencies are needed to be installed for in-source installation
  
 ```bash
 # Install dependencies
-yum -y install python34 python34-libs python34-bottle python34-requests \
-    python34-mysql python34-typing openssl openssh-clients crontabs
+yum -y install python36 python36-libs python36-bottle python36-requests \
+    python36-mysql python36-typing openssl openssh-clients crontabs
 ```
 
 If AKRR will use MariaDB/MySQL on the local machine install it:
