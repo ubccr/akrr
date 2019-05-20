@@ -1,5 +1,9 @@
 These are notes on the installation of AKRR (05/20/19)
 
+- There may be errors with sudo yum install akrr....rpm
+	- If error is that akrr_test is not available or whatever: run the following in the top directory of AKRR: sudo docker build -t akrr_test -f Dockerfile_run_tests .
+		- This makes the akrr_test image properly to use
+
 - EPEL does not have python34-mysql or python34-typing
 	- rpm of python34-typing can be found here: https://centos.pkgs.org/7/puias-unsupported-x86_64/python34-typing-3.5.2.2-3.sdl7.noarch.rpm.html
 
