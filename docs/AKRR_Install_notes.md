@@ -41,6 +41,7 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 	- For head node, I used the local thing that was in my bash (where it says hoffmaps@----)
 	- Based my answers off of the AKRR_Add_Resource
 
-
+- Update: able to generate batch jobs decently fine it seems, but problems came when trying to do akrr resource deploy -r ub-hpc - kept saying it wasn't bash all the time - so I'll try and figure that out
+	- Also I did generate some batch files and try to submit them, but ran into issues there because none of the akrr commands were recognized!! Uh oh!
 
 
