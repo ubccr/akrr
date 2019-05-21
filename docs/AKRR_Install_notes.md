@@ -4,6 +4,7 @@ These are notes on the installation of AKRR (05/20/19)
 	- If error is that akrr_test is not available or whatever: run the following in the top directory of AKRR:
 ```bash
 sudo docker build -t akrr_test -f Dockerfile_run_tests .
+# Then what needs to run is the make_rpm_with_docker.sh in the docker directory
 ```
 
 - EPEL does not have python34-mysql or python34-typing
