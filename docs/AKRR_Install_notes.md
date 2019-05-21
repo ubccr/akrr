@@ -31,7 +31,11 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 
 - Having some problems with setting up akrr on this machine, trying to do akrr setup but was not working properly
 	- had to start mariadb service with 'service mariadb start' then I got a different error message!
+	- (btw root does not need a password for logging into mysql...)
 
+- Update: akrr setup ran to completion!
+	- First I made the akrruser and gave it all the appropriate privileges in mysql with root
+	- Then I ran into problems bc modw was being used (thats the XDMOD db) so I installed XDMOD too and so far it isnt yelling at me. Stay tuned!
 
 
 
