@@ -4,7 +4,7 @@ LABEL description="image to make slurm rpm"
 
 # install dependencies
 RUN \
-    yum update && \
+    yum -y update && \
     yum -y install --setopt=tsflags=nodocs epel-release && \
     yum -y install --setopt=tsflags=nodocs \
         vim wget bzip2 \
