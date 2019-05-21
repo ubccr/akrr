@@ -43,5 +43,18 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 
 - Update: able to generate batch jobs decently fine it seems, but problems came when trying to do akrr resource deploy -r ub-hpc - kept saying it wasn't bash all the time - so I'll try and figure that out
 	- Also I did generate some batch files and try to submit them, but ran into issues there because none of the akrr commands were recognized!! Uh oh!
+	
+
+
+- Update: I'm thinking I probably added the ub-hpc thing wrong. As the head node I used the local thing, and I think perhaps I should use the vortex.ccr.buffalo.edu thing... not sure
+	- I'll try and do things with the ub-hpc connected to the local node, but I don't think that will be what we want, since I'm just connecting back to my own computer
+		- but I was able to fix the 'bash all the time' thing, so hopefully that isn't a problem anymore for that at least
+	- I'm trying to make a ub-hpc-actual that actually has me ssh to hoffmaps@vortex.ccr.buffalo.edu, but it keeps failing its pings, and I'm not sure why, since I can ssh into it fine from terminal, I'll do some of my own testing too
+
+
+
+
+
+
 
 
