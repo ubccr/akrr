@@ -1,6 +1,6 @@
 # Run regtest1 in docker
-FROM nsimakov/centos_akrr_install_test:1
-
+#FROM nsimakov/centos_akrr_install_test:1
+FROM centos_akrr_install_test:1
 LABEL description="image to run tests manually"
 
 RUN usermod -a -G wheel akrruser
