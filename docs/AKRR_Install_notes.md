@@ -24,4 +24,11 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 - I had to make all the other images locally (the akrr_ready_... etc docker images that Docker_run_tests uses) since the images provided were all with python34 still. To do this I based it off of the instructions in the README of akrr/docker/centos_slurm_single_host_wlm
 
 
+- The image nsimakov/akrr_ready_centos_slurm_single_host_wlm:1 uses outdate python34. To use the python36 as is proper, you have to create the images yourself and run it all locally until it gets updated on the docker cloud
+	- The Dockerfiles in this repo use the same image names just without the nsimakov in front
+	- Recommendation: do all the image creating manually based on the readme in akrr/docker/centos_slurm_single_host_wlm, except without the nsimakov/ part at the beginning of each image
+
+
+
+
 
