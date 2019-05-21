@@ -4,15 +4,6 @@ if __name__ == '__main__':
     import inspect
     import os
     import sys
-    
-    # this was used to check python version
-    #import platform
-    #print(platform.python_version())
-    
-    # these lines were added to the /usr/bin/akrr to make it work apparently
-    #print(sys.path)
-    #sys.path.append('/home/hoffmaps/projects/akrr')
-    #print(sys.path)
 
     # Determine is it global or local installation
     cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -35,7 +26,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
-                    sudo yum install python34-mysql
+                    sudo yum install python36-mysql
                 Anaconda
                     conda install mysqlclient
                     """)
@@ -50,7 +41,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install python34-typing
-                    sudo yum install python34-typing
+                    sudo yum install python36-typing
                     """)
         exit(1)
     # Check presence of MySQLdb
@@ -64,7 +55,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
-                    sudo yum install python34-bottle
+                    sudo yum install python36-bottle
                 Anaconda
                     conda install bottle
                     """)
