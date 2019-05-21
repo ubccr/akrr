@@ -1,4 +1,5 @@
-FROM nsimakov/centos_slurm_single_host_wlm:1
+#FROM nsimakov/centos_slurm_single_host_wlm:1
+FROM centos_slurm_single_host_wlm:1
 
 LABEL description="centos for akrr tests"
 
@@ -7,19 +8,19 @@ LABEL description="centos for akrr tests"
 #    git sudo
 # Needed to build RPM:
 #    rpm-build
-# Needed to run:
-#    python34 python34-libs python34-bottle python34-requests python34-mysql python34-typing
+# Needed to run (updated):
+#    python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing
 #    openssl openssh-clients crontabs
 # Needed for tests:
-#     python34-PyYAML python34-pip gromacs
+#     python36-PyYAML python36-pip gromacs
 #     pip install pylint coverage pytest pytest-cov pytest-dependency
 #
 RUN \
     yum -y update && \
     yum -y install --setopt=tsflags=nodocs \
         git sudo \
-        python34 python34-libs python34-bottle python34-requests python34-mysql python34-typing openssl openssh-clients crontabs\
-        python34-PyYAML python34-pip gromacs \
+        python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing openssl openssh-clients crontabs\
+        python36-PyYAML python36-pip gromacs \
         rpm-build && \
     yum clean all
 
