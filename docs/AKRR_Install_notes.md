@@ -15,4 +15,5 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 - For whatever reason, there was trouble with finding the modules when running 'akrr setup'
 	- When typing akrr in terminal, it went to /usr/bin/akrr
 	- Had to end up appending the entire akrr repository to the sys path with sys.append
+		- (perhaps if added to path before somehow? Perhaps change the akrr file in bin to do this automatically, since that is what is copied to /usr/bin/akrr)
 	- That seems to have fixed the problem

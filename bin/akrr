@@ -5,9 +5,15 @@ if __name__ == '__main__':
     import os
     import sys
     
-    import platform
-    print(platform.python_version())
- 
+    # this was used to check python version
+    #import platform
+    #print(platform.python_version())
+    
+    # these lines were added to the /usr/bin/akrr to make it work apparently
+    #print(sys.path)
+    #sys.path.append('/home/hoffmaps/projects/akrr')
+    #print(sys.path)
+
     # Determine is it global or local installation
     cur_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     akrr_mod_dir = os.path.abspath(os.path.join(os.path.dirname(cur_dir), "akrr"))
