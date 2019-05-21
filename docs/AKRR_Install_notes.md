@@ -37,6 +37,9 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 	- First I made the akrruser and gave it all the appropriate privileges in mysql with root
 	- Then I ran into problems bc modw was being used (thats the XDMOD db) so I installed XDMOD too and so far it isnt yelling at me. Stay tuned!
 
+- Update: resource ub-hpc successfully added. 
+	- For head node, I used the local thing that was in my bash (where it says hoffmaps@----)
+	- Based my answers off of the AKRR_Add_Resource
 
 
 
