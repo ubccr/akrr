@@ -18,3 +18,9 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 		- (perhaps if added to path before somehow? Perhaps change the akrr file in bin to do this automatically, since that is what is copied to /usr/bin/akrr)
 	- That seems to have fixed the problem
         - Want to look into that akrr file in the bin? the two directory things do not really seem to do anything
+	- UPDATE: the problem was that the rpm was being made with python3.4 still, so now I am going through and updating all the files so that it is python3.6 so that HOPEFULLY it can find the right path (and so that we do not mess with python paths)
+
+
+
+
+
