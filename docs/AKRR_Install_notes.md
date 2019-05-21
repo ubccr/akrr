@@ -21,7 +21,7 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
         - Want to look into that akrr file in the bin? the two directory things do not really seem to do anything
 	- UPDATE: the problem was that the rpm was being made with python3.4 still, so now I am going through and updating all the files so that it is python3.6 so that HOPEFULLY it can find the right path (and so that we do not mess with python paths)
 
-
+- I had to make all the other images locally (the akrr_ready_... etc docker images that Docker_run_tests uses) since the images provided were all with python34 still. To do this I based it off of the instructions in the README of akrr/docker/centos_slurm_single_host_wlm
 
 
 
