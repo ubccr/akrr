@@ -29,6 +29,11 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 	- Recommendation: do all the image creating manually based on the readme in akrr/docker/centos_slurm_single_host_wlm, except without the nsimakov/ part at the beginning of each image
 
 
+- Having some problems with setting up akrr on this machine, trying to do akrr setup but was not working properly
+	- had to start mariadb service with 'service mariadb start' then I got a different error message!
+
+
+
 
 
 
