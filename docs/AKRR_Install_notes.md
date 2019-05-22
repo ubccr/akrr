@@ -54,6 +54,12 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 - Update: So I can't ping vortex.ccr.buffalo.edu, but I can ssh into it. Some solutions I found online but am unsure about:
 	- add the server address to /etc/resolv.conf (so add 128.205.41.13 in this case) - doesn't work
 	- some sort of firewall blocking things?
+	- The fix to this was just to not ping when trying to get there, so I had to look at the -h for akrr resource DUH - lesson learned: look at -h for everything too
+
+
+
+
+
 
 
 
