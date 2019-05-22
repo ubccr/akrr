@@ -59,7 +59,7 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 
 
 
-
+- Update: able to successfully connect to vortex.ccr.buffalo.edu, and able to run all the job things, based off of guide in repo, it all ran successfully
 
 
 
