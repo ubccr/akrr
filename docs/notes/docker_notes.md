@@ -17,7 +17,14 @@ docker run -v `pwd`:/root/apoa1_nve -it nvcr.io/hpc/namd:2.13-multinode
 
 #Next step, running namd from in there
 ```
+- Update: getting an error - working on seeing what's wrong with this
 
+```bash
+CUDA initialization error on 24902da047d8: CUDA driver version is insufficient for CUDA runtime version
+Charm++: standalone mode (not using charmrun)
+[0] Assertion "num_devices > 0" failed in file machine-ibverbs.c line 482.
+Segmentation fault (core dumped)
+```
 
 
 
