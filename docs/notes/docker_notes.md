@@ -25,7 +25,7 @@ Charm++: standalone mode (not using charmrun)
 [0] Assertion "num_devices > 0" failed in file machine-ibverbs.c line 482.
 Segmentation fault (core dumped)
 ```
-
+- Update: turns out there are a lot of prerequisites for this ^^ so we're going back to the first one and trying stuff out with that
 
 
 
