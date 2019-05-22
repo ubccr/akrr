@@ -6,6 +6,11 @@
 docker run --rm researchcomputing/namd_212_multicore_osgvo-el6 namd2
 ``` 
 
+- UPDATE: Nvidia namd found, presumably much better. Got it with
+
+```bash
+docker pull nvcr.io/hpc/namd:2.13-multinode
+```
 
 
 
