@@ -50,7 +50,10 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 	- I'll try and do things with the ub-hpc connected to the local node, but I don't think that will be what we want, since I'm just connecting back to my own computer
 		- but I was able to fix the 'bash all the time' thing, so hopefully that isn't a problem anymore for that at least
 	- I'm trying to make a ub-hpc-actual that actually has me ssh to hoffmaps@vortex.ccr.buffalo.edu, but it keeps failing its pings, and I'm not sure why, since I can ssh into it fine from terminal, I'll do some of my own testing too
-
+	
+- Update: So I can't ping vortex.ccr.buffalo.edu, but I can ssh into it. Some solutions I found online but am unsure about:
+	- add the server address to /etc/resolv.conf (so add 128.205.41.13 in this case) - doesn't work
+	- some sort of firewall blocking things?
 
 
 
