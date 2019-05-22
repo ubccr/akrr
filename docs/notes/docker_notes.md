@@ -32,7 +32,11 @@ docker run -v `pwd`:/root/apoa1_nve -it researchcomputing/namd_212_multicore_osg
 
 ```
 
+- Update: was able to run namd through the docker container with the following command (executed from where the input files were)
 
+```bash
+docker run -v `pwd`:/root/apoa1_nve -w /root/apoa1_nve researchcomputing/namd_212_multicore_osgvo-el6 namd2 input.namd
+```
 
 
 
