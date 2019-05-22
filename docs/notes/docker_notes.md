@@ -10,6 +10,12 @@ docker run --rm researchcomputing/namd_212_multicore_osgvo-el6 namd2
 
 ```bash
 docker pull nvcr.io/hpc/namd:2.13-multinode
+
+#Now to run it, interactivly and set up volume connection, go to directory with all the namd input files and do
+
+docker run -v `pwd`:/root/apoa1_nve -it nvcr.io/hpc/namd:2.13-multinode
+
+#Next step, running namd from in there
 ```
 
 
