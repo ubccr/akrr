@@ -1,4 +1,4 @@
-These are notes on the installation/setting up of AKRR 
+## Notes on setting up of AKRR and connecting it with ub-hpc 
 
 - There may be errors with sudo yum install akrr....rpm
 	- If error is that akrr_test is not available or whatever: run the following in the top directory of AKRR:
