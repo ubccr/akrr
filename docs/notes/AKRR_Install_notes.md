@@ -56,12 +56,9 @@ sudo docker build -t akrr_test -f Dockerfile_run_tests .
 	- some sort of firewall blocking things?
 	- The fix to this was just to not ping when trying to get there, so I had to look at the -h for akrr resource DUH - lesson learned: look at -h for everything too
 
-
-
-
 - Update: able to successfully connect to vortex.ccr.buffalo.edu, and able to run all the job things, based off of guide in repo, it all ran successfully
 
-
+## Running hpcc tests with akrr - a new saga
 
 
 
