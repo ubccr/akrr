@@ -31,8 +31,26 @@ module load mkl/2018.3
 Done some snooping and (seemingly) found the mpi and mkl libraries at the link: https://software.intel.com/en-us/articles/installing-intel-free-libs-and-python-yum-repo
 it tells you how to get these things, so I'm gonna try and do that now
 
+Keeping track of what I'm doing for MKL first
 
+```bash
+# Getting the repository
+sudo yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo
 
+# Importing the gpg public key
+sudo rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
 
+# yum install <COMPONENT>-<VERSION>.<UPDATE>-<BUILD_NUMBER> to install a particular version
+# So since I'm trying to do mkl/2018.3, I'll do the following, based on the chart they give at the site
+sudo yum install intel-mkl-2018.3-051
+
+```
+No problems happened. Now doing the same for the mpi
+
+```bash
+sudo yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo
+
+sudo yum install intel-mpi-2018.3-051
+```
 
 
