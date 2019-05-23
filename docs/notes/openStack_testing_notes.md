@@ -1,5 +1,5 @@
 ## Initial testing notes
-# getting familiar with openStack
+### getting familiar with openStack
 
 - Update: It's been a journey. I created a new directory for all the openstack testing stuff, in the projects directory in my home directory. In it there are key pairs and custom scripts
 
