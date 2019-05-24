@@ -8,6 +8,8 @@ Intel-mpi version used: 2018.3
 # building the Dockerfile
 docker build -t hpcc_intelmpi_centos7 .
 
+# running it (interactively)
+docker run -it hpcc_intelmpi_centos7
 ```
 
 

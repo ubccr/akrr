@@ -17,17 +17,18 @@ RUN \
 # copying in hpcc files
 COPY execs /home/hpccuser/execs
 
-
 # giving permissions and setting up path to mpi for hpccuser
 RUN \
-	#chmod -R a+w /home/hpccuser/execs && \
 	echo "export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64" >> /home/hpccuser/.bashrc && \
 	chown -R hpccuser /home/hpccuser/
 
 USER hpccuser
 
-# starts bash upon start
-ENTRYPOINT ["/bin/bash"]		
+WORKDIR /home/hpccuser/execs/hpcc-1.5.0/
 
+# in case we ever want to not do the input file thing
+#ENTRYPOINT ["/bin/bash"]
 
+# Starts entry script (so sets the input file for hpcc properly)
+ENTRYPOINT ["/home/hpccuser/execs/hpcc-1.5.0/set_input_file.sh"]		
 
