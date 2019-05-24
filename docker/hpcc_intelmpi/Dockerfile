@@ -31,4 +31,6 @@ WORKDIR /home/hpccuser/execs/hpcc-1.5.0/
 
 # Starts entry script (so sets the input file for hpcc properly)
 ENTRYPOINT ["/home/hpccuser/execs/hpcc-1.5.0/set_input_file.sh"]		
+#CMD ["default"] # default argument in case nothing is given
+
 
