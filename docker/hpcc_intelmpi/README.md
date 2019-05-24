@@ -1,4 +1,4 @@
-## This has all the necessary files for creating a docker image for HPCC using Intel-mpi
+## Files for creating HPCC Docker image (uses Intel-mpi)
 
 HPCC - High Performance Compute Competition, a benchmarking technique
 
