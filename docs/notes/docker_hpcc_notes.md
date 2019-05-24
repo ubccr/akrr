@@ -52,5 +52,28 @@ sudo yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-m
 
 sudo yum install intel-mpi-2018.3-051
 ```
+No problems happened with the installation, but the same error is given as above, with the error loading shared libraries
+
+Update: I was running it wrong, I believe you need to run it as follows:
+
+```bash
+mpirun -np 4 ./hpcc
+```
+On vortex, I only needed to load the mpi module to run hpcc successfully
+
+I managed to get mpirun being recognized by adding the directory to the path. In my case it was
+
+```bash
+export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64
+```
+
+This added all the mpi execs stuff to the path so I could do mpirun and such.
+Success!
+
+```bash
+mpirun -np 4 ./hpcc
+cat hpccoutf.txt
+```
+Gave good looking results! Next step: do it on docker.
 
 
