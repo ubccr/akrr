@@ -76,4 +76,55 @@ cat hpccoutf.txt
 ```
 Gave good looking results! Next step: do it on docker.
 
+Started docker container with centos:7 on it, linked up the hpcc_files directory to /root/hpcc_files in the docker image
+Then did the following process to set up intel mpi to be able to run it
+
+```bash
+# in docker image
+# copying over files
+cd /root
+mkdir appker
+cp -r hpcc_files/ appker/
+cd appker/hpcc_files/
+cp -r execs ../
+cd ..
+rm -rf hpcc_files
+
+# so now the hpcc executable should be in the following directory
+cd /root/appker/execs/hpcc-1.5.0
+
+# installing intel mpi
+yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo
+
+rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
+
+yum -y install intel-mpi-2018.3-051
+
+# as expected, mpirun still isn't found at this point
+# add it to the path 
+export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64
+# also added it to .bashrc for root so that it's permanently in the path
+
+
+# test it on the headnode
+mpirun -np 4 ./hpcc
+cat hpccoutf.txt
+
+```
+
+Then I make a docker image from that
+```bash
+# in original terminal
+docker commit [image_name]
+# get id of image since it has <none> as its name right now
+docker image ls
+docker tag [image_id] hpcc_intelmpi_centos7 [optinal tag to add, default is 'latest']
+```
+
+So I was able to make things work with adjusting the image and whatnot, now I'll make one with a Dockerfile so it's better documented
+
+
+
+
+
 
