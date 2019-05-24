@@ -25,3 +25,20 @@ docker run -it -v [path to akrr]/akrr/akrr/appker_repo/inputs/hpcc:/home/hpccuse
 This mount must happen, otherwise there is an error, since the script relies on inputs existing
 Alternatively, if you don't want to run a file immediately, you can just not put anything and it will just put you into the directory.
 
+NOTE: Permissions on the input directory must be correct, since the permissions are copied into the docker container. Do:
+
+```bash
+# for your inputs directory
+chmod a+x [inputs dir]
+ 
+# for all files in your inputs directory
+chmod a+rw *
+```
+
+As of 5/24/19, you can do all this and the docker container will be set up with the correct input file for doing mpirun etc...
+
+Next goal: be able to run the whole mpirun stuff from completely outside of the container just at the run instruction
+
+
+
+
