@@ -23,5 +23,5 @@ docker run -it -v [path to akrr]/akrr/akrr/appker_repo/inputs/hpcc:/home/hpccuse
 
 ```
 This mount must happen, otherwise there is an error, since the script relies on inputs existing
-
+Alternatively, if you don't want to run a file immediately, you can just not put anything and it will just put you into the directory.
 
