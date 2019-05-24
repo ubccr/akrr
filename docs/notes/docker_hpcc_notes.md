@@ -123,7 +123,7 @@ docker tag [image_id] hpcc_intelmpi_centos7 [optinal tag to add, default is 'lat
 
 So I was able to make things work with adjusting the image and whatnot, now I'll make one with a Dockerfile so it's better documented
 
-The directory for further notes on this ^^ is ../../docker/hpcc_intelmpi 
+The directory for further notes on this ^^ is (../../docker/hpcc_intelmpi) 
 
 
 
