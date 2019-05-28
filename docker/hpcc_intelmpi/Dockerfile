@@ -44,13 +44,9 @@ RUN \
 
 USER hpccuser
 
-WORKDIR /home/hpccuser
+WORKDIR $scriptsLoc
 
-# in case we ever want to not do the input file thing
-#ENTRYPOINT ["/bin/bash"]
-
-# Starts entry script (so sets the input file for hpcc properly)
-ENTRYPOINT ["python", "/opt/scripts/setup_hpcc.py"]		
-#CMD ["-v","-D"] # default argument in case nothing is given
-
+# runs the setup script to start (this calls the python script and such
+ENTRYPOINT ["./entrypoint.sh"]
+#CMD ["-v"]
 
