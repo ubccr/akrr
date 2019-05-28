@@ -60,7 +60,8 @@ mpirun -np 4 $hpccLoc
 Notes:
 - the hpcc executable looks for hpccinf.txt in the directory where you are, so that needs to be present wherever you're running it
 - I set up the tar and everything, so now the execs and inputs should be as described above
-
+- The setup script in _scripts_ correctly copies over input files from the input directory to the home directory for use
+	- The system: you enter the number of nodes (n) and processes per node (ppn) and then the script copies over _hpccinf.txt.[ppn]x[n]_ to the home directory as _hpccinf.txt_
 
 
 
