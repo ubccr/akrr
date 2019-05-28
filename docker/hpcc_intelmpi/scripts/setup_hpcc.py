@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 import os # to get environment vars
 import argparse # to deal with given arguments
 import shutil # for copying files over

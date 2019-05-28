@@ -47,10 +47,10 @@ USER hpccuser
 WORKDIR /home/hpccuser
 
 # in case we ever want to not do the input file thing
-ENTRYPOINT ["/bin/bash"]
+#ENTRYPOINT ["/bin/bash"]
 
 # Starts entry script (so sets the input file for hpcc properly)
-#ENTRYPOINT ["/home/hpccuser/execs/hpcc-1.5.0/set_input_file.sh"]		
-#CMD ["nofile"] # default argument in case nothing is given
+ENTRYPOINT ["python", "/opt/scripts/setup_hpcc.py"]		
+#CMD ["-v","-D"] # default argument in case nothing is given
 
 

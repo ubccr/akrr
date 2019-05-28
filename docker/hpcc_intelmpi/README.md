@@ -62,6 +62,9 @@ Notes:
 - I set up the tar and everything, so now the execs and inputs should be as described above
 - The setup script in _scripts_ correctly copies over input files from the input directory to the home directory for use
 	- The system: you enter the number of nodes (n) and processes per node (ppn) and then the script copies over _hpccinf.txt.[ppn]x[n]_ to the home directory as _hpccinf.txt_
-
+- It appears that the only way to both run the python file immediately and accept arguments from the command line of docker run is using ENTRYPOINT ["python", hardcoded/path/to/scripts/setupscript]
+	- If we want to use ENV $scriptsLoc we need to use the shell entrypoint format (I think)
+	- If we want to pass in arguments from docker run we need to have this form of entrypoint
+	- So for now I just have it as above in the Dockerfile, perhaps that can be figured out later too
 
 
