@@ -39,6 +39,28 @@ As of 5/24/19, you can do all this and the docker container will be set up with 
 
 Next goal: be able to run the whole mpirun stuff from completely outside of the container just at the run instruction
 
+## UPDATE - modifying how file system is set up
+
+```bash
+# Will be empty to allow user to mount things there
+/home/hpccuser/
+
+# location of execs directory
+/opt/appker/ 
+# Dockerfile has it as execsLoc for easy modification
+
+# location of some default inputs
+/usr/local/appker/inputs/hpcc/
+# Dockerfile has it as inputsLoc for easy modification
+# hpccLoc is the path directly to the hpcc executable, so to run it from any given directory you can do (using default example)
+mpirun -np 4 $hpccLoc
+
+
+```
+Notes:
+- the hpcc executable looks for hpccinf.txt in the directory where you are, so that needs to be present wherever you're running it
+- I set up the tar and everything, so now the execs and inputs should be as described above
+
 
 
 
