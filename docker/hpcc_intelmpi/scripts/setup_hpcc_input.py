@@ -11,6 +11,20 @@ def get_input_file_name(nodes, proc_per_node, default=False):
     else:
         return "hpccinf.txt." + str(proc_per_node) + "x" + str(nodes)
 
+# function that tries to copy a file from the source to the destination
+def copy_file_over(source_path, dest_path)
+    try:
+        shutil.copy(source_path, dest_path)
+        print("Successfully copied over proper input file to HOME directory")
+    except IOError as e:
+        # printing suggestions to possibly fix the issue
+        print("\33[91m" + str(e) + "\33[0m")
+        print("Possibly you wanted to use the default file? If so, use the -D/--default flag")
+        #print("Otherwise, add the desired file to " + hpcc_inputs_dir + " or just rename it to hpccinf.txt in the desired directory")
+        print("(By default this script copies the file into the HOME directory)")
+        print("Use the -v flag for more information or -h for help")
+
+
 
 if __name__ == "__main__":
     # parsing arguments given in
@@ -33,7 +47,7 @@ if __name__ == "__main__":
 
     # checks if need to do anything
     if args.nofile:
-        print("No file option specified. Exiting")
+        print("Nofile option specified. Exiting to shell.")
         quit()
 
     # printing warning to ensure intentional usage
@@ -54,7 +68,7 @@ if __name__ == "__main__":
     hpcc_inputs_dir = os.environ.get("inputsLoc") + "hpcc/"
     hpcc_input_name = get_input_file_name(args.nodes, args.proc_per_node, args.default)
     input_file_path = hpcc_inputs_dir + hpcc_input_name
-    dest_path = os.environ.get("HOME") + "/hpccinf.txt"
+    dest_path = os.environ.get("HOME") + "/hpccinf.txt" # perhaps want specification option?
 
     #verbose
     if args.verbose:
@@ -65,15 +79,5 @@ if __name__ == "__main__":
         print("Attempting to copy input file to destination")
         print(verbose_end)
 
-    # attempting the copy
-    try:
-        shutil.copy(input_file_path, dest_path)
-        print("Successfully copied over proper input file to HOME directory")
-    except IOError as e:
-        # printing suggestions to possibly fix the issue
-        print("\33[91m" + str(e) + "\33[0m")
-        print("Possibly you wanted to use the default file? If so, use the -D/--default flag")
-        #print("Otherwise, add the desired file to " + hpcc_inputs_dir + " or just rename it to hpccinf.txt in the desired directory")
-        print("(By default this script copies the file into the HOME directory)")
-        print("Use the -v flag for more information or -h for help")
-
+    #attempting to copy over file
+    copy_file_over(input_file_path, dest_path)

@@ -70,3 +70,13 @@ Notes:
 	- Setting working directory to the scripts place
 	- Calling the python script from the entrypoint script
 	- At end of entrypoint script going back to the home working directory and starting bash
+
+End of Day Notes:
+- So I got things working with the copying over script. I can send through arguments through docker run and it can copy things over pretty easily
+- For tomorrow:
+	- More convenience arguments for the python setup script? (see script for suggestions)
+	- Option to run mpirun straightup from docker run?
+	- Slight cleanup of script?
+
+
+
