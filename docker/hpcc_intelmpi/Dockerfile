@@ -27,13 +27,20 @@ ENV hpccLoc=$execsLoc/hpcc-1.5.0/hpcc
 ENV inputsLoc=/usr/local/appker/inputs/
 COPY hpcc_inputs.tar.gz $inputsLoc
 
+# location where convenience scripts will be (to run things using the flags and such)
+ENV scriptsLoc=/opt/scripts
+COPY scripts $scriptsLoc
+
+
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
 	echo "export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64" >> /home/hpccuser/.bashrc && \
 	cd $inputsLoc && \
 	tar -xzvf $inputsLoc/hpcc_inputs.tar.gz && \
 	chown -R hpccuser $inputsLoc/hpcc && \
-	chown -R hpccuser $execsLoc
+	chown -R hpccuser $execsLoc && \
+	chown -R hpccuser $scriptsLoc  # only doing this temporarily to finagle python script
+
 
 USER hpccuser
 
