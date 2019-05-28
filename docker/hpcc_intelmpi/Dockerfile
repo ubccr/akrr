@@ -47,6 +47,6 @@ USER hpccuser
 WORKDIR $scriptsLoc
 
 # runs the setup script to start (this calls the python script and such
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./entrypoint_setup.sh"]
 #CMD ["-v"]
 

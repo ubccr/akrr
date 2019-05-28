@@ -66,5 +66,7 @@ Notes:
 	- If we want to use ENV $scriptsLoc we need to use the shell entrypoint format (I think)
 	- If we want to pass in arguments from docker run we need to have this form of entrypoint
 	- So for now I just have it as above in the Dockerfile, perhaps that can be figured out later too
-
-
+- UPDATE: Current strategy being used
+	- Setting working directory to the scripts place
+	- Calling the python script from the entrypoint script
+	- At end of entrypoint script going back to the home working directory and starting bash
