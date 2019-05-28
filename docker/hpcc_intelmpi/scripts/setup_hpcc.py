@@ -16,11 +16,12 @@ if __name__ == "__main__":
     # parsing arguments given in
     parser = argparse.ArgumentParser()
     parser.add_argument("-v","--verbose", action="store_true", help="increase output verbosity")
-    parser.add_argument("-d", "--default", action="store_true", help="use default input file")
+    parser.add_argument("-D", "--default", action="store_true", help="use default input file")
     parser.add_argument("-n","--nodes", type=int, default=1,
                         help="specify the number of nodes hpcc will be running on (default=1)")
     parser.add_argument("-ppn","--proc_per_node", type=int, default=1,
                         help="specify the number of processes/cores per node (default=1)")
+    # another argument to potentially specify what directory to copy it into? - potential future
     args = parser.parse_args()
 
     # for better verbose readability
@@ -63,7 +64,7 @@ if __name__ == "__main__":
     except IOError as e:
         # printing suggestions to possibly fix the issue
         print("\33[91m" + str(e) + "\33[0m")
-        print("Possibly you wanted to use the default file? If so, use the -d/--default flag")
+        print("Possibly you wanted to use the default file? If so, use the -D/--default flag")
         print("Otherwise, add the desired file to " + hpcc_inputs_dir + " or just rename it to hpccinf.txt in the desired directory")
         print("(By default this script copies the file into the HOME directory)")
         print("Use the -v flag for more information")
