@@ -16,6 +16,7 @@ if __name__ == "__main__":
     # parsing arguments given in
     parser = argparse.ArgumentParser()
     parser.add_argument("-v","--verbose", action="store_true", help="increase output verbosity")
+    # another argument/way describing how this process works? Description?
     parser.add_argument("-D", "--default", action="store_true", help="use default input file")
     parser.add_argument("-n","--nodes", type=int, default=1,
                         help="specify the number of nodes hpcc will be running on (default=1)")
