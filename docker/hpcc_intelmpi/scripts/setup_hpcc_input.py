@@ -31,6 +31,11 @@ if __name__ == "__main__":
     verbose_start = "\33[33mDEBUG START========================== \33[0m "
     verbose_end = "\33[33m============================DEBUG END \33[0m "
 
+    # checks if need to do anything
+    if args.nofile:
+        print("No file option specified. Exiting")
+        quit()
+
     # printing warning to ensure intentional usage
     if args.default:
         print("\33[93mWARNING: Default file chosen, -n and -ppn arguments ignored \33[0m")
