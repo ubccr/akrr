@@ -12,7 +12,7 @@ def get_input_file_name(nodes, proc_per_node, default=False):
         return "hpccinf.txt." + str(proc_per_node) + "x" + str(nodes)
 
 # function that tries to copy a file from the source to the destination
-def copy_file_over(source_path, dest_path)
+def copy_file_over(source_path, dest_path):
     try:
         shutil.copy(source_path, dest_path)
         print("Successfully copied over proper input file to HOME directory")
