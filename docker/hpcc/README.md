@@ -4,6 +4,68 @@ HPCC - High Performance Compute Competition, a benchmarking technique
 
 Intel-mpi version used: 2018.3
 
+### My process I used to make the binary executable for HPCC
+```bash
+# This process is basically the same as the AKRR_HPCC_Deployment.md process
+# Everything will be done in the execs directory, we'll use environment variable $EXECS_DIR
+# So for example EXECS_DIR would be /path/to/proper/dir with execs being at end
+# The execs directory should be from the git repo, it contains bin and misc/hpcc (05/29/19)
+
+# Go to executable directory
+cd $EXECS_DIR/execs
+
+# Load modules (dependent on individual situation)
+module load intel/18.3
+module load intel-mpi/2018.3
+module load mkl/2018.3
+ 
+# We need to make bunch of interfaces to mkl library, unfortunately they are not precompiled
+# Lets compile them in $EXECS_DIR/execs/libs/<interface_name>
+# and install in $EXECS_DIR/execs/libs/lib
+mkdir -p $EXECS_DIR/execs/libs
+mkdir -p $EXECS_DIR/execs/libs/lib
+
+# make fftw2x_cdft interface to mkl
+cd $EXECS_DIR/execs/libs
+cp -r $MKLROOT/interfaces/fftw2x_cdft ./
+cd fftw2x_cdft
+make libintel64 PRECISION=MKL_DOUBLE interface=ilp64 MKLROOT=$MKLROOT INSTALL_DIR=$EXECS_DIR/execs/libs/lib
+
+# make FFTW C wrapper library
+cd $EXECS_DIR/execs/libs
+cp -r $MKLROOT/interfaces/fftw2xc ./
+cd fftw2xc
+make libintel64 PRECISION=MKL_DOUBLE MKLROOT=$MKLROOT INSTALL_DIR=$EXECS_DIR/execs/libs/lib
+
+ 
+# get the code
+cd $EXECS_DIR/execs
+wget http://icl.cs.utk.edu/projectsfiles/hpcc/download/hpcc-1.5.0.tar.gz
+tar xvzf hpcc-1.5.0.tar.gz
+cd hpcc-1.5.0
+# Prepare makefile
+# HPCC reuses makefiles from High Performance Linpack (thus do not forget to get to hpc directory)
+# you can start with something close from hpl/setup directory
+# or start from one of our make file
+# place Make.intel64_hpcresource file to hpcc-1.4.2/hpl
+cd hpl
+
+wget https://raw.githubusercontent.com/ubccr/akrr/master/akrr/appker_repo/execs/misc/hpcc/Make.intel64_hpcresource
+# edit Make.intel64_hpcresource to fit your system 
+# if you have intel based system with intel compilers and intel-mpi
+# most likely you don't need to change it
+ 
+# compile hpcc in hpcc-1.5.0 root directory
+cd ..
+make arch=intel64_hpcresource
+# if it is compiled successfully hpcc binary should appear in hpcc-1.5.0 directory
+
+# at that point you can take the entire execs directory with binary included, (keeping it named execs) and you can proceed building and running the Dockerfile, assuming you put the directory into the appropriate folder
+```
+
+
+
+
 ```bash
 # building the Dockerfile
 docker build -t hpcc_intelmpi_centos7 .
