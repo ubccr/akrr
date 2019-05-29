@@ -31,10 +31,11 @@ COPY hpcc_inputsV2.tar.gz $inputsLoc
 ENV scriptsLoc=/opt/scripts
 COPY scripts $scriptsLoc
 
+ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
-	echo "export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64" >> /home/hpccuser/.bashrc && \
+	echo "export PATH=$PATH:$mpiLoc" >> /home/hpccuser/.bashrc && \
 	cd $inputsLoc && \
 	tar -xzvf $inputsLoc/hpcc_inputsV2.tar.gz && \
 	chown -R hpccuser $inputsLoc/hpcc && \
