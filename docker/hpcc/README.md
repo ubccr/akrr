@@ -80,3 +80,14 @@ End of Day Notes:
 - UPDATE: Not using python anymore to read arguments, will do only bash script
 - Update: made bash script, seems to be all set up with basic functionality, now need to make some new hpcc input files for 1, 2, 4, and 6 cores
 
+- Update: Bash script works fine, added new files and made it so by default it goes for number of cores in terms of determining ppn
+- Next steps:
+	- Running a script to make sure about version somehow...? in execs
+	- Removing execs directory bc don't want to have a binary in the git repo
+	- Including instructions in this README about how to compile hpcc binary wherever it is
+
+
+
+
+
+
