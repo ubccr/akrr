@@ -60,7 +60,9 @@ cd ..
 make arch=intel64_hpcresource
 # if it is compiled successfully hpcc binary should appear in hpcc-1.5.0 directory
 
-# at that point you can take the entire execs directory with binary included, (keeping it named execs) and you can proceed building and running the Dockerfile, assuming you put the directory into the appropriate folder
+# at that point you can take the entire execs directory with binary included, (keeping it named execs)
+and you can proceed building and running the Dockerfile, assuming you put the directory 
+into the appropriate folder
 ```
 
 
