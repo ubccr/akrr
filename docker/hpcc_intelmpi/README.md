@@ -77,6 +77,6 @@ End of Day Notes:
 	- More convenience arguments for the python setup script? (see script for suggestions)
 	- Option to run mpirun straightup from docker run?
 	- Slight cleanup of script?
-
+- UPDATE: Not using python anymore to read arguments, will do only bash script
 
 
