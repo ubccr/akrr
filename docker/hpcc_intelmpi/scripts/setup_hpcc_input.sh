@@ -3,10 +3,12 @@
 # initial statements for testing
 echo "Arguments passed in: $@"
 echo "Number of arguments: $#"
+
+# initializing some variables
 num_args="$#"
 temp="hpcc/"
 hpcc_inputs_dir="$inputsLoc$temp"
-echo "hpcc_inputs_dir: " $hpcc_inputs_dir
+echo "hpcc_inputs_dir: $hpcc_inputs_dir"
 
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
@@ -15,11 +17,12 @@ echo "Number of cores: $cpu_cores"
 # help text essentially
 usage()
 {
-    	echo "usage: setup_hpcc.sh [-v] [-n NODES] [-ppn PROC_PER_NODE] [-h]"
+    	echo "usage: setup_hpcc_inputs.sh [-n NODES] [-ppn PROC_PER_NODE] [-h]"
 	echo ""
     	echo "Options:"
     	echo "	-h | --help			Display help text"
-	echo "	-v | --verbose			Increase verbosity of output"
+	#echo "	-v | --verbose			increase verbosity of output"
+	echo " 	-i | --interactive		Start a bash session after the run"
 	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
 	echo "	-ppn PROC_PER_NODE | "
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node"
@@ -38,23 +41,26 @@ validate_number()
 	fi
 }
 
+# setting default values for variables
+set_defaults()
+{
+	nodes=1
+	ppn=1
+	verbose=false
+	interactive=false
+}
 
+set_defaults
 
-
-
-# defaults, may change with implementation of getting number of cores from computer
-nodes=1
-ppn=1
-
+# if not given any arguments, just use cores instead
 if [ "$num_args" == "0" ]; then
 	echo "No arguments passed in. Basing input file off of cpu cores"
 	nodes=1
 	ppn=$cpu_cores
 fi
 
-verbose=false
 
-# loop through arguments
+# loop through arguments - for each to one of them
 while [ "$1" != "" ]; do
 	case $1 in
 		-h | --help)
@@ -63,6 +69,9 @@ while [ "$1" != "" ]; do
 			;;
 		-v | --verbose)
 			verbose=true
+			;;
+		-i | --interactive)
+			interactive=true
 			;;
 		-n | --nodes)
 			shift
@@ -82,10 +91,12 @@ while [ "$1" != "" ]; do
 done
 
 
-echo "ppn: " $ppn
-echo "nodes: " $nodes
-echo "verbose: " $verbose
+echo "ppn: $ppn"
+echo "nodes: $nodes"
+echo "verbose: $verbose"
+echo "interactive: $interactive"
 
+#validating that they are numbers
 validate_number $nodes
 validate_number $ppn
 
@@ -97,10 +108,12 @@ input_file_path="$hpcc_inputs_dir$hpcc_input_name"
 temp="/hpccinf.txt"
 dest_path=$HOME$temp
 
+# output for testing
 echo "Input file name: $hpcc_input_name"
 echo "Full path: $input_file_path"
 echo "Destination path: $dest_path"
 
+# check if input file exists, if it does, copy it over
 if [ -f "$input_file_path" ]; then
 	cp $input_file_path $dest_path
 	echo "$hpcc_input_name copied over to $dest_path"
@@ -113,8 +126,12 @@ fi
 
 
 
-
+cd $HOME
 
 echo "Hello reached the end"
+# if user sets interactive flag, starts up bash at end
+if [ "$interactive" == "true" ]; then
+	/bin/bash
+fi
 
 
