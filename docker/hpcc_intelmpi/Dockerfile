@@ -25,7 +25,7 @@ ENV hpccLoc=$execsLoc/hpcc-1.5.0/hpcc
 
 # location where the tar will be unpacked for some default inputs for hpcc
 ENV inputsLoc=/usr/local/appker/inputs/
-COPY hpcc_inputs.tar.gz $inputsLoc
+COPY hpcc_inputsV2.tar.gz $inputsLoc
 
 # location where convenience scripts will be (to run things using the flags and such)
 ENV scriptsLoc=/opt/scripts
@@ -36,7 +36,7 @@ COPY scripts $scriptsLoc
 RUN \
 	echo "export PATH=$PATH:/opt/intel/impi/2018.3.222/bin64" >> /home/hpccuser/.bashrc && \
 	cd $inputsLoc && \
-	tar -xzvf $inputsLoc/hpcc_inputs.tar.gz && \
+	tar -xzvf $inputsLoc/hpcc_inputsV2.tar.gz && \
 	chown -R hpccuser $inputsLoc/hpcc && \
 	chown -R hpccuser $execsLoc && \
 	chown -R hpccuser $scriptsLoc  # only doing this temporarily to finagle python script

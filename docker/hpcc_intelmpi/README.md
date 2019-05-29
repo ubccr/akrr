@@ -78,5 +78,5 @@ End of Day Notes:
 	- Option to run mpirun straightup from docker run?
 	- Slight cleanup of script?
 - UPDATE: Not using python anymore to read arguments, will do only bash script
-
+- Update: made bash script, seems to be all set up with basic functionality, now need to make some new hpcc input files for 1, 2, 4, and 6 cores
 
