@@ -12,6 +12,11 @@ echo "hpcc_inputs_dir: $hpcc_inputs_dir"
 
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
+if [[ "$cpu_cores" == "1" ]]; then
+	echo "Detected only one core. Counting processors instead"
+	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
+fi
+
 echo "Number of cores detected: $cpu_cores"
 
 # help text essentially
