@@ -131,6 +131,8 @@ if [[ "$run_hpcc" == "true" ]]; then
 	echo "Running hpcc..."
 	$mpiLoc/mpirun -np $ppn $hpccLoc
 	echo "Complete! hpccoutf.txt is in $work_dir"
+	echo "cat to standard out"
+	cat hpccoutf.txt
 fi
 
 echo "Hello reached the end (right before interactive)"
