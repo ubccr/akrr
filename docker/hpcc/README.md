@@ -159,8 +159,14 @@ End of Day Notes:
 
 - Update: changed initial script to count processors instead of cores if cores turns out to be 1
 
-Most updated docker image: pshoff/hpcc_benchmark:v02 (05/30/19)
-Older images: hpcc_test:v01 (05/29/19) 
+- Notes on how flags work:
+	- It appears that if you want to enter into the docker container and start playing around there, you need both -it on docker run AND -i on the script
+	- Having just one or the other does not start interactive session
+
+###Most updated docker image: pshoff/hpcc_benchmark:v03 (05/30/19)
+###Older images: 
+- hpcc_test:v01 (05/29/19) 
+- hpcc_test:v02 (05/30/19) - Doesn't have the check for 1 core that v03 has
 
 
 

@@ -68,5 +68,23 @@ Error: Failed to perform requested operation on instance "test_8cpu", the instan
 
 There seems to be a really weird bug where after doing the whole mpirun with hpcc anything that I cat only goes 150-160 lines before just stopping and I DON'T KNOW WHY. But the mpirun thing is the cause, bc I checked everywhere before, and everywhere after anything you cat just doesn't get to the end
 
+Dr. Simakov took a look at it, he didn't know exactly either, so we're trying some things
+1) try with counting the processors instead of the cores
+2) try also just running hpcc on base, without docker
+
+```bash
+# copying over a directory into openstack using the key stuff
+scp -i [path/to/key] -r execs/ centos@[IP Address]:/home/centos/execs_files
+```
+
+Note:
+- It appears that everything comes out fine with the cat if we dont do -it on docker run or -i flag on the script
+- If we have both, the cat doesnt work
+- Trying just -it on docker run: Doesn't cat it all properly, doesn't start interactive session
+- Trying just -i on script: Does cat properly, doesn't start interactive session
+
+
+
+
 
 
