@@ -135,6 +135,10 @@ if [[ "$run_hpcc" == "true" ]]; then
 	cat hpccoutf.txt
 fi
 
+# trying to run the script thing on hpcc
+$execsLoc/bin/appsigcheck.sh $hpccLoc
+
+
 echo "Hello reached the end (right before interactive)"
 # if user sets interactive flag, starts up bash at end
 if [[ "$interactive" == "true" ]]; then

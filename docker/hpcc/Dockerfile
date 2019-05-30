@@ -16,9 +16,12 @@ RUN \
 	echo "Added hpccuser (pass: hpccuser) and installed intel-mpi"
 
 # place where the executable is
-ENV execsLoc=/opt/appker
+ENV execsLoc=/opt/appker/execs
+
 # copying in hpcc files
 COPY execs $execsLoc
+# so the execs dir is /opt/appker/execs
+
 
 # location of executable file, since mpirun need to have the path to hpcc
 ENV hpccLoc=$execsLoc/hpcc-1.5.0/hpcc
@@ -49,5 +52,4 @@ WORKDIR $scriptsLoc
 
 # runs the setup script to start (this calls the python script and such
 ENTRYPOINT ["./setup_hpcc_input.sh"]
-#CMD ["-v"]
 

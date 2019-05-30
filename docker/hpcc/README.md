@@ -63,6 +63,8 @@ make arch=intel64_hpcresource
 # at that point you can take the entire execs directory with binary included, (keeping it named execs)
 #and you can proceed building and running the Dockerfile, assuming you put the directory 
 #into the appropriate folder
+
+# With my testing, if you'd like to really conserve space, you only need to copy the hpcc-1.5.0 in, you don't need all the libs stuff that was used to compile hpcc
 ```
 
 
@@ -150,7 +152,10 @@ End of Day Notes:
 	- Removing execs directory bc don't want to have a binary in the git repo
 	- Including instructions in this README about how to compile hpcc binary wherever it is
 
-
+- Update:
+	- I moved hpcc-1.5.0 back into execs, then added ./execs/hpcc-1.5.0 to the .gitignore so that we don't have the binary in the repo
+	- Added the things I did to compile hpcc on vortex
+	- Changed setup script to cat hpccoutf.txt after the run
 
 
 

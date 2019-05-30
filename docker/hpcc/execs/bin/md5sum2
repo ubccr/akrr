@@ -1,4 +1,12 @@
 #!/bin/bash
+
+# added this in from appsigcheck.sh bc it was giving errors
+die()
+{
+  echo "${errMsgPrefix} ${1}"
+  exit 1
+}
+
 if [ $# -lt 2 ]
 then
     die "usage: md5sum2 -b file"
