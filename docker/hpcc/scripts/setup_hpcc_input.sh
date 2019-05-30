@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # initial statements for testing
-echo "Arguments passed in: $@"
-echo "Number of arguments: $#"
+#echo "Arguments passed in: $@"
+#echo "Number of arguments: $#"
 
 # initializing some variables
 num_args="$#"
@@ -12,7 +12,7 @@ echo "hpcc_inputs_dir: $hpcc_inputs_dir"
 
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-echo "Number of cores: $cpu_cores"
+echo "Number of cores detected: $cpu_cores"
 
 # help text essentially
 usage()
@@ -91,9 +91,8 @@ while [[ "$1" != "" ]]; do
 done
 
 
-echo "ppn: $ppn"
 echo "nodes: $nodes"
-echo "verbose: $verbose"
+echo "ppn: $ppn"
 echo "interactive: $interactive"
 
 #validating that they are numbers
@@ -126,20 +125,21 @@ fi
 cd $work_dir
 echo "work dir: $work_dir"
 
+echo "Running appsigcheck..."
+# trying to run the script thing on hpcc
+$execsLoc/bin/appsigcheck.sh $hpccLoc
+
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "$run_hpcc" == "true" ]]; then
 	echo "Running hpcc..."
 	$mpiLoc/mpirun -np $ppn $hpccLoc
 	echo "Complete! hpccoutf.txt is in $work_dir"
-	echo "cat to standard out"
+	echo "cat output to standard out:"
 	cat hpccoutf.txt
 fi
 
-# trying to run the script thing on hpcc
-$execsLoc/bin/appsigcheck.sh $hpccLoc
 
-
-echo "Hello reached the end (right before interactive)"
+echo "End of entrypoint script. Interactive session will launch if specified."
 # if user sets interactive flag, starts up bash at end
 if [[ "$interactive" == "true" ]]; then
 	/bin/bash

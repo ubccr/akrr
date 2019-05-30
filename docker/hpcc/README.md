@@ -157,6 +157,13 @@ End of Day Notes:
 	- Added the things I did to compile hpcc on vortex
 	- Changed setup script to cat hpccoutf.txt after the run
 
+Most updated docker image: pshoff/hpcc_benchmark:v02 (05/30/19)
+Older images: hpcc_test:v01 (05/29/19) 
+
+
+
+
+
 
 
 
