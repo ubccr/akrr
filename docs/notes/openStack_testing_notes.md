@@ -41,8 +41,8 @@ First Step: install Docker on the instance (I think i did this previously)
 sudo yum install -y yum-utils device-mapper-persistent-data lvm2
 sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 sudo yum install docker-ce docker-ce-cli containerd.io
-# potentially want these 2 lines too?
-#sudo usermod -aG docker $(whoami) # adds current user to docker group
+# definitely want to add the user to the group so can just use docker by itself
+sudo usermod -aG docker $(whoami) # adds current user to docker group
 #sudo systemctl enable docker.service
 
 sudo systemctl start docker
@@ -66,7 +66,7 @@ Error: Failed to perform requested operation on instance "test_8cpu", the instan
 
 ```
 
-
+There seems to be a really weird bug where after doing the whole mpirun with hpcc anything that I cat only goes 150-160 lines before just stopping and I DON'T KNOW WHY. But the mpirun thing is the cause, bc I checked everywhere before, and everywhere after anything you cat just doesn't get to the end
 
 
 
