@@ -83,6 +83,7 @@ Note:
 - Trying just -it on docker run: Doesn't cat it all properly, doesn't start interactive session
 - Trying just -i on script: Does cat properly, doesn't start interactive session
 
+- Doing a bunch of runs through docker, hpcg isn't really consistent, varying in GFLOPS/s
 
 
 
