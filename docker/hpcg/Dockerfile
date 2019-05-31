@@ -4,7 +4,7 @@ LABEL desc="hpcc benchmark made ready to run"
 
 
 
-# Installing intel-mpi, intel-mkl and making hpcguser in one Run
+# Installing intel-mpi, intel-mkl and making hpcguser in one Run (needed for hpcg run)
 RUN \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
@@ -20,16 +20,16 @@ RUN \
 # name of executable that this Docker will have 
 ENV exeName=xhpcg_avx
 
-# location of binary executable to run
-ENV binLoc=/opt/appker/bin
+# where the mkl stuff is, which also has the hpcg things
+ENV MKLDIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
 
-# copying in the executable
-COPY bin/$exeName $binLoc/$exeName
+# location of binary executable to run
+ENV binLoc=$MKLDIR/benchmarks/hpcg/bin
 
 # path to executable file for mpirun
 ENV hpcgLoc=$binLoc/$exeName
 
-# location where any inputs to hpcg will be (in this case mainly only one
+# location where any inputs to hpcg will be (in this case mainly only one)
 ENV inputsLoc=/usr/local/appker/inputs/
 COPY inputs $inputsLoc
 
@@ -37,7 +37,7 @@ COPY inputs $inputsLoc
 ENV scriptsLoc=/opt/scripts
 COPY scripts $scriptsLoc
 
-# to be able to just say mpirun in interactive
+# to be able to just say mpirun in interactive (also for script)
 ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun

@@ -32,6 +32,7 @@ usage()
 
 }
 
+# ppn is used to set -np flag with mpirun
 set_defaults()
 {
 	work_dir=$HOME # location where hpcg input file gets copied to
@@ -81,6 +82,7 @@ echo "nodes: $nodes"
 echo "ppn: $ppn"
 echo "interactive: $interactive"
 
+# using environment variables
 # setting up paths to copy file over
 hpcg_input_name="hpcg.dat"
 input_file_path="$hpcg_inputs_dir$hpcg_input_name"
@@ -91,6 +93,7 @@ echo "Input file name: $hpcg_input_name"
 echo "Full path: $input_file_path"
 echo "Destination path: $dest_path"
 
+# checks if file exists
 if [[ -f "$input_file_path" ]]; then
 	cp $input_file_path $dest_path
 	echo "$hpcc_input_name copied over to $dest_path"
@@ -99,6 +102,7 @@ else
 	exit 1
 fi
 
+# by default working dir is home of hpcguser
 cd $work_dir
 echo "work dir: $work_dir"
 
@@ -107,6 +111,7 @@ source /opt/intel/bin/compilervars.sh intel64 -platform linux
 export OMP_NUM_THREADS=1 # based on HPCG Development thing
 
 
+# running hpcg and catting output
 if [[ "$run_hpcg" == "true" ]]; then
 	echo "Running hpcg..."
 	$mpiLoc/mpirun -np $ppn $hpcgLoc
@@ -118,7 +123,6 @@ if [[ "$run_hpcg" == "true" ]]; then
 	echo ".yaml #################"
 	cat *.yaml
 fi
-
 
 
 # if user sets interactive flag, starts up bash at end
