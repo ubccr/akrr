@@ -20,7 +20,7 @@ Slight issues I was having and how I fixed (after I installed intel mpi and mkl:
 ./xhpcg_avx2: error while loading shared libraries: libiomp5.so: cannot open shared object file: No such file or directory
 
 # Fix
-source /opt/intel/bin/compilervars.sh intel64 [linux]
+source /opt/intel/bin/compilervars.sh intel64 [-platform linux]
 # potentially add linux too, unsure if needed but before I put linux I was getting another error
 
 

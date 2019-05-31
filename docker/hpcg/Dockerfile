@@ -45,7 +45,8 @@ RUN \
 	echo "export PATH=$PATH:$mpiLoc" >> /home/hpcguser/.bashrc && \
 	chown -R hpcguser $inputsLoc && \
 	chown -R hpcguser $binLoc && \
-	chown -R hpcguser $scriptsLoc
+	chown -R hpcguser $scriptsLoc 
+	
 
 USER hpcguser
 
