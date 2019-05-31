@@ -147,8 +147,8 @@ fi
 echo "End of entrypoint script. Interactive session will launch if specified."
 
 # if user sets interactive flag, starts up bash at end
-#if [[ "$interactive" == "true" ]]; then
-#	/bin/bash
-#fi
+if [[ "$interactive" == "true" ]]; then
+	/bin/bash
+fi
 
 
