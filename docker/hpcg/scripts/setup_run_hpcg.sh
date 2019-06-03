@@ -48,7 +48,7 @@ set_defaults
 
 # counting if the processor supports avx2 or skx
 countAVX2="$(grep -oc 'avx2' /proc/cpuinfo)"
-countSKX="$(grep -oc 'skx' /proc/cpuinfo)"
+countSKX="$(grep -oc 'avx512' /proc/cpuinfo)"
 echo "avx2: $countAVX2"
 echo "skx: $countSKX"
 
