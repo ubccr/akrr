@@ -164,6 +164,82 @@ End of Day Notes:
 	- It appears that if you want to enter into the docker container and start playing around there, you need both -it on docker run AND -i on the script
 	- Having just one or the other does not start interactive session
 
+Notes on trying to compile HPCC for avx, avx2, skx:
+```bash
+# similar start setup
+# Go to Application Kernel executable directory
+cd $AKRR_APPKER_DIR/execs
+# Environment variable $AKRR_APPKER_DIR should be setup automatically during initial
+# deployment to HPC resource
+
+# Load modules
+module load intel/18.3
+module load intel-mpi/2018.3
+module load mkl/2018.3
+
+# We need to make bench of interfaces to mkl library, unfortunately they are not precompiled
+# Lets compile them in $AKRR_APPKER_DIR/execs/libs/<interface_name>
+# and install in $AKRR_APPKER_DIR/execs/libs/lib
+mkdir -p $AKRR_APPKER_DIR/execs/libs
+mkdir -p $AKRR_APPKER_DIR/execs/libs/lib
+
+# make FFTW C wrapper library
+cd $AKRR_APPKER_DIR/execs/libs
+cp -r $MKLROOT/interfaces/fftw2x_cdft ./
+cd fftw2x_cdft
+make libintel64 PRECISION=MKL_DOUBLE interface=ilp64 MKLROOT=$MKLROOT INSTALL_DIR=$AKRR_APPKER_DIR/execs/libs/lib
+
+# get the code
+cd $AKRR_APPKER_DIR/execs
+wget http://icl.cs.utk.edu/projectsfiles/hpcc/download/hpcc-1.5.0.tar.gz
+tar xvzf hpcc-1.5.0.tar.gz
+cd hpcc-1.5.0
+
+# Prepare makefile
+# HPCC reuses makefiles from High Performance Linpack (thus do not forget to get to hpc directory)
+# you can start with something close from hpl/setup directory
+# or start from one of our make file
+# place Make.intel64_hpcresource file to hpcc-1.4.2/hpl
+cd hpl
+
+
+
+
+```
+
+Looking for things that might show how to compile hpcc for avx vs avx2 vs skx:
+Best thing so far (doesn't give clear answer but its something):
+https://www.chpc.utah.edu/documentation/white_papers/skylake.pdf
+Found this in the thing above:
+
+For the Skylake and Broadwell, we have built HPCC 1.5.0 with Intel 2017.4 compilers and 
+corresponding Intel MKL and MPI using the following compiler optimization flags: 
+-O3 -ansi-alias -ip -axCORE-AVX512,CORE-AVX2,AVX,SSE4.2 -restrict
+
+Of course this does not work with the 'make' that we are doing
+
+Update: I think perhaps we need to go into the Make.intel64_hpcresource and change the Compilers/linkers - Optimization flags portion, so I'm going to try that now
+
+It did seem to change something... since the old hpcc is 63M and the new one is 64M
+So I made a couple binaries
+hpcc\_[with extension]
+	- coreAVX[2 | 512] - compiled with flags $(HPL_DEFS) -restrict -O3 -axCORE-AVX[2 | 512]
+	- mAVX[2| 512] - compiled with flags $(HPL_DEFS) -restrict -O3 -mavx -mno-avx2 -mno-avx512f (or proper ones 
+
+- the ansi-alias and -ip i don't know what they're doing, but maybe i'll try them later too
+- It seems that -axCORE-AVX does not work with ax - trying -axAVX : that seems to work!
+- For AVX, -axCORE-AVX2 did work, as did -axCORE-AVX512
+- For some reason when I make it multiple times in the same directory, it doesn't actually care about the CCFLAGS, so I'm just making a new execs directory and doing all the building every time for each individual one 
+- The mno options above failed with all sorts of combinations, so I'll just specify the -mavx and such instead, hopefully I don't need to disable
+
+
+
+This website seems to give some information regarding the various flags to potentially enable avx
+https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
+
+
+
+
 ###Most updated docker image: pshoff/hpcc_benchmark:v03 (05/30/19)
 ###Older images: 
 - hpcc_test:v01 (05/29/19) 
