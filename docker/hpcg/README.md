@@ -1,6 +1,7 @@
 ## Directory for working with Docker and HPCG image stuff
 THIS README IS NOT COMPLETE. I largely used it as notes while figuring things out
 
+
 Binaries I used were from Intel mkl
 
 Slight issues I was having and how I fixed (after I installed intel mpi and mkl:
@@ -26,8 +27,11 @@ Adding flexibility so that the script identifies what the optimal benchmark to u
 
 
 Most updated version: pshoff/hpcg_benchmark:auto (06/03/19) - figures out which version to use (of avx, avx2, or skx from site above)
+
 Older versions:
+
 pshoff/hpcg_benchmark:avx (05/31/19) - uses avx exclusively
+
 pshoff/hpcg_benchmark:avx2 (06/03/19) - uses avx2 exclusively
 
 
