@@ -1,4 +1,5 @@
 ## Files for creating HPCC Docker image (uses Intel-mpi)
+THIS README IS NOT COMPLETE. I used it mainly as notes while figuring things out
 
 HPCC - High Performance Compute Competition, a benchmarking technique
 

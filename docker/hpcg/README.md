@@ -1,4 +1,5 @@
 ## Directory for working with Docker and HPCG image stuff
+THIS README IS NOT COMPLETE. I largely used it as notes while figuring things out
 
 Binaries I used were from Intel mkl
 
@@ -22,7 +23,6 @@ xhpc_avx is optimized for Intel Xeon E3 for first and 2nd generation
 https://software.intel.com/en-us/mkl-linux-developer-guide-versions-of-the-intel-optimized-hpcg
 
 Adding flexibility so that the script identifies what the optimal benchmark to use would be
-Added:
 
 
 Most updated version: pshoff/hpcg_benchmark:auto (06/03/19) - figures out which version to use (of avx, avx2, or skx from site above)
