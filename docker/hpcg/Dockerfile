@@ -17,8 +17,8 @@ RUN \
 	echo "hpcguser:hpcguser" | chpasswd && \
 	echo "Added hpcguser (pass: hpcguser) and installed intel-mpi and intel-mkl"
 
-# name of executable that this Docker will have 
-ENV exeName=xhpcg_avx
+# name of executable that this Docker will have - NOT USED IN FAVOR OF DETERMINING THAT DURING STARTUP
+#ENV exeName=xhpcg_avx2
 
 # where the mkl stuff is, which also has the hpcg things
 ENV MKLDIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
@@ -26,8 +26,8 @@ ENV MKLDIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
 # location of binary executable to run
 ENV binLoc=$MKLDIR/benchmarks/hpcg/bin
 
-# path to executable file for mpirun
-ENV hpcgLoc=$binLoc/$exeName
+# path to executable file for mpirun - NOT USED IN FAVOR OF DETERMINING THAT DURING STARTUP
+#ENV hpcgLoc=$binLoc/$exeName
 
 # location where any inputs to hpcg will be (in this case mainly only one)
 ENV inputsLoc=/usr/local/appker/inputs/

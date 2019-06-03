@@ -20,7 +20,7 @@ usage()
 	echo " Options:"
     	echo "	-h | --help			Display help text"
 	#echo "	-v | --verbose			increase verbosity of output"
-	echo " 	-i | --interactive		Start a bash session after the run"
+	echo " 	-i | --interactive		Start a bash session after the run (use with -it in docker run"
 	echo "	--norun				Set if you don't want to immediately run hpcg"
 	echo "	**-n NODES | --nodes NODES	Specify number of nodes hpcg will be running on"
 	echo "	**-ppn PROC_PER_NODE | "
@@ -41,9 +41,26 @@ set_defaults()
 	verbose=false
 	interactive=false
 	run_hpcg=true
+	exeName="xhpcg_avx" # determining optimal hpcg execution (checks for avx, avx2, or skx)
 }
 
 set_defaults
+
+# counting if the processor supports avx2 or skx
+countAVX2="$(grep -oc 'avx2' /proc/cpuinfo)"
+countSKX="$(grep -oc 'skx' /proc/cpuinfo)"
+echo "avx2: $countAVX2"
+echo "skx: $countSKX"
+
+# if find any, sets the proper executable name (can still be overriden
+if [[ "$countAVX2" -gt "0" ]]; then
+	exeName="xhpcg_avx2"
+fi
+
+if [[ "$countSKX" -gt "0" ]]; then
+	exeName="xhpcg_skx"
+fi 
+
 
 # loop through arguments - for each to one of them
 while [[ "$1" != "" ]]; do
@@ -110,9 +127,13 @@ echo "work dir: $work_dir"
 source /opt/intel/bin/compilervars.sh intel64 -platform linux
 export OMP_NUM_THREADS=1 # based on HPCG Development thing
 
+# finally sets hpcgLocation (location of hpcg executable chosen)
+hpcgLoc=$binLoc/$exeName
+
 
 # running hpcg and catting output
 if [[ "$run_hpcg" == "true" ]]; then
+	echo "Using $exeName to run hpcg"
 	echo "Running hpcg..."
 	$mpiLoc/mpirun -np $ppn $hpcgLoc
 	echo "Complete! Outputs are in $work_dir"
