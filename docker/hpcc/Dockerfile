@@ -41,6 +41,7 @@ RUN \
 	echo "export PATH=$PATH:$mpiLoc" >> /home/hpccuser/.bashrc && \
 	cd $inputsLoc && \
 	tar -xzvf $inputsLoc/hpcc_inputsV2.tar.gz && \
+	rm $inputsLoc/hpcc_inputsV2.tar.gz && \
 	chown -R hpccuser $inputsLoc/hpcc && \
 	chown -R hpccuser $execsLoc && \
 	chown -R hpccuser $scriptsLoc  # only doing this temporarily to finagle python script
