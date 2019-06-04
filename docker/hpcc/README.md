@@ -330,14 +330,17 @@ wget https://raw.githubusercontent.com/hoffmaps/akrr/intern_work/docker/hpcc/exe
 cd ..
 make arch=intel64_avxflags
 # then the hpcc appears in that directory
+# appears that you can just copy over the binary...? Don't seem to need anything else to run it...
+# for now though the entire hpcc-1.5.0 directory is copied over
+
 ```
 
 
-###Most updated docker image: pshoff/hpcc_benchmark:v03 (05/30/19)
+###Most updated docker image: pshoff/hpcc_benchmark:v04 (06/04/19)
 ###Older images: 
-- hpcc_test:v01 (05/29/19) 
-- hpcc_test:v02 (05/30/19) - Doesn't have the check for 1 core that v03 has
-
+- pshoff/hpcc_benchmark:v01 (05/29/19) 
+- pshoff/hpcc_benchmark:v02 (05/30/19) - Doesn't have the check for 1 core that v03 has
+- pshoff/hpcc_benchmark:v03 (05/30/19) - Hpcc not compiled with avx flags like v04
 
 
 
