@@ -6,6 +6,7 @@ HPCC - High Performance Compute Competition, a benchmarking technique
 Intel-mpi version used: 2018.3
 
 ### My process I used to make the binary executable for HPCC
+See bottom of readme for updated version
 ```bash
 # This process is basically the same as the AKRR_HPCC_Deployment.md process
 # Everything will be done in the execs directory, we'll use environment variable $EXECS_DIR
@@ -271,6 +272,65 @@ This website seems to give some information regarding the various flags to poten
 https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html
 
 
+## Updated notes on how to compile HPCC so that it has AVX stuff
+```bash
+
+s process is basically the same as the AKRR_HPCC_Deployment.md process
+# Everything will be done in the execs directory, we'll use environment variable $EXECS_DIR
+# So for example EXECS_DIR would be /path/to/proper/dir with execs being at end
+# The execs directory should be from the git repo, it contains bin and misc/hpcc (05/29/19)
+
+# Go to executable directory
+cd $EXECS_DIR/execs
+
+# Load modules (dependent on individual situation)
+module load intel/18.3
+module load intel-mpi/2018.3
+module load mkl/2018.3
+ 
+# We need to make bunch of interfaces to mkl library, unfortunately they are not precompiled
+# Lets compile them in $EXECS_DIR/execs/libs/<interface_name>
+# and install in $EXECS_DIR/execs/libs/lib
+mkdir -p $EXECS_DIR/execs/libs
+mkdir -p $EXECS_DIR/execs/libs/lib
+
+# make fftw2x_cdft interface to mkl
+cd $EXECS_DIR/execs/libs
+cp -r $MKLROOT/interfaces/fftw2x_cdft ./
+cd fftw2x_cdft
+make libintel64 PRECISION=MKL_DOUBLE interface=ilp64 MKLROOT=$MKLROOT INSTALL_DIR=$EXECS_DIR/execs/libs/lib
+
+# make FFTW C wrapper library
+cd $EXECS_DIR/execs/libs
+cp -r $MKLROOT/interfaces/fftw2xc ./
+cd fftw2xc
+make libintel64 PRECISION=MKL_DOUBLE MKLROOT=$MKLROOT INSTALL_DIR=$EXECS_DIR/execs/libs/lib
+
+ 
+# get the code
+cd $EXECS_DIR/execs
+wget http://icl.cs.utk.edu/projectsfiles/hpcc/download/hpcc-1.5.0.tar.gz
+tar xvzf hpcc-1.5.0.tar.gz
+cd hpcc-1.5.0
+# Prepare makefile
+# HPCC reuses makefiles from High Performance Linpack (thus do not forget to get to hpl directory)
+# you can start with something close from hpl/setup directory
+# or start from one of our make file
+# put make file into hpl directory
+cd hpl
+
+# now we need to get the proper make file
+# the major difference is that its CCFLAGS line is
+# CCFLAGS      = $(HPL_DEFS) -restrict -O3 -ansi-alias -ip -axCORE-AVX512,CORE-AVX2,AVX 
+# not just -restrict and -O3
+wget https://raw.githubusercontent.com/hoffmaps/akrr/intern_work/docker/hpcc/execs/misc/hpcc/Make.intel64_avxflags
+# so this (in theory) checks what the optimal option is for your system of the avxs
+
+# go back to hpcc-1.5.0 root dir
+cd ..
+make arch=intel64_avxflags
+# then the hpcc appears in that directory
+```
 
 
 ###Most updated docker image: pshoff/hpcc_benchmark:v03 (05/30/19)
