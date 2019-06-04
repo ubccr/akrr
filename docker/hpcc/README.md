@@ -232,6 +232,38 @@ hpcc\_[with extension]
 - For some reason when I make it multiple times in the same directory, it doesn't actually care about the CCFLAGS, so I'm just making a new execs directory and doing all the building every time for each individual one 
 - The mno options above failed with all sorts of combinations, so I'll just specify the -mavx and such instead, hopefully I don't need to disable
 
+- mavx2 did not work, suggested I use -march=core-avx2, check out this website it gave some more info
+https://software.intel.com/en-us/articles/performance-tools-for-software-developers-intel-compiler-options-for-sse-generation-and-processor-specific-optimizations
+- ^^^ Yeah this website is the bomb, it also gives the options that I used for the core stuff
+
+Lets take a look at the flags used in the paper:
+
+```bash
+# the flags used were:
+-O3 -ansi-alias -ip -axCORE-AVX512,CORE-AVX2,AVX,SSE4.2 -restrict
+
+# Lets look at what these mean
+
+# -O3 : turns on a bunch of optimizations to try and improve performance or code size (see https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html)
+
+# -ansi-alias : enables the use of ANSI aliasing rules in optimizations, so if your code follows ansi aliasability rules, the compiler can optimize more aggressively (see https://software.intel.com/en-us/cpp-compiler-developer-guide-and-reference-ansi-alias-qansi-alias and https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.3.0/com.ibm.zos.v2r3.cbcpx01/optalias.htm
+
+# -ip : enables additional interprocedural optimizations for single-file compilation. (see https://software.intel.com/en-us/cpp-compiler-developer-guide-and-reference-ip-qip and https://en.wikipedia.org/wiki/Interprocedural_optimization)
+
+# -axCORE-AVX512,CORE-AVX2,AVX,SSE4.2 : check at execution time what the best code path is for that processor, so AVX512 will be chosen for processors that support it, and AVX will be chosen for processors that support that but not AVX2 or AVX512 (see https://software.intel.com/en-us/articles/performance-tools-for-software-developers-intel-compiler-options-for-sse-generation-and-processor-specific-optimizations) 
+
+# -restrict : enables pointer disambiguation to further optimize (see https://software.intel.com/en-us/node/734225 and https://en.wikipedia.org/wiki/Restrict)
+
+
+
+
+```
+
+- So -mavx2 is instead -march=core-avx2, and -mavx512 is instead -march=avx512
+
+- Do we want to do some sort of march or mtune to tune things?
+
+- Also looks like -msse2 is the default on Linux, perhaps revise the input?
 
 
 This website seems to give some information regarding the various flags to potentially enable avx
