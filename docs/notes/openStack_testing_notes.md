@@ -86,6 +86,15 @@ Note:
 - Doing a bunch of runs through docker, hpcg isn't really consistent, varying in GFLOPS/s
 
 
+- Looking at CPU Affinity
+
+```bash
+ps -aF
+# this displays some statistics about the running processes
+# PSR column shows what processor things are running on
+```
+
+
 
 
 
