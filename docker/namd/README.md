@@ -4,6 +4,8 @@ Went to this site: https://www.ks.uiuc.edu/Development/Download/download.cgi?Pac
 And I downloaded Linux-x86_64-multicore (64-bit Intel/AMD single node)
 
 I then put the resulting tar in namd_loc in this directory (its in .gitignore so won't get posted to github) then I untarred it
+All the executable stuff is in namd_loc/execs
+
 
 Dockerfile creation was pretty straightforward.
 Based it off of hpcc docker file
