@@ -78,7 +78,28 @@ Just says to run it like regular mpirun -np 8 $EXE $INPUT
 Sooo I'm not sure what to do about it rn, so I'm just gonna try and get namd working, that seems to hold more promise (06/05/19)
 
 
+I'm back after only a day! I got gamess and namd to work more or less. The output looks decent. I still probably want to do some tuning on those to make the script a bit more concise, but that's for future me. Right now I want to look at nwchem.
 
+So I guess for some reason now nwchem works?? At least I haven't gotten the error as above when running it, ran it with the standard mpirun -np 4 $EXE $INPUT stuff
+
+Copied over a LOT of files from vortex, not sure if I need them all. Anyways:
+
+Now trying to run it on my own machine, I'm getting the following error:
+```bash
+/home/hoffmaps/projects/akrr/docker/nwchem/execs/nwchem-6.8/bin/LINUX64/nwchem: error while loading shared libraries: libmkl_intel_ilp64.so: cannot open shared object file: No such file or directory
+/home/hoffmaps/projects/akrr/docker/nwchem/execs/nwchem-6.8/bin/LINUX64/nwchem: error while loading shared libraries: libmkl_intel_ilp64.so: cannot open shared object file: No such file or directory
+/home/hoffmaps/projects/akrr/docker/nwchem/execs/nwchem-6.8/bin/LINUX64/nwchem: error while loading shared libraries: libmkl_intel_ilp64.so: cannot open shared object file: No such file or directory
+/home/hoffmaps/projects/akrr/docker/nwchem/execs/nwchem-6.8/bin/LINUX64/nwchem: error while loading shared libraries: libmkl_intel_ilp64.so: cannot open shared object file: No such file or directory
+```
+Things I found online suggested adding things to LD\_LIBRARY\_PATH but seems to have not really worked...  : https://stackoverflow.com/questions/35046753/using-mkl-error-while-loading-shared-libraries-libmkl-intel-lp64-so
+
+Alright so I'm not sure why it works but I think it works now, I just followed advice from above and did
+```bash
+locate  compilervars.sh
+source /adress you got from locate command/compilervars.sh intel64
+source ~/.bashrc
+```
+Potentially have to finagle this in Docker? But regardless it now works on my system, on to the Docker! Looks like I need mkl for this one though
 
 
 
