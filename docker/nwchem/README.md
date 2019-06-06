@@ -96,12 +96,41 @@ Things I found online suggested adding things to LD\_LIBRARY\_PATH but seems to 
 Alright so I'm not sure why it works but I think it works now, I just followed advice from above and did
 ```bash
 locate  compilervars.sh
+# gave me /opt/intel/compilers_and_libraries_2018.3.222/linux/bin/compilervars.sh
 source /adress you got from locate command/compilervars.sh intel64
+
 source ~/.bashrc
 ```
+
 Potentially have to finagle this in Docker? But regardless it now works on my system, on to the Docker! Looks like I need mkl for this one though
 
+Also I might just need the binary for this one, so I'm gonna try just copying over that one
 
+Well just tried running it on the docker.. epic FAIL. Got the following error
+```bash
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   PID 130 RUNNING AT 51b047931fee
+=   EXIT CODE: 7
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================
+   Intel(R) MPI Library troubleshooting guide:
+      https://software.intel.com/node/561764
+===================================================================================
+
+===================================================================================
+=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
+=   PID 144 RUNNING AT 51b047931fee
+=   EXIT CODE: 135
+=   CLEANING UP REMAINING PROCESSES
+=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
+===================================================================================
+```
+
+Maybe we just need all the stuff? I'll try adding in the other directories
+Yeah still getting a similar error. After doing some snooping, its probably something to do with nwchem and not necessarily mpirun, so I'll have to finangle that somehow
+But I definitely have to do that whole source thing from above, otherwise it just doesn't find the libraries. I'm not sure why everything works on my system but not on that system...
 
 
 
