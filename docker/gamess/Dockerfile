@@ -9,6 +9,7 @@ RUN \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
 	yum -y install intel-mpi-2018.3-051 && \
+	yum -y install tcsh && \
 	yum -y install sudo && \
 	useradd -d /home/gamessuser -ms /bin/bash gamessuser && \
 	usermod -aG wheel gamessuser && \
@@ -28,7 +29,7 @@ ENV gamessName=gamess_11Nov2017R3
 ENV gamessLoc=$execsLoc/$gamessName
 
 # location where the input for gamess will be
-ENV inputsLoc=/usr/local/appker/inputs
+ENV inputsLoc=/usr/local/appker/inputs/gamess
 COPY ./inputs/gamess $inputsLoc
 
 ENV scriptsLoc=/opt/scripts
@@ -50,7 +51,7 @@ USER gamessuser
 WORKDIR $scriptsLoc
 
 # runs the setup script to start (this calls the python script and such
-#ENTRYPOINT ["./setup_run_gamess.sh"]
+ENTRYPOINT ["./setup_run_gamess.sh"]
 
 
 

@@ -47,5 +47,12 @@ Also, I had to delete the first thing of LD\_LIBRARY\_PATH (or rather the first 
 Unsure if also have to have mkl, rn I'm doing fine with only mpi
 
 
+Okay I think I have it more or less working, though there is something sorta weird in the output.
+It says that "MPI kickoff will run GAMESS on 01 cores in 1 nodes." despite the fact that I put 6 cores per node, It does register the 6 bc it says "placing 6 of each process type onto each node" so I'm not sure what thats all about
+
+
+
+
+
 
 
