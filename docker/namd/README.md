@@ -12,5 +12,5 @@ Based it off of hpcc docker file
 Copied over the executables, inputs, and scripts
 then modified the entrypoint script to fit namd
 It seems to run correctly without a problem, except it is taking a bit long
-Other than that, this Docker image should be more or less set to go 
+Other than that, this Docker image should be more or less set to go, similar to other docker setups
 

@@ -122,13 +122,16 @@ else
 	exit 1
 fi
 
+cd $work_dir
+
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "$run_namd" == "true" ]]; then
 	echo "Running hpcc..."
 	$mpiLoc/mpirun -np $ppn $namdLoc $work_dir/$namd_input_name
 	echo "Complete! outputs are in is in $work_dir"
 	echo "cat output to standard out:"
-	cat *-out*
+	# cat doesn't really work for these files, so have to maybe find something else?
+	#cat *-out*
 fi
 
 echo "End of entrypoint script. Interactive session will launch if specified."
