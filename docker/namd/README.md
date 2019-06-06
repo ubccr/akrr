@@ -14,3 +14,8 @@ then modified the entrypoint script to fit namd
 It seems to run correctly without a problem, except it is taking a bit long
 Other than that, this Docker image should be more or less set to go, similar to other docker setups
 
+
+NOTE: The cat doesn't work since the out files are binary... Perhaps also want to check on output of the whole thing, unsure how accurate it is
+Also check with mpi setup, unsure if done correctly
+
+
