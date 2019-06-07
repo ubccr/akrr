@@ -79,8 +79,11 @@ class OpenStackServer:
                  flavor=None, volume=None, network=None, security_group=None, key_name=None,
                  ssh_username=None, ssh_private_key_file=None,
                  floating_ip_attach=False):
+        from akrr.util import get_full_path
         if resource is not None:
-            self.openstack = OpenStack(resource["openstack_env_set_script"])
+            # @todo check that it is not spinning already
+            self.openstack = OpenStack(get_full_path(
+                resource["resource_cfg_directory"], resource["openstack_env_set_script"]))
             self.flavor = resource["openstack_flavor"]
             self.volume = resource["openstack_volume"]
             self.network = resource["openstack_network"]
