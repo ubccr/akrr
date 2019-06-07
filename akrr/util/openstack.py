@@ -81,6 +81,7 @@ class OpenStackServer:
                  floating_ip_attach=False):
         from akrr.util import get_full_path
         if resource is not None:
+            # @todo check that it is not spinning already
             self.openstack = OpenStack(get_full_path(
                 resource["resource_cfg_directory"], resource["openstack_env_set_script"]))
             self.flavor = resource["openstack_flavor"]

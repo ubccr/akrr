@@ -536,56 +536,57 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
             "see application output for more hints")
         log.error_count += 1
 
-    # test the nodes, log to headnode and ping them
-    if parameters['RunEnv:Nodes'] == '':
-        log.error("Nodes are not detected, check batch_job_template and setup of AKRR_NODELIST variable")
-        log.error_count += 1
-
-    nodes = parameters['RunEnv:Nodes'].split()
-
-    requested_nodes = eval(completed_tasks['resource_param'])['nnodes']
-
-    str_io = io.StringIO()
-    try:
-        sys.stdout = sys.stderr = str_io
-        rsh = akrr.util.ssh.ssh_resource(resource)
-
-        number_of_unknown_hosts = 0
-        for node in set(nodes):
-            log.debug2(node)
-            out = akrr.util.ssh.ssh_command(rsh, "ping -c 1 %s" % node)
-            if out.count("unknown host") > 0:
-                number_of_unknown_hosts += 1
-
-        rsh.close(force=True)
-        del rsh
-
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-
-        if number_of_unknown_hosts > 0:
-            log.error("ERROR %d: Can not ping compute nodes from head node\n" % (log.error_count + 1) +
-                      "Nodes on which test job was executed detected as " + parameters['RunEnv:Nodes'] + "\n" +
-                      "If these names does not have sense check batch_job_template and setup of AKRR_NODELIST "
-                      "variable in resource configuration file")
+    if resource['batch_scheduler'].lower() != "openstack":
+        # test the nodes, log to headnode and ping them
+        if parameters['RunEnv:Nodes'] == '':
+            log.error("Nodes are not detected, check batch_job_template and setup of AKRR_NODELIST variable")
             log.error_count += 1
-    except Exception as e:
-        sys.stdout = sys.__stdout__
-        sys.stderr = sys.__stderr__
-        log.critical("Can not connect to %s\nProbably invalid credential, see full error report:\n%s",
-                     resource['name'], str_io.getvalue())
-        raise e
 
-    # check ppn count
-    if requested_nodes * resource['ppn'] != len(nodes):
-        log.error(
-            "ERROR {}: Number of requested processes (processes per node * nodes) "
-            "do not match actual processes executed"
-            "Either\n"
-            "    AKRR_NODELIST variable is set incorrectly\n"
-            "Or\n"
-            "    processes per node (PPN) is wrong\n".format(log.error_count + 1))
-        log.error_count += 1
+        nodes = parameters['RunEnv:Nodes'].split()
+
+        requested_nodes = eval(completed_tasks['resource_param'])['nnodes']
+
+        str_io = io.StringIO()
+        try:
+            sys.stdout = sys.stderr = str_io
+            rsh = akrr.util.ssh.ssh_resource(resource)
+
+            number_of_unknown_hosts = 0
+            for node in set(nodes):
+                log.debug2(node)
+                out = akrr.util.ssh.ssh_command(rsh, "ping -c 1 %s" % node)
+                if out.count("unknown host") > 0:
+                    number_of_unknown_hosts += 1
+
+            rsh.close(force=True)
+            del rsh
+
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+
+            if number_of_unknown_hosts > 0:
+                log.error("ERROR %d: Can not ping compute nodes from head node\n" % (log.error_count + 1) +
+                          "Nodes on which test job was executed detected as " + parameters['RunEnv:Nodes'] + "\n" +
+                          "If these names does not have sense check batch_job_template and setup of AKRR_NODELIST "
+                          "variable in resource configuration file")
+                log.error_count += 1
+        except Exception as e:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
+            log.critical("Can not connect to %s\nProbably invalid credential, see full error report:\n%s",
+                         resource['name'], str_io.getvalue())
+            raise e
+
+        # check ppn count
+        if requested_nodes * resource['ppn'] != len(nodes):
+            log.error(
+                "ERROR {}: Number of requested processes (processes per node * nodes) "
+                "do not match actual processes executed"
+                "Either\n"
+                "    AKRR_NODELIST variable is set incorrectly\n"
+                "Or\n"
+                "    processes per node (PPN) is wrong\n".format(log.error_count + 1))
+            log.error_count += 1
     log.info("\nTest kernel execution summary:\n%s", results_summary)
     log.info("\nThe output looks good.\n")
 
@@ -771,9 +772,23 @@ def resource_deploy(args):
     # run test job to queue
     run_test_job(resource, app_name, nodes)
 
+    if resource['batch_scheduler'].lower() == "openstack":
+        # Start instance if it is cloud
+        openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
+        resource['openstack_server'] = openstack_server
+        openstack_server.create()
+        resource['remote_access_node'] = openstack_server.ip
+
     if log.error_count == 0:
         append_to_bashrc(resource)
         enable_resource_for_execution(resource)
+
+    if resource['batch_scheduler'].lower() == "openstack":
+        # delete instance if it is cloud
+        akrr.util.openstack.OpenStackServer(resource=resource)
+        resource['openstack_server'].delete()
+        resource['remote_access_node'] = None
+
     log.empty_line()
 
     log.info("Result:")
