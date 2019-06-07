@@ -201,3 +201,16 @@ def strip_empty_lines(m_str):
         if not line.strip() == '':
             out += line + "\n"
     return out
+
+
+def get_full_path(cur_dir, path):
+    """
+    return full path if path is relative to cur_dir
+    if path is full path return it
+    """
+    import os.path
+    if len(path) == 0:
+        return cur_dir
+    if path[0] == "/":
+        return path
+    return os.path.abspath(os.path.join(cur_dir, path))

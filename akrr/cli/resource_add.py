@@ -222,7 +222,7 @@ def get_resource_name_by_id(resource_id, resources):
 
 
 def validate_queuing_system(queuing_system):
-    if queuing_system in ['slurm', 'pbs']:
+    if queuing_system in ['slurm', 'pbs', 'openstack']:
         return True
     else:
         return False
@@ -703,7 +703,7 @@ def resource_add(config):
     log.empty_line()
 
     while True:
-        log.log_input('Enter queuing system on resource (slurm or pbs): ')
+        log.log_input('Enter queuing system on resource (slurm, pbs or openstack): ')
         queuing_system = input()
         if validate_queuing_system(queuing_system):
             break

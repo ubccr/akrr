@@ -17,7 +17,7 @@ submit_commands = {
     'sge': "qsub $scriptPath",
     # 'shell': "/bin/sh $scriptPath",
     'slurm': "sbatch $scriptPath",
-    'OpenStack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
+    'openstack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
 }
 
 # Regular expression for extracting job id of submitted batch script
@@ -27,7 +27,7 @@ job_id_extract_patterns = {
     'sge': r'job (\d+)',
     # 'shell': r'',  # N/A,
     'slurm': r'^Submitted batch job (\d+)',
-    'OpenStack': r'^PID of last background process is (\d+)'
+    'openstack': r'^PID of last background process is (\d+)'
 }
 
 # Command and regular expression to detect that the job is still queued or running
@@ -36,7 +36,7 @@ wait_expressions = {
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
     'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
-    'OpenStack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
+    'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
     # 'shell'       : ["kill(0, $jobId)"]
 }
 
@@ -45,7 +45,7 @@ kill_expressions = {
     'pbs': ["qdel $jobId"],
     'sge': ["qdel $jobId"],
     'slurm': ["scancel $jobId"],
-    'OpenStack': ["kill -9  $jobId"]
+    'openstack': ["kill -9  $jobId"]
     # shell       => "kill(9, $jobId)"
 }
 
