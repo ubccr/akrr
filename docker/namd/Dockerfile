@@ -16,32 +16,35 @@ RUN \
 echo "Added namduser (pass: namduser) and installed intel-mpi"
 
 # copying executable (assumes its in namd_loc/execs
-ENV execsLoc=/opt/appker/execs
+ENV EXECS_LOC=/opt/appker/execs
 
-COPY ./namd_loc/execs $execsLoc
+COPY ./namd_loc/execs $EXECS_LOC
+# to get the appsigcheck thing
+COPY ./execs $EXECS_LOC/
 
 # location of namd executable
-ENV namdLoc=$execsLoc/namd2
+ENV NAMD_EXE_FULL_PATH=$EXECS_LOC/namd2
 
 # copying over inputs to use for namd2
-ENV inputsLoc=/usr/local/appker/inputs
-COPY ./inputs/apoa1_nve $inputsLoc
+ENV INPUTS_LOC=/usr/local/appker/inputs
+ENV NAMD_INPUTS_DIR=$INPUTS_LOC/namd
+COPY ./inputs/namd $NAMD_INPUTS_DIR
 
-ENV scriptsLoc=/opt/scripts
-COPY scripts $scriptsLoc
+ENV SCRIPTS_LOC=/opt/scripts
+COPY scripts $SCRIPTS_LOC
 
 
-ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
+ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 RUN \
-	echo "export PATH=$PATH:$mpiLoc" >> /home/namduser/.bashrc && \
-	chown -R namduser $inputsLoc && \
-	chown -R namduser $execsLoc && \
-	chown -R namduser $scriptsLoc
+	echo "export PATH=$PATH:$MPI_LOC" >> /home/namduser/.bashrc && \
+	chown -R namduser $INPUTS_LOC && \
+	chown -R namduser $EXECS_LOC && \
+	chown -R namduser $SCRIPTS_LOC
 
 USER namduser
 
-WORKDIR $scriptsLoc
+WORKDIR $SCRIPTS_LOC
 
 ENTRYPOINT ["./setup_run_namd.sh"]
 

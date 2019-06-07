@@ -1,18 +1,18 @@
 #!/bin/bash
 
 # name of input we want to use in inputs location
-namd_input_name="input.namd"
-namd_input_path="$inputsLoc/$namd_input_name"
+namd_cur_inputs_dir_name="apoa1_nve"
+namd_input_files_dir="${NAMD_INPUTS_DIR}/${namd_cur_inputs_dir_name}"
 
 
 # gets the number of cores of this machine (used for later mpirun -np flag
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-if [[ "$cpu_cores" == "1" ]]; then
+if [[ "${cpu_cores}" == "1" ]]; then
 	echo "Detected only one core. Counting processors instead"
 	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
 fi
 
-echo "Number of cores detected: $cpu_cores"
+echo "Number of cores detected: ${cpu_cores}"
 
 
 
@@ -39,7 +39,7 @@ usage()
 # allows script to continue if the argument passed in is a valid number
 validate_number()
 {
-	echo "Testing entry: " $1
+	echo "Testing entry: $1"
 	# checking if the given argument is an integer
 	re='^[0-9]+$'
 	if ! [[ $1 =~ $re ]] ; then
@@ -54,9 +54,9 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$HOME # location where hpcc input file gets copied to
+	work_dir=${HOME} # location where hpcc input file gets copied to
 	nodes=1
-	ppn=$cpu_cores
+	ppn=${cpu_cores}
 	verbose=false
 	interactive=false
 	run_namd=true
@@ -98,40 +98,41 @@ while [[ "$1" != "" ]]; do
 done
 
 
-echo "nodes: $nodes"
-echo "ppn: $ppn"
-echo "interactive: $interactive"
+echo "nodes: ${nodes}"
+echo "ppn: ${ppn}"
+echo "interactive: ${interactive}"
 
 #validating that they are numbers
-validate_number $nodes
-validate_number $ppn
+validate_number ${nodes}
+validate_number ${ppn}
 
-input_file_path=$namd_input_path
+input_files_path="${namd_input_files_dir}"
 
 
-dest_path=$work_dir
-echo "Input file path: $input_file_path"
-echo "Input dir path: $inputsLoc"
+dest_path="${work_dir}"
+echo "Input file path: ${input_files_path}"
+echo "Namd Input dir path: ${NAMD_INPUTS_DIR}"
 
 # check if input file exists, if it does, copy it over
-if [[ -f "$input_file_path" ]]; then
-	cp $inputsLoc/* $dest_path
-	echo "Copied everything from $inputsLoc to $dest_path"
+if [[ -f "${input_files_path}/input.namd" ]]; then
+	cp ${input_files_path}/* ${dest_path}
+	echo "Copied everything from ${input_files_path} to ${dest_path}"
 else
-	echo "Error: $input_file_path does not exist"
+	echo "Error: ${input_files_path}/input.namd does not exist"
 	exit 1
 fi
 
 cd $work_dir
 
+echo "Running appsigcheck..."
+${EXECS_LOC}/bin/appsigcheck.sh ${NAMD_EXE_FULL_PATH}
+
 # running hpcc with mpirun, where -np is number of cores for the machine
-if [[ "$run_namd" == "true" ]]; then
+if [[ "${run_namd}" == "true" ]]; then
 	echo "Running hpcc..."
-	$mpiLoc/mpirun -np $ppn $namdLoc $work_dir/$namd_input_name
-	echo "Complete! outputs are in is in $work_dir"
-	echo "cat output to standard out:"
-	# cat doesn't really work for these files, so have to maybe find something else?
-	#cat *-out*
+	${MPI_LOC}/mpirun -np ${ppn} ${NAMD_EXE_FULL_PATH} ${work_dir}/input.namd
+	echo "Complete! outputs are in is in ${work_dir}"
+	echo "Cat doesn't really work for output..."
 fi
 
 echo "End of entrypoint script. Interactive session will launch if specified."
