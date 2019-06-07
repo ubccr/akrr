@@ -132,12 +132,12 @@ echo "work dir: ${work_dir}"
 
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
-${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_LOC}
+${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
 	echo "Running hpcc..."
-	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_LOC}
+	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
 	echo "Complete! hpccoutf.txt is in ${work_dir}"
 	echo "cat output to standard out:"
 	cat hpccoutf.txt

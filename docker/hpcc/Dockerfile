@@ -22,7 +22,7 @@ COPY execs $EXECS_LOC
 
 
 # location of executable file, since mpirun need to have the path to hpcc
-ENV HPCC_LOC=$EXECS_LOC/hpcc-1.5.0/hpcc
+ENV HPCC_EXE_FULL_PATH=$EXECS_LOC/hpcc-1.5.0/hpcc
 
 # location where the tar will be unpacked for some default inputs for hpcc
 ENV INPUTS_LOC=/usr/local/appker/inputs
@@ -42,7 +42,7 @@ RUN \
 	rm $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
 	chown -R hpccuser $INPUTS_LOC/hpcc && \
 	chown -R hpccuser $EXECS_LOC && \
-	chown -R hpccuser $SCRIPTS_LOC  # only doing this temporarily to finagle python script
+	chown -R hpccuser $SCRIPTS_LOC  
 
 
 USER hpccuser
