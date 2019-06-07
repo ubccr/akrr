@@ -15,8 +15,9 @@ RUN \
 	echo "hpcguser:hpcguser" | chpasswd && \
 	echo "Added hpcguser (pass: hpcguser) and installed intel-mpi and intel-mkl"
 
-# name of executable that this Docker will have - NOT USED IN FAVOR OF DETERMINING THAT DURING STARTUP
-#ENV EXE_NAME=xhpcg_avx2
+# name of executable directory (place where the sigcheck will be so can get that tag)
+ENV EXECS_LOC=/opt/appker/execs
+COPY execs $EXECS_LOC
 
 # where the mkl stuff is, which also has the hpcg things
 ENV MKL_DIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
@@ -30,33 +31,28 @@ ENV HPCG_BIN_LOC=$MKL_DIR/benchmarks/hpcg/bin
 # location where any inputs to hpcg will be (in this case mainly only one)
 ENV INPUTS_LOC=/usr/local/appker/inputs
 COPY inputs $INPUTS_LOC
+ENV HPCG_INPUTS_PATH=$INPUTS_LOC/hpcg
 
 # location of convenience scripts
-ENV scriptsLoc=/opt/scripts
-COPY scripts $scriptsLoc
+ENV SCRIPTS_LOC=/opt/scripts
+COPY scripts $SCRIPTS_LOC/
 
 # to be able to just say mpirun in interactive (also for script)
-ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
+ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
-	echo "export PATH=$PATH:$mpiLoc" >> /home/hpcguser/.bashrc && \
+	echo "export PATH=$PATH:$MPI_LOC" >> /home/hpcguser/.bashrc && \
 	chown -R hpcguser $INPUTS_LOC && \
 	chown -R hpcguser $HPCG_BIN_LOC && \
-	chown -R hpcguser $scriptsLoc 
+	chown -R hpcguser $SCRIPTS_LOC && \
+	chown -R hpcguser $EXECS_LOC
 	
 
 USER hpcguser
 
-WORKDIR $scriptsLoc
+WORKDIR $SCRIPTS_LOC
 
 #runs the setup script to set up the input things and run hpcg
 
 ENTRYPOINT ["./setup_run_hpcg.sh"]
-
-
-
-
-
-
-

@@ -2,15 +2,15 @@
 
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-if [[ "$cpu_cores" == "1" ]]; then
+if [[ "${cpu_cores}" == "1" ]]; then
 	echo "Detected only one core. Counting processors instead"
 	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
 fi
 
-echo "Number of cores detected: $cpu_cores"
+echo "Number of cores detected: ${cpu_cores}"
 echo "(used for determining what to use for -np flag in mpirun)"
 
-hpcg_inputs_dir=$inputsLoc
+hpcg_inputs_dir="${HPCG_INPUTS_PATH}"
 
 
 usage()
@@ -35,30 +35,30 @@ usage()
 # ppn is used to set -np flag with mpirun
 set_defaults()
 {
-	work_dir=$HOME # location where hpcg input file gets copied to
+	work_dir="${HOME}" # location where hpcg input file gets copied to
 	nodes=1
-	ppn=$cpu_cores
+	ppn="${cpu_cores}"
 	verbose=false
 	interactive=false
 	run_hpcg=true
-	exeName="xhpcg_avx" # determining optimal hpcg execution (checks for avx, avx2, or skx)
+	hpcg_exe_name="xhpcg_avx" # determining optimal hpcg execution (checks for avx, avx2, or skx)
 }
 
 set_defaults
 
 # counting if the processor supports avx2 or skx
-countAVX2="$(grep -oc 'avx2' /proc/cpuinfo)"
-countSKX="$(grep -oc 'avx512' /proc/cpuinfo)"
-echo "avx2: $countAVX2"
-echo "skx: $countSKX"
+count_avx2="$(grep -oc 'avx2' /proc/cpuinfo)"
+count_avx512="$(grep -oc 'avx512' /proc/cpuinfo)"
+echo "avx2: ${count_avx2}"
+echo "avx512: ${count_avx512}"
 
 # if find any, sets the proper executable name (can still be overriden
-if [[ "$countAVX2" -gt "0" ]]; then
-	exeName="xhpcg_avx2"
+if [[ "${count_avx2}" -gt "0" ]]; then
+	hpcg_exe_name="xhpcg_avx2"
 fi
 
-if [[ "$countSKX" -gt "0" ]]; then
-	exeName="xhpcg_skx"
+if [[ "${count_avx512}" -gt "0" ]]; then
+	hpcg_exe_name="xhpcg_skx"
 fi 
 
 
@@ -95,25 +95,25 @@ while [[ "$1" != "" ]]; do
 	shift # to go to next argument
 done
 
-echo "nodes: $nodes"
-echo "ppn: $ppn"
-echo "interactive: $interactive"
+echo "nodes: ${nodes}"
+echo "ppn: ${ppn}"
+echo "interactive: ${interactive}"
 
 # using environment variables
 # setting up paths to copy file over
 hpcg_input_name="hpcg.dat"
-input_file_path="$hpcg_inputs_dir$hpcg_input_name"
+input_file_path="${hpcg_inputs_dir}/${hpcg_input_name}"
 
-dest_path="$work_dir/$hpcg_input_name"
+dest_path="${work_dir}/${hpcg_input_name}"
 
-echo "Input file name: $hpcg_input_name"
-echo "Full path: $input_file_path"
-echo "Destination path: $dest_path"
+echo "Input file name: ${hpcg_input_name}"
+echo "Full path: ${input_file_path}"
+echo "Destination path: ${dest_path}"
 
 # checks if file exists
-if [[ -f "$input_file_path" ]]; then
-	cp $input_file_path $dest_path
-	echo "$hpcc_input_name copied over to $dest_path"
+if [[ -f "${input_file_path}" ]]; then
+	cp ${input_file_path} ${dest_path}
+	echo "${hpcc_input_name} copied over to ${dest_path}"
 else
 	echo "Error: $input_file_path does not exist"
 	exit 1
@@ -121,22 +121,25 @@ fi
 
 # by default working dir is home of hpcguser
 cd $work_dir
-echo "work dir: $work_dir"
+echo "work dir: ${work_dir}"
 
 # source to connect up the mkl libraries
 source /opt/intel/bin/compilervars.sh intel64 -platform linux
 export OMP_NUM_THREADS=1 # based on HPCG Development thing
 
 # finally sets hpcgLocation (location of hpcg executable chosen)
-hpcgLoc=$binLoc/$exeName
+hpcg_exe_full_path="${HPCG_BIN_LOC}/${hpcg_exe_name}"
 
+echo "Running appsigcheck..."
+# trying to run the script thing on hpcc
+${EXECS_LOC}/bin/appsigcheck.sh ${hpcg_exe_full_path}
 
 # running hpcg and catting output
-if [[ "$run_hpcg" == "true" ]]; then
-	echo "Using $exeName to run hpcg"
+if [[ "${run_hpcg}" == "true" ]]; then
+	echo "Using ${hpcg_exe_full_path} to run hpcg"
 	echo "Running hpcg..."
-	$mpiLoc/mpirun -np $ppn $hpcgLoc
-	echo "Complete! Outputs are in $work_dir"
+	${MPI_LOC}/mpirun -np ${ppn} ${hpcg_exe_full_path}
+	echo "Complete! Outputs are in ${work_dir}"
 	echo "cat output to standard out:"
 	echo "hpcg_log ###################"
 	cat hpcg_log*
@@ -147,7 +150,7 @@ fi
 
 
 # if user sets interactive flag, starts up bash at end
-if [[ "$interactive" == "true" ]]; then
+if [[ "${interactive}" == "true" ]]; then
 	/bin/bash
 fi
 
