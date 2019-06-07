@@ -159,6 +159,7 @@ class AkrrDaemon:
                ORDER BY s.time_to_start ASC''', (time_now_str,))
 
         tasks_to_activate = self.dbCur.fetchall()
+
         for task_to_activate in tasks_to_activate:
             (task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param_str, group_id,
              parent_task_id) = task_to_activate
@@ -168,13 +169,10 @@ class AkrrDaemon:
                 if resource_enabled.get(resource, 0) == 0 or appkernel_enabled.get(app, 0) == 0:
                     continue
 
+
             task_activated = False
             task_handler = None
             start_task_execution = True
-            # Commit all what was pushed before but not committed
-            # so we can rollback if something will go wrong
-            self.dbCon.commit()
-            self.dbCon.commit()
             try:
                 log.info(
                     "Activating Task\n" +
@@ -188,8 +186,24 @@ class AkrrDaemon:
                     "Task parameters: %s\n\t" % task_param_str +
                     "Parent task id: %s" % parent_task_id)
 
+                # check limit for resource on max number of active tasks
+                if cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1) >= 0:
+                    # get number of active tasks
+                    self.dbCur.execute(
+                        '''SELECT task_id, resource, app
+                           FROM mod_akrr.active_tasks
+                           WHERE resource like %s''', (resource,))
+                    activate_task = self.dbCur.fetchall()
+                    if len(activate_task) >= cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1):
+                        continue
+
                 if cfg.find_resource_by_name(resource).get('active', True) is False:
                     raise AkrrError("%s is marked as inactive in AKRR" % resource)
+
+                # Commit all what was pushed before but not committed
+                # so we can rollback if something will go wrong
+                self.dbCon.commit()
+                self.dbCon.commit()
 
                 # Check If resource is on maintenance
                 self.dbCur.execute(
