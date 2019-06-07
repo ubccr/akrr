@@ -96,7 +96,11 @@ Things I found online suggested adding things to LD\_LIBRARY\_PATH but seems to 
 Alright so I'm not sure why it works but I think it works now, I just followed advice from above and did
 ```bash
 locate  compilervars.sh
-# gave me /opt/intel/compilers_and_libraries_2018.3.222/linux/bin/compilervars.sh
+# gave me the following
+# /opt/intel/bin/compilervars.sh
+# /opt/intel/compilers_and_libraries_2018/linux/bin/compilervars.sh
+# /opt/intel/compilers_and_libraries_2018.3.222/linux/bin/compilervars.sh
+
 source /adress you got from locate command/compilervars.sh intel64
 
 source ~/.bashrc
@@ -131,6 +135,32 @@ Well just tried running it on the docker.. epic FAIL. Got the following error
 Maybe we just need all the stuff? I'll try adding in the other directories
 Yeah still getting a similar error. After doing some snooping, its probably something to do with nwchem and not necessarily mpirun, so I'll have to finangle that somehow
 But I definitely have to do that whole source thing from above, otherwise it just doesn't find the libraries. I'm not sure why everything works on my system but not on that system...
+It works fine on my machine if I just source the things from above...
+
+Found something called gdb thats supposed to be helpful for debugging, so I'm gonna try using that to analyze the core files
+
+It is sorta interesting, I can sorta see what functions were called by doing
+gbd \[executable\] \[core file\] 
+then typing in where
+
+Okay so we're gonna try just using an nwchem image from Docker hub instead of making our own, so I'll try that:
+```bash
+docker pull nwchemorg/nwchem-qc
+```
+Found here: https://hub.docker.com/r/nwchemorg/nwchem-qc
+Seems to be working, but unsure how its working as far as mpirun and such
+
+If we use one of their things, it works fine, but if we try to use the aump2.nw, it turns out with this:
+```bash
+[hoffmaps@dhcp-128-205-70-4 nwchem]$ docker run -v $(pwd):/opt/data nwchemorg/nwchem-qc "aump2.nw"
+# leads to
+UnboundLocalError: local variable 'geometry' referenced before assignment
+```
+I think this is probably what went wrong with my nwchem! Something to do with geometry
+Though this is weird, since it ran on my machine still...
+Let me look into that.
+
+
 
 
 
