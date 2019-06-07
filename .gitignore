@@ -29,4 +29,5 @@
 /shippable
 /tests/.coverage
 /tests/regtest1/.crontmp
-
+etc_old
+log_old

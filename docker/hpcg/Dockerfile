@@ -1,8 +1,6 @@
 FROM centos:7
 
-LABEL desc="hpcc benchmark made ready to run"
-
-
+LABEL desc="HPCG benchmark made ready to run"
 
 # Installing intel-mpi, intel-mkl and making hpcguser in one Run (needed for hpcg run)
 RUN \
@@ -18,20 +16,20 @@ RUN \
 	echo "Added hpcguser (pass: hpcguser) and installed intel-mpi and intel-mkl"
 
 # name of executable that this Docker will have - NOT USED IN FAVOR OF DETERMINING THAT DURING STARTUP
-#ENV exeName=xhpcg_avx2
+#ENV EXE_NAME=xhpcg_avx2
 
 # where the mkl stuff is, which also has the hpcg things
-ENV MKLDIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
+ENV MKL_DIR=/opt/intel/compilers_and_libraries_2018.3.222/linux/mkl
 
 # location of binary executable to run
-ENV binLoc=$MKLDIR/benchmarks/hpcg/bin
+ENV HPCG_BIN_LOC=$MKL_DIR/benchmarks/hpcg/bin
 
 # path to executable file for mpirun - NOT USED IN FAVOR OF DETERMINING THAT DURING STARTUP
-#ENV hpcgLoc=$binLoc/$exeName
+#ENV HPCG_EXE_LOC=$HPCG_BIN_LOC/$EXE_NAME
 
 # location where any inputs to hpcg will be (in this case mainly only one)
-ENV inputsLoc=/usr/local/appker/inputs/
-COPY inputs $inputsLoc
+ENV INPUTS_LOC=/usr/local/appker/inputs
+COPY inputs $INPUTS_LOC
 
 # location of convenience scripts
 ENV scriptsLoc=/opt/scripts
@@ -43,8 +41,8 @@ ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
 	echo "export PATH=$PATH:$mpiLoc" >> /home/hpcguser/.bashrc && \
-	chown -R hpcguser $inputsLoc && \
-	chown -R hpcguser $binLoc && \
+	chown -R hpcguser $INPUTS_LOC && \
+	chown -R hpcguser $HPCG_BIN_LOC && \
 	chown -R hpcguser $scriptsLoc 
 	
 
