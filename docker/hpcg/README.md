@@ -26,13 +26,12 @@ https://software.intel.com/en-us/mkl-linux-developer-guide-versions-of-the-intel
 Adding flexibility so that the script identifies what the optimal benchmark to use would be
 
 
-Most updated version: pshoff/hpcg_benchmark:auto (06/03/19) - figures out which version to use (of avx, avx2, or skx from site above)
+Most updated version: pshoff/akrr_benchmarks:hpcg - has appsigcheck and script has common practices
 
 Older versions:
-
-pshoff/hpcg_benchmark:avx (05/31/19) - uses avx exclusively
-
-pshoff/hpcg_benchmark:avx2 (06/03/19) - uses avx2 exclusively
+- pshoff/hpcg_benchmark:auto (06/03/19) - automatically figures out which one to use, but didn't have appsigcheck of executable
+- pshoff/hpcg_benchmark:avx (05/31/19) - uses avx exclusively
+- pshoff/hpcg_benchmark:avx2 (06/03/19) - uses avx2 exclusively
 
 
 
