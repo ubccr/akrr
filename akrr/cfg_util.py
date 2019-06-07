@@ -78,7 +78,8 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         'remote_access_method': [str, False, True],
         'appkernel_dir': [str, False, True],
         'akrr_common_cleanup_template': [str, False, True],
-        'akrr_data': [str, False, True]
+        'akrr_data': [str, False, True],
+        'max_number_of_active_tasks': [int, True, True],
     }
 
     for variable, (m_type, nullable, must) in parameters_types.items():
