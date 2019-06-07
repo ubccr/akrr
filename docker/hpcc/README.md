@@ -335,14 +335,15 @@ make arch=intel64_avxflags
 
 ```
 
+Update: I updated the scripts to be more reflective of standard practices, things work as normal now, but things are in private repo
 
-### Most updated docker image: pshoff/hpcc_benchmark:v04 (06/04/19)
+### Most updated docker image: pshoff/akrr_benchmarks:hpcc (06/07/19)
 
 ### Older images: 
 - pshoff/hpcc_benchmark:v01 (05/29/19) 
 - pshoff/hpcc_benchmark:v02 (05/30/19) - Doesn't have the check for 1 core that v03 has
 - pshoff/hpcc_benchmark:v03 (05/30/19) - Hpcc not compiled with avx flags like v04
-
+- pshoff/hpcc_benchmark:v04 (06/04/19) - Script didn't have standard practices
 
 
 
