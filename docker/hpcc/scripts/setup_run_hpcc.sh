@@ -30,7 +30,7 @@ usage()
 	echo " 	-i | --interactive		Start a bash session after the run"
 	echo "	--norun				Set if you don't want to immediately run hpcc"
 	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
-	echo "	-{ppn} PROC_PER_NODE | "
+	echo "	-ppn PROC_PER_NODE | "
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
@@ -97,7 +97,7 @@ done
 
 
 echo "nodes: ${nodes}"
-echo "{ppn}: ${ppn}"
+echo "ppn: ${ppn}"
 echo "interactive: ${interactive}"
 
 #validating that they are numbers
