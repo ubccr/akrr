@@ -239,6 +239,7 @@ def load_resource(resource_name: str):
         # last modification time for future reloading
         resource['default_resource_cfg_filename'] = default_resource_cfg_filename
         resource['resource_cfg_filename'] = resource_cfg_filename
+        resource['resource_cfg_directory'] = os.path.dirname(resource_cfg_filename)
         resource['default_resource_cfg_file_last_mod_time'] = os.path.getmtime(default_resource_cfg_filename)
         resource['resource_cfg_file_last_mod_time'] = os.path.getmtime(resource_cfg_filename)
 
