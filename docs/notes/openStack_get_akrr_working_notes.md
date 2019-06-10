@@ -99,7 +99,7 @@ cp <somewhere>/lakeeffect-xdmod-openrc.sh /home/akrruser/akrr/etc/resources/lake
 ppn = 8
 
 # head node for remote access
-remote_access_node = None
+remote_access_node = "headnode.somewhere.org" # this was None earlier
 # Remote access method to the resource (default ssh)
 remote_access_method = "ssh"
 # Remote copy method to the resource (default scp)
@@ -203,5 +203,6 @@ Also weird is that running the deploy again, its getting to that point a lot fas
 - I did add some print statements in openstack.py, but deleted them after it worked fine.
 - So it appears that the resource is all set to start working, I got the okay from the code, since the only warnings were about the execs and inputs already being there, which had sense
 
-
+- Next step: try and deploy one of the tests.
+- We'll do hpcc first
 
