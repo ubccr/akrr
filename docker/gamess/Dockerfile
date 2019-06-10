@@ -15,15 +15,15 @@ RUN \
 	echo "Added gamessuser (pass: gamessuser) and installed intel-mpi"
 
 # place where the executable is
-ENV EXECS_DIR=/opt/appker/execs
+ENV EXECS_LOC=/opt/appker/execs
 
 # copying in gamess files
-COPY execs $EXECS_DIR
+COPY execs $EXECS_LOC
 # so the execs dir is /opt/appker/execs
 
 ENV GAMESS_NAME=gamess_11Nov2017R3
 # location of games path, needed in rungms
-ENV GAMESS_EXE_DIR=$EXECS_DIR/$GAMESS_NAME
+ENV GAMESS_EXE_DIR=$EXECS_LOC/$GAMESS_NAME
 
 # location where the input for gamess will be
 ENV INPUTS_LOC=/usr/local/appker/inputs
@@ -40,7 +40,7 @@ RUN \
 	echo "export PATH=$PATH:$MPI_LOC" >> /home/gamessuser/.bashrc && \
 	cd $INPUTS_LOC && \
 	chown -R gamessuser $INPUTS_LOC && \
-	chown -R gamessuser $EXECS_DIR && \
+	chown -R gamessuser $EXECS_LOC && \
 	chown -R gamessuser $SCRIPTS_LOC 
 
 

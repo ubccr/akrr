@@ -134,6 +134,9 @@ echo "work dir: ${work_dir}"
 # to allow access for mpiexec.hydra
 export PATH=${PATH}:${MPI_LOC}
 
+echo "Running appsigcheck..."
+${EXECS_LOC}/bin/appsigcheck.sh ./rungms
+
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
 	./rungms ${gamess_input_name} ${version} ${nodes} ${ppn}
