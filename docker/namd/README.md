@@ -19,3 +19,6 @@ NOTE: The cat doesn't work since the out files are binary... Perhaps also want t
 Also check with mpi setup, unsure if done correctly
 
 
+UPDATE: Added in the appsigcheck thing, so it checks that stuff fine
+
+
