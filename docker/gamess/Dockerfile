@@ -23,14 +23,12 @@ COPY execs $EXECS_DIR
 
 ENV GAMESS_NAME=gamess_11Nov2017R3
 # location of games path, needed in rungms
-ENV GAMESS_DIR=$EXECS_DIR/$GAMESS_NAME
+ENV GAMESS_EXE_DIR=$EXECS_DIR/$GAMESS_NAME
 
 # location where the input for gamess will be
 ENV INPUTS_LOC=/usr/local/appker/inputs
 COPY ./inputs/gamess $INPUTS_LOC/gamess
 ENV GAMESS_INPUTS_LOC=$INPUTS_LOC/gamess
-
-
 
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC

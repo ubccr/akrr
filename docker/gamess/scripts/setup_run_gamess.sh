@@ -3,12 +3,12 @@
 
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-if [[ "$cpu_cores" == "1" ]]; then
+if [[ "${cpu_cores}" == "1" ]]; then
 	echo "Detected only one core. Counting processors instead"
 	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
 fi
 
-echo "Number of cores detected: $cpu_cores"
+echo "Number of cores detected: ${cpu_cores}"
 
 
 # help text essentially
@@ -44,9 +44,9 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$HOME # location where gamess input file gets copied to
+	work_dir=${HOME} # location where gamess input file gets copied to
 	nodes=1
-	ppn=$cpu_cores
+	ppn=${cpu_cores}
 	verbose=false
 	interactive=false
 	run_gamess=true
@@ -89,61 +89,59 @@ while [[ "$1" != "" ]]; do
 done
 
 
-echo "nodes: $nodes"
-echo "ppn: $ppn"
-echo "interactive: $interactive"
+echo "nodes: ${nodes}"
+echo "ppn: ${ppn}"
+echo "interactive: ${interactive}"
 
 
 #validating that they are numbers
-validate_number $nodes
-validate_number $ppn
-
-
+validate_number ${nodes}
+validate_number ${ppn}
 
 gamess_input_name="c8h10-cct-mp2.inp"
-input_file_path="$inputsLoc/$gamess_input_name"
+input_file_path="${GAMESS_INPUTS_LOC}/${gamess_input_name}"
 
-dest_path=$work_dir
+dest_path=${work_dir}
 
 # output for testing
-echo "Input file name: $gamess_input_name"
-echo "Full path: $input_file_path"
-echo "Destination path: $dest_path"
+echo "Input file name: ${gamess_input_name}"
+echo "Full path: ${input_file_path}"
+echo "Destination path: ${dest_path}"
 
 #check if input file exists, if it does, copy it over
-if [[ -f "$input_file_path" ]]; then
-	cp $input_file_path $dest_path
-	echo "$gamess_input_name copied over to $dest_path"
+if [[ -f "${input_file_path}" ]]; then
+	cp ${input_file_path} ${dest_path}
+	echo "${gamess_input_name} copied over to ${dest_path}"
 else
-	echo "Error: $input_file_path does not exist"
+	echo "Error: ${input_file_path} does not exist"
 	exit 1
 fi
 
 # copies over the run file to the working directory
-if [[ -f "$gamessLoc/rungms" ]]; then
-	cp $gamessLoc/rungms $dest_path
-	echo "rungms copied over to $dest_path"
+if [[ -f "${GAMES_EXE_DIR}/rungms" ]]; then
+	cp ${GAMES_EXE_DIR}/rungms ${dest_path}
+	echo "rungms copied over to ${dest_path}"
 else
-	echo "Error: $gamessLoc/rungms does not exist"
+	echo "Error: ${GAMES_EXE_DIR}/rungms does not exist"
 	exit 1
 fi
 
 
 # go to working directory to run gamess
-cd $work_dir
-echo "work dir: $work_dir"
+cd ${work_dir}
+echo "work dir: ${work_dir}"
 
 # to allow access for mpiexec.hydra
-export PATH=$PATH:$mpiLoc
+export PATH=${PATH}:${MPI_LOC}
 
-if [[ "$run_gamess" == "true" ]]; then
+if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
-	./rungms $gamess_input_name $version $nodes $ppn
-	echo "Complete! Gamess has been run, output in $work_dir"
+	./rungms ${gamess_input_name} ${version} ${nodes} ${ppn}
+	echo "Complete! Gamess has been run, output in ${work_dir}"
 fi
 
 # if user sets interactive flag, starts up bash at end
-if [[ "$interactive" == "true" ]]; then
+if [[ "${interactive}" == "true" ]]; then
 	/bin/bash
 fi
 
