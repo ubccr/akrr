@@ -52,7 +52,9 @@ It says that "MPI kickoff will run GAMESS on 01 cores in 1 nodes." despite the f
 
 Other than that, it seems to be running fine. Will come back to it to make some tune ups, but for now it SEEMS okay
 
-
+Update: changed up the run script to reflect best practices and added appsigcheck thing.
+TO NOTE: Update your rungms to reflect proper directories and such
+For example, GMSPATH, if using this Dockerfile, would correspond to GAMESS\_EXE\_DIR
 
 
 
