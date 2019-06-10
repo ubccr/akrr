@@ -160,6 +160,8 @@ I think this is probably what went wrong with my nwchem! Something to do with ge
 Though this is weird, since it ran on my machine still...
 Let me look into that.
 
+So I'm not exactly sure what's going on. For now we won't worry about it I suppose, we'll just use the docker given for now. So this directory is basically not used for anything bc we're not using my docker.
+
 
 
 
