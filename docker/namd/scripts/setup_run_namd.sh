@@ -129,7 +129,7 @@ ${EXECS_LOC}/bin/appsigcheck.sh ${NAMD_EXE_FULL_PATH}
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_namd}" == "true" ]]; then
-	echo "Running hpcc..."
+	echo "Running namd..."
 	${MPI_LOC}/mpirun -np ${ppn} ${NAMD_EXE_FULL_PATH} ${work_dir}/input.namd
 	echo "Complete! outputs are in is in ${work_dir}"
 	echo "Cat doesn't really work for output..."

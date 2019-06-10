@@ -118,11 +118,11 @@ else
 fi
 
 # copies over the run file to the working directory
-if [[ -f "${GAMES_EXE_DIR}/rungms" ]]; then
-	cp ${GAMES_EXE_DIR}/rungms ${dest_path}
+if [[ -f "${GAMESS_EXE_DIR}/rungms" ]]; then
+	cp ${GAMESS_EXE_DIR}/rungms ${dest_path}
 	echo "rungms copied over to ${dest_path}"
 else
-	echo "Error: ${GAMES_EXE_DIR}/rungms does not exist"
+	echo "Error: ${GAMESS_EXE_DIR}/rungms does not exist"
 	exit 1
 fi
 
@@ -134,8 +134,10 @@ echo "work dir: ${work_dir}"
 # to allow access for mpiexec.hydra
 export PATH=${PATH}:${MPI_LOC}
 
+# executable is in a sorta weird place
+gamess_exe_full_path="${GAMESS_EXE_DIR}/gamess.${version}.x"
 echo "Running appsigcheck..."
-${EXECS_LOC}/bin/appsigcheck.sh ./rungms
+${EXECS_LOC}/bin/appsigcheck.sh ${gamess_exe_full_path}
 
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
