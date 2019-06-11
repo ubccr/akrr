@@ -1,0 +1,133 @@
+$ akrr app validate -n 1 -r lakeeffect -a hpcg
+
+[INFO] Validating hpcg application kernel installation on lakeeffect
+[INFO] ################################################################################
+[INFO] Validating lakeeffect parameters from /home/hoffmaps/projects/akrr/etc/resources/lakeeffect/resource.conf
+[INFO] Syntax of /home/hoffmaps/projects/akrr/etc/resources/lakeeffect/resource.conf is correct and all necessary parameters are present.
+[INFO] Syntax of /home/hoffmaps/projects/akrr/akrr/default_conf/hpcg.app.conf is correct and all necessary parameters are present.
+[INFO] ################################################################################
+[INFO] Validating resource accessibility. Connecting to lakeeffect.
+================================================================================
+[INFO] Successfully connected to lakeeffect
+
+
+[INFO] Checking directory locations
+
+[INFO] Checking: 199.109.192.4:/home/centos/appker/akrr_data
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: 199.109.192.4:/home/centos/appker/resource
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: 199.109.192.4:/home/centos/appker/network_scratch
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+[INFO] Checking: 199.109.192.4:/home/centos/appker/network_scratch
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+out:  [
+  {
+    "ID": "99254479-43e2-4d18-beae-af6c1ddc3fd9",
+    "Name": "akrrtemp",
+    "Status": "ACTIVE",
+    "Networks": "lakeeffect-199.109.195=199.109.192.4",
+    "Image": "",
+    "Flavor": "c8.m16"
+  }
+]
+
+out:  []
+
+[INFO] ################################################################################
+[INFO] Will send test job to queue, wait till it executed and will analyze the output
+Will use AKRR REST API at https://localhost:8091/api/v1
+[INFO] 
+Submitted test job to AKRR, task_id is 3144569
+
+
+
+================================================================================
+Tast status:
+Task is in scheduled_tasks queue.
+It schedule to be started on 2019-06-11T15:38:15
+
+time: 2019-06-11 15:38:15 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: None
+Status info:
+None
+
+time: 2019-06-11 15:38:25 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Created batch job script and have submitted it to remote queue.
+Status info:
+Remote job ID is 1454
+
+time: 2019-06-11 15:39:25 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Still in queue. Either waiting or running
+Status info:
+  PID TTY          TIME CMD
+ 1454 ?        00:00:00 bash
+
+
+time: 2019-06-11 15:40:31 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine
+Status info:
+Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine
+
+time: 2019-06-11 15:40:36 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+time: 2019-06-11 15:40:46 
+
+================================================================================
+Tast status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+time: 2019-06-11 15:40:57 [INFO] Test job is completed analyzing output
+
+[INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory for this task: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508
+Location of some important generated files:
+        Batch job script: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/jobfiles/hpcg.job
+        Application kernel output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/jobfiles/appstdout
+        Batch job standard output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/jobfiles/stdout
+        Batch job standard error output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/jobfiles/stderr
+        XML processing results: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/result.xml
+        Task execution logs: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/hpcg/2019.06.11.15.38.16.531508/proc/log
+
+
+[INFO] 
+Enabling hpcg on lakeeffect for execution
+
+[INFO] Successfully enabled hpcg on lakeeffect
+[INFO] 
+DONE, you can move to next step!
+

@@ -64,7 +64,6 @@ if resource['batch_scheduler'].lower() == "openstack":
 #### ADDED BY PHILLIP HOFFMANN TO DELETE OPENSTACK INSTANCE AFTER TESTS
 if resource['batch_scheduler'].lower() == "openstack":
         # delete instance if it is cloud
-        akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
         resource['remote_access_node'] = None
 #### ADDED BY PHILLIP HOFFMANN
@@ -89,13 +88,13 @@ sudo systemctl start docker
 ```bash
 appkernel_run_env_template = """
 sudo systemctl start docker
-
+docker pull pshoff/akrr_benchmarks:hpcc
 # set how to run app kernel
 RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:hpcc"
 """
 ```
+Also don't forget the pull to get the most updated version of the docker file
 
-
-
+Example of validation run is in openStack\_hpcc\_validation\_example
 
 

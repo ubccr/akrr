@@ -109,6 +109,39 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 UPDATE: The Json error thing happens when something goes wrong with connecting to the resource in app_validate, probably some sort of error with sshing or something?
 
 Update: Now without changing anything (that I know of) the Json error is no more, but still having issues with the whole import yaml thingy
+- I think I fixed the whole import yaml thingy by just stopping the daemon but now there's a whole host of other errors. - has to do with *.yaml not being a file or directory? I'll try just removing that bottom statement from the hpcg config
+
+# THIS NEEDS TO BE FIXED
+- The Json error is back with a vengance. I still don't know why its an error or WHAT is even going on. For now I'm just gonna bypass it by having the is_server_running return False in openstack file (in akrr.akrr.util.openstack.py) 
+- Update: turns out the error happened bc we were making too many http requests or something? With the tokens when we're sourcing the environment script.
+- So for now we're trying to revoke the token at the end, perhaps that helps?
+
+
+### back to the yaml things
+- After restarting the docker daemon the yaml was correctly used and such
+- I think maybe you should pull the docker image before running it to make sure its the most up to date, so I'm adding a pull in the app.configs
+- so now hpcg.app.config is now this:
+
+```bash
+appkernel_run_env_template = """
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:hpcg
+RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:hpcg"
+
+"""
+```
+Yeah that worked now.... UGH IT WAS SO SIMPLE TO SOLVE
+
+So we worked with the json thing, turns out it has to do with a token thing when we're sourcing the script - for now we just revoke the token during garbage collecting, so we'll see if issues come up again
+For now we have a validation run, example in openStack_hpcc_validation_example
+
+
+
+
+
+
+
+
 
 
 
