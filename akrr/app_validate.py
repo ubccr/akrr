@@ -192,7 +192,6 @@ def app_validate(resource, appkernel, nnodes):
     #### ADDED BY PHILLIP HOFFMANN TO DELETE OPENSTACK INSTANCE AFTER TESTS
     if resource['batch_scheduler'].lower() == "openstack":
         # delete instance if it is cloud
-        akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
         resource['remote_access_node'] = None
     #### ADDED BY PHILLIP HOFFMANN
