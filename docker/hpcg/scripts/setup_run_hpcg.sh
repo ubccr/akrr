@@ -143,9 +143,20 @@ if [[ "${run_hpcg}" == "true" ]]; then
 	echo "cat output to standard out:"
 	echo "hpcg_log ###################"
 	cat hpcg_log*
-	echo 
-	echo ".yaml #################"
-	cat *.yaml
+	
+	# printing out yaml in proper format (based on default hpcg.app.conf)
+	for f in *.yaml
+	do
+		echo "====== $f Start ======"
+		cat $f
+		echo "====== $f End   ======"
+	done
+	for f in *.txt
+	do
+		echo "====== $f Start ======"
+		cat $f
+		echo "====== $f End   ======"
+	done
 fi
 
 
