@@ -83,9 +83,17 @@ sudo systemctl start docker
 - Update: okay docker is started now, but the docker hub repo was private so I made it public to see if at least the docker thing works
 
 - Update: it completed successfully, seems we have everything we need, I'll check it all over again tomorrow, but it appears hpcc works
+- Yeah everything appears to be working as normal, no weird things other than a logging error, but I don't think that really affects anything
 
+- UPDATE: Editing the place that calls the docker run to remove container on exit, so the hpcc.app.conf is now this:
+```bash
+appkernel_run_env_template = """
+sudo systemctl start docker
 
-
+# set how to run app kernel
+RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:hpcc"
+"""
+```
 
 
 
