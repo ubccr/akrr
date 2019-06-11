@@ -22,6 +22,10 @@ class OpenStack:
         print("Start Session")
         self._start_session()
 
+    # added to try and solve problem with having too many tokens..?
+    def __del__(self):
+        self.token_revoke()
+
     def _start_session(self):
         import akrr.pexpect.replwrap
 
@@ -110,8 +114,15 @@ class OpenStackServer:
 
     def is_server_running(self):
         """check if server with same name already up"""
-        out = self.openstack.run_open_stack_cmd("server list -f json --name "+self.name)
-        out = json.loads(out.strip())
+        cmd = "server list -f json --name "+self.name
+        out = self.openstack.run_open_stack_cmd(cmd)
+        try:
+            out = json.loads(out.strip())
+        except json.JSONDecodeError as e: # added to hopefully track error better
+            log.error("Can get status of OpenStack instance:")
+            log.error("Command: " + cmd)
+            log.error("Output: " + out)
+            raise e
         if len(out) == 0:
             return False
         else:
