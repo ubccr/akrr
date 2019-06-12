@@ -141,7 +141,7 @@ ${EXECS_LOC}/bin/appsigcheck.sh ${gamess_exe_full_path}
 
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
-	./rungms ${gamess_input_name} ${version} ${nodes} ${ppn}
+	./rungms ${gamess_input_name} ${version} ${ppn} ${nodes}
 	echo "Complete! Gamess has been run, output in ${work_dir}"
 fi
 

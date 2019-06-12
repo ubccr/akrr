@@ -84,7 +84,7 @@ while [[ "${1}" != "" ]]; do
 			;;
 		-ppn | --proc_per_node)
 			shift
-			{ppn}=${1}
+			ppn=${1}
 			;;
 		*)
 			echo "Error: unrecognized argument"

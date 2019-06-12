@@ -112,12 +112,12 @@ task mp2
 task direct_mp2
 task ccsd(t)     # Perform a single point CCSD(T) calculation
 
-#scratch_dir /panasas/scratch/xdtas
-#permanent_dir /panasas/scratch/xdtas2
+## /panasas/scratch/xdtas
+## /panasas/scratch/xdtas2
 
-#scratch_dir /home/hoffmaps/projects/akrr/docker/nwchem/temp
-#permanent_dir /home/hoffmaps/projects/akrr/docker/nwchem/temp
+# /home/hoffmaps/projects/akrr/docker/nwchem/temp
+# /home/hoffmaps/projects/akrr/docker/nwchem/temp
 
 #PRINT debug
-#scratch_dir /home/nwchemuser
-#permanent_dir /home/nwchemuser
+# /home/nwchemuser
+# /home/nwchemuser
