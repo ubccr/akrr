@@ -2,13 +2,8 @@ FROM centos:7
 
 LABEL desc="namd benchmark made ready to run"
 
-
-# VERY similar to hpcc - seems that we only need mpi?
 # Installing intel-mpi and making namduser in one Run
 RUN \
-	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
-	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
-	yum -y install intel-mpi-2018.3-051 && \
 	yum -y install sudo && \
 	useradd -d /home/namduser -ms /bin/bash namduser && \
 	usermod -aG wheel namduser && \

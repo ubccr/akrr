@@ -1,4 +1,5 @@
 ## Directory with all the files for the namd docker
+NOTE: Right now this docker is incorrect bc its using mpi and not charmrun like its supposed to, i'll be working on getting it working with charm
 
 Went to this site: https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD
 And I downloaded Linux-x86_64-multicore (64-bit Intel/AMD single node)
@@ -21,4 +22,6 @@ Also check with mpi setup, unsure if done correctly
 
 UPDATE: Added in the appsigcheck thing, so it checks that stuff fine
 
-
+## UPDATE 
+So I gotta do this whole thing with charmrun somehow, NOT mpi
+So that's what I'll be working on shortly to fix this
