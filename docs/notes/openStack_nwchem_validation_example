@@ -1,0 +1,117 @@
+[INFO] Validating nwchem application kernel installation on lakeeffect
+[INFO] ################################################################################
+[INFO] Validating lakeeffect parameters from /home/hoffmaps/projects/akrr/etc/resources/lakeeffect/resource.conf
+[INFO] Syntax of /home/hoffmaps/projects/akrr/etc/resources/lakeeffect/resource.conf is correct and all necessary parameters are present.
+[INFO] Syntax of /home/hoffmaps/projects/akrr/akrr/default_conf/nwchem.app.conf is correct and all necessary parameters are present.
+[INFO] ################################################################################
+[INFO] Validating resource accessibility. Connecting to lakeeffect.
+================================================================================
+[INFO] Successfully connected to lakeeffect
+
+
+[INFO] Checking directory locations
+
+[INFO] Checking: 199.109.192.10:/home/centos/appker/akrr_data
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: 199.109.192.10:/home/centos/appker/resource
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: 199.109.192.10:/home/centos/appker/network_scratch
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+[INFO] Checking: 199.109.192.10:/home/centos/appker/network_scratch
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+[INFO] ################################################################################
+[INFO] Will send test job to queue, wait till it executed and will analyze the output
+Will use AKRR REST API at https://localhost:8091/api/v1
+[INFO] 
+Submitted test job to AKRR, task_id is 3144574
+
+
+
+================================================================================
+Tast status:
+Task is in scheduled_tasks queue.
+It schedule to be started on 2019-06-12T10:56:20
+
+time: 2019-06-12 10:56:20 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: None
+Status info:
+None
+
+time: 2019-06-12 10:56:30 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Created batch job script and have submitted it to remote queue.
+Status info:
+Remote job ID is 1448
+
+time: 2019-06-12 10:57:23 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Still in queue. Either waiting or running
+Status info:
+  PID TTY          TIME CMD
+ 1448 ?        00:00:00 bash
+
+
+time: 2019-06-12 11:01:37 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine
+Status info:
+Not in queue. Either exited with error or executed successfully. Copied all files to local machine. Deleted all files from remote machine
+
+time: 2019-06-12 11:01:42 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+time: 2019-06-12 11:01:52 
+
+================================================================================
+Tast status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+time: 2019-06-12 11:02:02 [INFO] Test job is completed analyzing output
+
+[INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory for this task: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067
+Location of some important generated files:
+        Batch job script: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/jobfiles/nwchem.job
+        Application kernel output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/jobfiles/appstdout
+        Batch job standard output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/jobfiles/stdout
+        Batch job standard error output: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/jobfiles/stderr
+        XML processing results: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/result.xml
+        Task execution logs: /home/hoffmaps/projects/akrr/log/comptasks/lakeeffect/nwchem/2019.06.12.10.56.20.192067/proc/log
+
+
+[INFO] 
+Enabling nwchem on lakeeffect for execution
+
+[INFO] Successfully enabled nwchem on lakeeffect
+[INFO] 
+DONE, you can move to next step!
