@@ -34,7 +34,14 @@ ${MPI_LOC}/mpirun ${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
 ```
 Yeah we need to use charmrun for this
 
+UPDATE: turns out we just wanted to do the ./namd run without the whole charmrun deal bc with multicore machines we can do that, and on openstack its considered one machine, so that works fine now
 
+### Update on how things are working (based on results file)
+	- hpcc - takes about 3.5/4 mins, seems to be running on 8 cores
+	- hpcg - 8 processes, takes about 1 min
+	- gamess - 8 cores, takes about 2.5 mins
+	- namd - running on 8 cores, takes about 2 mins (tho CPU usage for one is 800%)
+	- nwchem
 
 
 
