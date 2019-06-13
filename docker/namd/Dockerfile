@@ -2,6 +2,7 @@ FROM centos:7
 
 LABEL desc="namd benchmark made ready to run"
 
+
 # Installing intel-mpi and making namduser in one Run
 RUN \
 	yum -y install sudo && \
@@ -28,8 +29,6 @@ COPY ./inputs/namd $NAMD_INPUTS_DIR
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC
 
-
-ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 RUN \
 	echo "export PATH=$PATH:$MPI_LOC" >> /home/namduser/.bashrc && \

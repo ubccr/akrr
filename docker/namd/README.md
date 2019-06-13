@@ -25,3 +25,31 @@ UPDATE: Added in the appsigcheck thing, so it checks that stuff fine
 ## UPDATE 
 So I gotta do this whole thing with charmrun somehow, NOT mpi
 So that's what I'll be working on shortly to fix this
+
+Found this website with the tar: http://charmplusplus.org/download/
+Got the tar and unpacked it
+Now I have to build it somehow?
+```bash
+# tried just building it with the standard target
+./build charm++ netlrts-linux-x86_64
+```
+Update - so I'm not exactly sure how this charmrun stuff is working. HOWEVER i did the following command and namd2 finished within a few minutes
+```bash
+./namd2 +p6 ../../inputs/namd/apoa1_nve/input.namd 
+```
+Based on this website: https://www.ks.uiuc.edu/Research/namd/2.9/ug/node79.html
+I'm not sure if it makes a difference? But we're gonna try and get this one working with akrr
+Update: checked with nikolay, it makes sense.
+I updated the script ot now reflect this, now when it runs namd it is
+```bash
+${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
+```
+This does appear to run the things in parallel but also for some reason when I look at htop, one of them is using 600% of the cpu so idk whats up with that
+
+
+
+
+
+
+
+
