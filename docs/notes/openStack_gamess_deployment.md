@@ -43,7 +43,7 @@ sudo systemctl start docker
 docker pull pshoff/akrr_benchmarks:gamess
 
 # set how to run app kernel
-RUN_APPKERNEL="docker run pshoff/akrr_benchmarks:gamess"
+RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:gamess"
 """
 ```
 Now we just try the validation run

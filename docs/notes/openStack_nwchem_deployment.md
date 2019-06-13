@@ -47,7 +47,7 @@ docker pull nwchemorg/nwchem-qc
 # Temporary until we figure out exactly which one we want to run
 brary_tests/CH4_STO6G_FCI/ch4_sto6g_fci.nw
 # connecting it to a volume...
-RUN_APPKERNEL="docker run -v $AKRR_TMP_WORKDIR:/opt/data nwchemorg/nwchem-qc aump2.nw"
+RUN_APPKERNEL="docker run --rm -v $AKRR_TMP_WORKDIR:/opt/data nwchemorg/nwchem-qc aump2.nw"
 """
 ```
 In this case we want to run aump2.nw

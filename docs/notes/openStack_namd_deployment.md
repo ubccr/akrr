@@ -47,7 +47,7 @@ sudo systemctl start docker
 docker pull pshoff/akrr_benchmarks:namd
 
 #set how to run app kernel
-RUN_APPKERNEL="docker run pshoff/akrr_benchmarks:namd"
+RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:namd"
 """
 ```
 
