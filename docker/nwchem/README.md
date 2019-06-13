@@ -162,7 +162,7 @@ Let me look into that.
 
 So I'm not exactly sure what's going on. For now we won't worry about it I suppose, we'll just use the docker given for now. So this directory is basically not used for anything bc we're not using my docker.
 
-
+Update: we're back at it. The nwchem appears to only be running on 2 cores, so we're gonna have a dockerfile that uses their docker but instead runs our own mpirun thingy
 
 
 

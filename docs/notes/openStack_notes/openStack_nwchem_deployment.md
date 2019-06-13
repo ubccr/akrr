@@ -93,7 +93,12 @@ Okay that makes it run fine, but now we run into a similar error as before, wher
 
 The plan: im gonna spin up an instance and run the docker and see if I can't find anything out
 
+Update: wasn't able to figure out what the error was with the geometry, Nikolay figured out it has to do with how big the shared memory thing is, so we're editing how much memory is being shared, and you can do that with the --shm-size flag on docker run
+```bash
+# new RUN_APPKERNEL
+RUN_APPKERNEL="docker run --rm --shm-size 8g -v $AKRR_TMP_WORKDIR:/opt/data nwchemorg/nwchem-qc aump2.nw"
 
+```
 
 
 
