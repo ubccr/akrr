@@ -1,54 +1,23 @@
-FROM centos:7
+FROM nwchemorg/nwchem-qc:latest
 
-LABEL desc="nwchem benchmark made ready to run"
-
-
-
-# Installing intel-mpi, intel-mkl and making nwchemuser in one Run (needed for nwchem run)
+# have to run these so we can do objcopy for the appsigcheck
 RUN \
-	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
-	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
-	yum -y install intel-mpi-2018.3-051 && \
-	yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && \
-	yum -y install intel-mkl-2018.3-051 && \
-	yum -y install sudo && \
-	yum -y install gdb && \ 
-	yum -y update && \
-	useradd -d /home/nwchemuser -ms /bin/bash nwchemuser && \
-	usermod -aG wheel nwchemuser && \
-	echo "nwchemuser:nwchemuser" | chpasswd && \
-echo "Added nwchemuser (pass: nwchemuser) and installed intel-mpi and intel-mkl"
+	apt-get -y update && \
+	apt-get -y install binutils
 
-# path to executable (aka nwchem)
-ENV execsLoc=/opt/appker/execs
-COPY execs $execsLoc
-ENV exePath=$execsLoc/nwchem-6.8/bin/LINUX64/nwchem
+ENV EXECS_LOC=/opt/appker/execs
+COPY ./execs ${EXECS_LOC}
 
+ENV INPUTS_DIR=/usr/local/appker/inputs
+ENV NWCHEM_INPUTS_DIR=${INPUTS_DIR}/nwchem
 
-# location where inputs to use are
-ENV inputsLoc=/usr/local/appker/inputs
-COPY ./inputs/nwchem $inputsLoc
+COPY ./inputs/nwchem ${NWCHEM_INPUTS_DIR}/
 
-# location of convenience scripts
-ENV scriptsLoc=/opt/scripts
-COPY scripts $scriptsLoc
+# The path to the nwchem executable is stored in $NWCHEM_EXECUTABLE
 
-# to be able to do mpi run and such
-ENV mpiLoc=/opt/intel/impi/2018.3.222/bin64
+ENV SCRIPTS_DIR=/opt/appker/scripts
+COPY scripts ${SCRIPTS_DIR}
 
-# giving permissions and setting up path to mpi for nwchemuser - so can just do mpirun
-RUN \
-	echo "export PATH=$PATH:$mpiLoc" >> /home/nwchemuser/.bashrc && \
-	chown -R nwchemuser:nwchemuser $inputsLoc && \
-	chown -R nwchemuser:nwchemuser $execsLoc && \
-	chown -R nwchemuser:nwchemuser $scriptsLoc 
-	
-
-USER nwchemuser
-
-WORKDIR $scriptsLoc
-
-#runs the setup script to set up the input things and run nwchem
+WORKDIR ${SCRIPTS_DIR}
 
 ENTRYPOINT ["./setup_run_nwchem.sh"]
-

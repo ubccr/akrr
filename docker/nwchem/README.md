@@ -163,6 +163,27 @@ Let me look into that.
 So I'm not exactly sure what's going on. For now we won't worry about it I suppose, we'll just use the docker given for now. So this directory is basically not used for anything bc we're not using my docker.
 
 Update: we're back at it. The nwchem appears to only be running on 2 cores, so we're gonna have a dockerfile that uses their docker but instead runs our own mpirun thingy
+- Also adding in the option for shared memory allocation made it work with lakeeffect
+
+- So I edited the scripts and Dockerfile, so now just running the docker straightup runs it with the proper input
+- I did have to set --allow-run-as-root for mpirun bc that's how their mpi run was set up
+- Also i set the shared memory to 8g
+- also there was a weird error with the docker run:
+```bash
+# a bunch of messages like this:
+[4a07f1be2fc6:00199] Read -1, expected 27456, errno = 1
+
+```
+Looking it up online, this place: https://github.com/radiasoft/devops/issues/132 recommended adding the flag --cap-add=SYS\_PTRACE and that seemed to get rid of the printouts, and it seems to be working fine otherwise. However, another site recommended something else: https://github.com/open-mpi/ompi/issues/4948 
+- For now I'm gonna do the --cap-add thing bc that just seems more straightforward. Other than that it seems to be running okay
+
+
+
+
+
+
+
+
 
 
 
