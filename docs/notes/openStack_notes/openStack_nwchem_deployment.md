@@ -97,10 +97,24 @@ Update: wasn't able to figure out what the error was with the geometry, Nikolay 
 ```bash
 # new RUN_APPKERNEL
 RUN_APPKERNEL="docker run --rm --shm-size 8g -v $AKRR_TMP_WORKDIR:/opt/data nwchemorg/nwchem-qc aump2.nw"
-
 ```
+Update: I made a dockerfile from their docker image so that it runs based on the number of cpu/cores not just 2, so now the app config looks like this:
 
+```bash
+appkernel_run_env_template = """
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:nwchem
+# Temporary until we figure out exactly which one we want to run
+# connecting it to a volume...
 
+# the cap-add to not print all the errors that are being given
+RUN_APPKERNEL="docker run --rm --shm-size 8g --cap-add=SYS_PTRACE pshoff/akrr_benchmarks:nwchem"
+sed -i -e "s/scratch_dir/#/g" $INPUT
+sed -i -e "s/permanent_dir/#/g" $INPUT
+"""
+```
+So this incorporates the shared memory size and also gets rid of the printing of all those errors
+yep! seems to be working well now
 
 
 

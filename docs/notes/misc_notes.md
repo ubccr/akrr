@@ -41,7 +41,7 @@ UPDATE: turns out we just wanted to do the ./namd run without the whole charmrun
 	- hpcg - 8 processes, takes about 1 min
 	- gamess - 8 cores, takes about 2.5 mins
 	- namd - running on 8 cores, takes about 2 mins (tho CPU usage for one is 800%)
-	- nwchem
+	- nwchem - now working well, takes about 1.5 mins
 
 
 
