@@ -146,6 +146,8 @@ fi
 
 echo "End of entrypoint script. Interactive session will launch if specified."
 
+echo "See the github repo for any updates/thoughts"
+
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then
 	/bin/bash

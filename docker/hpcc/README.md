@@ -337,6 +337,11 @@ make arch=intel64_avxflags
 
 Update: I updated the scripts to be more reflective of standard practices, things work as normal now, but things are in private repo
 
+Update: image changed so that the Dockerfile uses a full path for the scripts to accomodate singularity. This does mean that you can't send in arguments to the image when running it.
+Thoughts on possible solutions
+	- Exec form of Entrypoint with the whole /bin/bash -c $SCRIPTS_LOC/run thing - this doesn't allow for commands to be sent in.
+	- Take out the $SCRIPTS part and do the full path in plaintext, bc SCRIPTS is declared earlier anyways - CURRENT SETUP
+
 ### Most updated docker image: pshoff/akrr_benchmarks:hpcc (06/07/19)
 
 ### Older images: 

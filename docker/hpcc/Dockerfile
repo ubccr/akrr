@@ -47,8 +47,11 @@ RUN \
 
 USER hpccuser
 
-WORKDIR $SCRIPTS_LOC
+#WORKDIR $SCRIPTS_LOC
 
-# runs the setup script to start (this calls the python script and such
-ENTRYPOINT ["./setup_run_hpcc.sh"]
-
+# runs the setup script to start
+# This one doesn't use the absolute path, uses the env variable
+# ENTRYPOINT [ "/bin/bash", "-c" , "$SCRIPTS_LOC/setup_run_hpcc.sh" ]
+#
+# Just using the straightup absolute path;
+ENTRYPOINT [ "/opt/scripts/setup_run_hpcc.sh" ]
