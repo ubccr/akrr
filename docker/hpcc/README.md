@@ -342,6 +342,10 @@ Thoughts on possible solutions
 	- Exec form of Entrypoint with the whole /bin/bash -c $SCRIPTS_LOC/run thing - this doesn't allow for commands to be sent in.
 	- Take out the $SCRIPTS part and do the full path in plaintext, bc SCRIPTS is declared earlier anyways - CURRENT SETUP
 
+- Update: we're modifying how we're doing the Docker images so that its user independent to allow for running it in singularity without having to worry about switching user to have proper permissions and whatnot
+	- What this means is that we're running everything as a root in the docker, so we don't need the user and just need to make sure everything needed is accessible by anyone
+
+
 ### Most updated docker image: pshoff/akrr_benchmarks:hpcc (06/07/19)
 
 ### Older images: 

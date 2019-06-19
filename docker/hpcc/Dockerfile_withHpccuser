@@ -6,7 +6,12 @@ LABEL desc="hpcc benchmark made ready to run"
 RUN \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
-	yum -y install intel-mpi-2018.3-051
+	yum -y install intel-mpi-2018.3-051 && \
+	yum -y install sudo && \
+	useradd -d /home/hpccuser -ms /bin/bash hpccuser && \
+	usermod -aG wheel hpccuser && \
+	echo "hpccuser:hpccuser" | chpasswd && \
+	echo "Added hpccuser (pass: hpccuser) and installed intel-mpi"
 
 # place where the executable is
 ENV EXECS_LOC=/opt/appker/execs
@@ -29,17 +34,18 @@ COPY scripts $SCRIPTS_LOC
 
 ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
-# giving permissions to allow anyone to run things - give all permissions to everything basically
+# giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
+	echo "export PATH=$PATH:$MPI_LOC" >> /home/hpccuser/.bashrc && \
 	cd $INPUTS_LOC && \
 	tar -xzvf $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
 	rm $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
-	chmod -R 777 $EXECS_LOC && \  
-	chmod -R 777 $SCRIPTS_LOC && \
-	chmod -R 777 $MPI_LOC && \
-	chmod -R 777 $INPUTS_LOC && \
-	chmod -R 777 /usr/lib64
-	
+	chown -R hpccuser $INPUTS_LOC/hpcc && \
+	chown -R hpccuser $EXECS_LOC && \
+	chown -R hpccuser $SCRIPTS_LOC  
+
+
+USER hpccuser
 
 #WORKDIR $SCRIPTS_LOC
 

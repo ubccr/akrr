@@ -57,12 +57,6 @@ fi
 cd ${work_dir}
 echo "work dir: ${work_dir}"
 
-echo "ENVIRONMENT==================="
-env
-echo "ENVIRONMENT==================="
-
-
-
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
 ${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
