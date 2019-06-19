@@ -1,0 +1,137 @@
++ temp=hpcc
++ hpcc_inputs_dir=/usr/local/appker/inputs/hpcc
++ echo 'hpcc_inputs_dir: /usr/local/appker/inputs/hpcc'
+hpcc_inputs_dir: /usr/local/appker/inputs/hpcc
++ set_defaults
++ work_dir=/user/hoffmaps
++ nodes=1
++ ppn=8
++ verbose=false
++ interactive=false
++ run_hpcc=true
++ [[ -ppn != '' ]]
++ case $1 in
++ shift
++ ppn=8
++ shift
++ [[ '' != '' ]]
++ echo 'ppn: 8'
+ppn: 8
++ temp=x
++ hpcc_input_name=hpccinf.txt.8x1
++ hpcc_input_full_path=/usr/local/appker/inputs/hpcc/hpccinf.txt.8x1
++ temp=hpccinf.txt
++ dest_path=/user/hoffmaps/hpccinf.txt
++ [[ -f /usr/local/appker/inputs/hpcc/hpccinf.txt.8x1 ]]
++ cp /usr/local/appker/inputs/hpcc/hpccinf.txt.8x1 /user/hoffmaps/hpccinf.txt
++ echo 'hpccinf.txt.8x1 copied over to /user/hoffmaps/hpccinf.txt'
+hpccinf.txt.8x1 copied over to /user/hoffmaps/hpccinf.txt
++ cd /user/hoffmaps
++ echo 'work dir: /user/hoffmaps'
+work dir: /user/hoffmaps
++ echo ENVIRONMENT===================
+ENVIRONMENT===================
++ env
+MANPATH=/util/common/Lmod/lmod/lmod/share/man::
+XDG_SESSION_ID=11283
+HOSTNAME=cpn-d13-16.int.ccr.buffalo.edu
+SHELL=/bin/bash
+TERM=xterm-256color
+SCRIPTS_LOC=/opt/scripts
+HISTSIZE=1000
+SSH_CLIENT=10.60.1.13 55846 22
+MODULEPATH_ROOT=/util/common/modulefiles
+AKRR_APPKER_DIR=/gpfs/scratch/hoffmaps/akrr_project
+LMOD_PKG=/util/common/Lmod/lmod/lmod
+AKRR_LOCAL_SCRATCH=/tmp
+SINGULARITY_APPNAME=
+LMOD_VERSION=7.7
+SSH_TTY=/dev/pts/0
+QT_GRAPHICSSYSTEM_CHECKED=1
+AKRR_NETWORK_SCRATCH=/gpfs/scratch/hoffmaps/network_scratch
+USER_PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/lpp/mmfs/bin:/user/hoffmaps/bin:/bin:
+/usr/bin:/sbin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+USER=hoffmaps
+LD_LIBRARY_PATH=/.singularity.d/libs
+LS_COLORS=rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=05;48;5;232;38;5;15:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;34:*.tar=38;5;9:*.tgz=38;5;9:*.arc=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lha=38;5;9:*.lz4=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.tzo=38;5;9:*.t7z=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lrz=38;5;9:*.lz=38;5;9:*.lzo=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.bz=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.war=38;5;9:*.ear=38;5;9:*.sar=38;5;9:*.rar=38;5;9:*.alz=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.cab=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.webm=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.axv=38;5;13:*.anx=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.axa=38;5;45:*.oga=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:
+LMOD_sys=Linux
+UTIL=/util
+SINGULARITY_NAME=hpcc_benchmark_v05.sif
+INPUTS_LOC=/usr/local/appker/inputs
+HPCC_EXE_FULL_PATH=/opt/appker/execs/hpcc-1.5.0/hpcc
+AKRR_AKRR_DIR=/gpfs/scratch/hoffmaps/network_scratch/akrr_data/test_huey
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MAIL=/var/spool/mail/hoffmaps
+LMOD_SETTARG_CMD=:
+PWD=/user/hoffmaps
+XMODIFIERS=@im=none
+LOCAL_SCRATCH=/scratch
+LANG=en_US.UTF-8
+EXECS_LOC=/opt/appker/execs
+MODULEPATH=/util/academic/modulefiles/Core:/util/common/modulefiles/Core
+CEPH_ARGS=--cluster=ceph-int --id=cephfs --conf /etc/ceph/ceph-int-client.conf
+LMOD_CMD=/util/common/Lmod/lmod/lmod/libexec/lmod
+MPI_LOC=/opt/intel/impi/2018.3.222/bin64
+HISTCONTROL=ignoredups
+SSH_ASKPASS=/usr/libexec/openssh/gnome-ssh-askpass
+HOME=/user/hoffmaps
+SHLVL=3
+LANGUAGE=
+BASH_ENV=/util/common/Lmod/lmod/lmod/init/bash
+LOGNAME=hoffmaps
+CVS_RSH=ssh
+SSH_CONNECTION=10.60.1.13 55846 10.104.13.16 22
+GLOBAL_SCRATCH=/gpfs/scratch
+MODULESHOME=/util/common/Lmod/lmod/lmod
+LESSOPEN=||/usr/bin/lesspipe.sh %s
+LMOD_FULL_SETTARG_SUPPORT=no
+SINGULARITY_CONTAINER=/gpfs/scratch/hoffmaps/singularity_images/hpcc_benchmark_v05.sif
+XDG_RUNTIME_DIR=/run/user/587694
+LMOD_DIR=/util/common/Lmod/lmod/lmod/libexec
+BASH_FUNC_module()=() {  eval $($LMOD_CMD bash "$@") && eval $(${LMOD_SETTARG_CMD:-:} -s sh)
+}
+BASH_FUNC_ml()=() {  eval $($LMOD_DIR/ml_cmd "$@")
+}
+_=/usr/bin/env
+OLDPWD=/gpfs/scratch/hoffmaps/singularity_images
++ echo ENVIRONMENT===================
+ENVIRONMENT===================
++ echo 'Running appsigcheck...'
+Running appsigcheck...
++ /opt/appker/execs/bin/appsigcheck.sh /opt/appker/execs/hpcc-1.5.0/hpcc
+===ExeBinSignature=== MD5: 34d3aefab5972fcfd22354c162ee3a9e /opt/appker/execs/hpcc-1.5.0/hpcc
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: not is not an executable binary file
+===ExeBinSignature=== MD5: not is not an executable binary file
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
++ echo 'Running hpcc...'
+Running hpcc...
++ /opt/intel/impi/2018.3.222/bin64/mpirun -np 8 /opt/appker/execs/hpcc-1.5.0/hpcc
++ echo 'Complete! hpccoutf.txt is in /user/hoffmaps'
+Complete! hpccoutf.txt is in /user/hoffmaps
++ echo 'cat output to standard out:'
+cat output to standard out:
++ cat hpccoutf.txt
+########################################################################
+This is the DARPA/DOE HPC Challenge Benchmark version 1.5.0 October 2012
+Produced by Jack Dongarra and Piotr Luszczek
+Innovative Computing Laboratory
+University of Tennessee Knoxville and Oak Ridge National Laboratory
+
+See the source files for authors of specific codes.
+Compiled on Jun  4 2019 at 11:04:41
+Current time (1560955326) is Wed Jun 19 10:42:06 2019
+
+Hostname: 'cpn-d13-17.int.ccr.buffalo.edu'
+########################################################################
+================================================================================
+HPLinpack 2.0  --  High-Performance Linpack benchmark  --   September 10, 2008
+Written by A. Petitet and R. Clint Whaley,  Innovative Computing Laboratory, UTK
+Modified by Piotr Luszczek, Innovative Computing Laboratory, UTK
+Modified by Julien Langou, University of Colorado Denver
+================================================================================
+## REST OF FILE ISN'T RELEVANT

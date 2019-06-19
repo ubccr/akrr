@@ -171,7 +171,7 @@ RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
 	- That also didn't work..... unsure what's going on
 	- The weirdest thing is that it seems to work fine if I'm just running the image in the terminal
 
-
+- UPDATE: So Ben helped me a whole bunch. There was the error with the md5sum2 that just gave a bunch of weird stuff, saying it couldn't make the temp directory and stuff like that. The singularity thing ran fine when I sshed into the node and ran it, but it didn't work when I did sbatch. Turns out the problem happens with sbatch bc it sets the environment TMPDIR to be /scratch/[jobid] whereas with the salloc stuff TMPDIR wasn't set. So at the beginning of the job I just did unset TMPDIR and the md5sum2 thing worked fine/as expected
 
 
 
