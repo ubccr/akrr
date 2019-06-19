@@ -1,0 +1,229 @@
+[hoffmaps@dhcp-128-205-70-4 jobfiles]$ ssh huey
+UPDATED: March 6, 2015
+
+You are accessing a University at Buffalo (UB) - Center for Computational Research (CCR)
+computer system that is provided for CCR-authorized users only.  By using this system
+(which consists of any device attached to this machine, including compute nodes,
+remote visualization software and hardware, storage and database resources), you have
+implicitly agreed to abide by the highest standards of responsibility to your
+colleagues -- the students, faculty, staff, and external users who share this environment.
+You are required to comply with ALL University at Buffalo policies
+(http://www.buffalo.edu/ubit/policies/it-policies-a-to-z/computer-and-network-use.html),
+as well as state and federal laws concerning appropriate use of information technology.
+
+- CCR is not responsible for the loss or misuse of data on our systems.
+
+- CCR systems are NOT HIPAA-compliant.  Storage of any personally identifiable Protected
+Health Information (PHI) on our systems is a violation of the Health Insurance Portability
+and Accountability Act (HIPAA) of 1996 Privacy and Security Rules.  If in doubt, contact
+CCR before transferring your data.
+
+- All CCR systems are monitored for administrative and security reasons. Use of this system
+constitutes consent to this monitoring for these purposes.
+
+By continuing to use this system you indicate your awareness of and consent to these terms
+and conditions of use.  Non-compliance of these terms is considered a breach of University
+policy and may result in disciplinary and/or legal action.
+
+LOG OFF IMMEDIATELY if you do not agree to the conditions stated in this warning.
+
+Last login: Wed Jun 19 11:27:40 2019 from 10.116.22.12
+
+[hoffmaps@cld-huey ~]$ cd /gpfs/scratch/hoffmaps/singularity_images
+
+[hoffmaps@cld-huey singularity_images]$ singularity pull docker://pshoff/hpcc_benchmark:v05
+
+WARNING: Authentication token file not found : Only pulls of public images will succeed
+INFO:    Starting build...
+Getting image source signatures
+Skipping fetch of repeat blob sha256:8ba884070f611d31cb2c42eddb691319dc9facf5e0ec67672fcfa135181ab3df
+Skipping fetch of repeat blob sha256:fc54fa3aaa11fe90e7882a70eaec3d9f222855fc0cab5608e6c61eac70a9d56f
+Skipping fetch of repeat blob sha256:d101ad03047bfa0521857203c83cdedfbd9b4bdb2731d71aac10a03a6c9cc876
+Skipping fetch of repeat blob sha256:2d29afc50bab18132e5c8063c45ff9b8c9522d4da9e956903ade24ce0848eebb
+Skipping fetch of repeat blob sha256:88871d0af19dd9b4270e96ee6cb2cad2b261579dd3465d91373b242af2fcf67d
+Skipping fetch of repeat blob sha256:6956e42df2627f0d9a13539c908368689d0eec5a335bb1bc647e516297643113
+Copying config sha256:9f07acf2d6f9084d50ae88fe3bbd657dedbccd844d911e78c8c332473f6e8861
+ 3.83 KiB / 3.83 KiB [======================================================] 0s
+Writing manifest to image destination
+Storing signatures
+FATAL:   Unable to pull docker://pshoff/hpcc_benchmark:v05: conveyor failed to get: Error writing blob: write /tmp/sbuild-673480145/oci-put-blob158259605: no space left on device
+
+# I've had the above error before, unsure what causes it, but going onto a node and doing it seems to create the sif file fine, so that's what I'm doing below
+
+[hoffmaps@cld-huey singularity_images]$ salloc
+salloc: Granted job allocation 12500
+
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12500 general-c     bash hoffmaps  R       0:04      1 cpn-d13-16
+
+[hoffmaps@cld-huey singularity_images]$ ssh cpn-d13-16
+Last login: Wed Jun 19 11:17:07 2019 from cld-huey.int.ccr.buffalo.edu
+
+[hoffmaps@cpn-d13-16 ~]$ cd /gpfs/scratch/hoffmaps/singularity_images
+
+[hoffmaps@cpn-d13-16 singularity_images]$ singularity pull docker://pshoff/hpcc_benchmark:v05
+
+WARNING: Authentication token file not found : Only pulls of public images will succeed
+INFO:    Starting build...
+Getting image source signatures
+Skipping fetch of repeat blob sha256:8ba884070f611d31cb2c42eddb691319dc9facf5e0ec67672fcfa135181ab3df
+Skipping fetch of repeat blob sha256:fc54fa3aaa11fe90e7882a70eaec3d9f222855fc0cab5608e6c61eac70a9d56f
+Skipping fetch of repeat blob sha256:d101ad03047bfa0521857203c83cdedfbd9b4bdb2731d71aac10a03a6c9cc876
+Skipping fetch of repeat blob sha256:2d29afc50bab18132e5c8063c45ff9b8c9522d4da9e956903ade24ce0848eebb
+Skipping fetch of repeat blob sha256:88871d0af19dd9b4270e96ee6cb2cad2b261579dd3465d91373b242af2fcf67d
+Skipping fetch of repeat blob sha256:6956e42df2627f0d9a13539c908368689d0eec5a335bb1bc647e516297643113
+Copying config sha256:9f07acf2d6f9084d50ae88fe3bbd657dedbccd844d911e78c8c332473f6e8861
+ 3.83 KiB / 3.83 KiB [======================================================] 0s
+Writing manifest to image destination
+Storing signatures
+INFO:    Creating SIF file...
+INFO:    Build complete: hpcc_benchmark_v05.sif
+
+[hoffmaps@cpn-d13-16 singularity_images]$ exit
+
+logout
+Connection to cpn-d13-16.int.ccr.buffalo.edu closed.
+
+[hoffmaps@cld-huey singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  test.sh
+
+[hoffmaps@cld-huey singularity_images]$ cat test.sh 
+#!/bin/bash
+#SBATCH --partition=general-compute
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:40:00
+#SBATCH --output=/gpfs/scratch/hoffmaps/network_scratch/stdout
+#SBATCH --error=/gpfs/scratch/hoffmaps/network_scratch/stderr
+#SBATCH --exclusive
+#SBATCH --constraint=CPU-L5520
+
+
+RUN_APPKERNEL="/gpfs/scratch/hoffmaps/singularity_images/hpcc_benchmark_v05.sif -ppn 8"
+
+$RUN_APPKERNEL >> /gpfs/scratch/hoffmaps/singularity_images/temp.out 2>&1
+
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12500 general-c     bash hoffmaps  R       4:42      1 cpn-d13-16
+
+[hoffmaps@cld-huey singularity_images]$ scancel 12500
+salloc: Job allocation 12500 has been revoked.
+
+[hoffmaps@cld-huey singularity_images]$ salloc --partition=general-compute --nodes=1 --ntasks-per-node=8 --time=00:40:00 --exclusive --constraint=CPU-L5520
+salloc: Granted job allocation 12501
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12501 general-c     bash hoffmaps  R       0:07      1 cpn-d13-16
+
+[hoffmaps@cld-huey singularity_images]$ ssh cpn-d13-16
+Last login: Wed Jun 19 11:30:05 2019 from cld-huey.int.ccr.buffalo.edu
+
+[hoffmaps@cpn-d13-16 ~]$ cd /gpfs/scratch/hoffmaps/singularity_images/
+[hoffmaps@cpn-d13-16 singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  test.sh
+
+[hoffmaps@cpn-d13-16 singularity_images]$ bash test.sh 
+(there's a decent pause here, a couple minutes long)
+
+[hoffmaps@cpn-d13-16 singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  temp.out  test.sh
+(temp.out is pretty long. The important parts are towards the beginning)
+
+[hoffmaps@cpn-d13-16 singularity_images]$ less temp.out 
+(then go down a bit and you get to this part:)
++ echo 'Running appsigcheck...'
+Running appsigcheck...
++ /opt/appker/execs/bin/appsigcheck.sh /opt/appker/execs/hpcc-1.5.0/hpcc
+===ExeBinSignature=== MD5: 34d3aefab5972fcfd22354c162ee3a9e /opt/appker/execs/hpcc-1.5.0/hpcc
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: not is not an executable binary file
+===ExeBinSignature=== MD5: not is not an executable binary file
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
++ echo 'Running hpcc...'
+Running hpcc...
++ /opt/intel/impi/2018.3.222/bin64/mpirun -np 8 /opt/appker/execs/hpcc-1.5.0/hpcc
++ echo 'Complete! hpccoutf.txt is in /user/hoffmaps'
+Complete! hpccoutf.txt is in /user/hoffmaps
++ echo 'cat output to standard out:'
+cat output to standard out:
++ cat hpccoutf.txt
+########################################################################
+# This is the expected behavior, the rest of the file is a bunch of output from the program being run.
+
+[hoffmaps@cpn-d13-16 singularity_images]$ exit
+logout
+Connection to cpn-d13-16.int.ccr.buffalo.edu closed.
+
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12501 general-c     bash hoffmaps  R      10:19      1 cpn-d13-16
+
+[hoffmaps@cld-huey singularity_images]$ scancel 12501
+salloc: Job allocation 12501 has been revoked.
+Hangup
+
+[hoffmaps@cld-huey singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  temp.out  test.sh
+
+[hoffmaps@cld-huey singularity_images]$ mv temp.out temp_salloc.out 
+[hoffmaps@cld-huey singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  temp_salloc.out  test.sh
+
+# now submitting it through sbatch
+[hoffmaps@cld-huey singularity_images]$ sbatch test.sh 
+Submitted batch job 12502
+
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12502 general-c  test.sh hoffmaps  R       0:05      1 cpn-d13-16
+
+[hoffmaps@cld-huey singularity_images]$ ls
+akrr_benchmarks_hpcc.sif  hpcc_benchmark_v05.sif  oci  temp.out  temp_salloc.out  test.sh
+
+[hoffmaps@cld-huey singularity_images]$ cat temp.out 
+(there's a bunch of other output, mainly from my testing, but the bottom of the cat is the important bit)
++ echo 'Running appsigcheck...'
+Running appsigcheck...
++ /opt/appker/execs/bin/appsigcheck.sh /opt/appker/execs/hpcc-1.5.0/hpcc
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/opt/appker/execs/hpcc-1.5.0/hpcc', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/libpthread.so.0', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/libm.so.6', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+===ExeBinSignature=== MD5: not is not an executable binary file
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+===ExeBinSignature=== MD5: not is not an executable binary file
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/libdl.so.2', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/librt.so.1', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/libgcc_s.so.1', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
+mktemp: failed to create file via template ‘/scratch/12502/tmp.XXXXXXXXXX’: No such file or directory
+objcopy: warning: could not create temporary file whilst copying '/lib64/libc.so.6', (error: Read-only file system)
+===ExeBinSignature=== MD5: Unable to run objcopy
++ echo 'Running hpcc...'
+Running hpcc...
++ /opt/intel/impi/2018.3.222/bin64/mpirun -np 8 /opt/appker/execs/hpcc-1.5.0/hpcc
+[mpiexec@cpn-d13-16.int.ccr.buffalo.edu] HYDU_create_process (../../utils/launch/launch.c:825): execvp error on file /usr/bin/srun (No such file or directory)
+
+[hoffmaps@cld-huey singularity_images]$ squeue -u hoffmaps
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             12502 general-c  test.sh hoffmaps  R       2:17      1 cpn-d13-16
+# It still keeps running for some reason, which I don't understand 
+# After the final print out, it doesn't print anything else to the temp
+

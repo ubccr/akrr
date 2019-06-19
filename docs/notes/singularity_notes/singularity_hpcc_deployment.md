@@ -141,6 +141,36 @@ A couple weird things about this
 	- It seems like there's something wrong with the environment variables, since its trying to copy things into /home/hoffmaps instead of /home/hpccuser like it does in Docker.
 I'll look into these tomorrow
 
+- So, it appears maybe things went wrong bc in singularity everything is root? so now just trying to run docker as if everythig is root..
+
+- Okay so I found here: https://singularity.lbl.gov/docs-docker#troubleshooting that we shouldn't be doing anything with $HOME because that gets mounted as my home and not the home that I want (aka hpccuser home) so imma change that in the dockerfile so now instead of $HOME it'll be /home/hpccuser
+
+- So things are sorta weird with how singularity deals with users....
+- It runs the singularity as whatever user it is, but we want to run as hpccuser in the container, so I'm trying to change things up so that I run as hpccuser
+
+- Update: so we want to set up the docker so that its able to run as any user so that we don't have to worry about switching users or anything like that
+
+- Updated permissions so now more or less everything we would use has overarching permissions
+
+- The objcopy issue happens when trying to run appsigcheck
+- The mpiexec error happens when actually trying to execute hpcc
+
+Also changed app conf to be this now, the cache directory thing isn't really that important
+```bash
+appkernel_run_env_template = """
+export SINGULARITY_IMAGEDIR="/gpfs/scratch/hoffmaps/singularity_images"
+
+# set how to run app kernel ( the ppn 8 is temporary, perhaps to change to be general)
+RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
+"""
+```
+
+### Trying to fix the objcopy issue:
+- First I'm trying to change the permissions on the files to be 777 so everything should be readable and writable
+	- Yeah that wasn't the issue. Turns out with singularity, everything enters in read only mode by default (see: http://singularity.lbl.gov/archive/docs/v2-2/create-image#read-only-vs-read-write) so now I'm setting the writable flag
+	- That also didn't work..... unsure what's going on
+	- The weirdest thing is that it seems to work fine if I'm just running the image in the terminal
+
 
 
 
