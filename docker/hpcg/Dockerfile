@@ -49,10 +49,10 @@ RUN \
 	chown -R hpcguser $EXECS_LOC
 	
 
-USER hpcguser
+#USER hpcguser
 
-WORKDIR $SCRIPTS_LOC
+#WORKDIR $SCRIPTS_LOC
 
 #runs the setup script to set up the input things and run hpcg
 
-ENTRYPOINT ["./setup_run_hpcg.sh"]
+ENTRYPOINT ["/opt/scripts/setup_run_hpcg.sh"]
