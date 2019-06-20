@@ -8,7 +8,7 @@ echo "hpcc_inputs_dir: ${hpcc_inputs_dir}"
 # setting default values for variables
 set_defaults()
 {
-	work_dir=${HOME} # location where input file will get copied to
+	work_dir=/tmp  # location where input file will get copied to
 	nodes=1
 	ppn=8
 	verbose=false
@@ -57,12 +57,19 @@ fi
 cd ${work_dir}
 echo "work dir: ${work_dir}"
 
+echo "ENVIRONMENT==================="
+env
+echo "ENVIRONMENT==================="
+
+
+
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
 ${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 echo "Running hpcc..."
+echo "Hpcc path: ${HPCC_EXE_FULL_PATH}"
 ${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
 echo "Complete! hpccoutf.txt is in ${work_dir}"
 echo "cat output to standard out:"
