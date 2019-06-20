@@ -173,6 +173,34 @@ RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
 
 - UPDATE: So Ben helped me a whole bunch. There was the error with the md5sum2 that just gave a bunch of weird stuff, saying it couldn't make the temp directory and stuff like that. The singularity thing ran fine when I sshed into the node and ran it, but it didn't work when I did sbatch. Turns out the problem happens with sbatch bc it sets the environment TMPDIR to be /scratch/[jobid] whereas with the salloc stuff TMPDIR wasn't set. So at the beginning of the job I just did unset TMPDIR and the md5sum2 thing worked fine/as expected
 
+- UPDATE: so there was the problem with mpirun trying to run srun, which of course doesn't exist in the singularity container. It was doing that because one of the environment variables that was set with the sbatch was a SLURM environment variable, so it thought the scheduler was slurm, so it tried to run srun. The fix: set I_MPI_HYDRA_BOOTSTRAP to be ssh (the default) before running the container.
+	- Update: this may not be the SAFEST option. But it works so far
+
+SO, I changed up the script so now it deletes the old hpccout, so there's no confusion.
+I added some waits to allow the things to run all the way through and display
+Also I changed the working directory to /tmp so that it wasn't in the home one all the time.
+
+Remember also to pull the singularity image you want to use down from docker and putting into $SINGULARITY_IMAGEDIR
+Now, the hpcc.app.conf should look something like this:
+```bash
+appkernel_run_env_template = """
+
+export SINGULARITY_IMAGEDIR="/gpfs/scratch/hoffmaps/singularity_images"
+export I_MPI_HYDRA_BOOTSTRAP="ssh"
+unset TMPDIR
+
+# set how to run app kernel ( the ppn 8 is temporary, perhaps to change to be general)
+RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
+"""
+That works! At least things went well with it. Only sorta weird thing it looks like is RunEnv:Nodes, which is some weird sha256(?) value? But other than that seems to be fine.
+
+```
+
+
+
+
+
+
 
 
 
