@@ -130,10 +130,11 @@ echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 wait
 
-set I_MPI_HYDRA_BOOTSTRAP="ssh"
+#export I_MPI_HYDRA_BOOTSTRAP="ssh"
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
 	echo "Running hpcc..."
+	rm -f hpccoutf.txt # removing the out file so it doesn't get confused
 	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
 	wait
 	echo "Complete! hpccoutf.txt is in ${work_dir}"

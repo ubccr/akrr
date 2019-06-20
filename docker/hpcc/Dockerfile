@@ -34,11 +34,10 @@ RUN \
 	cd $INPUTS_LOC && \
 	tar -xzvf $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
 	rm $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
-	chmod -R 777 $EXECS_LOC && \  
-	chmod -R 777 $SCRIPTS_LOC && \
-	chmod -R 777 $MPI_LOC && \
-	chmod -R 777 $INPUTS_LOC && \
-	chmod -R 777 /usr/lib64
+	chmod -R 755 $EXECS_LOC && \  
+	chmod -R 755 $SCRIPTS_LOC && \
+	chmod -R 755 $MPI_LOC && \
+	chmod -R 755 $INPUTS_LOC
 	
 
 #WORKDIR $SCRIPTS_LOC
