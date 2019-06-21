@@ -25,6 +25,7 @@ https://software.intel.com/en-us/mkl-linux-developer-guide-versions-of-the-intel
 
 Adding flexibility so that the script identifies what the optimal benchmark to use would be
 
+Added the /scratch directory to be the place for the temporary working directory, right now doesn't clean it up at the end, perhaps want that functionality?
 
 Most updated version: pshoff/akrr_benchmarks:hpcg - has appsigcheck and script has common practices
 

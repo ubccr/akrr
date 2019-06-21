@@ -22,20 +22,20 @@ usage()
 	#echo "	-v | --verbose			increase verbosity of output"
 	echo " 	-i | --interactive		Start a bash session after the run (use with -it in docker run"
 	echo "	--norun				Set if you don't want to immediately run hpcg"
-	echo "	**-n NODES | --nodes NODES	Specify number of nodes hpcg will be running on"
-	echo "	**-ppn PROC_PER_NODE | "
+	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcg will be running on"
+	echo "	-ppn PROC_PER_NODE | "
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
 	echo "					- used to determine -np VAL for mpirun"
-	echo " ** = not implemented. These options do nothing."
+	#echo " ** = not implemented. These options do nothing."
 
 }
 
 # ppn is used to set -np flag with mpirun
 set_defaults()
 {
-	work_dir="${HOME}" # location where hpcg input file gets copied to
+	work_dir=$(mktemp -d /scratch/tmp.XXXXXXXXXX)  # location where hpcg input file gets copied to
 	nodes=1
 	ppn="${cpu_cores}"
 	verbose=false
@@ -78,14 +78,14 @@ while [[ "$1" != "" ]]; do
 		--norun)
 			run_hpcg=false
 			;;
-		#-n | --nodes) # unsure how these would be implemented
-		#	shift
-		#	nodes=$1
-		#	;;
-		#-ppn | --proc_per_node)
-		#	shift
-		#	ppn=$1
-		#	;;
+		-n | --nodes) # unsure how these would be implemented
+			shift
+			nodes=$1
+			;;
+		-ppn | --proc_per_node)
+			shift
+			ppn=$1
+			;;
 		*)
 			echo "Error: unrecognized argument"
 			usage
@@ -119,8 +119,8 @@ else
 	exit 1
 fi
 
-# by default working dir is home of hpcguser
-cd $work_dir
+# make working directory and cd to it
+cd ${work_dir}
 echo "work dir: ${work_dir}"
 
 # source to connect up the mkl libraries
@@ -133,12 +133,14 @@ hpcg_exe_full_path="${HPCG_BIN_LOC}/${hpcg_exe_name}"
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
 ${EXECS_LOC}/bin/appsigcheck.sh ${hpcg_exe_full_path}
+wait
 
 # running hpcg and catting output
 if [[ "${run_hpcg}" == "true" ]]; then
 	echo "Using ${hpcg_exe_full_path} to run hpcg"
 	echo "Running hpcg..."
 	${MPI_LOC}/mpirun -np ${ppn} ${hpcg_exe_full_path}
+	wait
 	echo "Complete! Outputs are in ${work_dir}"
 	echo "cat output to standard out:"
 	echo "hpcg_log ###################"
@@ -159,6 +161,7 @@ if [[ "${run_hpcg}" == "true" ]]; then
 	done
 fi
 
+# doesn't clean up temp dir at end....
 
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then
