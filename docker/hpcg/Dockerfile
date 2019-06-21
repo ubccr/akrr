@@ -47,7 +47,8 @@ RUN \
 
 #USER hpcguser
 
-#WORKDIR $SCRIPTS_LOC
+# so it sets up for making the temp file
+WORKDIR /scratch
 
 #runs the setup script to set up the input things and run hpcg
 
