@@ -77,8 +77,8 @@ Errors we're getting
 - the cpus don't support avx instructions.... oof
 	- This is probably bc the cpus on huey are really old, so they probably just cant do avx, meaning we can't really do hpcg on it... on to other things!
 
-
-
+- Update: we'll maybe try things on preprod and on the gpu node, STAY TUNED
+- Looks like on the gpu the whole avx thing would work, so we would just need to modify the job file so that it requests the gpu node
 
 
 

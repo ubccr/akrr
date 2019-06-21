@@ -192,10 +192,10 @@ unset TMPDIR
 # set how to run app kernel ( the ppn 8 is temporary, perhaps to change to be general)
 RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
 """
+```
 That works! At least things went well with it. Only sorta weird thing it looks like is RunEnv:Nodes, which is some weird sha256(?) value? But other than that seems to be fine.
 
-```
-
+UPDATE: Changed it so that the temporary place where files are housed is in $PWD. If running docker regularly, it will be in /scratch. If run in singularity, it will be run in $PWD
 
 
 
