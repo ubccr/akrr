@@ -2,6 +2,15 @@ FROM centos:7
 
 LABEL desc="namd benchmark made ready to run"
 
+
+# Installing intel-mpi and making namduser in one Run
+RUN \
+	yum -y install sudo && \
+	useradd -d /home/namduser -ms /bin/bash namduser && \
+	usermod -aG wheel namduser && \
+	echo "namduser:namduser" | chpasswd && \
+echo "Added namduser (pass: namduser) and installed intel-mpi"
+
 # copying executable (assumes its in namd_loc/execs
 ENV EXECS_LOC=/opt/appker/execs
 
@@ -20,16 +29,17 @@ COPY ./inputs/namd $NAMD_INPUTS_DIR
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC
 
-# setting up directories and permissions
+
 RUN \
-	mkdir /scratch && \
-	chmod -R 777 /scratch && \
-	chmod -R 755 $EXECS_LOC && \
-	chmod -R 755 $SCRIPTS_LOC && \
-	chmod -R 755 $INPUTS_LOC	
+	echo "export PATH=$PATH:$MPI_LOC" >> /home/namduser/.bashrc && \
+	chown -R namduser $INPUTS_LOC && \
+	chown -R namduser $EXECS_LOC && \
+	chown -R namduser $SCRIPTS_LOC
 
-WORKDIR /scratch
+USER namduser
 
-ENTRYPOINT ["/opt/scripts/setup_run_namd.sh"]
+WORKDIR $SCRIPTS_LOC
+
+ENTRYPOINT ["./setup_run_namd.sh"]
 
 

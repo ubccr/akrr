@@ -26,12 +26,12 @@ usage()
 	#echo "	-v | --verbose			increase verbosity of output"
 	echo " 	-i | --interactive		Start a bash session after the run"
 	echo "	--norun				Set if you don't want to immediately run hpcc"
-	echo "	**-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
-	echo "	**-ppn PROC_PER_NODE | "
+	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
+	echo "	-ppn PROC_PER_NODE | "
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
-	echo " ** = not used. In most cases not having any arguments is fine"
+	#echo " ** = not used. In most cases not having any arguments is fine"
 } 
 
 
@@ -54,7 +54,7 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=${HOME} # location where hpcc input file gets copied to
+	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where hpcc input file gets copied to
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -126,11 +126,13 @@ cd $work_dir
 
 echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${NAMD_EXE_FULL_PATH}
+wait
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_namd}" == "true" ]]; then
 	echo "Running namd..."
 	${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
+	wait
 	echo "Complete! outputs are in is in ${work_dir}"
 	echo "Cat doesn't really work for output..."
 fi
