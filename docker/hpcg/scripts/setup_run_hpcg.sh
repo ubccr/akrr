@@ -35,7 +35,7 @@ usage()
 # ppn is used to set -np flag with mpirun
 set_defaults()
 {
-	work_dir=$(mktemp -d /scratch/tmp.XXXXXXXXXX)  # location where hpcg input file gets copied to
+	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX)  # location where hpcg input file gets copied to
 	nodes=1
 	ppn="${cpu_cores}"
 	verbose=false
