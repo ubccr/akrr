@@ -47,7 +47,7 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$(mktemp -d /scratch/tmp.XXXXXXXXXX) # location where input file will get copied to
+	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where input file will get copied to
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false

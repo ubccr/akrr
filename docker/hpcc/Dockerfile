@@ -41,8 +41,8 @@ RUN \
 	chmod -R 755 $MPI_LOC && \
 	chmod -R 755 $INPUTS_LOC
 	
-
-#WORKDIR $SCRIPTS_LOC
+# so that the temp directory gets created there
+WORKDIR /scratch
 
 # runs the setup script to start
 # This one doesn't use the absolute path, uses the env variable
