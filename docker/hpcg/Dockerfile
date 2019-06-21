@@ -37,8 +37,8 @@ ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions and setting up path to mpi for hpccuser - so can just do mpirun
 RUN \
-	mkdir -p /scratch && \
-	chmod -R 755 /scratch && \
+	mkdir /scratch && \
+	chmod -R 777 /scratch && \
 	chmod -R 755 $EXECS_LOC && \
 	chmod -R 755 $SCRIPTS_LOC && \
 	chmod -R 755 $MPI_LOC && \
