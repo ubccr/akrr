@@ -47,7 +47,7 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=/tmp # location where input file will get copied to
+	work_dir=$(mktemp -d /scratch/tmp.XXXXXXXXXX) # location where input file will get copied to
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -134,7 +134,6 @@ wait
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
 	echo "Running hpcc..."
-	rm -f hpccoutf.txt # removing the out file so it doesn't get confused
 	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
 	wait
 	echo "Complete! hpccoutf.txt is in ${work_dir}"

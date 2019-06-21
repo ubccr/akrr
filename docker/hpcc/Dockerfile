@@ -31,6 +31,8 @@ ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions to allow anyone to run things - give all permissions to everything basically
 RUN \
+	mkdir /scratch && \
+	chmod -R 777 /scratch && \
 	cd $INPUTS_LOC && \
 	tar -xzvf $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
 	rm $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
