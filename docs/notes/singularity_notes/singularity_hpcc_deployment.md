@@ -198,7 +198,11 @@ That works! At least things went well with it. Only sorta weird thing it looks l
 UPDATE: Changed it so that the temporary place where files are housed is in $PWD. If running docker regularly, it will be in /scratch. If run in singularity, it will be run in $PWD
 
 
+Then do periodic things
+```bash
+akrr task new -r test_huey -a namd -n 1 -t0 "01:00" -t1 "05:00" -p 1
 
+```
 
 
 

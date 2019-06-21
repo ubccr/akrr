@@ -71,7 +71,12 @@ Then we do the standard
 akrr app validate -n 1 -a $APPKER -r $RESOURCE
 ```
 
+If it works then we can do periodic tasks or something?
+```bash
+akrr task new -r test_huey -a namd -n 1 -t0 "01:00" -t1 "05:00" -p 1
 
+
+```
 
 
 
