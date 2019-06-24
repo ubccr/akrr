@@ -168,6 +168,12 @@ Update: we're back at it. The nwchem appears to only be running on 2 cores, so w
 - So I edited the scripts and Dockerfile, so now just running the docker straightup runs it with the proper input
 - I did have to set --allow-run-as-root for mpirun bc that's how their mpi run was set up
 - Also i set the shared memory to 8g
+```bash
+#Ran it like this:
+docker run --shm-size 8g --cap-add=SYS_PTRACE pshoff/akrr_benchmarks:nwchem
+
+
+```
 - also there was a weird error with the docker run:
 ```bash
 # a bunch of messages like this:

@@ -15,9 +15,16 @@ COPY ./inputs/nwchem ${NWCHEM_INPUTS_DIR}/
 
 # The path to the nwchem executable is stored in $NWCHEM_EXECUTABLE
 
-ENV SCRIPTS_DIR=/opt/appker/scripts
+ENV SCRIPTS_DIR=/opt/scripts
 COPY scripts ${SCRIPTS_DIR}
 
-WORKDIR ${SCRIPTS_DIR}
+RUN \ 
+	mkdir /scratch && \
+	chmod -R 777 /scratch && \
+	chmod -R 755 $EXECS_LOC && \
+	chmod -R 755 $SCRIPTS_DIR && \
+	chmod -R 755 $INPUTS_DIR
 
-ENTRYPOINT ["./setup_run_nwchem.sh"]
+WORKDIR /scratch
+
+ENTRYPOINT ["/opt/scripts/setup_run_nwchem.sh"]
