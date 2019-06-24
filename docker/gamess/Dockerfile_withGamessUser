@@ -7,7 +7,12 @@ RUN \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
 	yum -y install intel-mpi-2018.3-051 && \
-	yum -y install tcsh 
+	yum -y install tcsh && \
+	yum -y install sudo && \
+	useradd -d /home/gamessuser -ms /bin/bash gamessuser && \
+	usermod -aG wheel gamessuser && \
+	echo "gamessuser:gamessuser" | chpasswd && \
+	echo "Added gamessuser (pass: gamessuser) and installed intel-mpi"
 
 # place where the executable is
 ENV EXECS_LOC=/opt/appker/execs
@@ -32,17 +37,19 @@ ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
 # giving permissions and setting up path to mpi for gamessuser - so can just do mpirun
 RUN \
-	mkdir /scratch && \
-	chmod -R 777 /scratch && \
-	chmod -R 755 $EXECS_LOC && \
-	chmod -R 755 $SCRIPTS_LOC && \
-	chmod -R 755 $INPUTS_LOC
+	echo "export PATH=$PATH:$MPI_LOC" >> /home/gamessuser/.bashrc && \
+	cd $INPUTS_LOC && \
+	chown -R gamessuser $INPUTS_LOC && \
+	chown -R gamessuser $EXECS_LOC && \
+	chown -R gamessuser $SCRIPTS_LOC 
 
 
-WORKDIR /scratch
+USER gamessuser
+
+WORKDIR $SCRIPTS_LOC
 
 # runs the setup script to start (this calls the python script and such
-ENTRYPOINT ["/opt/scripts/setup_run_gamess.sh"]
+ENTRYPOINT ["./setup_run_gamess.sh"]
 
 
 

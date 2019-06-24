@@ -44,7 +44,7 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where gamess input file gets copied to
+	work_dir=${HOME} # location where gamess input file gets copied to
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -101,7 +101,7 @@ validate_number ${ppn}
 gamess_input_name="c8h10-cct-mp2.inp"
 input_file_path="${GAMESS_INPUTS_LOC}/${gamess_input_name}"
 
-dest_path="${work_dir}"
+dest_path=${work_dir}
 
 # output for testing
 echo "Input file name: ${gamess_input_name}"
@@ -136,15 +136,12 @@ export PATH=${PATH}:${MPI_LOC}
 
 # executable is in a sorta weird place
 gamess_exe_full_path="${GAMESS_EXE_DIR}/gamess.${version}.x"
-
 echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${gamess_exe_full_path}
-wait
 
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
 	./rungms ${gamess_input_name} ${version} ${ppn} ${nodes}
-	wait
 	echo "Complete! Gamess has been run, output in ${work_dir}"
 fi
 
