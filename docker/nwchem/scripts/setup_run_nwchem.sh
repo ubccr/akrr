@@ -23,12 +23,12 @@ usage()
 	#echo "	-v | --verbose			increase verbosity of output"
 	echo " 	-i | --interactive		Start a bash session after the run"
 	echo "	--norun				Set if you don't want to immediately run hpcc"
-	echo "	**-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
-	echo "	**-ppn PROC_PER_NODE | "
+	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
+	echo "	-ppn PROC_PER_NODE | "
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
-	echo " ** = not used. In most cases not having any arguments is fine"
+	#echo " ** = not used. In most cases not having any arguments is fine"
 } 
 
 # allows script to continue if the argument passed in is a valid number
@@ -48,7 +48,7 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=${HOME} # location where hpcc input file gets copied to
+	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where hpcc input file gets copied to
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -111,7 +111,6 @@ if [[ -f "${input_files_path}/${input_file_name}" ]]; then
 else
 	echo "Error: ${input_files_path}/${input_file_name} input file does not exist"
 	exit 1
-
 fi
 
 
@@ -119,11 +118,13 @@ cd $work_dir
 
 echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${NWCHEM_EXECUTABLE}
+wait
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_namd}" == "true" ]]; then
 	echo "Running namd..."
 	mpirun --allow-run-as-root -np ${ppn} ${NWCHEM_EXECUTABLE} ${input_file_name}
+	wait
 	echo "Complete! outputs are in is in ${work_dir}"
 fi
 
@@ -133,7 +134,6 @@ if [[ "${interactive}" == "true" ]]; then
 	/bin/bash
 fi
 
-/bin/bash
 
 
 
