@@ -61,7 +61,7 @@ Look at output files, and if they seem okay, you're good!
 
 Update: so there was an issue with namd taking really long, I was running it with mpirun instead of just with charmrun or whatever. So I switched how it was being run in the script so it just runs the executable with the proper number of nodes. I pushed it up to docker up so it should be working
 
-
+- update: also running okay locally just with charmrun
 
 
 
