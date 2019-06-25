@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 # name of input we want to use in inputs location
 namd_cur_inputs_dir_name="apoa1_nve"
 namd_input_files_dir="${NAMD_INPUTS_DIR}/${namd_cur_inputs_dir_name}"
@@ -131,7 +131,7 @@ wait
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_namd}" == "true" ]]; then
 	echo "Running namd..."
-	${CHARMRUN_EXE_FULL_PATH} ${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
+	${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
 	wait
 	echo "Complete! outputs are in is in ${work_dir}"
 	echo "Cat doesn't really work for output..."

@@ -11,6 +11,7 @@ COPY ./execs $EXECS_LOC/
 
 # location of namd executable
 ENV NAMD_EXE_FULL_PATH=$EXECS_LOC/namd2
+ENV CHARMRUN_EXE_FULL_PATH=$EXECS_LOC/charmrun
 
 # copying over inputs to use for namd2
 ENV INPUTS_LOC=/usr/local/appker/inputs

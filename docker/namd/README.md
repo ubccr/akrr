@@ -46,7 +46,7 @@ ${NAMD_EXE_FULL_PATH} +p${ppn} ${work_dir}/input.namd
 ```
 This does appear to run the things in parallel but also for some reason when I look at htop, one of them is using 600% of the cpu so idk whats up with that
 
-
+- Note: currently using namd 2.12b1-multicore
 
 
 
