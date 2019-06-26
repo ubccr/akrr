@@ -81,6 +81,8 @@ RUN_APPKERNEL="$SINGULARITY_IMAGEDIR/akrr_benchmarks_hpcc.sif -ppn 8"
 ```
 Again, this is an example, and the RUN_APPKERNEL should be modified just to run the singularity executable and send in any arguments it might need, the -ppn 8 is because I'm focusing on 8 cores per node
 
+## Performing validation run
+
 After editing the config file, you can try doing dry run stuff if you want, but you can go right to validation too.
 ```bash
 akrr app validate -n 1 -a $APPKER -r $RESOURCE
