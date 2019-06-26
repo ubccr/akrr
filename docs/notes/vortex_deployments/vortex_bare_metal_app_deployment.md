@@ -46,8 +46,13 @@ RUN_APPKERNEL="srun --mpi=pmi2 $EXE $INPUT"
 ```
 I didn't touch it, and it appears to have worked fine, there were no errors that came up
 
+### ior
+Didn't find the HDF5 so skipped installing of HDF5, went right to installing ior
+I just ran the validation thing without really changing much in the config, other than adding the module load intel and intel-mpi
+And it says that it worked when I did the validation, but I'm not exactly sure if it worked correctly bc I don't know how correctly looks.
 
-
+### mdtest
+Just did what was said with deployment, and it said that things worked fine
 
 
 
