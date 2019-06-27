@@ -1,0 +1,22 @@
+#!/bin/bash
+if [ $# -lt 2 ]
+then
+    die "usage: md5sum2 -b file"
+fi
+
+file_in=$2
+tmp=`mktemp`
+
+[ -f $file_in -a -x $file_in ] || die "$file_in is not an executable binary file"
+
+
+objcopy -j .text -O binary $file_in $tmp
+[ "$?" -eq "0" ] || die "Unable to run objcopy"
+
+md5=`md5sum -b $tmp|cut -d " " -f 1`
+[ "$?" -eq "0" ] || die "Unable to run md5sum"
+rm -f $tmp
+[ "$?" -eq "0" ] || die "Unable to run rm"
+echo $md5 $file_in
+
+exit 0
