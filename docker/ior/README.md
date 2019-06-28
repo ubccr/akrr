@@ -63,5 +63,48 @@ I want to do it with arguments, bc otherwise it'll run like 3 appsigchecks, so I
 Okay, it works, only thing is that in appstdout it doesn't have the signature bc a little bit further down the job file it pipes the result of check into the out file with > instead of >> so it gets overwritten...
 Perhaps need to change this? But right now barebones works okay it seems, or at least no different.
 
+Finally was able to find where the > was: it was in default_conf/default.resource.conf.
+So I changed it there, and I also did the standard unset TMPDIR in the ior.app.conf
+So now the ior.app.conf looks like:
+```bash
+# which IO API/formats to check
+testPOSIX = True
+testMPIIO = False
+testHDF5 = False
+testNetCDF = False
+
+# will do write test first and after that read, that minimize the caching impact from storage nodes
+# require large temporary storage easily 100s GiB
+doAllWritesFirst = True
+
+appkernel_run_env_template = """
+# load application environment
+# module load hdf5
+module load intel
+module load intel-mpi
+module list
+
+# set executable location
+EXE="/gpfs/scratch/hoffmaps/singularity_images/akrr_benchmarks_ior_barebones02.sif"
+
+# setting things up to use the singularity image
+export LD_LIBRARY_PATH=/opt/appker/lib:/opt/intel/impi/2018.3.222/lib64:$LD_LIBRARY_PATH
+unset TMPDIR
+$EXE --appsigcheck >> $AKRR_APP_STDOUT_FILE 2>&1
+EXE="$EXE --ior-run"
+
+# set how to run mpi on nodes
+for node in $AKRR_NODELIST; do echo $node>>all_nodes; done
+RUNMPI="mpiexec -n $AKRR_CORES -f all_nodes"
+
+# set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+sed -n "$(($AKRR_CORES_PER_NODE+1)),$(($AKRR_CORES))p" all_nodes > all_nodes_offset
+sed -n "1,$(($AKRR_CORES_PER_NODE))p" all_nodes >> all_nodes_offset
+RUNMPI_OFFSET="mpiexec -n $AKRR_CORES -f all_nodes_offset"
+"""
+```
+Note the section to set up for singularity. 
+Right now ior_barebones02 is the one to use, ior_barebones doesn't have the appsigcheck built in yet
+
 
 
