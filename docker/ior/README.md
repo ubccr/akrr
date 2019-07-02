@@ -107,4 +107,27 @@ Note the section to set up for singularity.
 Right now ior_barebones02 is the one to use, ior_barebones doesn't have the appsigcheck built in yet
 
 
+## Trying to get it working with openstack.
+Due to the nature of the resulting ior.job file, it seems the best strategy would be to just have the script run the executable and have all the arguments passed in to it, so that $EXE is the docker run command, and the mpi stuff is just nothing
+
+Also looks like we need to change appkernel_requests_two_nodes_for_one to false to have this thing get run as only one node
+
+Errors I ran into
+- mpiexec not found -> fix by just doing absolute path in the script
+- no such file or directory with the temporary file and such that is sent over
+	- since it is using $AKRR_TMP_WORKDIR to do its thing, which of course doesnt exist in docker
+	- potential solution: mount the volume somehow with -v /path:/path/in/container (done in the conf part)
+
+- There was some error that I couldn't find the script? They talked about it here: https://github.com/moby/moby/issues/9066 maybe it has something to do with line-ending problem something? Not sure, but I removed some of the extra lines in the files and now it works again..? Anyways back to the -v flag.
+- Update nope we still get the error sometimes
+
+
+According to https://docs.docker.com/storage/bind-mounts/ the -v flag makes the things as a directory, so really I just need to link $AKRR_TMP_WORKDIR  to $AKRR_TMP_WORKDIR in theory
+
+- Okay so now we are getting an error standard_init_linux.go:207: exec user process caused "no such file or directory"
+- so some sort of file or directory is going haywire..? in theory the -v flag should be creating the things...
+	- Actually this maybe is another one of the line endings issues...? see: https://forums.docker.com/t/standard-init-linux-go-175-exec-user-process-caused-no-such-file/20025/5
+	- Unsure though bc they're saying it has to do with windows somehow? I don't know
+
+
 

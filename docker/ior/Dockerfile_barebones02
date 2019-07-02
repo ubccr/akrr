@@ -26,8 +26,6 @@ ENV LD_LIBRARY_PATH=$GPFS_LIB_LOC:/opt/intel/impi/2018.3.222/lib64
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC/
 
-ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
-
 RUN \
 	mkdir /scratch && \
 	chmod -R 777 /scratch && \
