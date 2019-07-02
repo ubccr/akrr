@@ -27,8 +27,8 @@ if [[ "${run_appsigcheck}" == "true" ]]; then
 fi
 
 if [[ "${run_ior}" == "true" ]]; then
-	echo "Running MDTEST"
-	${MPI_LOC}/mpirun ${MDTEST_EXE_PATH} "$@"
+	echo "Running IOR"
+	${MDTEST_EXE_PATH} $@
 	wait
 fi
 echo "done"

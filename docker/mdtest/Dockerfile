@@ -13,12 +13,12 @@ ENV EXECS_LOC=/opt/appker/execs
 
 COPY execs $EXECS_LOC
 # assuming this is what the ior main folder is
-COPY ./ior-3.2.0 $EXECS_LOC/ior
+COPY ior-3.2.0 $EXECS_LOC/ior
 ENV MDTEST_EXE_PATH=$EXECS_LOC/ior/src/mdtest
 
 # need to have the gpfs library (was giving error otherwise
 ENV GPFS_LIB_LOC=/opt/appker/lib
-COPY ./lib $GPFS_LIB_LOC
+COPY lib $GPFS_LIB_LOC
 
 # adding path to libraries so mdtest can see them
 ENV LD_LIBRARY_PATH=$GPFS_LIB_LOC:/opt/intel/impi/2018.3.222/lib64

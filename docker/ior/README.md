@@ -129,5 +129,5 @@ According to https://docs.docker.com/storage/bind-mounts/ the -v flag makes the 
 	- Actually this maybe is another one of the line endings issues...? see: https://forums.docker.com/t/standard-init-linux-go-175-exec-user-process-caused-no-such-file/20025/5
 	- Unsure though bc they're saying it has to do with windows somehow? I don't know
 
-
+UPDATE: So i kept getting this file directory error or whatever, so I just said alright I'm just going to rewrite the entire dockerfile line by line to see what is causing it, and I did (with slight differences) and now it works so I have no clue what the issue is, but I won't touch it now.
 
