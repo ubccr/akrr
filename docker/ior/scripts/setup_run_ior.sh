@@ -3,6 +3,9 @@
 
 run_ior=false
 run_appsigcheck=false
+run_mdtest=false
+run_appsig_ior=false
+run_appsig_mdtest=false
 
 proc=8
 
@@ -10,12 +13,18 @@ proc=8
 # only goes through until it gets something that it doesn't recognize (regular argument)
 while [[ "$1" != "" ]]; do
         case $1 in
-                --ior-run)
+                --run-ior)
                         run_ior=true
                         ;;
-                --appsigcheck*)
-                        run_appsigcheck=true;
+		--run-mdtest)
+			run_mdtest=true
+			;;
+                --appsig-ior)
+                        run_appsig_ior=true;
                         ;;
+		--appsig-mdtest)
+			run_appsig_mdtest=true;
+			;;
 		--proc)
 			shift
 			proc=$1
@@ -28,14 +37,29 @@ while [[ "$1" != "" ]]; do
         shift
 done
 
-if [[ "${run_appsigcheck}" == "true" ]]; then
+if [[ "${run_appsig_ior}" == "true" ]]; then
         echo "Running appsigcheck..."
         ${EXECS_LOC}/bin/appsigcheck.sh ${IOR_EXE_PATH}
         wait
 fi
+
+if [[ "${run_appsig_mdtest}" == "true" ]]; then
+        echo "Running appsigcheck..."
+        ${EXECS_LOC}/bin/appsigcheck.sh ${MDTEST_EXE_PATH}
+        wait
+fi
+
 
 if [[ "${run_ior}" == "true" ]]; then
         echo "Running IOR"
         ${MPI_LOC}/mpiexec -n ${proc} ${IOR_EXE_PATH} "$@"
 	wait
 fi
+
+if [[ "${run_mdtest}" == "true" ]]; then
+	echo "Running Mdtest"
+	${MPI_LOC}/mpirun ${MDTEST_EXE_PATH} "$@"
+	wait
+fi
+
+

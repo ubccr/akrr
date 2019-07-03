@@ -13,6 +13,8 @@ COPY execs $EXECS_LOC
 
 COPY ior-3.2.0 $EXECS_LOC/ior
 ENV IOR_EXE_PATH=$EXECS_LOC/ior/src/ior
+ENV MDTEST_EXE_PATH=$EXECS_LOC/ior/src/mdtest
+
 
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC
