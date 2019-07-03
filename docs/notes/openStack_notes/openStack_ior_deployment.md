@@ -159,6 +159,42 @@ RUNMPI_OFFSET=""
 """
 ```
 
+After adjusting some things to have ior and mdtest working with the same docker image, this is the final config
+```bash
+# which IO API/formats to check
+testPOSIX = True
+testMPIIO = False
+testHDF5 = False
+testNetCDF = False
 
+# setting false up here so we can just run on one node
+appkernel_requests_two_nodes_for_one = False
+
+# will do write test first and after that read, that minimize the caching impact from storage nodes
+# require large temporary storage easily 100s GiB
+doAllWritesFirst = True
+
+appkernel_run_env_template = """
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:ior_mdtest
+EXE="docker run -v $AKRR_TMP_WORKDIR:$AKRR_TMP_WORKDIR --rm pshoff/akrr_benchmarks:ior_mdtest --run-ior --proc 8"
+
+# to get appsig
+docker run --rm pshoff/akrr_benchmarks:ior_mdtest --appsig-ior >> $AKRR_APP_STDOUT_FILE 2>&1
+
+# set how to run mpirun on all nodes
+for node in $AKRR_NODELIST; do echo $node>>all_nodes; done
+# putting nothing here bc further down we don't want to use it really
+RUNMPI=""
+
+# set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+sed -n "$(($AKRR_CORES_PER_NODE+1)),$(($AKRR_CORES))p" all_nodes > all_nodes_offset
+sed -n "1,$(($AKRR_CORES_PER_NODE))p" all_nodes >> all_nodes_offset
+# same for this run
+RUNMPI_OFFSET=""
+"""
+
+
+```
 
 
