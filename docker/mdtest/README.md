@@ -1,5 +1,7 @@
 ## Making mdtest docker
 
+NOTE: this is mainly irrelevant since I decided just to use the ior docker to run mdtest, so there's that. But I kept this here in case.
+
 For barebones version it's pretty straightforward, since I'm basically just reusing the ior version, just with calling the mdtest in the script
 
 So just setting it up basically the same as ior, I'm getting this error (or similar) trying to run it
