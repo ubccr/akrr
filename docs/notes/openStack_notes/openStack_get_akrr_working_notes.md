@@ -164,6 +164,7 @@ Okay so I'm finding a few problems I think
 - Looking at stderr, says it can't find all the akrr functions (they're in akrr_util.bash)
 - Analyzing the volume: the execs tar was not unpacked for some reason, but unpacking it did give a seemingly proper akrr_util.bash
 - I looked at a different run, and it was unpacked but akrr_util.bash was literally just empty. not sure what that's about
+- so if you're getting some error that one of the things in execs isn't working correctly, try going into the volume, getting the execs tar from github, and unpacking it in the resource directory
 
 So I left it unpacked, so maybe it won't have to do the unpacking and whatnot
 - Leaving it unpacked did indeed allow the test job to run to completion, but another erro happened immediately after:
