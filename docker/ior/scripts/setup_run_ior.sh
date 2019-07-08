@@ -9,6 +9,8 @@ run_appsig_mdtest=false
 
 proc=8
 
+host_file_path=""
+
 # so you have to specify --ior-run to actually run the thing, and you can use the appsigcheck flag to run the signature thing
 # only goes through until it gets something that it doesn't recognize (regular argument)
 while [[ "$1" != "" ]]; do
@@ -28,6 +30,10 @@ while [[ "$1" != "" ]]; do
 		--proc)
 			shift
 			proc=$1
+			;;
+		--host-file-path)
+			shift
+			host_file_path=$1
 			;;
                 *)
                         echo "unrecognized argument, continuing"
