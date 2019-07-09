@@ -1,5 +1,5 @@
-#!/bin/bash
-
+#/bin/bash
+# extra bc this supposedly also works with hdf5 and all that
 run_ior=false;
 run_appsigcheck=false;
 
