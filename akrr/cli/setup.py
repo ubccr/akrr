@@ -266,7 +266,7 @@ class AKRRSetup:
                 msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
                 msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
                 msg += "\t\tDROP DATABASE mod_appkernel;\n"
-                msg += "\t\tDROP DATABASE mod_akrr2;\n\n"
+                msg += "\t\tDROP DATABASE mod_akrr;\n\n"
 
                 log.error(msg)
                 exit(1)
