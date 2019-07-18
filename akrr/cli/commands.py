@@ -9,12 +9,6 @@ def add_command_daemon(parent_parser):
     parser = parent_parser.add_parser('daemon', description=add_command_daemon.__doc__)
     subparsers = parser.add_subparsers(title='commands')
 
-    # @todo ensure proper cron execution
-    # parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
-    # parser.add_argument('-a', '--append', action='store_true',
-    #                     help="append stdout and stderr to file rather then overwrite")
-    # parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
-
     cli_daemon_start(subparsers)
     cli_daemon_stop(subparsers)
     cli_daemon_restart(subparsers)
@@ -50,23 +44,38 @@ def cli_daemon_stop(parent_parser):
 def cli_daemon_restart(parent_parser):
     """restart AKRR daemon"""
     parser = parent_parser.add_parser('restart', description=cli_daemon_restart.__doc__)
+    parser.add_argument('-cron', action='store_true', help="for launching by cron, no output on normal operation")
 
-    def handler(_):
+    def handler(args):
         from akrr.util import log
         from akrr.daemon import get_daemon_pid, daemon_start, daemon_stop
 
-        # if args.cron:
-        #    args.append = True
-        #    args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
-
-        log.info("Restarting AKRR")
-        try:
-            if get_daemon_pid(True) is not None:
-                daemon_stop()
-        except Exception as e:
-            log.exception("Exception was thrown during daemon stopping")
-            log.log_traceback(str(e))
-        return daemon_start()
+        if args.cron is True:
+            # i.e. executed by cron
+            #   run same command as separate process (but without -cron)
+            #   print output only if return non zero code
+            import subprocess
+            import sys
+            import os
+            argv = [sys.executable, os.path.abspath(sys.argv[0])]
+            if len(sys.argv) > 0:
+                for arg in sys.argv[1:]:
+                    if arg != "-cron":
+                        argv.append(arg)
+            try:
+                subprocess.check_output(argv, stderr=subprocess.STDOUT, timeout=120)
+            except subprocess.CalledProcessError as e:
+                if hasattr(e, 'output'):
+                    print(e.output.decode("utf-8"))
+        else:
+            log.info("Restarting AKRR")
+            try:
+                if get_daemon_pid(True) is not None:
+                    daemon_stop()
+            except Exception as e:
+                log.exception("Exception was thrown during daemon stopping")
+                log.log_traceback(str(e))
+            return daemon_start()
 
     parser.set_defaults(func=handler)
 
@@ -100,10 +109,29 @@ def cli_daemon_check(parent_parser):
 def cli_daemon_checknrestart(parent_parser):
     """check if AKRR daemon is up if not it will restart it"""
     parser = parent_parser.add_parser('checknrestart', description=cli_daemon_checknrestart.__doc__)
+    parser.add_argument('-cron', action='store_true', help="for launching by cron, no output on normal operation")
 
-    def handler(_):
+    def handler(args):
         from akrr.daemon import daemon_check_and_start_if_needed
-        return daemon_check_and_start_if_needed()
+        if args.cron is True:
+            # i.e. executed by cron
+            #   run same command as separate process (but without -cron)
+            #   print output only if return non zero code
+            import subprocess
+            import sys
+            import os
+            argv = [sys.executable, os.path.abspath(sys.argv[0])]
+            if len(sys.argv) > 0:
+                for arg in sys.argv[1:]:
+                    if arg != "-cron":
+                        argv.append(arg)
+            try:
+                subprocess.check_output(argv, stderr=subprocess.STDOUT, timeout=120)
+            except subprocess.CalledProcessError as e:
+                if hasattr(e, 'output'):
+                    print(e.output.decode("utf-8"))
+        else:
+            return daemon_check_and_start_if_needed()
 
     parser.set_defaults(func=handler)
 

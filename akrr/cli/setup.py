@@ -20,7 +20,7 @@ except ImportError:
                 #instale EPEL repo information
                 sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                 #install mysqlclient-python
-                sudo yum install python34-mysql
+                sudo yum install python36-mysql
                 """)
     exit(1)
 except Exception as _e:
