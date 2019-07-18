@@ -754,8 +754,8 @@ class AKRRSetup:
             mail = "MAILTO = " + self.cron_email
         else:
             mail = None
-        restart = "50 23 * * * " + akrr_bin_dir + "/akrr daemon -cron restart"
-        check_and_restart = "33 * * * * " + akrr_bin_dir + "/akrr daemon -cron checknrestart"
+        restart = "50 23 * * * " + akrr_bin_dir + "/akrr daemon restart -cron"
+        check_and_restart = "33 * * * * " + akrr_bin_dir + "/akrr daemon checknrestart -cron"
 
         try:
             crontan_content = subprocess.check_output("crontab -l", shell=True)
