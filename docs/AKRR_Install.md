@@ -22,8 +22,8 @@ The following dependencies are needed to be installed for in-source installation
  
 ```bash
 # Install dependencies
-yum -y install python34 python34-libs python34-bottle python34-requests \
-    python34-mysql python34-typing openssl openssh-clients crontabs
+yum -y install python36 python36-libs python36-bottle python36-requests \
+    python36-mysql python36-typing openssl openssh-clients crontabs
 ```
 
 If AKRR will use MariaDB/MySQL on the local machine install it:
@@ -137,5 +137,24 @@ no crontab for akrruser
 ```
 
 At this point AKRR should be installed and running. Now new resources can be added.
+
+## Tips and Tricks
+
+### MySQL Server on a Different Host
+
+In case if MySQL is located at different host following options to `akrr setup` command allows 
+to specify MySQL server host name.
+
+```text
+  --akrr-db AKRR_DB  mod_akrr2 database location in
+                     [user[:password]@]host[:port] format, missing values will
+                     be asked. Default: localhost:3306
+  --ak-db AK_DB      mod_appkernel database location. Usually same host as
+                     XDMoD's databases host. Default: same as akrr
+  --xd-db XD_DB      XDMoD modw database location. It is XDMoD's databases
+                     host. Default: same as akr
+```
+
+
 
 Next: [Usage](AKRR_Usage.md)
