@@ -26,7 +26,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
-                    sudo yum install python34-mysql
+                    sudo yum install python36-mysql
                 Anaconda
                     conda install mysqlclient
                     """)
@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install python34-typing
-                    sudo yum install python34-typing
+                    sudo yum install python36-typing
                     """)
         exit(1)
     # Check presence of MySQLdb
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                     #install mysqlclient-python
-                    sudo yum install python34-bottle
+                    sudo yum install python36-bottle
                 Anaconda
                     conda install bottle
                     """)
