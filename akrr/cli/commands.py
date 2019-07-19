@@ -513,3 +513,79 @@ def cli_enable(parent_parser):
         resource_app_enable(args.resource, args.appkernel, args.dry_run)
 
     parser.set_defaults(func=handler)
+
+
+def add_command_archive(parent_parser):
+    """AK runs output, logs, pickels and batch jobs script manipulation"""
+    parser = parent_parser.add_parser('archive',  description=add_command_archive.__doc__)
+    subparsers = parser.add_subparsers(title="commands for archive")
+    #parser.add_argument(
+    #    '-udl', '--update-dir-layout', action='store_true', help="update dir layout")
+
+    cli_archive_remove_state_dumps(subparsers)
+    cli_archive_remove_tasks_workdir(subparsers)
+    cli_archive_update_layout(subparsers)
+
+
+def cli_archive_remove_state_dumps(parent_parser):
+    """remove state dumps"""
+    parser = parent_parser.add_parser(
+        'remove-tasks-state-dumps', description=cli_archive_remove_state_dumps.__doc__)
+
+    parser.add_argument(
+        '--days', required=True, type=int, help="do operations for tasks older than `--days`")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).remove_tasks_state_dumps(
+            args.days, args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_archive_remove_tasks_workdir(parent_parser):
+    """remove task workdir, normally it should not be copied to AKRR at all."""
+    parser = parent_parser.add_parser(
+        'remove-tasks-workdir', description=cli_archive_remove_state_dumps.__doc__)
+
+    parser.add_argument(
+        '--days', required=True, type=int, help="do operations for tasks older than `--days`")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).remove_tasks_workdir(
+            args.days, args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_archive_update_layout(parent_parser):
+    """update resource/appkernel/task to resource/appkernel/year/month/task layout"""
+    parser = parent_parser.add_parser(
+        'update-layout', description=cli_archive_update_layout.__doc__)
+
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).update_layout(
+            args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)

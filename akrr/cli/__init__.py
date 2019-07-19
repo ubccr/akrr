@@ -130,6 +130,9 @@ class CLI:
         from .commands import add_command_task
         add_command_task(self.subparsers)
 
+        from .commands import add_command_archive
+        add_command_archive(self.subparsers)
+
         self.verbose = False
 
     def process_common_args(self, cli_args):
