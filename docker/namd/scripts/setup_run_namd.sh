@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+
 # name of input we want to use in inputs location
 namd_cur_inputs_dir_name="apoa1_nve"
 namd_input_files_dir="${NAMD_INPUTS_DIR}/${namd_cur_inputs_dir_name}"
