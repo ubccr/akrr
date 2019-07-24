@@ -1,0 +1,52 @@
+FROM centos:7
+
+LABEL desc="hpcc benchmark made ready to run"
+
+# Installing intel-mpi and making hpccuser in one Run
+RUN \
+	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
+	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
+	yum -y install intel-mpi-2018.3-051
+
+# place where the executable is
+ENV EXECS_LOC=/opt/appker/execs
+
+# copying in hpcc files
+COPY execs $EXECS_LOC
+# so the execs dir is /opt/appker/execs
+
+
+# location of executable file, since mpirun need to have the path to hpcc
+ENV HPCC_EXE_FULL_PATH=$EXECS_LOC/hpcc-1.5.0/hpcc
+
+# location where the tar will be unpacked for some default inputs for hpcc
+ENV INPUTS_LOC=/usr/local/appker/inputs
+COPY hpcc_inputsV2.tar.gz $INPUTS_LOC/
+
+# location where convenience scripts will be (to run things using the flags and such)
+ENV SCRIPTS_LOC=/opt/scripts
+COPY scripts $SCRIPTS_LOC
+
+ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
+
+# giving permissions to allow anyone to run things - give all permissions to everything basically
+RUN \
+	mkdir /scratch && \
+	chmod -R 777 /scratch && \
+	cd $INPUTS_LOC && \
+	tar -xzvf $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
+	rm $INPUTS_LOC/hpcc_inputsV2.tar.gz && \
+	chmod -R 755 $EXECS_LOC && \  
+	chmod -R 755 $SCRIPTS_LOC && \
+	chmod -R 755 $MPI_LOC && \
+	chmod -R 755 $INPUTS_LOC
+	
+# so that the temp directory gets created there
+WORKDIR /scratch
+
+# runs the setup script to start
+# This one doesn't use the absolute path, uses the env variable
+# ENTRYPOINT [ "/bin/bash", "-c" , "$SCRIPTS_LOC/setup_run_hpcc.sh" ]
+#
+# Just using the straightup absolute path;
+ENTRYPOINT [ "/opt/scripts/setup_run_hpcc_simple.sh" ]

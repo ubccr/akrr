@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # initializing some variables
 temp="hpcc"
 hpcc_inputs_dir="${INPUTS_LOC}/${temp}"
@@ -14,36 +14,6 @@ fi
 
 echo "Number of cores detected: ${cpu_cores}"
 
-# help text essentially
-usage()
-{
-    	echo "usage: setup_hpcc_inputs.sh [-h] [-i] [--norun] [-n NODES] [-{ppn} PROC_PER_NODE]"
-	echo ""
-    	echo " Options:"
-    	echo "	-h | --help			Display help text"
-	#echo "	-v | --verbose			increase verbosity of output"
-	echo " 	-i | --interactive		Start a bash session after the run"
-	echo "	--norun				Set if you don't want to immediately run hpcc"
-	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
-	echo "	-ppn PROC_PER_NODE | "
-	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
-	echo "					(if not specified, number of cpu cores is used,"
-	echo "					as found in /proc/cpuinfo)"
-	echo "  --pin 				Turn on process pinning for mpi (I_MPI_PIN)"
-} 
-
-# allows script to continue if the argument passed in is a valid number
-validate_number()
-{
-	echo "Testing entry: ${1}"
-	# checking if the given argument is an integer
-	re='^[0-9]+$'
-	if ! [[ ${1} =~ ${re} ]] ; then
-   		echo "error: Entry is not an integer, as expected" >&2; exit 1
-	else
-		echo "Entry is valid"
-	fi
-}
 
 # setting default values for variables
 set_defaults()
@@ -54,7 +24,6 @@ set_defaults()
 	verbose=false
 	interactive=false
 	run_hpcc=true
-	I_MPI_PIN=0
 }
 
 set_defaults
@@ -65,12 +34,6 @@ while [[ "${1}" != "" ]]; do
 		-h | --help)
 			usage
 			exit
-			;;
-		-v | --verbose)
-			verbose=true
-			;;
-		-i | --interactive)
-			interactive=true
 			;;
 		--norun)
 			run_hpcc=false
@@ -83,9 +46,6 @@ while [[ "${1}" != "" ]]; do
 			shift
 			ppn=${1}
 			;;
-		--pin)
-			I_MPI_PIN=1
-			;;
 		*)
 			echo "Error: unrecognized argument"
 			usage
@@ -94,15 +54,6 @@ while [[ "${1}" != "" ]]; do
 	esac
 	shift # to go to next argument
 done
-
-
-echo "nodes: ${nodes}"
-echo "ppn: ${ppn}"
-echo "interactive: ${interactive}"
-
-#validating that they are numbers
-validate_number ${nodes}
-validate_number ${ppn}
 
 # setting up paths to do the copying
 temp="x"
@@ -135,31 +86,22 @@ echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 wait
 
-# to print some more info
-lscpu
-wait
+#echo "CPU Info inside container"
+
+
+#echo "Cgroup inside container"
+#${MPI_LOC}/mpirun -np ${ppn} $SCRIPTS_LOC/cat_cgroup.sh
+
+export KMP_AFFINITY="verbose"
 
 #export I_MPI_HYDRA_BOOTSTRAP="ssh"
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
 	echo "Running hpcc..."
-	export I_MPI_DEBUG=5
-	export I_MPI_PIN
-	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
+	${MPI_LOC}/mpirun -print-rank-map -genv I_MPI_DEBUG=5 -np ${ppn} ${HPCC_EXE_FULL_PATH}
 	wait
 	echo "Complete! hpccoutf.txt is in ${work_dir}"
 	echo "cat output to standard out:"
 	cat hpccoutf.txt
 fi
-
-
-echo "End of entrypoint script. Interactive session will launch if specified."
-
-echo "See the github repo for any updates/thoughts"
-
-# if user sets interactive flag, starts up bash at end
-if [[ "${interactive}" == "true" ]]; then
-	/bin/bash
-fi
-
 
