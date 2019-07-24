@@ -28,7 +28,6 @@ usage()
 	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
-	echo " 	--pin				Set I_MPI_PIN to 1 (for process pinning)"
 	#echo " ** = not used. In most cases not having any arguments is fine"
 } 
 
@@ -55,7 +54,6 @@ set_defaults()
 	verbose=false
 	interactive=false
 	run_namd=true
-	I_MPI_PIN=0
 }
 
 set_defaults
@@ -84,9 +82,6 @@ while [[ "$1" != "" ]]; do
 		-ppn | --proc_per_node)
 			shift
 			ppn=$1
-			;;
-		--pin)
-			I_MPI_PIN=1
 			;;
 		*)
 			echo "Error: unrecognized argument"
@@ -124,11 +119,11 @@ cd $work_dir
 echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${NWCHEM_EXECUTABLE}
 wait
-export I_MPI_DEBUG=5
+
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_namd}" == "true" ]]; then
 	echo "Running namd..."
-	export I_MPI_PIN
+	export I_MPI_DEBUG=5
 	mpirun --allow-run-as-root -np ${ppn} ${NWCHEM_EXECUTABLE} ${input_file_name}
 	wait
 	echo "Complete! outputs are in is in ${work_dir}"

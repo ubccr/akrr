@@ -28,4 +28,4 @@ RUN \
 
 WORKDIR /scratch
 
-ENTRYPOINT ["/opt/scripts/setup_run_nwchem.sh"]
+ENTRYPOINT ["/opt/scripts/setup_run_nwchem_debug.sh"]
