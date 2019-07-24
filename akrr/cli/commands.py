@@ -219,8 +219,9 @@ def add_command_setup(parent_parser):
     parser.set_defaults(func=setup_handler)
 
 
-def add_command_update(parent_parser):
+def add_command_setup_update(parent_parser):
     """Update AKRR"""
+    # @todo should be option to setup
     parser = parent_parser.add_parser('update', description=add_command_setup.__doc__)
     parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
 
@@ -587,5 +588,60 @@ def cli_archive_update_layout(parent_parser):
         from akrr.archive import Archive
         Archive(args.dry_run, args.comp_task_dir).update_layout(
             args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def add_command_update(parent_parser):
+    """AKRR update routings"""
+    parser = parent_parser.add_parser('update',  description=add_command_archive.__doc__)
+    subparsers = parser.add_subparsers(title="commands for update")
+    #parser.add_argument(
+    #    '-udl', '--update-dir-layout', action='store_true', help="update dir layout")
+
+    cli_update_db_compare(subparsers)
+    cli_update_rename_appkernels(subparsers)
+
+
+def cli_update_db_compare(parent_parser):
+    """Copy mod_akrr database"""
+    parser = parent_parser.add_parser(
+        'db-compare', description=cli_archive_remove_state_dumps.__doc__)
+    parser.add_argument(
+        "--src",
+        help="mod_akrr source database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        "--dest",
+        help="mod_akrr database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources to copy")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.update import mod_akrr_db_compare
+        mod_akrr_db_compare(args.src, args.dest)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_update_rename_appkernels(parent_parser):
+    """Rename appkernels from long to short format"""
+    parser = parent_parser.add_parser(
+        'rename-appkernels', description=cli_archive_remove_state_dumps.__doc__)
+    parser.add_argument(
+        "--mod-akrr", default='akrruser:@localhost:3306:/mod_akrr',
+        help="mod_akrr source database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        "--mod-appkernel", default='akrruser:@localhost:3306:/mod_appkernel',
+        help="mod_appkernel database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_appkernel")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.update import rename_appkernels
+        rename_appkernels(args.mod_akrr, args.mod_appkernel, args.dry_run)
 
     parser.set_defaults(func=handler)
