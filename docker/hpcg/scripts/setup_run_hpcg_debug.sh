@@ -28,7 +28,7 @@ usage()
 	echo "					(if not specified, number of cpu cores is used,"
 	echo "					as found in /proc/cpuinfo)"
 	echo "					- used to determine -np VAL for mpirun"
-	echo " 	--pin 				Set I_MPI_PIN to 1 to have mpiru pin processes"
+	#echo " ** = not implemented. These options do nothing."
 
 }
 
@@ -42,7 +42,6 @@ set_defaults()
 	interactive=false
 	run_hpcg=true
 	hpcg_exe_name="xhpcg_avx" # determining optimal hpcg execution (checks for avx, avx2, or skx)
-	I_MPI_PIN=0
 }
 
 set_defaults
@@ -86,9 +85,6 @@ while [[ "$1" != "" ]]; do
 		-ppn | --proc_per_node)
 			shift
 			ppn=$1
-			;;
-		--pin)
-			I_MPI_PIN=1
 			;;
 		*)
 			echo "Error: unrecognized argument"
@@ -139,13 +135,13 @@ echo "Running appsigcheck..."
 ${EXECS_LOC}/bin/appsigcheck.sh ${hpcg_exe_full_path}
 wait
 
+
+
 # running hpcg and catting output
 if [[ "${run_hpcg}" == "true" ]]; then
 	echo "Using ${hpcg_exe_full_path} to run hpcg"
 	echo "Running hpcg..."
-	export I_MPI_DEBUG=5
-	export I_MPI_PIN
-	${MPI_LOC}/mpirun -np ${ppn} ${hpcg_exe_full_path}
+	${MPI_LOC}/mpirun -genv I_MPI_DEBUG=5 -np ${ppn} ${hpcg_exe_full_path}
 	wait
 	echo "Complete! Outputs are in ${work_dir}"
 	echo "cat output to standard out:"
