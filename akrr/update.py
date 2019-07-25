@@ -64,7 +64,7 @@ def mod_akrr_db_compare(db_src, db_dest):
 
         table_is_same = True
         # {'Field': 'task_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'UNI', 'Default': None, 'Extra': ''}
-        message = "Columns in tables"
+        message = "Columns in tables\n"
         message += "%30s %10s %10s %10s %20s %20s\n" % ("Table Name", "same", "in tables1", "in tables2", "type1", "type2")
         for field in fields_all:
             in_table1 = field in table1['Field']
