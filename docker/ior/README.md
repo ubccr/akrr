@@ -131,3 +131,11 @@ According to https://docs.docker.com/storage/bind-mounts/ the -v flag makes the 
 
 UPDATE: So i kept getting this file directory error or whatever, so I just said alright I'm just going to rewrite the entire dockerfile line by line to see what is causing it, and I did (with slight differences) and now it works so I have no clue what the issue is, but I won't touch it now.
 
+
+Update: now working with hdf5 and netcdf on openstack (i believe), basically I just re-built the ior on vortex with the right configs (according to the ior deployment) and then got all the libraries I needed into the lib folder here. I rebuilt the dockerfile and modified the config file to use the new docker and then set the things to test to be true for hdf5 and it put me through validation so wooo
+
+
+
+
+
+

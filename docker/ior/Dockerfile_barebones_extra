@@ -15,6 +15,7 @@ COPY execs $EXECS_LOC
 # assuming this is what the ior main folder is
 COPY ./ior-3.2.0 $EXECS_LOC/ior
 ENV IOR_EXE_PATH=$EXECS_LOC/ior/src/ior
+ENV MDTEST_EXE_PATH=$EXECS_LOC/ior/src/mdtest
 
 # need to have the gpfs library (was giving error otherwise
 ENV GPFS_LIB_LOC=/opt/appker/lib

@@ -21,10 +21,10 @@ while [[ "$1" != "" ]]; do
 		--run-mdtest)
 			run_mdtest=true
 			;;
-                --appsig-ior)
+                --ior-appsig)
                         run_appsig_ior=true;
                         ;;
-		--appsig-mdtest)
+		--mdtest-appsig)
 			run_appsig_mdtest=true;
 			;;
 		--proc)
@@ -55,6 +55,15 @@ if [[ "${run_appsig_mdtest}" == "true" ]]; then
         wait
 fi
 
+export I_MPI_DEBUG=5
+
+echo "DOCKER Before Cache drop"
+free -h
+
+sudo bash $SCRIPTS_LOC/drop_caches.sh
+
+echo "DOCKER After Cache drop"
+free -h
 
 if [[ "${run_ior}" == "true" ]]; then
         echo "Running IOR"

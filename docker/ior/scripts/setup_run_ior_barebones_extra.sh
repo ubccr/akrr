@@ -1,7 +1,10 @@
 #/bin/bash
 # extra bc this supposedly also works with hdf5 and all that
 run_ior=false;
-run_appsigcheck=false;
+ior_appsig=false;
+
+run_mdtest=false;
+mdtest_appsig=false;
 
 # goes through each case (2 arguments)
 while [[ "$1" != "" ]]; do
@@ -9,8 +12,14 @@ while [[ "$1" != "" ]]; do
 		--run-ior)
 			run_ior=true
 			;;
-		--appsigcheck*)
-			run_appsigcheck=true;
+		--run-mdtest)
+			run_mdtest=true
+			;;
+		--ior-appsig)
+			ior_appsig=true
+			;;
+		--mdtest-appsig)
+			mdtest_appsig=true
 			;;
 		*)
 			echo "unrecognized argument, continuing"
@@ -20,8 +29,8 @@ while [[ "$1" != "" ]]; do
 	shift
 done
 
-if [[ "${run_appsigcheck}" == "true" ]]; then
-	echo "Running appsigcheck..."
+if [[ "${ior_appsig}" == "true" ]]; then
+	echo "Running IOR appsigcheck..."
 	${EXECS_LOC}/bin/appsigcheck.sh ${IOR_EXE_PATH}
 	wait
 fi
@@ -31,6 +40,20 @@ if [[ "${run_ior}" == "true" ]]; then
 	${IOR_EXE_PATH} $@
 	wait
 fi
+
+if [[ "${mdtest_appsig}" == "true" ]]; then
+        echo "Running MDTEST appsigcheck..."
+        ${EXECS_LOC}/bin/appsigcheck.sh ${MDTEST_EXE_PATH}
+        wait
+fi
+
+if [[ "${run_mdtest}" == "true" ]]; then
+        echo "Running MDTEST"
+        ${MDTEST_EXE_PATH} $@
+        wait
+fi
+
+
 echo "done"
 
 

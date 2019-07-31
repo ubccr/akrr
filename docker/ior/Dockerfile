@@ -3,6 +3,7 @@ FROM centos:7
 LABEL desc="ior benchmark"
 
 RUN \
+	yum -y update && \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
 	yum -y install intel-mpi-2018.3-051
@@ -19,10 +20,11 @@ ENV MDTEST_EXE_PATH=$EXECS_LOC/ior/src/mdtest
 ENV SCRIPTS_LOC=/opt/scripts
 COPY scripts $SCRIPTS_LOC
 
-ENV GPFS_LIB_LOC=/opt/appker/lib
-COPY lib $GPFS_LIB_LOC
+ENV GPFS_LIB_LOC=/opt/appker/libs
+COPY libs $GPFS_LIB_LOC
 
-ENV LD_LIBRARY_PATH=/opt/intel/impi/2018.3.222/lib64:$GPFS_LIB_LOC
+ENV LD_LIBRARY_PATH=$GPFS_LIB_LOC:/opt/intel/impi/2018.3.222/lib64:$GPFS_LIB_LOC/hdf5-1.8.21/lib:$GPFS_LIB_LOC/pnetcdf-1.11.1/lib
+
 
 ENV MPI_LOC=/opt/intel/impi/2018.3.222/bin64
 
