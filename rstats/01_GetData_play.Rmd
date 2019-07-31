@@ -1,0 +1,569 @@
+---
+title: "Meltdown Spectre Update Performance Influence"
+output: html_notebook
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(XML)
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(RMariaDB)
+#install.packages("gridExtra")
+library(gridExtra)
+```
+
+
+# Load data
+
+Got tables from appkernel.ccr.buffalo.edu modw database.
+```{r}
+#con <- dbConnect(RMariaDB::MariaDB(), group = "appkernel", dbname = "mod_akrr")
+
+# just connecting with root bc its the easiest
+con <- dbConnect(RMariaDB::MariaDB(), username="root",group = "appkernel", dbname = "mod_akrr")
+
+#get all tables except jobfact
+res <- dbSendQuery(
+    con, 
+    "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo 
+    WHERE status=1 AND collected > '2017-11-08 00:00:00' AND 
+        ((resource LIKE \"huey%\" AND collected < '2018-01-05 13:00:00') OR
+        (resource LIKE \"edge%\" AND collected < '2018-01-08 00:00:00'));")
+
+# updated for me, this appears to get some tables that have all the info
+res <- dbSendQuery(con, "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo where status=1 AND ((resource LIKE \"bare_metal_real%\") OR (resource LIKE \"singularity_real%\"));")
+
+
+all_res1<- dbFetch(res)
+dbClearResult(res)
+all_res1$state <- 1L
+
+# this stuff is like the 2nd half of results, right now I just have it all grouped as one in all_res1
+res <- dbSendQuery(con,  
+    "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo 
+    WHERE status=1 AND collected > '2017-09-01 00:00:00' AND
+        ((resource LIKE \"huey%\" AND collected > '2018-01-05 13:00:00') OR
+        (resource LIKE \"edge%\" AND collected > '2018-01-09 00:00:00'));")
+all_res2 <- dbFetch(res)
+dbClearResult(res)
+all_res2$state <- 2L
+
+all_res  <- rbind(all_res1,all_res2)
+
+# so I just have everything in all_res now, with no state difference or whatever 
+all_res <- all_res1
+
+# cleanup
+dbDisconnect(con)
+remove(con,res)
+remove(all_res1,all_res2)
+```
+
+
+```{r}
+
+# renaming things to make it more straightforward...?
+all_res <- all_res1
+all_res %<>% rename(app_long=reporter,task_id=instance_id)
+all_res$nnodes <- as.integer(sub(".+\\.([0-9]+)$","\\1",all_res$reporternickname))
+
+s <- all_res$app == ""
+
+# so this list isn't really helpful since all the app_longs are just like the last part of these things
+# so I'm changing it to just have the lowercase ones without all the xdmod stuffs in front
+app_conv<-list(
+    "namd" = "NAMD",
+    "nwchem" = "NWChem",
+    "gamess" = "GAMESS",
+    "enzo" = "ENZO",
+    "hpcc" = "HPCC",
+    "imb" = "IMB",
+    "graph500" ="Graph500",
+    "ior" = "IOR",
+    "mdtest" = "MDTest",
+    "hpcg" = "HPCG" # also added hpcg in
+)
+
+# this just seems to be filtering out all the things that aren't listed above
+all_res %<>% filter(app_long %in% names(app_conv))
+
+# adds an extra column so that for namd it is NAMD and so on, like the app_conv up there
+# so in app column it has all those ^^ things (the caps in app_conv)
+all_res$app<-sapply(all_res$app_long,function(x){unlist(app_conv[[x]])})
+
+# this just seems to be for local runs... doesn't apply to me yet
+s<-all_res$app=="IOR"&all_res$resource=="huey_local"
+all_res$app[s]<-"IOR.local"
+s<-all_res$app=="MDTest"&all_res$resource=="huey_local"
+all_res$app[s]<-"MDTest.local"
+
+# N/A for me
+all_res$resource[all_res$resource=="huey_local"]="huey"
+
+#all_res$state <- sample(c(1L,2L),nrow(all_res),replace = TRUE)
+# getting rid of some specific tasks? N/A I believe
+all_res %<>% filter(task_id != 3701390L) %>%
+    filter(task_id != 3701399L) %>%
+    filter(task_id != 3701400)
+
+rm(s)
+```
+
+```{r}
+# doesn't apply for me
+# this section appears to determine what sort of node/cpu it ran on? So not exactly similar for me
+edge_CPU_L5520 <-c(
+sprintf("cpn-d14-%02d", seq(2,23)),
+sprintf("cpn-d14-%02d", seq(26,39)),
+sprintf("cpn-d15-%02d", c(seq(1,32),seq(34,40))),
+sprintf("cpn-d16-%02d", c(seq(2,14),seq(17,41))),
+"cpn-d15-33",
+"cpn-d16-15",
+"cpn-d16-16"
+)
+
+nodes_CPU_L5520 <- rep(FALSE,times=nrow(all_res))
+for(i in 1:nrow(all_res)){
+    #i<-1
+    m_nodes<-strsplit(trimws(gsub(";"," ",all_res$nodes[[i]]))," ")[[1]]
+    rigth_cpu <- TRUE
+    for(m_node in m_nodes){
+        #print(paste(m_node,m_node %in% edge_CPU_L5520))
+        if(!(m_node %in% edge_CPU_L5520)){
+            rigth_cpu=FALSE
+        }
+    }
+    #print(paste(i,rigth_cpu))
+    nodes_CPU_L5520[i]<-rigth_cpu
+}
+all_res$resource[nodes_CPU_L5520] <- "edge8core_ibm"
+all_res$resource[all_res$resource=="edge"] <- "edge8core_dell"
+
+all <- all_res %>% filter(app!="test") %>%
+    select(state,task_id,resource,app,nnodes,walltime,collected,body)
+```
+
+```{r}
+# Instead, I'll do it here. will add a new cpu_type category
+all_res$cpu_type <- ""
+
+# replacing on a conditional
+all_res$cpu_type <- "CPU-L5520" # if its not the other cpus, its this one
+all_res$cpu_type[grepl("cpn-u25-39",all_res$nodes)] <- "CPU-GOLD-6130"
+all_res$cpu_type[grepl("cpn-u22-39",all_res$nodes)] <- "CPU-GOLD-6130"
+# with 27-31 it has a slightly different gres, idk if that makes a difference
+all_res$cpu_type[grepl("cpn-u27-31",all_res$nodes)] <- "CPU-GOLD-6130"
+
+all_res$cpu_type[grepl("cpn-u26",all_res$nodes)] <- "CPU-Phi-7250"
+
+# cpus are based off of slurm config at /etc/slurm/slurm-cluster.conf
+# I was using the preprod partition so that's what its based on
+
+# gets a subset of the data
+all <- all_res %>% 
+    select(state, task_id, resource, app, nnodes, walltime, collected, body, cpu_type)
+```
+
+
+```{r}
+# this seems to sorta parse the xml body file
+get_metrics <- function(xml){
+   l<-xmlToList(xml) 
+   if(!("benchmark" %in% names(l))){return(NULL)}
+   if(!("statistics" %in% names(l$benchmark))){return(NULL)}
+   
+   ll <- l$benchmark$statistics
+   if(length(ll)==0){return(NULL)}
+   
+   df<-NULL
+   for(i in 1:length(ll)){
+       m_metrics<-NA
+       m_value<-NA
+       m_units<-NA
+       if("ID" %in% names(ll[[i]])){m_metrics<-ll[[i]]$ID}
+       if("value" %in% names(ll[[i]])){m_value<-ll[[i]]$value}
+       if("units" %in% names(ll[[i]])){m_units<-ll[[i]]$units}
+       df <- rbind(df,data.frame(metric=m_metrics,value=m_value,units=m_units,stringsAsFactors = FALSE))
+   }
+   df
+}
+
+# parses the body for all of the various metrics/info
+metrics <- all %>% group_by(state,resource,app,nnodes,task_id) %>% do(get_metrics(.$body) )
+metrics$value <- as.numeric(metrics$value)
+metrics <- ungroup(metrics)
+
+
+# unsure exactly what these things do.... not doing them
+metrics$resource <- factor(metrics$resource,levels=unique(metrics$resource))
+metrics$app <- factor(metrics$app,levels=unlist(app_conv, use.names = FALSE))
+metrics$units <- factor(metrics$units)
+metrics$metric <- factor(metrics$metric,levels=unique(c("Wall Clock Time",metrics$metric)))
+
+metrics %<>% left_join(all %>% select(task_id,collected), by="task_id")
+gc() # garbage collecting
+
+# so at this point I think I have enough to do at least a bit of stat analysis, so I'm gonna do that instead of trying to figure all the rest of this out
+```
+
+```{r}
+# gets only the entries that are hpcc
+all_hpcc <- all[all$app == "HPCC",]
+all_hpcc$task_id <- as.numeric(all_hpcc$task_id)
+metrics_hpcc <- metrics[metrics$app == "HPCC",]
+
+# keeps the units of metrics intact
+metrics_hpcc$metric_and_units <- paste(metrics_hpcc$metric, "(", metrics_hpcc$units,")", sep="")
+remove(temp)
+
+# makes a data frame with 21 columns, 25 rows (however many metrics there are)
+temp <- data.frame(matrix(ncol=length(unique(metrics_hpcc$metric_and_units))+1, nrow=length(unique(metrics_hpcc$task_id))))
+
+# sets up the name of the columns (based on the metrics gotten)
+column_names = c("task_id", unique(metrics_hpcc$metric_and_units))
+colnames(temp) <- column_names
+# at this point the column names are correct
+temp["task_id"] <- as.numeric(unique(metrics_hpcc$task_id))
+
+# don't need to do resource thing if we're doing the merge down there
+# picks out the unique ones so that its just task id and resource being looked at
+#id_and_resource <- unique(metrics_hpcc %>% select(task_id, resource))
+
+# assigns in the resource
+#temp$resource <- id_and_resource[id_and_resource$task_id==temp$task_id, "resource"]
+
+# loop through each row - basically takes the stat names and puts the appropriate value in the proper column
+for(row in 1:nrow(metrics_hpcc)){
+    full_row = metrics_hpcc[row,] # full row of data frame
+    id = full_row$task_id[1]# gets id of row 
+    stat_name = full_row$metric_and_units[1] # gets name of the stat
+    stat_val = full_row$value[1] # gets value of metric
+    temp[temp$task_id==id,stat_name] <- stat_val # assigns value for that metric column
+}
+
+# puts them together based on id
+temp2 <- merge(x=all_hpcc, y=temp, by="task_id")
+full_hpcc <- temp2
+```
+
+```{r}
+setup_data <- function(app_test)
+{
+    all_app <- all[all$app == app_test,]
+    all_app$task_id <- as.numeric(all_app$task_id)
+    metrics_app <- metrics[metrics$app == app_test,]
+
+    # keeps the units of metrics intact
+    metrics_app$metric_and_units <- paste(metrics_app$metric, "(", metrics_app$units,")", sep="")
+    
+
+    # makes a data frame with 21 columns, 25 rows (however many metrics there are)
+    temp <- data.frame(matrix(ncol=length(unique(metrics_app$metric_and_units))+1, nrow=length(unique(metrics_app$task_id))))
+
+    # sets up the name of the columns (based on the metrics gotten)
+    column_names = c("task_id", unique(metrics_app$metric_and_units))
+    colnames(temp) <- column_names
+    # at this point the column names are correct
+    temp["task_id"] <- as.numeric(unique(metrics_app$task_id))
+
+    # don't need to do resource thing if we're doing the merge down there
+    # picks out the unique ones so that its just task id and resource being looked at
+    #id_and_resource <- unique(metrics_hpcc %>% select(task_id, resource))
+
+    # assigns in the resource
+    #temp$resource <- id_and_resource[id_and_resource$task_id==temp$task_id, "resource"]
+
+    # loop through each row - basically takes the stat names and puts the appropriate value in the proper column
+    for(row in 1:nrow(metrics_app)){
+        full_row = metrics_app[row,] # full row of data frame
+        id = full_row$task_id[1]# gets id of row 
+        stat_name = full_row$metric_and_units[1] # gets name of the stat
+        stat_val = full_row$value[1] # gets value of metric
+        temp[temp$task_id==id,stat_name] <- stat_val # assigns value for that metric column
+    }
+
+    # puts them together based on id
+    temp2 <- merge(x=all_app, y=temp, by="task_id")
+    return(temp2)
+}
+
+full_namd <- setup_data("NAMD")
+full_nwchem <- setup_data("NWChem")
+full_gamess <- setup_data("GAMESS")
+full_hpcg <- setup_data("HPCG") 
+full_hpcc <- setup_data("HPCC")
+full_ior <- setup_data("IOR")
+# okay so hpcg seems to be a bit off/weird, looking into it
+# so looks like with some of the things the avx needed for hpcg isn't available, so it just gives an error
+# for bare metal, looks like global nx, ny, and nz are all 32
+# for the singularity, it looks like the corresponding values are 208 (see appstdout)
+# yeah for some reason the data file was not in there for the bare metal, so I just added it in
+# so any tests on bare metal for hpcg after 11:38 on 07/09/19 are valid and should be the same as the singularity ones
+
+# for some reason the walltime for nwchem is a lot higher for singularity compared to normal
+```
+
+```{r, fig.width=15}
+
+grid.arrange(
+    ggplot(full_hpcc %>% filter(resource=="vortex_bare_metal"), aes(x = resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=cpu_type)) +
+        geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5, position=position_jitter()),
+    ggplot(full_hpcc %>% filter(resource=="vortex_dock_sing"), aes(x = resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=cpu_type)) +
+        geom_dotplot(binaxis='y', stackdir='center', dotsize=0.5, position=position_jitter()),
+    ncol=2)
+
+```
+
+```{r, fig.width=7}
+ggplot(full_hpcc, 
+       aes(y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc, 
+       aes(y = walltime, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc, 
+       aes(y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc, 
+       aes(y = `Average STREAM 'Copy' Memory Bandwidth(MByte per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+ggplot(full_hpcc, 
+       aes(y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc %>% filter(walltime>5), 
+       aes(y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+
+```
+     
+```{r}
+
+hpcc_singularity <- full_hpcc %>% filter(resource=="singularity_real")
+hpcc_bare_metal <- full_hpcc %>% filter(resource=="bare_metal_real")
+t.test(hpcc_singularity$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, hpcc_bare_metal$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`)
+
+
+```
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = walltime, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='centerwhole')
+```
+```{r}
+colnames(full_hpcc) <- gsub(" ","_",colnames(full_hpcc))
+ggplot(full_hpcc, aes(x = resource, y = `MPI Random Access(MUpdate per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center', binwidth=0.1)
+
+```
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+
+```
+
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `Average STREAM 'Add' Memory Bandwidth(MByte per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+```
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `Average STREAM 'Copy' Memory Bandwidth(MByte per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+```
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+
+```
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `High Performance LINPACK Efficiency(Percent)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+
+```
+
+```{r}
+ggplot(full_hpcc, aes(x = resource, y = `Parallel Matrix Transpose (PTRANS)(MByte per Second)`, fill=cpu_type)) +
+    geom_dotplot(binaxis='y', stackdir='center')
+```
+
+
+```{r}
+# making sure to filter out any resources we aint using
+metrics %<>% filter(resource %in% c("vortex_bare_metal","vortex_dock_sing"))
+
+metrics$resource <- factor(
+    metrics$resource,
+    levels = unique(c("vortex_bare_metal","vortex_dock_sing")))
+
+levels(metrics$resource) <- c("TestCluster","ProductionCluster")
+metrics$nnodes <- factor(metrics$nnodes,levels = unique(c(1,2,4,8,16,metrics$nnodes)))
+
+metrics$state_id <- metrics$state
+metrics$state <- as.character(metrics$state_id)
+metrics$state[metrics$state=="1"]<-"Before"
+metrics$state[metrics$state=="2"]<-"After"
+
+metrics$state <- factor(metrics$state,levels = c("Before","After"))
+
+metrics %<>% arrange(collected)
+
+#convert md performance should be ns/day was sim second per Day
+j <- metrics$metric=="Molecular Dynamics Performance"
+metrics$value[j] <- metrics$value[j]*1e9
+metrics$units[j] <- "ns/day"
+
+
+```
+
+
+```{r}
+write.csv(metrics,"metrics.csv")
+save(
+    list=c("metrics"),
+    file="metrics.Rdata"
+)
+```
+
+
+
+```{r}
+
+
+metrics %<>% filter(app %in% c("HPCC","NAMD"))
+metrics$app <- factor(as.character(metrics$app),levels = c("HPCC","NAMD"))
+
+selected_metrics <- c(
+    "Wall Clock Time",
+    "Molecular Dynamics Simulation Performance",
+    "High Performance LINPACK Floating-Point Performance",
+    "Fast Fourier Transform (FFTW) Floating-Point Performance",
+    "Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance",
+    "Average STREAM 'Copy' Memory Bandwidth"
+)
+metrics %<>% filter(metric %in% selected_metrics)
+metrics$metric <- factor(as.character(metrics$metric),levels = selected_metrics)
+metrics$metric_long <- metrics$metric
+levels(metrics$metric) <- c(
+    "Wall Time",
+    "MD Perf.",
+    "LINPACK",
+    "FFT",
+    "DGEMM",
+    "STREAM"
+)
+
+#convert md performance should be ns/day was sim second per Day
+j <- metrics$metric=="Molecular Dynamics Performance"
+metrics$value[j] <- metrics$value[j]*1e9
+
+j <- metrics$metric=="LINPACK"
+metrics$value[j] <- metrics$value[j]/1024
+
+#metrics %>% group_by(metric) %>% summarise(units=last(units))
+metrics$units <- metrics$metric
+levels(metrics$units) <- c(
+    "s",
+    "ns/day",
+    "GFLOP/s",
+    "MFLOP/s",
+    "MFLOP/s",
+    "MB/s"
+)
+
+save(
+    list=c("metrics"),
+    file="metrics_selected.Rdata"
+)
+```
+
+```{r}
+load(file="metrics_selected.Rdata")
+#select only what is needed2
+
+#only up to 30 points for Testing-Cluster
+metrics %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+    
+metrics %<>% group_by(resource, app, nnodes, metric, state) %>% 
+        mutate(id = row_number()) %>% ungroup()
+
+
+metrics %<>% filter(!(resource=="Testing-Cluster" & id > 30L))
+
+#Sparcify After for UBHPC
+metrics %>% filter(resource=="UB-HPC" & app == "NAMD") %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "NAMD" & nnodes == 1L & id > 10)
+set.seed(08122018)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "NAMD" & nnodes == 2L & id > 20)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 10L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "HPCC" & nnodes == 1L & id > 10)
+set.seed(08122018)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "HPCC" & nnodes == 2L & id > 10)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+
+metrics %>% filter(resource=="UB-HPC") %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+
+save(
+    list=c("metrics"),
+    file="metrics_selected2.Rdata"
+)
+```
+
+```{r}
+#Read metrics bigger smaller
+
+ak_metrics <- read.csv("ak_metrics.csv",header = F,col.names = c("app","metric","better"))
+
+m_app<-ak_metrics$app[[1]]
+for(i in 2:nrow(ak_metrics)){
+    if(ak_metrics$app[[i]]==""){
+        ak_metrics$app[[i]]=m_app
+    }else{
+        m_app<-ak_metrics$app[[i]]
+    }
+}
+ak_metrics$BiggerBetter <- ak_metrics$better !="S"
+
+ak_metrics %<>% filter(metric!="" & app %in% unlist(app_conv,use.names = F))  %>% select(-better)
+
+save(
+    list=c("ak_metrics"),
+    file="ak_metrics.Rdata"
+)
+```
+
+
+
+
+
+
+
+
