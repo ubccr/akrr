@@ -45,6 +45,8 @@ UPDATE: turns out we just wanted to do the ./namd run without the whole charmrun
 
 
 
-
+Error I was experiencing with running ior on openstack:
+Docker wouldn't run bc some weird file not found error or something, but only on openstack
+what I did: I just added a yum update command in the dockerfile so it updates stuff and now it appears to work idk
 
 
