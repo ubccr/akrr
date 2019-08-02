@@ -20,6 +20,7 @@ ssh -i openstack-testing.key centos@199.109.192.21
 ```
 
 Once you're in the instance, you can install docker. Following the instructions here: https://docs.docker.com/install/linux/docker-ce/centos/
+
 (Note: this is for installing docker on centos, things may be slightly different if you use other operating systems)
 
 ```bash
