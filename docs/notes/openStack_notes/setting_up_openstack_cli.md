@@ -1,5 +1,6 @@
 ## How to set up Command Line Interface with Openstack
 
+Initial setup on your machine (or wherever you want the cli set up):
 ```bash
 # get pip3 first
 sudo yum install python36-setuptools
@@ -14,13 +15,16 @@ sudo pip3 install git+https://github.com/ubccr/v3oidcmokeyapikey.git
 sudo python3 -m pip install python-cinderclient==3.6.1
 sudo python3 -m pip install python-openstackclient
 sudo python3 -m pip install git+https://github.com/ubccr/v3oidcmokeyapikey.git
-
 ```
+
 Then you go to the OpenStack portal: https://lakeeffect.ccr.buffalo.edu
+
 Go to the project you want to connect to.
 
-Top left click Project -> API Access
+At the top left click Project -> API Access
+
 Then on the far right of the API Access page, click Download OpenStack RC File -> OpenStack RC File (Identity API v3)
+
 (Name of RC file is different for everyone, depends on project. In my case it was called lakeeffect-benchmarks-openrc.sh)
 
 The inside of this script looks like:
@@ -42,15 +46,16 @@ export OS_TOKEN=`openstack --os-auth-type v3oidcmokeyapikey --os-identity-provid
 export OS_AUTH_TYPE=v3token
 ```
 And what it does is it gets you a token that is used to work with OpenStack from your command line.
+
 It sets up all the variables needed to work with that project.
 
 ### Getting your CCR API Key
 What you do need is the CCR API Key, which is unique to each CCR User.
 To get it, go to the Identiy Management Portal, which is the link found here: https://ubccr.freshdesk.com/support/solutions/articles/13000025034-identity-management-portal
 
-Click CCR Identity Management Portal
-Log into your account.
-Go to Api Keys and click "Create Api Key" for Access to CCR Openstack CLI.
+- Click CCR Identity Management Portal
+- Log into your account.
+- Go to Api Keys and click "Create Api Key" for Access to CCR Openstack CLI.
 Then a text box will show up with a string of letters, symbols, and numbers. 
 This is the key to use when it prompts for the API Key. Save it somewhere, then click "Done".
 Now the ccr-os-api key thing should say "Active" next to it.
