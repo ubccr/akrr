@@ -236,6 +236,7 @@ Sample output:
 
 ```
 Then try to ssh into the instance
+(note: centos@<ip address>, the ip address is given up above under networks)
 
 ```bash
 ssh -i openstack-testing.key centos@199.109.192.28
