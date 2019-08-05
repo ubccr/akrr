@@ -132,20 +132,20 @@ source /opt/intel/bin/compilervars.sh intel64 -platform linux
 export OMP_NUM_THREADS=1 # based on HPCG Development thing
 
 # finally sets hpcgLocation (location of hpcg executable chosen)
-hpcg_exe_full_path="${HPCG_BIN_LOC}/${hpcg_exe_name}"
+hpcg_exe_full_path="${HPCG_BIN_DIR}/${hpcg_exe_name}"
 
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
-${EXECS_LOC}/bin/appsigcheck.sh ${hpcg_exe_full_path}
+${EXECS_DIR}/bin/appsigcheck.sh ${hpcg_exe_full_path}
 wait
 
 # running hpcg and catting output
 if [[ "${run_hpcg}" == "true" ]]; then
 	echo "Using ${hpcg_exe_full_path} to run hpcg"
 	echo "Running hpcg..."
-	export I_MPI_DEBUG=5
+	#export I_MPI_DEBUG=5
 	export I_MPI_PIN
-	${MPI_LOC}/mpirun -np ${ppn} ${hpcg_exe_full_path}
+	${MPI_DIR}/mpirun -np ${ppn} ${hpcg_exe_full_path}
 	wait
 	echo "Complete! Outputs are in ${work_dir}"
 	echo "cat output to standard out:"
