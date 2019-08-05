@@ -99,7 +99,7 @@ validate_number ${nodes}
 validate_number ${ppn}
 
 gamess_input_name="c8h10-cct-mp2.inp"
-input_file_path="${GAMESS_INPUTS_LOC}/${gamess_input_name}"
+input_file_path="${GAMESS_INPUTS_DIR}/${gamess_input_name}"
 
 dest_path="${work_dir}"
 
@@ -132,13 +132,13 @@ cd ${work_dir}
 echo "work dir: ${work_dir}"
 
 # to allow access for mpiexec.hydra
-export PATH=${PATH}:${MPI_LOC}
+export PATH=${PATH}:${MPI_DIR}
 
 # executable is in a sorta weird place
 gamess_exe_full_path="${GAMESS_EXE_DIR}/gamess.${version}.x"
 
 echo "Running appsigcheck..."
-${EXECS_LOC}/bin/appsigcheck.sh ${gamess_exe_full_path}
+${EXECS_DIR}/bin/appsigcheck.sh ${gamess_exe_full_path}
 wait
 
 if [[ "${run_gamess}" == "true" ]]; then
