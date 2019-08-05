@@ -183,3 +183,6 @@ export_db_max_repeat_attempts = 48
 
 # The default parameters that should be made available to each task.
 default_task_params = {'test_run': False}
+
+# Encoding for conversion of bytes to sting. Default encoding is 'utf-8'
+encoding = "utf-8"
