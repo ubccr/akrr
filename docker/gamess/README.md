@@ -1,60 +1,89 @@
-## Directory for Gamess Docker things
+# Directory for Gamess Appkernel Docker
 
+This directory has all the files needed to create a Docker image for the Gamess Appkernel.
+The binary is not on the repository, that must be set up once you clone the repo.
+If you want to create the Dockerfile, you need to get the binary.
 
-Right now trying to run it on ub-hpc, but getting some weird mpi error, but seems to be starting and running okay up until the error, and I'm not sure what exactly the error is.
-I'm gonna try and just get the binary and try to run things on my local machine...
+## Guide to getting the Gamess binary set up from UB-HPC resource:
 
-Here is the error I got:
+__On resource__
 ```bash
-===================================================================================
-=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 86375 RUNNING AT srv-p22-12.cbls.ccr.buffalo.edu
-=   EXIT CODE: 24
-=   CLEANING UP REMAINING PROCESSES
-=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
-===================================================================================
-
-===================================================================================
-=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 86375 RUNNING AT srv-p22-12.cbls.ccr.buffalo.edu
-=   EXIT CODE: 24
-=   CLEANING UP REMAINING PROCESSES
-=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
-===================================================================================
-   Intel(R) MPI Library troubleshooting guide:
-      https://software.intel.com/node/561764
-===================================================================================
-
-
+# check if gamess is available
+module avail gamess
 ```
-Also don't forget to copy over the input file to where you're running the rungms thing
-So I tarred up the whole games directory and such, and now I'm trying to get gamess to at least run on my computer.
-So of course a lot of things need to be changed in rungms
-List of things I changed (this is now their new values
+```text
+---------------------------------- /util/academic/modulefiles/Core -----------------------------------
+   gamess/5dec2014R1-ddi    gamess/5dec2014R1    gamess/11Nov2017R3    gamess/18Aug2016R1 (D)
+```
+
+For the Dockerfile in the git repo, gamess/11Nov2017R3 was used. Any version can be used, but the name of the version would have to be changed in the Dockerfile (change the GAMESS\_NAME variable). 
+
+We'll be getting the binary from the resource, so really you just need a temporary directory to work with the files that you can access later with sftp from your machine, so cd to whatever directory you want to store the binary for now.
+
+Find the location of the binary.
 ```bash
-set SCR=`pwd`
-set USERSCR=`pwd`
-set GMSPATH=/home/hoffmaps/projects/akrr/docker/gamess/execs/gamess_11Nov2017R3
+module show gamess/11Nov2017R3
 ```
-Looks to be running fine....
-It does mpiexec.hydra do do its thing
+```text
+whatis(" GAMESS")
+prepend_path("PATH","/util/academic/gamess/11Nov2017R3/impi/gamess")
+load("intel/18.1")
+load("intel-mpi/2018.1")
+load("mkl/2018.1")
+```
+Check the directory that's added to the PATH:
+```bash
+ls /util/academic/gamess/11Nov2017R3/impi/gamess
+```
+You should see a bunch of files and libraries, most importantly the gamess executable, gamess.01.x, or something similar. 
 
-Update: seemed to complete gamess thing normally. Now to make a Dockerfile! It'll be a lot like hpcc as usual
+In normal AKRR usage, we would only need the rungms script into a different directory, but in this case we want the entire directory so we can put it into our Docker image.
+So, from the temporary directory, lets copy everything into that.
+```bash
+cp -r /util/academic/gamess/11Nov2017R3/impi/gamess ./
+```
+In my case it copied as just gamess, I changed the directory name to gamess\_11Nov2017R3 to distinguish it.
+*Note: I copied the entire directory. You likely don't need everything in it, but I don't know gamess well enough to know what is or isn't needed. This has room for optimizing in terms of space*
 
-Initial docker setup seems to be doing okay.
-One added thing: I have to install csh shell, bc that's whats at the top of the rungms file.
-Also, I had to delete the first thing of LD\_LIBRARY\_PATH (or rather the first time it was being used as $LD\_LIBRARY\_PATH to put on the end bc it wasn't defined or something)
-Unsure if also have to have mkl, rn I'm doing fine with only mpi
+So now you have the gamess executable in a directory. You now need to get it on the machine with the Dockerfile into the execs directory.
+I used sftp.
+
+__On Dockerfile Machine__
+```bash
+cd execs 
+# this is the execs directory in the gamess Docker directory
+
+sftp vortex.ccr.buffalo.edu
+# now you're on the resource where the gamess directory is
+# go to the directory where you made the gamess directory
+# then do a get
+get -r gamess_11Nov2017R3
+# (this may take a little bit, potentially think about tarring?)
+```
+So once you have all that downloaded into your execs directory, you need to modify the rungms script.
+Specifically towards the beginning (~line 64), you need to change 3 values:
+```bash
+# old values
+set SCR=/gpfs/scratch/$USER
+set USERSCR=/gpfs/scratch/$USER/scr
+set GMSPATH=/util/academic/gamess/11Nov2017R3/impi/gamess
+
+# new values
+set SCR=`pwd`                                                                       
+set USERSCR=`pwd`                                                               
+set GMSPATH=$GAMESS_EXE_DIR 
+```
+This is because the Docker script goes to the place where we want to run it from. 
+Then the GMSPATH is the directory where the gamess executable is, which for the Docker is in GAMESS\_EXE\_DIR.
+
+Once you change the rungms script, you should be good to build and run the Docker.
+Just running it with the regular docker run command will run gamess and display the results to the standard output.
+It will try and guess how many cores to launch it on. 
+There are flags that you can pass in to take some control over it.
+
+### Flags for the run script
 
 
-Okay I think I have it more or less working, though there is something sorta weird in the output.
-It says that "MPI kickoff will run GAMESS on 01 cores in 1 nodes." despite the fact that I put 6 cores per node, It does register the 6 bc it says "placing 6 of each process type onto each node" so I'm not sure what thats all about
-
-Other than that, it seems to be running fine. Will come back to it to make some tune ups, but for now it SEEMS okay
-
-Update: changed up the run script to reflect best practices and added appsigcheck thing.
-TO NOTE: Update your rungms to reflect proper directories and such
-For example, GMSPATH, if using this Dockerfile, would correspond to GAMESS\_EXE\_DIR
 
 
 

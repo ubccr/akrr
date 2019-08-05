@@ -141,8 +141,11 @@ echo "Running appsigcheck..."
 ${EXECS_DIR}/bin/appsigcheck.sh ${gamess_exe_full_path}
 wait
 
+export LD_LIBRARY_PATH=/opt/intel/impi/2018.3.222/bin64
+
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
+	export I_MPI_DEBUG=5
 	./rungms ${gamess_input_name} ${version} ${ppn} ${nodes}
 	wait
 	echo "Complete! Gamess has been run, output in ${work_dir}"
