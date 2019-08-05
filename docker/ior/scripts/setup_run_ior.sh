@@ -45,35 +45,28 @@ done
 
 if [[ "${run_appsig_ior}" == "true" ]]; then
         echo "Running appsigcheck..."
-        ${EXECS_LOC}/bin/appsigcheck.sh ${IOR_EXE_PATH}
+        ${EXECS_DIR}/bin/appsigcheck.sh ${IOR_EXE_PATH}
         wait
 fi
 
 if [[ "${run_appsig_mdtest}" == "true" ]]; then
         echo "Running appsigcheck..."
-        ${EXECS_LOC}/bin/appsigcheck.sh ${MDTEST_EXE_PATH}
+        ${EXECS_DIR}/bin/appsigcheck.sh ${MDTEST_EXE_PATH}
         wait
 fi
 
-export I_MPI_DEBUG=5
+#export I_MPI_DEBUG=5
 
-echo "DOCKER Before Cache drop"
-free -h
-
-sudo bash $SCRIPTS_LOC/drop_caches.sh
-
-echo "DOCKER After Cache drop"
-free -h
 
 if [[ "${run_ior}" == "true" ]]; then
         echo "Running IOR"
-        ${MPI_LOC}/mpiexec -n ${proc} ${IOR_EXE_PATH} "$@"
+        ${MPI_DIR}/mpiexec -n ${proc} ${IOR_EXE_PATH} "$@"
 	wait
 fi
 
 if [[ "${run_mdtest}" == "true" ]]; then
 	echo "Running Mdtest"
-	${MPI_LOC}/mpirun ${MDTEST_EXE_PATH} "$@"
+	${MPI_DIR}/mpirun ${MDTEST_EXE_PATH} "$@"
 	wait
 fi
 
