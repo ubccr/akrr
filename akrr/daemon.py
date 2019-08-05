@@ -1368,7 +1368,7 @@ def daemon_start():
         ps_output = ps_command.stdout.read()
         return_code = ps_command.wait()
         assert return_code == 0, "ps command returned %d" % return_code
-        for pid_str in ps_output.split("\n")[:-1]:
+        for pid_str in ps_output.decode(encoding=cfg.encoding).split("\n")[:-1]:
             os.kill(int(pid_str), sig)
 
     # make dir for logs and check the biggest number
