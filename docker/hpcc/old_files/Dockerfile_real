@@ -21,7 +21,7 @@ ENV HPCC_EXE_FULL_PATH=$EXECS_DIR/hpcc-1.5.0/hpcc
 
 # location where the tar will be unpacked for some default inputs for hpcc
 ENV INPUTS_DIR=/usr/local/appker/inputs
-COPY inputs $INPUTS_DIR
+COPY hpcc_inputsV2.tar.gz $INPUTS_DIR/
 
 # location where convenience scripts will be (to run things using the flags and such)
 ENV SCRIPTS_DIR=/opt/scripts
@@ -33,6 +33,9 @@ ENV MPI_DIR=/opt/intel/impi/2018.3.222/bin64
 RUN \
 	mkdir /scratch && \
 	chmod -R 777 /scratch && \
+	cd $INPUTS_DIR && \
+	tar -xzvf $INPUTS_DIR/hpcc_inputsV2.tar.gz && \
+	rm $INPUTS_DIR/hpcc_inputsV2.tar.gz && \
 	chmod -R 755 $EXECS_DIR && \  
 	chmod -R 755 $SCRIPTS_DIR && \
 	chmod -R 755 $MPI_DIR && \
@@ -42,5 +45,8 @@ RUN \
 WORKDIR /scratch
 
 # runs the setup script to start
+# This one doesn't use the absolute path, uses the env variable
+# ENTRYPOINT [ "/bin/bash", "-c" , "$SCRIPTS_LOC/setup_run_hpcc.sh" ]
+#
 # Just using the straightup absolute path;
 ENTRYPOINT [ "/opt/scripts/setup_run_hpcc.sh" ]

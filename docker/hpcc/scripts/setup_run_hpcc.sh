@@ -2,7 +2,7 @@
 
 # initializing some variables
 temp="hpcc"
-hpcc_inputs_dir="${INPUTS_LOC}/${temp}"
+hpcc_inputs_dir="${INPUTS_DIR}/${temp}"
 echo "hpcc_inputs_dir: ${hpcc_inputs_dir}"
 
 # gets the number of cores of this machine
@@ -132,20 +132,19 @@ echo "work dir: ${work_dir}"
 
 echo "Running appsigcheck..."
 # trying to run the script thing on hpcc
-${EXECS_LOC}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
+${EXECS_DIR}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 wait
 
-# to print some more info
-lscpu
-wait
+# print some more info
+# lscpu
 
 #export I_MPI_HYDRA_BOOTSTRAP="ssh"
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
 	echo "Running hpcc..."
-	export I_MPI_DEBUG=5
+	#export I_MPI_DEBUG=5
 	export I_MPI_PIN
-	${MPI_LOC}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
+	${MPI_DIR}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
 	wait
 	echo "Complete! hpccoutf.txt is in ${work_dir}"
 	echo "cat output to standard out:"
@@ -154,8 +153,6 @@ fi
 
 
 echo "End of entrypoint script. Interactive session will launch if specified."
-
-echo "See the github repo for any updates/thoughts"
 
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then
