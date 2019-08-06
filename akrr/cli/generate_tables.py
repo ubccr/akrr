@@ -478,7 +478,7 @@ def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=
     """
     for ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria in \
             _mod_appkernel_app_kernel_def:
-        sql = "select * from app_kernels where name='%s'" % name
+        sql = "select * from app_kernel_def where ak_base_name='%s'" % name
         cur_appkernel.execute(sql)
         result = cur_appkernel.fetchall()
         if len(result) > 0:
