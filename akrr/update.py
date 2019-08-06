@@ -156,6 +156,9 @@ ak_rename = {
     'xdmod.benchmark.npb': 'npb',
     'xdmod.benchmark.osjitter': 'osjitter',
     'xdmod.bundle': 'bundle',
+    'xdmod.appker.densela.blas': 'densela.blas',
+    'xdmod.benchmark.hpcg':'hpcg',
+    'xdmod.benchmark.mem.stream.core':'stream.core'
 }
 
 
@@ -175,6 +178,7 @@ def rename_appkernels_mod_akrr(mod_akrr: str, dry_run: bool = False) -> None:
     update_completed_tasks = True
     update_app_kernels = True
     update_app_kernels_list = True
+    update_scheduled_tasks = True
 
     con_akrr, cur_akrr = get_con_to_db2(mod_akrr)
 
@@ -227,6 +231,14 @@ def rename_appkernels_mod_akrr(mod_akrr: str, dry_run: bool = False) -> None:
         log.info("Updating app_kernels list")
         from akrr.cli.generate_tables import populate_mod_akrr_appkernels
         populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run)
+
+    if update_scheduled_tasks:
+        log.info("Updating scheduled_tasks")
+        for old, new in ak_rename.items():
+            log.debug("update scheduled_tasks: %s -> %s" % (new, old))
+            cursor_execute(
+                cur_akrr,
+                "update scheduled_tasks set app=%s where app=%s", (new, old), dry_run)
 
 
 def rename_appkernels_mod_appkernel(mod_appkernel: str, dry_run: bool = False) -> None:
