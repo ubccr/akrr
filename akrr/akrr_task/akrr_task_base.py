@@ -15,7 +15,7 @@ submit_commands = {
     # 'lsf': "bsub < $scriptPath",
     'pbs': "qsub $scriptPath",
     'sge': "qsub $scriptPath",
-    # 'shell': "/bin/sh $scriptPath",
+    'shell': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!",
     'slurm': "sbatch $scriptPath",
     'openstack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
 }
@@ -25,7 +25,7 @@ job_id_extract_patterns = {
     # 'lsf': r'<(\d+)',
     'pbs': r'^(\d+)',
     'sge': r'job (\d+)',
-    # 'shell': r'',  # N/A,
+    'shell': r'^PID of last background process is (\d+)',
     'slurm': r'^Submitted batch job (\d+)',
     'openstack': r'^PID of last background process is (\d+)'
 }
@@ -36,8 +36,8 @@ wait_expressions = {
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
     'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
-    'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
-    # 'shell'       : ["kill(0, $jobId)"]
+    'shell': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
+    'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M]
 }
 
 kill_expressions = {
@@ -45,8 +45,8 @@ kill_expressions = {
     'pbs': ["qdel $jobId"],
     'sge': ["qdel $jobId"],
     'slurm': ["scancel $jobId"],
+    'shell': ["kill -9  $jobId"],
     'openstack': ["kill -9  $jobId"]
-    # shell       => "kill(9, $jobId)"
 }
 
 
