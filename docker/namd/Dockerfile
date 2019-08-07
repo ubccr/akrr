@@ -8,7 +8,7 @@ ENV EXECS_DIR=/opt/appker/execs
 COPY execs $EXECS_DIR
 
 # location of namd executable
-ENV NAMD_EXE_FULL_PATH=$EXECS_DIR/namd_2.13b2-multicore/namd2
+ENV NAMD_EXE_FULL_PATH=$EXECS_DIR/NAMD_2.12b1_Linux-x86_64-multicore/namd2
 # ENV CHARMRUN_EXE_FULL_PATH=$EXECS_DIR/charmrun
 
 # copying over inputs to use for namd2
