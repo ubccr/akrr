@@ -5,7 +5,7 @@ ior_appsig=false;
 
 run_mdtest=false;
 mdtest_appsig=false;
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$GPFS_LIB_LOC:/opt/intel/impi/2018.3.222/lib64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIB_DIR:/opt/intel/impi/2018.3.222/lib64
 
 # goes through each case (2 arguments)
 while [[ "$1" != "" ]]; do

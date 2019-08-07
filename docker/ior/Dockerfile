@@ -23,11 +23,11 @@ ENV SCRIPTS_DIR=/opt/scripts
 COPY scripts $SCRIPTS_DIR
 
 # location of the libraries ior needs
-ENV GPFS_LIB_DIR=/opt/appker/lib
-COPY lib $GPFS_LIB_DIR
+ENV LIB_DIR=/opt/appker/lib
+COPY lib $LIB_DIR
 
 # for ior to be able to use libraries
-ENV LD_LIBRARY_PATH=$GPFS_LIB_DIR:/opt/intel/impi/2018.3.222/lib64:$GPFS_LIB_DIR/hdf5-1.8.21/lib:$GPFS_LIB_LOC/pnetcdf-1.11.1/lib
+ENV LD_LIBRARY_PATH=$LIB_DIR:/opt/intel/impi/2018.3.222/lib64
 
 # to use mpirun and such 
 ENV MPI_DIR=/opt/intel/impi/2018.3.222/bin64

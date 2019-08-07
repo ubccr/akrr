@@ -18,13 +18,13 @@ libgpfs.so    libhdf5_hl.la     libhdf5_hl.so.10.2.2  libhdf5.so         libimf.
 libhdf5.a     libhdf5_hl.so     libhdf5.la            libhdf5.so.10      libintlc.so.5
 libhdf5_hl.a  libhdf5_hl.so.10  libhdf5.settings      libhdf5.so.10.3.2  libirng.so
 ```
-
-/util/academic/hdf5/1.8.15p1/lib
-
+This should all be in a new directory named lib
 ### In UB-HPC where to find these libraries
 All the hdf5 libraries you can find in the HDF5 temp directory when you're going through the process of compiling ior (the section of installing HDF5)
 
 ```bash
+# on vortex
+
 # libgpfs.so
 # using locate I found it here
 /usr/lib64/libgpfs.so
@@ -41,10 +41,10 @@ $ echo $LD_LIBRARY_PATH
 
 $ cd /util/academic/intel/18.3/lib/intel64
 
-# then libimf.so and libsvml.so was there
+# then all the libraries you need should be there...
 ```
 
-
+To run ior or mdtest, use the flags --run-ior or --run-mdtest respectively, specify the number of processes with -proc (used with mpiexec)
 
 
 
