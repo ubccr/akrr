@@ -70,6 +70,46 @@ def create_and_populate_tables(
         sys.exit(1)
 
 
+# mod_akrr.appkernels id,name,nodes_list
+_mod_akrr_appkernels = [
+    (7, 'imb', '2;4;8;16'),
+    (22, 'gamess', '1;2;4;8'),
+    (23, 'namd', '1;2;4;8'),
+    (24, 'nwchem', '1;2;4;8'),
+    (25, 'hpcc', '1;2;4;8;16'),
+    (27, 'ior', '1;2;4;8'),
+    (28, 'graph500', '1;2;4;8'),
+    (29, 'enzo', '1;2;4;8'),
+    (32, 'mdtest', '1;2;4;8'),
+    (33, 'hpcg', '1;2;4;8'),
+    (34, 'gromacs_micro', '1')
+]
+
+
+def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False):
+    """
+    populate_mod_akrr_appkernels
+    """
+    for ak_id, name, nodes_list in _mod_akrr_appkernels:
+        sql = "select * from app_kernels where name='%s'" % name
+        cur_akrr.execute(sql)
+        result = cur_akrr.fetchall()
+        if len(result) > 0:
+            if result[0]['id'] != ak_id:
+                log.error("in app_kernels table id (%d) for appkernel %s does not match standatd value of %d" %
+                          (result[0]['id'], name, ak_id))
+        else:
+            sql = "INSERT INTO `app_kernels` (id,name,nodes_list) VALUES" + \
+                  "(%d,'%s','%s')" % (ak_id, name, nodes_list) + \
+                  "ON DUPLICATE KEY UPDATE id=VALUES(id);"
+            if log.verbose or dry_run:
+                print(sql)
+            if not dry_run:
+                cur_akrr.execute(sql)
+        if not dry_run:
+            con_akrr.commit()
+
+
 def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
     """
     Create / Populate the tables required in the mod_akrr database.
@@ -335,21 +375,7 @@ INSERT INTO `akrr_err_regexp` VALUES
 (1004, 1, '*', '*', 'ERROR: Job was killed on remote resource due to walltime exceeded limit','0',
     'akrr_status','Job was killed on remote resource due to walltime exceeded limit',
     'walltime exceeded limit,\r\nprocessing from akrr_status')
-'''),
-        ('POPULATE app_kernels', """
-        INSERT INTO `app_kernels` (id,name,nodes_list) VALUES
-            (7,'imb','2;4;8;16'),
-            (22,'gamess','1;2;4;8'),
-            (23,'namd','1;2;4;8'),
-            (24,'nwchem','1;2;4;8'),
-            (25,'hpcc','1;2;4;8;16'),
-            (27,'ior','1;2;4;8'),
-            (28,'graph500','1;2;4;8'),
-            (29,'enzo','1;2;4;8'),
-            (30,'hpcg','1;2;4;8'),
-            (31,'gromacs_micro','1')
-        ON DUPLICATE KEY UPDATE id=VALUES(id);
-        """)
+''')
     )
 
     connection_function = None
@@ -365,6 +391,123 @@ INSERT INTO `akrr_err_regexp` VALUES
         drop_if_needed=False,
         dry_run=dry_run
     )
+    # populate mod_akrr.app_kernels
+    con_akrr, cur_akrr = akrr.db.get_akrr_db(dict_cursor=True)
+    populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run)
+
+
+
+# mod_appkernel.app_kernel_def
+# ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria
+_mod_appkernel_app_kernel_def = [
+    (7, 'IMB', 'imb', 'node', 0,
+     """<a href="http://www.intel.com/software/imb/" target="_blank" """
+     """alt="imb">Intel MPI Benchmark</a> (formally Pallas MPI Benchmark) suite. The suite measures the """
+     """interconnect''s latency, bandwidth, bidirectional bandwidth, and various MPI collective operations'' """
+     """latencies (Broadcast, AllToAll, AllGather, AllReduce, etc). It also measures the MPI-2 Remote Direct """
+     """Memory Access (RDMA) performance.\r\n<p>\r\nThe benchmarks are run with one process """
+     """(single-threaded mode) per node.""", 0, None),
+    (22, 'GAMESS', 'gamess', 'node', 0,
+     """<a href="http://www.msg.chem.iastate.edu/gamess/" """
+     """target="_blank" alt="gamess">GAMESS</a> is an ab initio computational chemistry software package"""
+     """developed by Professor Mark Gordon''s research group at Iowa State University.\r\n<p>\r\nThe input"""
+     """to the benchmark runs is restricted Hartree-Fock energy calculation of C8H10 with MP2"""
+     """correction.\r\n<p>\r\nThe version of GAMESS being benchmarked is 1 MAY 2012 (R1).\r\n""",
+     0, None),
+    (23, 'NAMD', 'namd', 'node', 0,
+     """<a href="http://www.ks.uiuc.edu/Research/namd/" target="_blank" """
+     """alt="namd">NAMD</a> is a molecular dynamics simulation package developed by the Theoretical and """
+     """Computational Biophysics Group in the Beckman Institute for Advanced Science and Technology at """
+     """the University of Illinois at Urbana-Champaign.\r\n<p>\r\nThe input to the benchmark runs is the """
+     """Apolipoprotein A1 benchmark input, which consists of 92,224 atoms, uses 2 fs step size, 0,200 steps, """
+     """and uses the NVE ensemble.\r\n<p>\r\nThe version of NAMD being benchmarked is 2.7b2""",
+     0, None),
+    (24, 'NWChem', 'nwchem', 'node', 0,
+     """<a href="http://www.nwchem-sw.org" target="_blank" """
+     """alt="nwchem">NWChem</a> is an ab initio computational chemistry software package developed by """
+     """Pacific Northwest National Laboratory.\r\n<p>\r\nThe input to the benchmark runs is the """
+     """Hartree-Fock energy calculation of Au+ with MP2 and Coupled Cluster corrections.\r\n<p>\r\n"""
+     """The version of NWChem being benchmarked is 5.1.1.\r\n<p>\r\nThe metrics we show here contain NWChem''s """
+     """self-collected Global Arrays statistics. The Global Arrays toolkit is the communication library used by """
+     """NWChem to manipulate large akrrays distributed across compute nodes. The Global Arrays toolkit has """
+     """three basic operations: Get (fetch values from remote memory), Put (store values to remote memory), """
+     """and Accumulate (update values in remote memory). NWChem measures the numbers of these operations """
+     """and the amount of data affected by them.""", 0, None),
+    (25, 'HPCC', 'hpcc', 'node', 0,
+     """<a href="http://icl.cs.utk.edu/hpcc/" target="_blank" """
+     """alt="hpcc">HPC Challenge Benchmark</a> suite. It consists of a) High Performance LINPACK, which solves """
+     """a linear system of equations and measures the floating-point performance, b) Parallel Matrix """
+     """Transpose (PTRANS), which measures total communications capacity of the interconnect, c) """
+     """MPI Random Access, which measures the rate of random updates of remote memory, d) """
+     """Fast Fourier Transform, which measures the floating-point performance of """
+     """double-precision complex one-dimensional Discrete Fourier Transform. """, 0,
+     None),
+    (27, 'IOR', 'ior', 'node', 0,
+     """'IOR (Interleaved-Or-Random) measures the performance of a storage system under simple access patterns. """
+     """It uses four different I/O interfaces: POSIX, MPI IO, HDF (Hierarchical Data Format), and """
+     """Parallel NetCDF (Network Common Data Form) to read and write contiguous chunks of data against either """
+     """a single file (N-to-1 mode) or N files (N-to-N mode), and it reports the aggregate I/O throughput.""",
+     0, None),
+    (28, 'Graph500', 'graph500', 'node', 0,
+     """<a href="http://www.graph500.org" target="_blank" """
+     """alt="graph500">Graph 500</a> is a benchmark designed to measure the performance of graph algorithms, an """
+     """increasingly important workload in the data-intensive analytics applications.\r\n<p>\r\nCurrently """
+     """Graph 500 benchmark contains one computational kernel: the breadth-first search. The input is a """
+     """pre-generated graph created with the following parameters:  SCALE=16 and edgefactor=16. These """
+     """translate to, on a per MPI process basis,  2^SCALE=65536 vertices and """
+     """65536*edgefactor=1.04 million edges.""", 0, None),
+    (29, 'Enzo', 'enzo', 'node', 0,
+     """<a href="http://enzo-project.org/" target="_blank" """
+     """alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>""",
+     0, None),
+    (32, 'MDTest', 'mdtest', 'node', 0, 'File system Metadata Benchmark', 0, None),
+    (33, 'HPCG', 'hpcg', 'node', 0,
+     """<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" """
+     """alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort"""
+     """to create a new metric for ranking HPC systems.""", 0, None),
+    (34, 'GROMACS-micro', 'gromacs_micro', 'node', 0,
+     """<a href="http://www.gromacs.org/" target="_blank" """
+     """alt="GROMACS">GROMACS:</a> based micro-benchmark for testing purposes\r\n<p>""",
+     0, None)
+]
+
+
+def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=False):
+    """
+    populate_mod_akrr_appkernels
+    """
+    for ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria in \
+            _mod_appkernel_app_kernel_def:
+        sql = "select * from app_kernel_def where ak_base_name='%s'" % name
+        cur_appkernel.execute(sql)
+        result = cur_appkernel.fetchall()
+        if len(result) > 0:
+            if result[0]['ak_def_id'] != ak_def_id:
+                log.error(
+                    "in app_kernel_def table ak_def_id (%d) for appkernel %s does not match standatd value of %d" %
+                    (result[0]['id'], name, ak_def_id))
+        else:
+            sql = "INSERT INTO `app_kernel_def` " + \
+                  "(ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria)" + \
+                  "VALUES" + \
+                  "(%d,'%s','%s','%s', %d,'%s', %d,%s)" % \
+                  (ak_def_id, name, ak_base_name, processor_unit,
+                   enabled, description, visible, str(control_criteria)) + \
+                  "ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);;"
+            if log.verbose or dry_run:
+                print(sql)
+            if not dry_run:
+                cur_appkernel.execute(
+                    "INSERT INTO `app_kernel_def` "
+                    "(ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria)"
+                    "VALUES"
+                    "(%s,%s,%s,%s,%s,%s,%s,%s)"
+                    "ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id)",
+                    (ak_def_id, name, ak_base_name, processor_unit,
+                     enabled, description, visible, control_criteria)
+                )
+        if not dry_run:
+            con_appkernel.commit()
 
 
 def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
@@ -811,69 +954,6 @@ CREATE TABLE IF NOT EXISTS `control_regions` (
   ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;""") 
     )
-
-    # DEFINE: The insert statements that will be needed to populate the tables.
-    population_statements = (
-        ('POPULATE app_kernel_def',
-         """
-INSERT INTO `app_kernel_def` VALUES
-(7, 'IMB', 'imb', 'node', 0, '<a href="http://www.intel.com/software/imb/" target="_blank" """
-         """alt="imb">Intel MPI Benchmark</a> (formally Pallas MPI Benchmark) suite. The suite measures the """
-         """interconnect''s latency, bandwidth, bidirectional bandwidth, and various MPI collective operations'' """
-         """latencies (Broadcast, AllToAll, AllGather, AllReduce, etc). It also measures the MPI-2 Remote Direct """
-         """Memory Access (RDMA) performance.\r\n<p>\r\nThe benchmarks are run with one process """
-         """(single-threaded mode) per node.', 0,NULL),
-(22, 'GAMESS', 'gamess', 'node', 0, '<a href="http://www.msg.chem.iastate.edu/gamess/" """
-         """target="_blank" alt="gamess">GAMESS</a> is an ab initio computational chemistry software package"""
-         """developed by Professor Mark Gordon''s research group at Iowa State University.\r\n<p>\r\nThe input"""
-         """to the benchmark runs is restricted Hartree-Fock energy calculation of C8H10 with MP2"""
-         """correction.\r\n<p>\r\nThe version of GAMESS being benchmarked is 1 MAY 2012 (R1).\r\n', 0,NULL),
-(23, 'NAMD', 'namd', 'node', 0, '<a href="http://www.ks.uiuc.edu/Research/namd/" target="_blank" """
-         """alt="namd">NAMD</a> is a molecular dynamics simulation package developed by the Theoretical and """
-         """Computational Biophysics Group in the Beckman Institute for Advanced Science and Technology at """
-         """the University of Illinois at Urbana-Champaign.\r\n<p>\r\nThe input to the benchmark runs is the """
-         """Apolipoprotein A1 benchmark input, which consists of 92,224 atoms, uses 2 fs step size, 0,200 steps, """
-         """and uses the NVE ensemble.\r\n<p>\r\nThe version of NAMD being benchmarked is 2.7b2', 0,NULL),
-(24, 'NWChem', 'nwchem', 'node', 0, '<a href="http://www.nwchem-sw.org" target="_blank" """
-         """alt="nwchem">NWChem</a> is an ab initio computational chemistry software package developed by """
-         """Pacific Northwest National Laboratory.\r\n<p>\r\nThe input to the benchmark runs is the """
-         """Hartree-Fock energy calculation of Au+ with MP2 and Coupled Cluster corrections.\r\n<p>\r\n"""
-         """The version of NWChem being benchmarked is 5.1.1.\r\n<p>\r\nThe metrics we show here contain NWChem''s """
-         """self-collected Global Arrays statistics. The Global Arrays toolkit is the communication library used by """
-         """NWChem to manipulate large akrrays distributed across compute nodes. The Global Arrays toolkit has """
-         """three basic operations: Get (fetch values from remote memory), Put (store values to remote memory), """
-         """and Accumulate (update values in remote memory). NWChem measures the numbers of these operations """
-         """and the amount of data affected by them.', 0,NULL),
-(25, 'HPCC', 'hpcc', 'node', 0, '<a href="http://icl.cs.utk.edu/hpcc/" target="_blank" """
-         """alt="hpcc">HPC Challenge Benchmark</a> suite. It consists of a) High Performance LINPACK, which solves """
-         """a linear system of equations and measures the floating-point performance, b) Parallel Matrix """
-         """Transpose (PTRANS), which measures total communications capacity of the interconnect, c) """
-         """MPI Random Access, which measures the rate of random updates of remote memory, d) """
-         """Fast Fourier Transform, which measures the floating-point performance of """
-         """double-precision complex one-dimensional Discrete Fourier Transform. ', 0,NULL),
-(27, 'IOR', 'ior', 'node', 0, """
-         """'IOR (Interleaved-Or-Random) measures the performance of a storage system under simple access patterns. """
-         """It uses four different I/O interfaces: POSIX, MPI IO, HDF (Hierarchical Data Format), and """
-         """Parallel NetCDF (Network Common Data Form) to read and write contiguous chunks of data against either """
-         """a single file (N-to-1 mode) or N files (N-to-N mode), and it reports the aggregate I/O throughput.', 0,NULL),
-(28, 'Graph500', 'graph500', 'node', 0, '<a href="http://www.graph500.org" target="_blank" """
-         """alt="graph500">Graph 500</a> is a benchmark designed to measure the performance of graph algorithms, an """
-         """increasingly important workload in the data-intensive analytics applications.\r\n<p>\r\nCurrently """
-         """Graph 500 benchmark contains one computational kernel: the breadth-first search. The input is a """
-         """pre-generated graph created with the following parameters:  SCALE=16 and edgefactor=16. These """
-         """translate to, on a per MPI process basis,  2^SCALE=65536 vertices and """
-         """65536*edgefactor=1.04 million edges.', 0,NULL),
-(29, 'Enzo', 'enzo', 'node', 0, '<a href="http://enzo-project.org/" target="_blank" """
-         """alt="Enzo">Enzo:</a> an Adaptive Mesh Refinement Code for Astrophysics\r\n<p>', 0,NULL),
-(30, 'HPCG', 'hpcg', 'node', 0, '<a href="http://www.hpcg-benchmark.org/index.html" target="_blank" """
-         """alt="hpcg">The High Performance Conjugate Gradients (HPCG) Benchmark</a> project is an effort"""
-         """to create a new metric for ranking HPC systems.', 0,NULL),
-(31, 'GROMACS-micro', 'gromacs_micro', 'node', 0, '<a href="http://www.gromacs.org/" target="_blank" """
-         """alt="GROMACS">GROMACS:</a> based micro-benchmark for testing purposes\r\n<p>', 0,NULL)
-ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
-"""),
-    )
-
     # EXECUTE: the statements defined previously
     connection_function = None
     if not dry_run:
@@ -881,12 +961,15 @@ ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);
     
     create_and_populate_tables(
         default_tables,
-        population_statements if populate else tuple(),
+        tuple(),
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",
         connection_function,
         dry_run=dry_run
     )
+    # populate app_kernel_def
+    con_appkernel, cur_appkernel = akrr.db.get_ak_db(dict_cursor=True)
+    populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run)
 
 
 def copy_table_with_rename(cur_akrr, cur_akrr2, table, cols, order_by=None, table2=None, cols2=None, at_once=True):

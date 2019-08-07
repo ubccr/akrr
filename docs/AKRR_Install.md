@@ -138,4 +138,47 @@ no crontab for akrruser
 
 At this point AKRR should be installed and running. Now new resources can be added.
 
+## Tips and Tricks
+
+### MySQL Server on a Different Host
+
+In case if MySQL is located at different host following options to `akrr setup` command allows 
+to specify MySQL server host name.
+
+```text
+  --akrr-db AKRR_DB  mod_akrr2 database location in
+                     [user[:password]@]host[:port] format, missing values will
+                     be asked. Default: localhost:3306
+  --ak-db AK_DB      mod_appkernel database location. Usually same host as
+                     XDMoD's databases host. Default: same as akrr
+  --xd-db XD_DB      XDMoD modw database location. It is XDMoD's databases
+                     host. Default: same as akr
+```
+
+### No Administrative Rights on MySQL Server
+
+If there is no access with administrative rights to MySQL server from AKRR host, or a different
+person administer database, ask user with administrative rights execute following:
+
+```
+CREATE DATABASE IF NOT EXISTS mod_akrr;
+CREATE DATABASE IF NOT EXISTS mod_appkernel;
+
+CREATE USER akrruser@'AKRR_HOSTNAME' IDENTIFIED BY 'password'
+
+GRANT ALL ON mod_akrr.* TO akrruser@'AKRR_HOSTNAME';
+GRANT ALL ON mod_appkernel.* TO akrruser@'AKRR_HOSTNAME';
+GRANT SELECT ON modw.* TO akrruser@'AKRR_HOSTNAME';
+```
+
+
+Prior to running `akrr setup` ensure that the created user has access to DB from AKRR host.
+For example by trying access mod_akrr with mysql client:
+
+```bash
+mysql -u akrruser -p -h <MYSQL_SERVER> mod_akrr
+```
+
+You might need also to add akrruser@'localhost' and add AKRR_HOSTNAME by it IP address.
+
 Next: [Usage](AKRR_Usage.md)

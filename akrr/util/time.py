@@ -35,7 +35,17 @@ def to_datetime(time):
         return datetime.datetime.now().replace(hour=time.hour, minute=time.minute, second=0, microsecond=0)
 
 
-def time_stamp_to_datetime_str(time_stamp: str):
+def time_stamp_to_datetime(time_stamp: str) -> datetime.datetime:
+    """
+    Convert time_stamp string (%Y.%m.%d.%H.%M.%S.%f) to datatime
+    """
+    return datetime.datetime.strptime(time_stamp, "%Y.%m.%d.%H.%M.%S.%f")
+
+
+def time_stamp_to_datetime_str(time_stamp: str) -> str:
+    """
+    Reformat time_stamp (%Y.%m.%d.%H.%M.%S.%f) to %Y-%m-%d %H:%M:%S
+    """
     return datetime.datetime.strptime(time_stamp, "%Y.%m.%d.%H.%M.%S.%f").strftime("%Y-%m-%d %H:%M:%S")
 
 

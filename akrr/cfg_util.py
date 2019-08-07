@@ -305,3 +305,4 @@ def load_app(app_name):
     except Exception:
         log.exception("Exception occurred during app kernel configuration loading for %s." % app_name)
         raise AkrrError("Can not load app configuration for %s." % app_name)
+

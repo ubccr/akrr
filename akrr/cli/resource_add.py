@@ -222,14 +222,19 @@ def get_resource_name_by_id(resource_id, resources):
 
 
 def validate_queuing_system(queuing_system):
-    if queuing_system in ['slurm', 'pbs', 'openstack']:
+    """
+    Validate that queuing_system is in supported systems
+    """
+    if queuing_system in ['slurm', 'pbs', 'shell', 'openstack']:
         return True
     else:
         return False
 
 
 def check_connection_to_resource():
-    """check the connection to remote resource."""
+    """
+    Check the connection to remote resource.
+    """
     global remote_access_node
     global remote_access_method
     global remote_copy_method
@@ -703,7 +708,7 @@ def resource_add(config):
     log.empty_line()
 
     while True:
-        log.log_input('Enter queuing system on resource (slurm, pbs or openstack): ')
+        log.log_input('Enter queuing system on resource (slurm, pbs, shell or openstack): ')
         queuing_system = input()
         if validate_queuing_system(queuing_system):
             break

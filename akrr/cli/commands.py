@@ -9,12 +9,6 @@ def add_command_daemon(parent_parser):
     parser = parent_parser.add_parser('daemon', description=add_command_daemon.__doc__)
     subparsers = parser.add_subparsers(title='commands')
 
-    # @todo ensure proper cron execution
-    # parser.add_argument('-o', '--output-file', help="redirect stdout and stderr to file")
-    # parser.add_argument('-a', '--append', action='store_true',
-    #                     help="append stdout and stderr to file rather then overwrite")
-    # parser.add_argument('-cron', action='store_true', help="set defaults for launching by cron")
-
     cli_daemon_start(subparsers)
     cli_daemon_stop(subparsers)
     cli_daemon_restart(subparsers)
@@ -50,23 +44,38 @@ def cli_daemon_stop(parent_parser):
 def cli_daemon_restart(parent_parser):
     """restart AKRR daemon"""
     parser = parent_parser.add_parser('restart', description=cli_daemon_restart.__doc__)
+    parser.add_argument('-cron', action='store_true', help="for launching by cron, no output on normal operation")
 
-    def handler(_):
+    def handler(args):
         from akrr.util import log
         from akrr.daemon import get_daemon_pid, daemon_start, daemon_stop
 
-        # if args.cron:
-        #    args.append = True
-        #    args.output_file = os.path.join(cfg.data_dir, 'checknrestart')
-
-        log.info("Restarting AKRR")
-        try:
-            if get_daemon_pid(True) is not None:
-                daemon_stop()
-        except Exception as e:
-            log.exception("Exception was thrown during daemon stopping")
-            log.log_traceback(str(e))
-        return daemon_start()
+        if args.cron is True:
+            # i.e. executed by cron
+            #   run same command as separate process (but without -cron)
+            #   print output only if return non zero code
+            import subprocess
+            import sys
+            import os
+            argv = [sys.executable, os.path.abspath(sys.argv[0])]
+            if len(sys.argv) > 0:
+                for arg in sys.argv[1:]:
+                    if arg != "-cron":
+                        argv.append(arg)
+            try:
+                subprocess.check_output(argv, stderr=subprocess.STDOUT, timeout=120)
+            except subprocess.CalledProcessError as e:
+                if hasattr(e, 'output'):
+                    print(e.output.decode("utf-8"))
+        else:
+            log.info("Restarting AKRR")
+            try:
+                if get_daemon_pid(True) is not None:
+                    daemon_stop()
+            except Exception as e:
+                log.exception("Exception was thrown during daemon stopping")
+                log.log_traceback(str(e))
+            return daemon_start()
 
     parser.set_defaults(func=handler)
 
@@ -100,10 +109,29 @@ def cli_daemon_check(parent_parser):
 def cli_daemon_checknrestart(parent_parser):
     """check if AKRR daemon is up if not it will restart it"""
     parser = parent_parser.add_parser('checknrestart', description=cli_daemon_checknrestart.__doc__)
+    parser.add_argument('-cron', action='store_true', help="for launching by cron, no output on normal operation")
 
-    def handler(_):
+    def handler(args):
         from akrr.daemon import daemon_check_and_start_if_needed
-        return daemon_check_and_start_if_needed()
+        if args.cron is True:
+            # i.e. executed by cron
+            #   run same command as separate process (but without -cron)
+            #   print output only if return non zero code
+            import subprocess
+            import sys
+            import os
+            argv = [sys.executable, os.path.abspath(sys.argv[0])]
+            if len(sys.argv) > 0:
+                for arg in sys.argv[1:]:
+                    if arg != "-cron":
+                        argv.append(arg)
+            try:
+                subprocess.check_output(argv, stderr=subprocess.STDOUT, timeout=120)
+            except subprocess.CalledProcessError as e:
+                if hasattr(e, 'output'):
+                    print(e.output.decode("utf-8"))
+        else:
+            return daemon_check_and_start_if_needed()
 
     parser.set_defaults(func=handler)
 
@@ -191,8 +219,9 @@ def add_command_setup(parent_parser):
     parser.set_defaults(func=setup_handler)
 
 
-def add_command_update(parent_parser):
+def add_command_setup_update(parent_parser):
     """Update AKRR"""
+    # @todo should be option to setup
     parser = parent_parser.add_parser('update', description=add_command_setup.__doc__)
     parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
 
@@ -483,5 +512,136 @@ def cli_enable(parent_parser):
     def handler(args):
         from akrr.app import resource_app_enable
         resource_app_enable(args.resource, args.appkernel, args.dry_run)
+
+    parser.set_defaults(func=handler)
+
+
+def add_command_archive(parent_parser):
+    """AK runs output, logs, pickels and batch jobs script manipulation"""
+    parser = parent_parser.add_parser('archive',  description=add_command_archive.__doc__)
+    subparsers = parser.add_subparsers(title="commands for archive")
+    #parser.add_argument(
+    #    '-udl', '--update-dir-layout', action='store_true', help="update dir layout")
+
+    cli_archive_remove_state_dumps(subparsers)
+    cli_archive_remove_tasks_workdir(subparsers)
+    cli_archive_update_layout(subparsers)
+
+
+def cli_archive_remove_state_dumps(parent_parser):
+    """remove state dumps"""
+    parser = parent_parser.add_parser(
+        'remove-tasks-state-dumps', description=cli_archive_remove_state_dumps.__doc__)
+
+    parser.add_argument(
+        '--days', required=True, type=int, help="do operations for tasks older than `--days`")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).remove_tasks_state_dumps(
+            args.days, args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_archive_remove_tasks_workdir(parent_parser):
+    """remove task workdir, normally it should not be copied to AKRR at all."""
+    parser = parent_parser.add_parser(
+        'remove-tasks-workdir', description=cli_archive_remove_state_dumps.__doc__)
+
+    parser.add_argument(
+        '--days', required=True, type=int, help="do operations for tasks older than `--days`")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).remove_tasks_workdir(
+            args.days, args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_archive_update_layout(parent_parser):
+    """update resource/appkernel/task to resource/appkernel/year/month/task layout"""
+    parser = parent_parser.add_parser(
+        'update-layout', description=cli_archive_update_layout.__doc__)
+
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources")
+    parser.add_argument(
+        '-a', '--appkernel', help="comma separated names of app kernels")
+    parser.add_argument('--comp-task-dir', help="complete tasks directory")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.archive import Archive
+        Archive(args.dry_run, args.comp_task_dir).update_layout(
+            args.resource, args.appkernel)
+
+    parser.set_defaults(func=handler)
+
+
+def add_command_update(parent_parser):
+    """AKRR update routings"""
+    parser = parent_parser.add_parser('update',  description=add_command_archive.__doc__)
+    subparsers = parser.add_subparsers(title="commands for update")
+    #parser.add_argument(
+    #    '-udl', '--update-dir-layout', action='store_true', help="update dir layout")
+
+    cli_update_db_compare(subparsers)
+    cli_update_rename_appkernels(subparsers)
+
+
+def cli_update_db_compare(parent_parser):
+    """Copy mod_akrr database"""
+    parser = parent_parser.add_parser(
+        'db-compare', description=cli_archive_remove_state_dumps.__doc__)
+    parser.add_argument(
+        "--src",
+        help="mod_akrr source database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        "--dest",
+        help="mod_akrr database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        '-r', '--resource', help="comma separated names of resources to copy")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.update import mod_akrr_db_compare
+        mod_akrr_db_compare(args.src, args.dest)
+
+    parser.set_defaults(func=handler)
+
+
+def cli_update_rename_appkernels(parent_parser):
+    """Rename appkernels from long to short format"""
+    parser = parent_parser.add_parser(
+        'rename-appkernels', description=cli_archive_remove_state_dumps.__doc__)
+    parser.add_argument(
+        "--mod-akrr", default='akrruser:@localhost:3306:/mod_akrr',
+        help="mod_akrr source database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_akrr")
+    parser.add_argument(
+        "--mod-appkernel", default='akrruser:@localhost:3306:/mod_appkernel',
+        help="mod_appkernel database location in [user[:password]@]host[:port][:/db_name] format, "
+             "missing values will be asked. Default: akrruser:@localhost:3306:/mod_appkernel")
+    parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
+
+    def handler(args):
+        from akrr.update import rename_appkernels
+        rename_appkernels(args.mod_akrr, args.mod_appkernel, args.dry_run)
 
     parser.set_defaults(func=handler)

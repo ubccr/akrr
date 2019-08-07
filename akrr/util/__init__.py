@@ -214,3 +214,19 @@ def get_full_path(cur_dir, path):
     if path[0] == "/":
         return path
     return os.path.abspath(os.path.join(cur_dir, path))
+
+
+def get_list_from_comma_sep_values(in_str):
+    """
+    Get list of strings from string with comma separated values.
+    If in_str is not string return it without change.
+    """
+    if in_str is None:
+        return None
+    elif isinstance(in_str, str):
+        if in_str.count(",") > 0:
+            return in_str.split(",")
+        else:
+            return [in_str]
+    else:
+        return in_str

@@ -20,7 +20,7 @@ except ImportError:
                 #instale EPEL repo information
                 sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
                 #install mysqlclient-python
-                sudo yum install python34-mysql
+                sudo yum install python36-mysql
                 """)
     exit(1)
 except Exception as _e:
@@ -266,7 +266,7 @@ class AKRRSetup:
                 msg += "To uninstall AKRR manually:\n\t1)remove " + akrr_cfg + "\n\t\trm " + akrr_cfg + "\n"
                 msg += "\t2) (optionally for totally fresh start) drop mod_akrr and mod_appkernel database\n"
                 msg += "\t\tDROP DATABASE mod_appkernel;\n"
-                msg += "\t\tDROP DATABASE mod_akrr2;\n\n"
+                msg += "\t\tDROP DATABASE mod_akrr;\n\n"
 
                 log.error(msg)
                 exit(1)
@@ -754,8 +754,8 @@ class AKRRSetup:
             mail = "MAILTO = " + self.cron_email
         else:
             mail = None
-        restart = "50 23 * * * " + akrr_bin_dir + "/akrr daemon -cron restart"
-        check_and_restart = "33 * * * * " + akrr_bin_dir + "/akrr daemon -cron checknrestart"
+        restart = "50 23 * * * " + akrr_bin_dir + "/akrr daemon restart -cron"
+        check_and_restart = "33 * * * * " + akrr_bin_dir + "/akrr daemon checknrestart -cron"
 
         try:
             crontan_content = subprocess.check_output("crontab -l", shell=True)
