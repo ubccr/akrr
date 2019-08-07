@@ -125,7 +125,7 @@ fi
 cd $work_dir
 
 echo "Running appsigcheck..."
-${EXECS_LOC}/bin/appsigcheck.sh ${NAMD_EXE_FULL_PATH}
+${EXECS_DIR}/bin/appsigcheck.sh ${NAMD_EXE_FULL_PATH}
 wait
 
 # running hpcc with mpirun, where -np is number of cores for the machine
