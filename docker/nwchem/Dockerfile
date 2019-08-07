@@ -5,24 +5,24 @@ RUN \
 	apt-get -y update && \
 	apt-get -y install binutils
 
-ENV EXECS_LOC=/opt/appker/execs
-COPY ./execs ${EXECS_LOC}
+ENV EXECS_DIR=/opt/appker/execs
+COPY ./execs $EXECS_DIR
 
 ENV INPUTS_DIR=/usr/local/appker/inputs
-ENV NWCHEM_INPUTS_DIR=${INPUTS_DIR}/nwchem
+COPY inputs $INPUTS_DIR
+ENV NWCHEM_INPUTS_DIR=$INPUTS_DIR/nwchem
 
-COPY ./inputs/nwchem ${NWCHEM_INPUTS_DIR}/
 
 # The path to the nwchem executable is stored in $NWCHEM_EXECUTABLE
 
 ENV SCRIPTS_DIR=/opt/scripts
-COPY scripts ${SCRIPTS_DIR}
+COPY scripts $SCRIPTS_DIR
 
 
 RUN \ 
 	mkdir /scratch && \
 	chmod -R 777 /scratch && \
-	chmod -R 755 $EXECS_LOC && \
+	chmod -R 755 $EXECS_DIR && \
 	chmod -R 755 $SCRIPTS_DIR && \
 	chmod -R 755 $INPUTS_DIR
 

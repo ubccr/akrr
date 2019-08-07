@@ -1,8 +1,9 @@
 #!/bin/bash
-
+set -x
 # name of input we want to use in inputs location
 nwchem_input_files_dir=${NWCHEM_INPUTS_DIR}
 input_file_name="aump2.nw"
+
 
 # gets the number of cores of this machine (used for later mpirun -np flag
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
@@ -120,6 +121,7 @@ fi
 
 
 cd $work_dir
+export LD_LIBRARY_PATH=/opt/intel/impi/2018.3.222/lib64:/opt/intel/mkl/lib/intel64
 
 echo "Running appsigcheck..."
 ${EXECS_DIR}/bin/appsigcheck.sh ${NWCHEM_EXECUTABLE}
@@ -129,7 +131,7 @@ export I_MPI_DEBUG=5
 if [[ "${run_namd}" == "true" ]]; then
 	echo "Running namd..."
 	export I_MPI_PIN
-	mpirun --allow-run-as-root -np ${ppn} ${NWCHEM_EXECUTABLE} ${input_file_name}
+	${MPI_DIR}/mpirun -np ${ppn} ${NWCHEM_EXECUTABLE} ${input_file_name}
 	wait
 	echo "Complete! outputs are in is in ${work_dir}"
 fi
