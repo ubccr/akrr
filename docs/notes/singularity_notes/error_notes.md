@@ -5,7 +5,7 @@ Overview of Singularity and Docker interplay: https://www.sylabs.io/guides/3.2/u
 Singularity does allow the use of Docker images to run.
 Some cases where behavior might not be exactly as expected...
 
-1) ==========
+### 1) ==========
 
 If the Dockerfile for a Docker image uses the command WORKDIR to change the working directory before running an ENTRYPOINT script, most likely the script will not be found, since singularity starts a docker differently.
 
@@ -29,7 +29,7 @@ This seems to be the simplest workaround if you have access to the Dockerfile.
 If you only have the Docker image, then you may have to try and find out where the entrypoint script is in the image to make Singularity start in that directory. 
 The conundrum is discussed more at length here: https://github.com/sylabs/singularity/issues/380
 
-2) ==========
+### 2) ==========
 
 Was getting some issues with getting a Singularity file setup. Something about no space left on device? This happened when I was just on regular huey, not on one of the nodes yet.
 Command and output:
@@ -62,11 +62,11 @@ FATAL:   Unable to pull docker://pshoff/akrr_benchmarks:hpcc: packer failed to p
 And I ran it from my singularity cache directory at /gpfs/scratch/hoffmaps/singularity_cache
 Once I got a job allocation and sshed onto a node, it worked fine and made the .sif file okay.
 
-Unsure why the issue is happening.
-Perhaps it has to do with the Cache directory? Maybe you have to declare it to be a different location, see https://singularity.lbl.gov/faq#no-space-left-on-device 
-But unsure if this was the actual problem.
+Perhaps it has to do with the Cache directory. Maybe you have to declare it to be a different location, see https://singularity.lbl.gov/faq#no-space-left-on-device 
 
-3) ==========
+(In this case you would just change the values of SINGULARITY_LOCALCACHEDIR, SINGULARITY_CACHEDIR, and SINGULARITY_TMPDIR. Check out setting_up_akrr_with_singularity)
+
+### 3) ==========
 
 For the file structure in a Singularity container, (it appears) all files are owned by root, regardless of whether or not the files where chown-ed in the Dockerfile to be owned by another user in the container (at least, from what I could tell). In my case, I was making all the files owned by hpccuser in the Dockerfile, assuming that therefore all permissions would be correct when accessing files. However, in the Singularity container, all files are owned by root despite my chowning them.
 You can check this out yourself by doing:
@@ -79,12 +79,12 @@ This can result in permissions being unexpected, usually meaning you can't acces
 If you have access to the Dockerfile and all the necessary files being used in the Docker image, the workaround would be either to change the permissions on the files and re-build the docker image, or not to bother at all with other users and just build the image with only the root user. Unsure how much this helps but it would allow more flexible permissions at least.
 
 
-4) ==========
+### 4) ==========
 
 It appears that there could be some unexpected behavior with environment variables like $HOME and $TMP, since they get mounted on the file system that is running the singularity. So if the Dockerfile or especially the run script is using them, it probably won't work as expected.
+See more info here: https://sylabs.io/guides/3.3/user-guide/bind_paths_and_mounts.html?highlight=home
 
-
-5) ==========
+### 5) ==========
 
 After a little while of just pulling singularity down regularly, I got this error:
 ```bash
