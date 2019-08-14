@@ -78,5 +78,34 @@ Now you just need to download the entire directory that has hpcc in it.
 
 Then all you have to do is put the hpcc-1.5.0 into the execs directory and you should be able to build and run the Docker. If you are using a different version of hpcc you might need to change the HPCC\_EXE\_FULL\_PATH variable in the Dockerfile.
 
-### Flags for the run script
+## Flags for the run script
+These are the flags I added for the script that is called when you run the docker image.
 
+(You put these at the end of the whole thing, so for example
+```bash
+docker run pshoff/akrr_benchmarks:hpcc -ppn 6 -v
+
+```
+Because of how I set up the script, only exactly the flags I give will work. (So you can't do something like -hv, you have to do -h -v)
+
+Anyways, onto the flags and what they do:
+```bash
+-h | --help                     Display help text
+
+-v | --verbose                  increase verbosity of output (does a set -x)
+
+-i | --interactive              Start a bash session after the run
+
+--norun                         Set if you don't want to immediately run hpcc 
+
+-n NODES | --nodes NODES        Specify number of nodes hpcc will be running on
+
+-ppn PROC\_PER\_NODE | 
+--proc\_per\_node PROC\_PER\_NODE   	Specify nymber of processes/cores per node
+					(if not specified, number of cpu cores is used as found in /proc/cpuinfo)
+
+--pin                           Turn on process pinning for mpi (I\_MPI\_PIN)
+
+-d DEBUG\_LEVEL | 
+--debug DEBUG\_LEVEL            Set the mpi debug level to the given value (0-5+, default 0)
+```

@@ -4,6 +4,7 @@ LABEL desc="hpcc benchmark made ready to run"
 
 # Installing intel-mpi and making hpccuser in one Run
 RUN \
+	yum -y update && \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mpi/setup/intel-mpi.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
 	yum -y install intel-mpi-2018.3-051
