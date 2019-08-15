@@ -37,7 +37,6 @@ echo `which namd2`
 So you just want to get the directory that the binary is in (in this case NAMD\_2.12b1\_Linux-x86\_64-multicore) and put it in your execs directory.
 Then from there you just have to modify the Dockerfile slightly to have the correct namd name.
 
-Once you have that binary all set up you can build the Docker image
+Once you have that binary all set up you can build the Docker image.
 
-### Flags to use
 

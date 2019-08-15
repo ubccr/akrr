@@ -5,7 +5,3 @@ This one is relatively straightforward, since the binaries being used here come 
 
 If you do want to have your own binaries, you would need to modify the Dockerfile and script a decent bit.
 
-### Flags for the run script
-
-
-

@@ -78,10 +78,7 @@ Then the GMSPATH is the directory where the gamess executable is, which for the 
 
 Once you change the rungms script, you should be good to build and run the Docker.
 Just running it with the regular docker run command will run gamess and display the results to the standard output.
-It will try and guess how many cores to launch it on. 
 There are flags that you can pass in to take some control over it.
-
-### Flags for the run script
 
 
 
