@@ -25,7 +25,7 @@ usage()
     	echo " Options:"
     	echo "	-h | --help			Display help text"
 	echo "	-v | --verbose			increase verbosity of output (does a set -x)"
-	echo " 	-i | --interactive		Start a bash session after the run"
+	echo " 	-i | --interactive		Start a bash session after the run (need to also do -it after docker run)"
 	echo "	--norun				Set if you don't want to immediately run hpcc "
 	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
 	echo "	-ppn PROC_PER_NODE | "
