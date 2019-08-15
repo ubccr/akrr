@@ -5,6 +5,8 @@ In this directory are all the directories for the various docker images of the A
 ## Flags for the run script
 These are the flags I added for the run scripts that is called when you run the docker image for the various appkernels.
 
+The only one that has other options is the ior/mdtest docker. See bottom of readme for info.
+
 So these are tags you can use for the hpcc, hpcg, gamess, namd, nwchem, ior, and nwchem.
 (You put these at the end of the whole thing, so for example
 ```bash
@@ -43,5 +45,17 @@ Some things to keep in mind:
 docker run -it pshoff/akrr_benchmakrs:hpcc -i
 # From my experience, only having one or the other won't properly start the interactive session
 ```
+
+For ior and mdtest, since they are both using the same Docker, you need to specify which one you want to run, so I've added some more options. So these options are available only for the ior/mdtest Docker:
+```bash
+--run-ior		Run the IOR executable
+
+--run-mdtest		Run the MDTest executable
+
+--ior-appsig		Run appsig on the IOR binary
+
+--mdtest-appsig		Run appsig on the MDTest binary
+```
+Note: when using the IOR docker, you can send in all the usual arguments that you would normally. AKRR sends over a lot of arguments to it. All you have to do is send over the arguments specific to the docker first (so the ppn, run-ior, etc) then once the script comes across an argument it doesn't recognize, it stops processing the arguments and sends the rest of the arguments through to the ior/mdtest binary.
 
 

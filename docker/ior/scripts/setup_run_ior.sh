@@ -17,8 +17,6 @@ fi
 
 echo "Number of processes set: ${cpu_cores}"
 
-proc=8
-
 host_file_path=""
 
 # help text essentially
