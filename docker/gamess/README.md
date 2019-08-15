@@ -2,7 +2,8 @@
 
 This directory has all the files needed to create a Docker image for the Gamess Appkernel.
 The binary is not on the repository, that must be set up once you clone the repo.
-If you want to create the Dockerfile, you need to get the binary.
+If you want to create the Docker yourself, you need to get the binary.
+See setup of this Docker directory at bottom of Readme
 
 ## Guide to getting the Gamess binary set up from UB-HPC resource:
 
@@ -81,7 +82,14 @@ Just running it with the regular docker run command will run gamess and display 
 There are flags that you can pass in to take some control over it.
 
 
-
+## Setup of this Docker directory
+- Dockerfile - creates the Docker image to use
+- execs - location of akrr help scripts and gamess binary
+	- bin - has the akkr help scripts
+	- gamess\_11Nov2017R3 - directory with all the gamess things, including rungms and the gamess binary. If you are getting this from git directly, you need to get this yourself.
+- inputs/gamess - location of gamess input file (c8h10-cct-mp2.inp)
+- scripts - location of entrypoint script that runs when the gamess docker is launched
+- original\_notes.md - my original notes on setting up the docker for gamess (not too helpful, but its there)
 
 
 
