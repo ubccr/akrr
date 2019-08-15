@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "Determining number of processes to use based on /proc/cpuinfo"
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
 if [[ "${cpu_cores}" == "1" ]]; then
@@ -7,29 +8,28 @@ if [[ "${cpu_cores}" == "1" ]]; then
 	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
 fi
 
-echo "Number of cores detected: ${cpu_cores}"
+echo "Number of processes being used: ${cpu_cores}"
 echo "(used for determining what to use for -np flag in mpirun)"
 
 hpcg_inputs_dir="${HPCG_INPUTS_PATH}"
 
-
 usage()
 {
-	echo "usage: setup_run_hpcg.sh [-h] [-i] [--norun] ( [-n NODES] [-ppn PROC_PER_NODE] )"
-	echo ""
-	echo " Options:"
-    	echo "	-h | --help			Display help text"
-	#echo "	-v | --verbose			increase verbosity of output"
-	echo " 	-i | --interactive		Start a bash session after the run (use with -it in docker run"
-	echo "	--norun				Set if you don't want to immediately run hpcg"
-	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcg will be running on"
-	echo "	-ppn PROC_PER_NODE | "
-	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
-	echo "					(if not specified, number of cpu cores is used,"
-	echo "					as found in /proc/cpuinfo)"
-	echo "					- used to determine -np VAL for mpirun"
-	echo " 	--pin 				Set I_MPI_PIN to 1 to have mpiru pin processes"
-
+        echo "usage: setup_hpcc_inputs.sh [-h] [-i] [--norun] [-n NODES] [-ppn PROC_PER_NODE] [--pin]"
+        echo "None are required."
+        echo ""
+        echo " Options:"
+        echo "  -h | --help                     Display help text"
+        echo "  -v | --verbose                  increase verbosity of output (does a set -x)"
+        echo "  -i | --interactive              Start a bash session after the run (need to also do -it after docker run)"
+        echo "  --norun                         Set if you don't want to immediately run hpcc "
+        echo "  -ppn PROC_PER_NODE | "
+        echo "  --proc_per_node PROC_PER_NODE   Specify nymber of processes/cores per node" 
+        echo "                                  (if not specified, number of cpu cores is used,"
+        echo "                                  as found in /proc/cpuinfo)"
+        echo "  --pin                           Turn on process pinning for mpi (I_MPI_PIN)"
+        echo "  -d DEBUG_LEVEL | "
+        echo "  --debug DEBUG_LEVEL             Set the mpi debug level to the given value (0-5+, default 0)"
 }
 
 # ppn is used to set -np flag with mpirun
@@ -43,10 +43,12 @@ set_defaults()
 	run_hpcg=true
 	hpcg_exe_name="xhpcg_avx" # determining optimal hpcg execution (checks for avx, avx2, or skx)
 	I_MPI_PIN=0
+	I_MPI_DEBUG=0
 }
 
 set_defaults
 
+echo "Checking if this supports avx2 or avx512 instructions"
 # counting if the processor supports avx2 or skx
 count_avx2="$(grep -oc 'avx2' /proc/cpuinfo)"
 count_avx512="$(grep -oc 'avx512' /proc/cpuinfo)"
@@ -71,24 +73,30 @@ while [[ "$1" != "" ]]; do
 			exit
 			;;
 		-v | --verbose)
+			echo "Verbose arg detected, doing set -x after processing args"
 			verbose=true
 			;;
 		-i | --interactive)
+			echo "Interactive arg detected, starting shell at end of script"
 			interactive=true
 			;;
 		--norun)
+			echo "No run arg detected, not running hpcg"
 			run_hpcg=false
 			;;
-		-n | --nodes) # unsure how these would be implemented
-			shift
-			nodes=$1
-			;;
 		-ppn | --proc_per_node)
+			echo "Proc Per Node arg detected, overwriting the value of processes found earilier"
 			shift
 			ppn=$1
 			;;
 		--pin)
+			echo "Pin arg detected, setting I_MPI_PIN to 1"
 			I_MPI_PIN=1
+			;;
+		-d | --debug)
+			echo "Debug arg detected, setting I_MPI_DEBUG to given value"
+			shift
+			I_MPI_DEBUG=$1
 			;;
 		*)
 			echo "Error: unrecognized argument"
@@ -99,10 +107,11 @@ while [[ "$1" != "" ]]; do
 	shift # to go to next argument
 done
 
-echo "nodes: ${nodes}"
-echo "ppn: ${ppn}"
-echo "interactive: ${interactive}"
+if [[ "${verbose}" == "true" ]]; then
+        set -x
+fi
 
+echo "Setting up input file and paths"
 # using environment variables
 # setting up paths to copy file over
 hpcg_input_name="hpcg.dat"
@@ -110,9 +119,9 @@ input_file_path="${hpcg_inputs_dir}/${hpcg_input_name}"
 
 dest_path="${work_dir}/${hpcg_input_name}"
 
-echo "Input file name: ${hpcg_input_name}"
-echo "Full path: ${input_file_path}"
-echo "Destination path: ${dest_path}"
+#echo "Input file name: ${hpcg_input_name}"
+#echo "Full path: ${input_file_path}"
+#echo "Destination path: ${dest_path}"
 
 # checks if file exists
 if [[ -f "${input_file_path}" ]]; then
@@ -128,6 +137,7 @@ cd ${work_dir}
 echo "work dir: ${work_dir}"
 
 # source to connect up the mkl libraries
+echo "Sourcing compilervars.sh to connect up mkl libraries"
 source /opt/intel/bin/compilervars.sh intel64 -platform linux
 export OMP_NUM_THREADS=1 # based on HPCG Development thing
 
@@ -143,7 +153,7 @@ wait
 if [[ "${run_hpcg}" == "true" ]]; then
 	echo "Using ${hpcg_exe_full_path} to run hpcg"
 	echo "Running hpcg..."
-	#export I_MPI_DEBUG=5
+	export I_MPI_DEBUG
 	export I_MPI_PIN
 	${MPI_DIR}/mpirun -np ${ppn} ${hpcg_exe_full_path}
 	wait
@@ -167,7 +177,7 @@ if [[ "${run_hpcg}" == "true" ]]; then
 	done
 fi
 
-# doesn't clean up temp dir at end....
+echo "End of entrypoint script, starting interactive session if specified"
 
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then
