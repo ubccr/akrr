@@ -72,8 +72,10 @@ cd ..
 make arch=intel64_avxflags
 # then the hpcc appears in that directory
 ```
+*Note: It should be fine if you use the normal make file that is given in the regular akrr. I just have this since I figured we should optimize it for avx instructions and such*
 
 Now you just need to download the entire directory that has hpcc in it.
+
 *Note: This might not be optimized in terms of space, I'm unsure exactly which files are or are not needed to run HPCC*
 
 Then all you have to do is put the hpcc-1.5.0 into the execs directory and you should be able to build and run the Docker. If you are using a different version of hpcc you might need to change the HPCC\_EXE\_FULL\_PATH variable in the Dockerfile.
