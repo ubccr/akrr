@@ -1,6 +1,6 @@
 #!/bin/bash
 
-
+echo "Trying to detect number of processes to use"
 # gets the number of cores of this machine
 cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
 if [[ "${cpu_cores}" == "1" ]]; then
@@ -8,24 +8,27 @@ if [[ "${cpu_cores}" == "1" ]]; then
 	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
 fi
 
-echo "Number of cores detected: ${cpu_cores}"
-
+echo "Number of processes set: ${cpu_cores}"
 
 # help text essentially
 usage()
 {
-    	echo "usage: setup_gamess_inputs.sh [-h] [-i] [--norun] [-n NODES] [-ppn PROC_PER_NODE]"
-	echo ""
-    	echo " Options:"
-    	echo "	-h | --help			Display help text"
-	#echo "	-v | --verbose			increase verbosity of output"
-	echo " 	-i | --interactive		Start a bash session after the run"
-	echo "	--norun				Set if you don't want to immediately run gamess"
-	echo "	-n NODES | --nodes NODES	Specify number of nodes gamess will be running on"
-	echo "	-ppn PROC_PER_NODE | "
-	echo "	--proc_per_node PROC_PER_NODE	Specify number of processes/cores per node" 
-	echo "					(if not specified, number of cpu cores is used,"
-	echo "					as found in /proc/cpuinfo)"
+        echo "usage: setup_hpcc_inputs.sh [-h] [-i] [--norun] [-n NODES] [-ppn PROC_PER_NODE] [--pin]"
+        echo "None are required."
+        echo ""
+        echo " Options:"
+        echo "  -h | --help                     Display help text"
+        echo "  -v | --verbose                  increase verbosity of output (does a set -x)"
+        echo "  -i | --interactive              Start a bash session after the run (need to also do -it after docker run)"
+        echo "  --norun                         Set if you don't want to immediately run hpcc "
+        echo "  -n NODES | --nodes NODES        Specify number of nodes hpcc will be running on"
+        echo "  -ppn PROC_PER_NODE | "
+        echo "  --proc_per_node PROC_PER_NODE   Specify nymber of processes/cores per node" 
+        echo "                                  (if not specified, number of cpu cores is used,"
+        echo "                                  as found in /proc/cpuinfo)"
+        echo "  --pin                           Turn on process pinning for mpi (I_MPI_PIN)"
+        echo "  -d DEBUG_LEVEL | "
+        echo "  --debug DEBUG_LEVEL             Set the mpi debug level to the given value (0-5+, default 0)"
 } 
 
 # allows script to continue if the argument passed in is a valid number
@@ -56,37 +59,57 @@ set_defaults()
 set_defaults
 
 # loop through arguments - for each to one of them
-while [[ "$1" != "" ]]; do
-	case $1 in
-		-h | --help)
-			usage
-			exit
-			;;
-		-v | --verbose)
-			verbose=true
-			;;
-		-i | --interactive)
-			interactive=true
-			;;
-		--norun)
-			run_gamess=false
-			;;
-		-n | --nodes)
-			shift
-			nodes=$1
-			;;
-		-ppn | --proc_per_node)
-			shift
-			ppn=$1
-			;;
-		*)
-			echo "Error: unrecognized argument"
-			usage
-			exit 1
-			;;
-	esac
-	shift # to go to next argument
+while [[ "${1}" != "" ]]; do
+        case $1 in
+                -h | --help)
+                        usage
+                        exit
+                        ;;
+                -v | --verbose)
+                        echo "Verbose arg detected, running set -x after arg processing"
+                        verbose=true
+                        ;;
+                -i | --interactive)
+                        echo "Interactive arg detected, starting bash session at end of script"
+                        interactive=true
+                        ;;
+                --norun)
+                        echo "Norun arg detected, will not run hpcc executable"
+                        run_hpcc=false
+                        ;;
+                -n | --nodes)
+                        echo "Nodes arg detected. Purely used to determine hpcc input file"
+                        echo "Using the docker image assumes you're working on one node"
+                        shift
+                        nodes=${1}
+                        ;;
+                -ppn | --proc_per_node)
+                        echo "Processes Per Node arg detected, overwriting previous processes value found from looking at number of cores"
+                        shift
+                        ppn=${1}
+                        ;;
+                --pin)
+                        echo "Pin arg detected, setting I_MPI_PIN to 1"
+                        I_MPI_PIN=1
+                        ;;
+                -d | --debug)
+                        echo "Debug arg detected, setting I_MPI_DEBUG to value after it"
+                        shift
+                        I_MPI_DEBUG=${1}
+                        ;;
+                *)
+                        echo "Error: unrecognized argument"
+                        usage
+                        exit 1
+                        ;;
+        esac
+        shift # to go to next argument
 done
+
+if [[ "${verbose}" == "true" ]]; then
+        set -x
+fi
+
 
 
 echo "nodes: ${nodes}"
@@ -105,7 +128,7 @@ dest_path="${work_dir}"
 
 # output for testing
 echo "Input file name: ${gamess_input_name}"
-echo "Full path: ${input_file_path}"
+echo "Full input path: ${input_file_path}"
 echo "Destination path: ${dest_path}"
 
 #check if input file exists, if it does, copy it over
@@ -141,11 +164,14 @@ echo "Running appsigcheck..."
 ${EXECS_DIR}/bin/appsigcheck.sh ${gamess_exe_full_path}
 wait
 
+# library path to allow mpirun in rungms to find everything
 export LD_LIBRARY_PATH=/opt/intel/impi/2018.3.222/bin64
 
 if [[ "${run_gamess}" == "true" ]]; then
 	echo "Running gamess..."
-	export I_MPI_DEBUG=5
+	export I_MPI_DEBUG
+	export I_MPI_PIN
+	# for rungms we have the order be version, procs per node, number nodes
 	./rungms ${gamess_input_name} ${version} ${ppn} ${nodes}
 	wait
 	echo "Complete! Gamess has been run, output in ${work_dir}"
