@@ -151,6 +151,9 @@ cd ${work_dir}
 
 echo "Running appsigcheck on HPCC binary..."
 # trying to run the script thing on hpcc
+source ${EXECS_DIR}/bin/akrr_util.bash
+export PATH=${EXECS_DIR}/bin:$PATH
+
 ${EXECS_DIR}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 wait
 

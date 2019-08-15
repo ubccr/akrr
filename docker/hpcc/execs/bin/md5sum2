@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# added this in from appsigcheck.sh bc it was giving errors
+# Perl-like die function
 die()
 {
   echo "${errMsgPrefix} ${1}"
