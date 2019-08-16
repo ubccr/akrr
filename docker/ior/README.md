@@ -44,8 +44,22 @@ $ cd /util/academic/intel/18.3/lib/intel64
 # then all the libraries you need should be there...
 ```
 
-To run ior or mdtest, use the flags --run-ior or --run-mdtest respectively, specify the number of processes with -proc (used with mpiexec)
+To run ior or mdtest, use the flags --run-ior or --run-mdtest respectively, specify the number of processes with -ppn (used with mpiexec)
 
+Note: running ior through Docker, since you're working on one node
+
+For running ior/mdtest with singularity, since we want to try and run it on 2 nodes, use the Dockerfile_singularity. This is because it runs just the ior/mdtest, so you can do mpirun [singularity image] in the akrr script. 
+
+## Setup of this Directory
+- Dockerfile - to use for normal ior docker with mpirun inside              
+- execs - location of the akrr help scripts and the ior/mdtest binaries
+	- bin - akrr help scripts
+	- ioe-3.2.0 - location of ior/mdtest binaries               
+- lib - contains all the libraries needed by ior and mdtest (see above)
+- Dockerfile_singularity - use this docker to make the docker to use for running it through singularity
+- hdf5_pnetcdf_libs - location of hdf5 and pnetcdf from when we made the binary on ubhpc  
+- original_notes.md - notes I had on getting ior and mdtest working
+- scripts - the run scripts used in the different docker files
 
 
 

@@ -4,3 +4,4 @@ libs_full
 old_files
 lib
 lib_real
+hdf5*
