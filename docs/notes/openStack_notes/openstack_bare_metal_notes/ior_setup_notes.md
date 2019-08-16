@@ -5,9 +5,13 @@ So again, you just upload the binary folder to the volume, also you want to symb
 You're also going to need to upload a script that clears the caches as well as the necessary libraries that ior needs (like gpfs/hdf5/etc, it'll tell you)
 
 Now, since we can't load up modules, we do have to have some variable usage to get around that
+
 PATH - need to update so it can find mpiexec
+
 SCRIPT_DIR - location of clear cache script (called with sudo)
+
 EXE - path to the executable being used (wherever you installed it)
+
 LD_LIBRARY_PATH - path to all the libraries that ior needs to use
 
 So in the end my config looked like:
@@ -54,5 +58,5 @@ RUNMPI_OFFSET="mpiexec -n $AKRR_CORES -f all_nodes_offset"
 ```
 
 Then validation seems okay
-I did edit the ior default config to call sudo bash $SCRIPT_DIR/drop_caches.sh
+
 
