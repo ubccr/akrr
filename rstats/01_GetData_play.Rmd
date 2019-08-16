@@ -35,8 +35,11 @@ res <- dbSendQuery(
         (resource LIKE \"edge%\" AND collected < '2018-01-08 00:00:00'));")
 
 # updated for me, this appears to get some tables that have all the info
-res <- dbSendQuery(con, "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo where status=1 AND ((resource LIKE \"bare_metal_real%\") OR (resource LIKE \"singularity_real%\"));")
+res <- dbSendQuery(con, "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo where status=1 AND ((resource LIKE \"vortex_dock_sing%\") OR (resource LIKE \"vortex_bare_metal%\") OR (resource LIKE \"preprod_debug_singularity%\") OR (resource LIKE \"bare_metal_real%\") OR (resource LIKE \"singularity_real%\") OR (resource LIKE \"singularity_32core%\") OR (resource LIKE \"bare_metal_32core%\") OR (resource LIKE \"bare_metal_gen_compute_8core%\") OR (resource LIKE \"singularity_gen_compute_8core%\") OR (resource LIKE \"bare_metal_gen_compute_8core%\") OR (resource LIKE \"bare_metal_real%\") OR (resource LIKE \"open-lakeeffect-stack%\") OR (resource LIKE \"singularity_32core_proc_pinning%\") OR (resource LIKE \"openstack-no-docker%\"));")
 
+res <- dbSendQuery(con, "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo where status=1 AND ((resource LIKE \"bare_metal_gen_compute_8core%\") OR (resource LIKE \"bare_metal_real%\") OR (resource LIKE \"open-lakeeffect-stack%\"));")
+
+res <- dbSendQuery(con, "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo where status=1 AND ((resource LIKE \"shell%\") OR (resource LIKE \"open-lakeeffect-stack%\"));")
 
 all_res1<- dbFetch(res)
 dbClearResult(res)
@@ -297,6 +300,7 @@ full_gamess <- setup_data("GAMESS")
 full_hpcg <- setup_data("HPCG") 
 full_hpcc <- setup_data("HPCC")
 full_ior <- setup_data("IOR")
+full_mdtest <- setup_data("MDTest")
 # okay so hpcg seems to be a bit off/weird, looking into it
 # so looks like with some of the things the avx needed for hpcg isn't available, so it just gives an error
 # for bare metal, looks like global nx, ny, and nz are all 32
@@ -318,7 +322,7 @@ grid.arrange(
 
 ```
 
-```{r, fig.width=7}
+```{r, fig.width=8, fig.height=8}
 ggplot(full_hpcc, 
        aes(y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
         geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
@@ -338,20 +342,522 @@ ggplot(full_hpcc,
        aes(y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
         geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
 
-ggplot(full_hpcc %>% filter(walltime>5), 
-       aes(y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
-        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free")
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot() + facet_wrap(~ cpu_type,scales = "free") + ylab("LINPACK FP Performance (MFLOP/s)")
 
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=1) + ylab("LINPACK FP Performance (MFLOP/s)") + 
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=1) + ylab("Matrix Mult FP (MFLOP/s)") + 
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           #filter(resource != "bare_metal_real") %>%
+           #filter(resource != "singularity_real"),
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP (MFLOPS/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Matrix Mult FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130") %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + facet_wrap(~ cpu_type,scales = "free")
+
+ggplot(full_hpcc %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+        #scale_fill_discrete(name = "Run Method", labels = c("general compute", "preprod", "openstack" )) + scale_x_discrete(name ="Run Method", labels=c("general compute","preprod","openstack")) 
+
+
+
+ggplot(full_hpcc %>%
+           filter(walltime>5) %>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core"),
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+
+ggplot(full_hpcc %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core"),
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+
+ggplot(full_hpcg %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core"),
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y = `Floating-Point Performance, Total(GFLOP/s)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+
+ggplot(full_namd %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core"),
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y =`Molecular Dynamics Simulation Performance(Second per Day)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+
+
+ggplot(full_nwchem %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core"),
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y =`Wall Clock Time(Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP (MFLOP/s)")
+
+
+ggplot(full_nwchem %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y =`Wall Clock Time(Second)`, fill=resource)) +
+        geom_boxplot(width=0.5)
+
+ggplot(full_hpcc %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "bare_metal_32core_proc_pinning") %>%
+           filter(resource != "singularity_32core_proc_pinning") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y =`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5)
+
+
+ ```
+
+```{r, fig.width=10, fig.height=10}
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+           #filter(resource != "vortex_bare_metal") %>%
+           #filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Matrix Mult FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 82000,label="Mean: +21 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+           #filter(resource != "vortex_bare_metal") %>%
+           #filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size= 5,x= 2.05, y = 21500,label="Mean: +4.3 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real"),
+           #filter(resource != "vortex_bare_metal") %>%
+           #filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size= 5,x= 2.05, y = 385000,label="Mean: +12 % ")
+
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           #filter(resource != "bare_metal_real") %>%
+           #filter(resource != "singularity_real"),
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size= 5,x= 2.05, y = 362000,label="Mean: +0.4 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           #filter(resource != "bare_metal_real") %>%
+           #filter(resource != "singularity_real"),
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size= 5,x= 2.05, y = 21000,label="Mean: -1.7 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           #filter(resource != "bare_metal_real") %>%
+           #filter(resource != "singularity_real"),
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Matrix Mult FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 68000,label="Mean: +1.6 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           #filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Matrix Mult FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 8250,label="Mean: -0.1 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           #filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 7500,label="Mean: +0.09 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           #filter(cpu_type=="CPU-GOLD-6130")%>%
+           filter(resource != "bare_metal_32core") %>%
+           filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 60700,label="Mean: +0.02 % ")
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("LINPACK FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 1030000,label="Mean: -2.5 % ")
+
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Fourier Transform FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 60000,label="Mean: +7.3 % ")
+
+ggplot(full_hpcc %>% 
+           filter(walltime>5) %>%
+           filter(cpu_type=="CPU-GOLD-6130")%>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "open-lakeeffect-stack"),
+       aes(x=resource, y = `Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + ylab("Matrix Mult FP(MFLOP/s)") +
+        scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") +
+        annotate("text", size=5,x= 2.05, y = 50600,label="Mean: -1.6 % ")
+
+
+
+ggplot(full_hpcc %>%
+           filter(walltime>5) %>%
+           #filter(resource != "bare_metal_32core") %>%
+           #filter(resource != "singularity_32core") %>%
+           filter(resource != "preprod_debug_singularity") %>%
+           filter(resource != "bare_metal_real") %>%
+           filter(resource != "singularity_real") %>%
+           filter(resource != "vortex_bare_metal") %>%
+           filter(resource != "vortex_dock_sing") %>%
+           filter(resource != "singularity_gen_compute_8core") %>%
+           filter(resource != "open-lakeeffect-stack") %>%
+           filter(resource != "bare_metal_gen_compute_8core"),
+       aes(x=resource, y = `High Performance LINPACK Floating-Point Performance(MFLOP per Second)`, fill=resource)) +
+        geom_boxplot(width=0.5) + 
+        #scale_fill_discrete(name = "Run Method", labels = c("Bare Metal", "Singularity")) + scale_x_discrete(name ="Run Method", labels=c("Bare Metal","Singularity")) + 
+        facet_wrap(~ cpu_type,scales = "free") 
+
+
+ Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)
+
+High Performance LINPACK Floating-Point Performance(MFLOP per Second)
+
+Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)
+
+hpcc_proc_pinning <- full_hpcc %>% filter(resource == "singularity_32core_proc_pinning")
+hpcc_bare_metal <- full_hpcc %>% filter(resource == "bare_metal_32core")
+
+t.test(hpcc_proc_pinning$`Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, hpcc_bare_metal$`Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`)
+
+n = mean(hpcc_proc_pinning$`High Performance LINPACK Floating-Point Performance(MFLOP per Second)`)
+org = mean(hpcc_bare_metal$`High Performance LINPACK Floating-Point Performance(MFLOP per Second)`)
+
+(n-org)/org *100
 ```
+
+matrix mult, fast fourier, lin
      
 ```{r}
+n =51260.23
+org =47779.63
 
-hpcc_singularity <- full_hpcc %>% filter(resource=="singularity_real")
-hpcc_bare_metal <- full_hpcc %>% filter(resource=="bare_metal_real")
-t.test(hpcc_singularity$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`, hpcc_bare_metal$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`)
+
+
+
+(n-org)/org *100
+
+```
+
+```{r}
+
+hpcc_singularity <- full_hpcc %>% filter(resource=="singularity_32core") 
+hpcc_bare_metal <- full_hpcc %>% filter(resource=="bare_metal_32core") 
+t.test(hpcc_singularity$`Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`, hpcc_bare_metal$`Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance(MFLOP per Second)`)
+
+hpcc_openstack <- full_hpcc %>% filter(resource=="open-lakeeffect-stack")
+hpcc_general_compute <- full_hpcc %>% filter(resource=="bare_metal_gen_compute_8core")
+hpcc_preprod <- full_hpcc %>% filter(resource=="bare_metal_real")
+
+{
+mean(hpcc_openstack$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`)
+mean(hpcc_general_compute$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`)
+mean(hpcc_preprod$`Fast Fourier Transform (FFTW) Floating-Point Performance(MFLOP per Second)`)
+}
 
 
 ```
+
+
+```{r}
+76722.57-63600.36)
+n =48060.68 
+org =48865.76 
+
+(n-org)/org *100
+
+
+((n - org)/((org + n)/2)) * 100
+ ```
 
 ```{r}
 ggplot(full_hpcc, aes(x = resource, y = walltime, fill=cpu_type)) +
