@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "Reach Entry Point"
-echo $$ > /var/run/enrypoint.pid
+if [ "$USER" = "root" ]; then
+    echo $$ > /var/run/enrypoint.pid
+fi
 
 set -e
 
@@ -65,9 +67,9 @@ start_process_w_confirm(){
 }
 
 
-for var in "$@"
+while (( "$#" ))
 do
-    case "$var" in
+    case "$1" in
     mysqld)
         echo "Launching mysqld"
         trap "/sbin/shutdown.sh mysqld; exit" SIGHUP SIGINT SIGTERM
@@ -101,11 +103,16 @@ do
         ;;
     akrr_v1)
         echo "Launching akrr v1.0"
-        /usr/bin/python /root/akrr/src/akrrscheduler.py start
+        AKRRUSER_HOME=${AKRRUSER_HOME:-/root}
+        AKRRUSER=${AKRRUSER:-root}
+        /usr/bin/python2 $AKRRUSER_HOME/akrr/src/akrrscheduler.py start
         ;;
     bash)
-        echo "Launching bash"
+        echo "Will launching bash at the end"
         run_bash=1
+        ;;
+    -c)
+        # from docker cmd skip to next
         ;;
     -loop)
         loop=1
@@ -117,10 +124,11 @@ do
         set -e
         ;;
     *)
-        echo "Executing ${var}"
-        ${var}
+        echo "Executing $1"
+        eval $1
         ;;
     esac
+    shift
 done
 
 if [ $run_bash -eq 1 ]; then
