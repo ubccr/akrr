@@ -72,7 +72,209 @@ RUN_APPKERNEL="docker run --rm pshoff/akrr_benchmarks:gamess"
 """
 ```
 
+### IOR:
+It's a bit more complicated for IOR since we want to clear caches in between runs, so you set things up slightly differently:
+```bash
 
+# which IO API/formats to check                                                                       
+testPOSIX = True                                                                                      
+testMPIIO = False                                                                                     
+testHDF5 = True                                                                                       
+testNetCDF = True                                                                                     
+                                                                                                      
+# setting false up here so we can just run on one node                                                
+appkernel_requests_two_nodes_for_one = False                                                          
+                                                                                                      
+# will do write test first and after that read, that minimize the caching impact from storage nodes   
+# require large temporary storage easily 100s GiB                                                     
+doAllWritesFirst = True                                                                               
+                                                                                                      
+appkernel_run_env_template = """                                                                      
+set -x                                                                                                
+sudo systemctl start docker                                                                           
+                                                                                                      
+export DOCKER_IMAGE=pshoff/akrr_benchmarks:ior_mdtest                                                 
+docker pull $DOCKER_IMAGE                                                                             
+EXE="docker run -v $AKRR_TMP_WORKDIR:$AKRR_TMP_WORKDIR --rm $DOCKER_IMAGE --run-ior -ppn $AKRR_CORES" 
+                                                                                                      
+free -h                                                                                               
+# to get appsig                                                                                       
+docker run --rm $DOCKER_IMAGE --ior-appsig >> $AKRR_APP_STDOUT_FILE 2>&1                              
+                                                                                                      
+echo "sync; echo 3 > /proc/sys/vm/drop_caches" > drop_caches.sh                                       
+export SCRIPT_DIR=`pwd`                                                                               
+
+# set how to run mpirun on all nodes
+for node in $AKRR_NODELIST; do echo $node>>all_nodes; done
+# putting nothing here bc further down we don't want to use it really
+RUNMPI=""
+
+# set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+sed -n "$(($AKRR_CORES_PER_NODE+1)),$(($AKRR_CORES))p" all_nodes > all_nodes_offset
+sed -n "1,$(($AKRR_CORES_PER_NODE))p" all_nodes >> all_nodes_offset
+# same for this run
+RUNMPI_OFFSET=""
+"""
+
+
+# new variable so you can clear caches
+runIORTestsWriteReadCyclic = """
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    #run the test
+    command_to_run="$RUNMPI $EXE $COMMON_PARAM $TEST_PARAM -o $AKRR_TMP_WORKDIR/$fileName"
+    
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+    done
+"""
+
+runIORTestsAllWritesFirst = """
+#do write first
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    #run the test
+    command_to_run="$RUNMPI $EXE $COMMON_PARAM $TEST_PARAM -w -k -o $AKRR_TMP_WORKDIR/$fileName"
+
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+    
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+#do read last
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    # run test
+    command_to_run="$RUNMPI_OFFSET $EXE $COMMON_PARAM $TEST_PARAM -r -o $AKRR_TMP_WORKDIR/$fileName"
+
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+    
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+"""
+
+
+runIORTestsWriteReadCyclicOneNode = """
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    #run the test
+    command_to_run="$RUNMPI $EXE $COMMON_PARAM $TEST_PARAM -w -k -o $AKRR_TMP_WORKDIR/$fileName"
+
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+
+    command_to_run="$RUNMPI_OFFSET $EXE $COMMON_PARAM $TEST_PARAM -r -o $AKRR_TMP_WORKDIR/$fileName"
+
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+"""
+
+runIORTestsAllWritesFirstOneNode = """
+#do write first
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    #run the tests
+    command_to_run="$RUNMPI $EXE $COMMON_PARAM $TEST_PARAM -w -k -o $AKRR_TMP_WORKDIR/$fileName"
+
+    #clearing cache
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+#do read last
+for TEST_PARAM in "${{TESTS_LIST[@]}}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+
+    #run the tests
+    command_to_run="$RUNMPI_OFFSET $EXE $COMMON_PARAM $TEST_PARAM -r -o $AKRR_TMP_WORKDIR/$fileName"
+    
+    # clearing cache
+    echo "Before cache clear:"
+    free -h
+    sudo bash $SCRIPT_DIR/drop_caches.sh
+    echo "After cache clear:"
+    free -h
+
+
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+"""
+```
+Notice how it's calling drop_caches.sh (see the ior docker directory scripts for what it might look like)
+ 
+### MDTest:
+Also slightly different since it's using the ior_mdtest docker
+```bash
+appkernel_run_env_template = """
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+
+# setting up docker
+sudo systemctl start docker
+export DOCKER_IMAGE=pshoff/akrr_benchmarks:ior_mdtest
+docker pull $DOCKER_IMAGE
+# set executable location
+EXE="docker run --rm $DOCKER_IMAGE -ppn $AKRR_CORES --run-mdtest"
+
+# to get app signature
+docker run --rm $DOCKER_IMAGE--mdtest-appsig >> $AKRR_APP_STDOUT_FILE 2>&1
+
+# set how to run app kernel - not using this bc using mpirun inside docker
+RUNMPI=""
+"""
+
+
+```
 
 Then you can do the validation.
 ```bash
