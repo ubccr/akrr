@@ -4,6 +4,8 @@ This directory has all the files needed to create a Docker image for the Gamess 
 The binary is not on the repository, that must be set up once you clone the repo.
 If you want to create the Docker yourself, you need to get the binary.
 See setup of this Docker directory at bottom of Readme
+Version of Gamess used when I was working with this Docker: gamess\_11Nov2017R3
+
 
 ## Guide to getting the Gamess binary set up from UB-HPC resource:
 

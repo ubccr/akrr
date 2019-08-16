@@ -2,6 +2,9 @@
 
 This directory has all the files needed to create a Docker image for the HPCC Appkernel. The binary is not in the repository, that must be set up once you clone the repo. If you want to create the Dockerfile, you need to get the binary.
 
+Hpcc version used when I was making the Docker: hpcc-1.5.0
+
+
 ## Guide to getting the HPCC binary set up from UB-HPC resource
 
 So, you can basically follow the steps for HPCC Deployment for normal AKRR, since that gets you the binary. 
@@ -79,3 +82,16 @@ Now you just need to download the entire directory that has hpcc in it.
 *Note: This might not be optimized in terms of space, I'm unsure exactly which files are or are not needed to run HPCC*
 
 Then all you have to do is put the hpcc-1.5.0 into the execs directory and you should be able to build and run the Docker. If you are using a different version of hpcc you might need to change the HPCC\_EXE\_FULL\_PATH variable in the Dockerfile.
+
+## Setup of this directoy
+- Dockerfile - the thing that makes the Docker image
+- execs - location of akrr scripts and hpcc binary
+	- bin - location of akrr help scripts
+	- misc - location of file to make the hpcc binary with (in my case)  
+	- hpcc-1.5.0 - directory with the hpcc binary to run (self provided if getting this from git)
+- inputs/hpcc - location of various possible inputs for hpcc
+- scripts - location of run script called when docker image is run
+- original\_notes.md - original notes as I was setting up the docker image - might be helpful for some more info
+
+
+

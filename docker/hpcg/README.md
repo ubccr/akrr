@@ -5,3 +5,9 @@ This one is relatively straightforward, since the binaries being used here come 
 
 If you do want to have your own binaries, you would need to modify the Dockerfile and script a decent bit.
 
+## Setup of this directory
+- Dockerfile - used to make the Docker image
+- execs/bin - location of akrr help scripts
+- inputs/hpcg - location of hpcg input to use
+- scripts - location of script that sets up and runs the hpcg benchmark
+

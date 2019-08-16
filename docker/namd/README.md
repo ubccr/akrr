@@ -39,4 +39,11 @@ Then from there you just have to modify the Dockerfile slightly to have the corr
 
 Once you have that binary all set up you can build the Docker image.
 
-
+## Setup of this directory
+- Dockerfile - used to make the Docker image
+- execs - location of akrr help scripts and namd binary
+	- bin - with akrr scripts
+	- NAMD_2.12b1_Linux-x86_64-multicore - directory with the namd2 binary
+- inputs/namd/apoa1_nve - location of namd inputs
+- scripts - location of run script to set up and run namd
+- original_notes.md - my original notes on getting namd to work in the docker

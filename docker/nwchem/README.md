@@ -1,20 +1,42 @@
-# Directory with Dockers for nwchem
+## Directory for the Nwchem docker
 
-The nwchem Docker has 2 "versions"
+So this "higher up" directory has the nwchem version that is present on ub-hpc.
 
-This one is based off of an existing nwchem docker from Dockerhub: nwchemorg/nwchem-qc:latest
+If you want to build this Docker by yourself, you have to provide the binary yourself.
 
-The Dockerfile is just adding a few things to work with akrr, namely adding a script that runs the appropriate amount of processes with mpirun.
+I got my binary from UB-HPC.
 
-So you should be able to just build the Docker image right away.
-
-For running the docker, you do need to specify some extra things to ensure that everything runs appropriately
-
+It's as easy as this (on vortex):
 ```bash
-docker run --shm-size 8g --cap-add=SYS_PTRACE <nwchem docker>
+module avail nwchem
+```
+```text
+
+---------------------------------- /util/academic/modulefiles/Core -----------------------------------
+   nwchem/6.0    nwchem/6.8 (D)
 
 ```
-The other docker directory has the nwchem version from vortex
+```bash
+module load nwchem/6.8
 
+echo `which nwchem`
+
+/util/academic/nwchem/nwchem-6.8/bin/LINUX64/nwchem
+```
+So you just have to get the directory the binary is in. In my case I got the nwchem-6.8 directory to have all the libs and such. 
+
+Quick note: I removed most of the src directories except for basis, since that's all that was being used in the nwchemorg docker.
+
+Then just use sftp to get the entire nwchem-6.8 directory into execs.
+
+## Setup of this Directory
+- Dockerfile - the file that builds the Docker image for nwchem
+- execs - location of nwchem binary and akrr help scripts
+	- bin - akrr help scripts
+	- nwchem-6.8 - directory with everything needed to run nwchem
+- inputs/nwchem - location of input for nwchem
+- scripts - location of setup and run script for nwchem
+- nwchem_other_docker - files used by me when working with the docker from nwchemorg that was more or less scrapped
+- src_real - all the extra directories I took out of the src directory in nwchem (not there on github)
 
 
