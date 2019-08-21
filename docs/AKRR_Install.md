@@ -18,17 +18,17 @@ the dependencies are from EPEL repository. If it was not done yet add it to repo
 yum -y install epel-release
 ```
 
+If AKRR will use MariaDB/MySQL on the local machine install it:
+```bash 
+yum -y install mariadb-server mariadb
+```
+
 The following dependencies are needed to be installed for in-source installation on CentOS:
  
 ```bash
 # Install dependencies
 yum -y install python36 python36-libs python36-bottle python36-requests \
     python36-mysql python36-typing openssl openssh-clients crontabs
-```
-
-If AKRR will use MariaDB/MySQL on the local machine install it:
-```bash 
-yum -y install mariadb-server  
 ```
 
 ## Installation on Same Host as XDMoD
