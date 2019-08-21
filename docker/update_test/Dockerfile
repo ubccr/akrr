@@ -7,8 +7,8 @@ COPY ./cmd_setup ./cmd_start ./cmd_stop /usr/local/sbin/
 # add akrruser user
 ENV DOCKER_USER=akrruser \
     DOCKER_PASSWORD=akrruser \
-    DOCKER_UID=9999 \
-    DOCKER_GID=9999 \
+    DOCKER_UID=1000 \
+    DOCKER_GID=1000 \
     DOCKER_SHELL=/bin/bash
 ENV DOCKER_GROUP=$DOCKER_USER \
     DOCKER_HOME=/home/$DOCKER_USER \

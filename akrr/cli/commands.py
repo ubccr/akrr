@@ -595,12 +595,19 @@ def cli_archive_update_layout(parent_parser):
 def add_command_update(parent_parser):
     """AKRR update routings"""
     parser = parent_parser.add_parser('update',  description=add_command_archive.__doc__)
-    subparsers = parser.add_subparsers(title="commands for update")
-    #parser.add_argument(
-    #    '-udl', '--update-dir-layout', action='store_true', help="update dir layout")
+
+    parser.add_argument(
+        '--old-akr-cfg', action='store_true', help="location of old akr-cfg")
+
+    subparsers = parser.add_subparsers(title="individual commands for update")
 
     cli_update_db_compare(subparsers)
     cli_update_rename_appkernels(subparsers)
+
+    def handler(args):
+        print("Run UPDATE")
+
+    parser.set_defaults(func=handler)
 
 
 def cli_update_db_compare(parent_parser):
@@ -620,6 +627,8 @@ def cli_update_db_compare(parent_parser):
     parser.add_argument('-d', '--dry-run', action='store_true', help="dry run")
 
     def handler(args):
+        print "Run db-compare"
+        return
         from akrr.update import mod_akrr_db_compare
         mod_akrr_db_compare(args.src, args.dest)
 
