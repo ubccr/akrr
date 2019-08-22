@@ -9,19 +9,25 @@ debug_redirect_task_processing_to_log_file = None
 dry_run = False
 
 
-def get_akrr_dirs():
-    """return akrr directories"""
+def get_akrr_dirs(akrr_home: str = None):
+    """
+    return akrr directories
+
+    AKRR home is determine in following order
+    1) If akrr_home is set it will use it.
+       This is mostly used during setup.
+    2) AKRR_HOME if AKRR_HOME environment variable is defined.
+       This is the case if akrr configs and appkernels running results
+       are stored not in standard place.
+    3) ~/akrr if initiated from RPM, that is akrr is in /usr/bin.
+    4) <path to AKRR sources> for in source installation
+    """
     import os
     import inspect
     from .util import which
     from akrr.util import log
 
-    # AKRR configuration can be in three places
-    # 1) AKRR_CONF if AKRR_CONF environment variable is defined
-    # 2) ~/akrr/etc/akrr.conf if initiated from RPM or global python install
-    # 3) <path to AKRR sources>/etc/akrr.conf for in source installation
-
-    in_src_install = False
+    in_src_install: bool = False
 
     akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
     if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir), 'bin', 'akrr')):
@@ -33,8 +39,10 @@ def get_akrr_dirs():
         akrr_bin_dir = os.path.dirname(akrr_cli_fullpath)
 
     # determine akrr_home
-    akrr_cfg = os.getenv("AKRR_CONF")
-    if akrr_cfg is None:
+    if akrr_home is None:
+        akrr_home = os.getenv("AKRR_HOME")
+
+    if akrr_home is None:
         if in_src_install:
             akrr_home = os.path.dirname(akrr_mod_dir)
             akrr_cfg = os.path.join(akrr_home, 'etc', 'akrr.conf')
@@ -45,8 +53,9 @@ def get_akrr_dirs():
             log.debug("AKRR configuration is in " + akrr_cfg)
 
     else:
-        akrr_home = os.path.dirname(os.path.dirname(akrr_cfg))
-        log.debug("AKRR_CONF is set. AKRR configuration is in " + akrr_cfg)
+        akrr_home = os.path.expanduser(akrr_home)
+        akrr_cfg = os.path.join(akrr_home, 'etc', 'akrr.conf')
+        log.debug("AKRR_HOME is set. AKRR configuration is in " + akrr_cfg)
 
     # location of akrr cfg directory
     cfg_dir = os.path.dirname(akrr_cfg)

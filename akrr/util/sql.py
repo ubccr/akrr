@@ -1,4 +1,25 @@
-"""Various utilities for SQL database handling"""
+"""
+Various utilities for SQL database handling
+"""
+
+from typing import Tuple, Dict, Union, Optional
+
+
+class Database:
+    """
+    @todo should we use it?
+    """
+    def __init__(self,
+                 user: str = None,
+                 password: str = None,
+                 host: str = None,
+                 port: int = None,
+                 database: str = None):
+        self.user: Optional[str] = user
+        self.password: Optional[str] = password
+        self.host: Optional[str] = host
+        self.port: Optional[int] = port
+        self.database: Optional[str] = database
 
 
 def get_user_password_host_port(user_password_host_port, default_port=3306, return_dict=False):
@@ -42,8 +63,10 @@ def get_user_password_host_port(user_password_host_port, default_port=3306, retu
     return user, password, host, port
 
 
-def get_user_password_host_port_db(user_password_host_port_db, default_port=3306,
-                                   default_database=None, return_dict=False):
+def get_user_password_host_port_db(user_password_host_port_db: str,
+                                   default_port: int =3306,
+                                   default_database: str = None,
+                                   return_dict: bool = False) -> Union[Dict, Tuple]:
     """
     return user,password,host,port,db tuple from [user[:password]@]host[:port][:/database] format.
     user and host can not contain @ or : symbols, password can.
@@ -110,7 +133,8 @@ def set_user_password_host_port_db(user, password, host, port, db):
     return user_password_host_port_db
 
 
-def get_con_to_db(user, password, host='localhost', port=3306, db_name=None, dict_cursor=True, raise_exception=True):
+def get_con_to_db(user: str, password: str, host: str = 'localhost', port: int = 3306, db_name: str = None,
+                  dict_cursor: bool = True, raise_exception: bool = True):
     import MySQLdb.cursors
 
     kwarg = {

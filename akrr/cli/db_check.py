@@ -115,6 +115,9 @@ def db_check(mod_akrr=True, mod_appkernel=True, modw=True):
         xdmod_ok = check_r_db(akrr.db.get_xd_db,
                               "Checking 'modw' Database / User privileges...",
                               "'modw' Database check complete - Status: %s")
+        if not xdmod_ok:
+            log.error("Can not access XDMoD's modw database. It is needed for AKRR integration with XDMoD")
+            log.error("If you want stand alone installation run setup as 'akrr setup --stand-alone'")
         overall_success = overall_success and xdmod_ok
 
     # DETERMINE: whether or not everything passed.

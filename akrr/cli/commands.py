@@ -181,11 +181,13 @@ def cli_daemon_startdeb(parent_parser):
 
 def add_command_setup(parent_parser):
     """Initial AKRR Setup"""
+    from akrr.cli.setup import AKRRSetup
+
     parser = parent_parser.add_parser('setup', description=add_command_setup.__doc__)
     parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possible")
 
     parser.add_argument(
-        "--akrr-db",
+        "--akrr-db", default=AKRRSetup.default_akrr_db,
         help="mod_akrr2 database location in [user[:password]@]host[:port] format, "
              "missing values will be asked. Default: localhost:3306")
     parser.add_argument(
@@ -195,6 +197,10 @@ def add_command_setup(parent_parser):
         "--xd-db",
         help="XDMoD modw database location. It is XDMoD's databases host. Default: same as akrr")
     parser.add_argument(
+        "--akrr-home",
+        help="AKRR home directory for configuration and app kernels run data."
+             "Default: ask during setup.")
+    parser.add_argument(
         '--stand-alone', action='store_true',
         help="install stand alone AKRR, fake modw db will be installed, normally modw comes with XDMoD.")
 
@@ -202,14 +208,14 @@ def add_command_setup(parent_parser):
         """call routine for initial AKRR setup"""
         import akrr
         akrr.dry_run = args.dry_run
-        from .setup import AKRRSetup
-        return AKRRSetup(
+        from akrr.cli.setup import AKRRSetup
+        return AKRRSetup().run(
             akrr_db=args.akrr_db,
             ak_db=args.ak_db,
             xd_db=args.xd_db,
+            akrr_home_dir=args.akrr_home,
             stand_alone=args.stand_alone
-        ).run()
-
+        )
     parser.set_defaults(func=setup_handler)
 
 
@@ -244,7 +250,7 @@ def add_command_setup_update(parent_parser):
         import akrr
         akrr.dry_run = args.dry_run
         from .setup import AKRRSetup
-        return AKRRSetup(
+        return AKRRSetup().run(
             akrr_db=args.akrr_db,
             ak_db=args.ak_db,
             xd_db=args.xd_db,
@@ -252,7 +258,7 @@ def add_command_setup_update(parent_parser):
             stand_alone=args.stand_alone,
             generate_db_only=args.generate_db_only,
             old_akrr_conf_dir=args.old_akrr_conf_dir
-        ).run()
+        )
 
     parser.set_defaults(func=update_handler)
 

@@ -108,7 +108,7 @@ def _send_su_user_password(bash, user, password):
     if testInvalidAdministrativeDatabaseUser:
         log.info("Entering invalid administrative database user")
         bash.expectSendline(
-            r'.*INPUT.* Please provide an administrative database user.*\nUsername:',
+            r'.*INPUT.* Please provide an administrative database user.*\[root]:',
             "invalid", timeout=fast_timeout)
         bash.expectSendline(
             r'.*INPUT.* Please provide the password.*\n',
@@ -118,7 +118,7 @@ def _send_su_user_password(bash, user, password):
         log.info("\nEntering valid administrative database user")
 
     bash.expectSendline(
-        r'.*INPUT.* Please provide an administrative database user.*\nUsername:',
+        r'.*INPUT.* Please provide an administrative database user.*\n[root]:',
         user, timeout=fast_timeout)
     bash.expectSendline(
         r'.*INPUT.* Please provide the password.*\n',
@@ -227,15 +227,15 @@ def setup():
     # set database user for AKRR
     _send_user_password(
         bash,
-        r'Please specify a database user to access mod_akrr database.*\n\[\S+\]',
+        r'Please specify a database user to access mod_akrr database.*\n\[\S+\]:',
         akrr_db_user_name, akrr_db_user_password
     )
     _send_su_user_password(bash, akrr_db_su_user_name, akrr_db_su_user_password)
 
-    # bAK database:
+    # AK database:
     _send_user_password(
         bash,
-        r'Please specify a database user to access mod_appkernel database.*\n\[\S+\]',
+        r'Please specify a database user to access mod_appkernel database.*\n\[\S+\]:',
         ak_db_user_name, ak_db_user_password
     )
     _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)
@@ -243,7 +243,7 @@ def setup():
     # XD database:
     _send_user_password(
         bash,
-        r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]',
+        r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]:',
         ak_db_user_name, ak_db_user_password
     )
     _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)

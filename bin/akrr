@@ -40,7 +40,7 @@ if __name__ == '__main__':
                 RedHat or CentOS from EPEL:
                     #instale EPEL repo information
                     sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-                    #install python34-typing
+                    #install python36-typing
                     sudo yum install python36-typing
                     """)
         exit(1)
