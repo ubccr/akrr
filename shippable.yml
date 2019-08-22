@@ -4,6 +4,6 @@ build:
         image_name: nsimakov/akrr_ready_centos_slurm_single_host_wlm
         image_tag: 1
         pull: true
-        options: "--user root -e HOME=/root -t"
+        options: "--user akrruser -e HOME=/home/akrruser -t"
     ci:
-        - /root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh rpm
+        - /home/akrruser/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh rpm

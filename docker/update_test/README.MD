@@ -2,7 +2,8 @@ Docker Container To Test AKRR Upgrade
 
 Building
 ```bash
-docker build -t pseudo_repo/centos-openxdmod-appkernels-update .
+# in akrr_src/docker directory (one level up from here)
+docker build -t pseudo_repo/centos-openxdmod-appkernels-update -f ./update_test/Dockerfile .
 ```
 
 Starting container

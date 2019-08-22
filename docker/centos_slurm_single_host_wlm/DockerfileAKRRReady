@@ -8,23 +8,21 @@ LABEL description="centos for akrr tests"
 # Needed to build RPM:
 #    rpm-build
 # Needed to run:
-#    python34 python34-libs python34-bottle python34-requests python34-mysql python34-typing
+#    python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing
+#    python36-prettytable
 #    openssl openssh-clients crontabs
 # Needed for tests:
-#     python34-PyYAML python34-pip gromacs
-#     pip install pylint coverage pytest pytest-cov pytest-dependency
+#     with yum: python34-PyYAML python34-pip gromacs
+#     with pip: pylint coverage pytest pytest-cov pytest-dependency
 #
-RUN \
-    yum -y update && \
+RUN yum -y update && \
     yum -y install --setopt=tsflags=nodocs \
         git sudo \
-        python34 python34-libs python34-bottle python34-requests python34-mysql python34-typing openssl openssh-clients crontabs\
-        python34-PyYAML python34-pip gromacs \
+        python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing \
+        python36-prettytable python36-PyYAML python36-pip \
+        openssl  openssh-clients crontabs gromacs \
         rpm-build && \
-    yum clean all
-
-
-RUN \
+    yum clean all && \
     pip3 install --upgrade pip && \
     pip3 install pylint coverage pytest pytest-cov pytest-dependency
 

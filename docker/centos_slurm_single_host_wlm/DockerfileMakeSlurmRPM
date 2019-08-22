@@ -17,14 +17,14 @@ RUN \
         perl perl-ExtUtils-MakeMaker
 
 # source of slurm
-ENV SLURM_TAR_BZ2_SOURCE=https://download.schedmd.com/slurm/slurm-18.08.4.tar.bz2
+ENV SLURM_TAR_BZ2_SOURCE=https://download.schedmd.com/slurm/slurm-19.05.2.tar.bz2
 
 # volume for final rpms dump
-VOLUME /RPMS
+VOLUME ./centos_slurm_single_host_wlm/RPMS
 
 # setup entry point
 WORKDIR /root
-COPY cmd_start cmd_stop make_slurm_rpms /sbin/
-ENTRYPOINT ["/sbin/cmd_start"]
-CMD ["make_slurm_rpms"]
 
+COPY ./centos_slurm_single_host_wlm/make_slurm_rpms ./utils/cmd_setup ./utils/cmd_start ./utils/cmd_stop /usr/local/sbin/
+ENTRYPOINT ["/usr/local/sbin/cmd_start"]
+CMD ["make_slurm_rpms"]
