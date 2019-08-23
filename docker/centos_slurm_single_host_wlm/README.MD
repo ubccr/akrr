@@ -71,6 +71,6 @@ docker push nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest
 docker build -t pseudo_repo/akrr_centos_slurm_single_host_wlm:latest .
 
 #run
-docker run -it --rm pseudo_repo/akrr_centos_slurm_single_host_wlm:latest bash
+docker run -it --rm pseudo_repo/akrr_centos_slurm_single_host_wlm:latest
 
 ```

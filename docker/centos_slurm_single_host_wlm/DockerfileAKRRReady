@@ -2,6 +2,12 @@ FROM nsimakov/centos_slurm_single_host_wlm:1
 
 LABEL description="centos for akrr tests"
 
+# add users
+RUN useradd -m -s /bin/bash batchuser && \
+    echo 'shippable:shippable' |chpasswd && \
+    usermod -a -G wheel akrruser && \
+    echo "akrruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 # install dependencies
 # Needed for shippable:
 #    git sudo
