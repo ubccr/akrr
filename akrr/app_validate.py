@@ -120,15 +120,14 @@ def app_validate(resource, appkernel, nnodes):
     str_io = io.StringIO()
     try:
         sys.stdout = sys.stderr = str_io
-        # connect to resource
-        #### ADDED BY PHILLIP HOFFMANN TO SPIN UP INSTANCE BEFORE SSH
+        # Connect to resource
+        # Spin-up instance before ssh it
         if resource['batch_scheduler'].lower() == "openstack":
             # Start instance if it is cloud
             openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
             resource['openstack_server'] = openstack_server
             openstack_server.create()
             resource['remote_access_node'] = openstack_server.ip
-        #### ADDED BY PHILLIP HOFFMANN
 
         rsh = akrr.util.ssh.ssh_resource(resource)
 
@@ -189,12 +188,11 @@ def app_validate(resource, appkernel, nnodes):
     rsh.close(force=True)
     del rsh
 
-    #### ADDED BY PHILLIP HOFFMANN TO DELETE OPENSTACK INSTANCE AFTER TESTS
+    # Delete openstack instance after tests
     if resource['batch_scheduler'].lower() == "openstack":
         # delete instance if it is cloud
         resource['openstack_server'].delete()
         resource['remote_access_node'] = None
-    #### ADDED BY PHILLIP HOFFMANN
 
     ###############################################################################################
     # send test job to queue

@@ -1,7 +1,9 @@
-"""This module contains routines for initial AKRR configuration"""
+"""
+This module contains routines for initial AKRR configuration
+"""
+
 import os
 import sys
-import inspect
 import re
 import getpass
 import subprocess
