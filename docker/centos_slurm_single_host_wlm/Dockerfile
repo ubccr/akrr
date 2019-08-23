@@ -39,7 +39,7 @@ RUN useradd -m -s /bin/bash akrruser && \
 
 # setup munge
 RUN echo "secret munge key secret munge key secret munge key" >/etc/munge/munge.key &&\
-    chown -R root:root /var/log/munge /run/munge /var/lib/munge /etc/munge &&\
+    chown -R munge:munge /var/log/munge /run/munge /var/lib/munge /etc/munge &&\
     chmod 600 /etc/munge/munge.key &&\
     cmd_start munged &&\
     munge -n | unmunge &&\

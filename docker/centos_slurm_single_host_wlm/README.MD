@@ -59,6 +59,10 @@ docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest \
        -f ./centos_slurm_single_host_wlm/DockerfileAKRRReady .
 
 #run
+docker run -it --rm \
+    -v ~/xmdow_wsp/akrr:/root/src/github.com/ubccr/akrr \
+    -e REPO_FULL_NAME=ubccr/akrr \
+    nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest bash
 
 #push to docker cloud
 docker push nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest

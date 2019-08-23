@@ -16,13 +16,24 @@ start_process(){
     name=$1
     command=$2
     pid_file=$3
+    user=${4:-x}
+
+    launch=false
 
     if [ ! -f "${pid_file}" ]; then
-        echo "Launching ${name}"
-        ${command}
-    elif [ ! -f "/proc/`cat ${pid_file}`" ]; then
-        echo "Launching ${name}"
-        ${command}
+        launch=true
+    elif [ ! -f "/proc/$(cat "${pid_file}")" ]; then
+        launch=true
+    fi
+
+    if [ "$launch" = true ] ;then
+        if [ "$user" = "x" ]; then
+            echo "Launching ${name}"
+            ${command}
+        else
+            echo "Launching ${name} as ${user} user"
+            sudo -u "${user}" "${command}"
+        fi
     else
         echo "${name} already running"
     fi
@@ -41,7 +52,7 @@ start_process_w_confirm(){
     timeout_time=2
 
     if [ -f "${pid_file}" ]; then
-        if [  -d "/proc/`cat ${pid_file}`" ]; then
+        if [  -d "/proc/$(cat "${pid_file}")" ]; then
             echo "${name} already running"
             return 1
         fi
@@ -55,9 +66,9 @@ start_process_w_confirm(){
     echo "Launching ${name}"
     ${command}
 
-    for ((i=0; i < ${timeout_time}; i++))
+    for ((i=0; i < timeout_time; i++))
     {
-        if grep -q ${confirm_sentence} ${log_file} ; then
+        if grep -q "${confirm_sentence}" "${log_file}" ; then
             echo "${name} is up"
             return 0
         fi
@@ -79,7 +90,7 @@ do
         mysqladmin --silent --wait=30 ping
         ;;
     munged)
-        start_process munged munged /run/munge/munged.pid
+        start_process munged munged /run/munge/munged.pid munge
         ;;
     sshd)
         start_process sshd /usr/sbin/sshd /run/sshd.pid
@@ -107,7 +118,7 @@ do
         echo "Launching akrr v1.0"
         AKRRUSER_HOME=${AKRRUSER_HOME:-/root}
         AKRRUSER=${AKRRUSER:-root}
-        /usr/bin/python2 $AKRRUSER_HOME/akrr/src/akrrscheduler.py start
+        /usr/bin/python2 "$AKRRUSER_HOME/akrr/src/akrrscheduler.py" start
         ;;
     bash)
         echo "Will launching bash at the end"
@@ -131,7 +142,7 @@ do
         ;;
     *)
         echo "Executing $1"
-        eval $1
+        eval "$1"
         ;;
     esac
     shift

@@ -1,17 +1,11 @@
-FROM nsimakov/centos_slurm_single_host_wlm:1
+FROM nsimakov/centos_slurm_single_host_wlm:latest
 
 LABEL description="centos for akrr tests"
-
-# add users
-RUN useradd -m -s /bin/bash batchuser && \
-    echo 'shippable:shippable' |chpasswd && \
-    usermod -a -G wheel akrruser && \
-    echo "akrruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # install dependencies
 # Needed for shippable:
 #    git sudo
-# Needed to build RPM:
+https://stackoverflow.blog/2019/08/22/impact-of-ask-question-wizard/?cb=1# Needed to build RPM:
 #    rpm-build
 # Needed to run:
 #    python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing
@@ -31,6 +25,8 @@ RUN yum -y update && \
     yum clean all && \
     pip3 install --upgrade pip && \
     pip3 install pylint coverage pytest pytest-cov pytest-dependency
+
+COPY ./utils/cmd_setup ./utils/cmd_start ./utils/cmd_stop /usr/local/sbin/
 
 # reset entry point
 ENTRYPOINT []
