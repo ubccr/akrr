@@ -5,7 +5,7 @@ LABEL description="centos for akrr tests"
 # install dependencies
 # Needed for shippable:
 #    git sudo
-https://stackoverflow.blog/2019/08/22/impact-of-ask-question-wizard/?cb=1# Needed to build RPM:
+# Needed to build RPM:
 #    rpm-build
 # Needed to run:
 #    python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing

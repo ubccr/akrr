@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# sometimes /usr/local/sbin is not in PATH
+export PATH="/usr/local/sbin:$PATH"
+
 kill_process(){
   kill -SIGTERM $1
   while [ -f /proc/$1 ];do sleep 1;done

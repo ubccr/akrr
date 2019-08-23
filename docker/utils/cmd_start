@@ -4,6 +4,9 @@ if [ "$USER" = "root" ]; then
     echo $$ > /var/run/enrypoint.pid
 fi
 
+# sometimes /usr/local/sbin is not in PATH
+export PATH="/usr/local/sbin:$PATH"
+
 set -e
 
 loop=0

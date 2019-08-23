@@ -6,4 +6,4 @@ build:
         pull: true
         options: "--user root -e HOME=/root -t"
     ci:
-        - /root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh rpm
+        - su akrruser -c '/root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh rpm'

@@ -81,6 +81,7 @@ RUN mkdir /var/log/slurm && \
     sacctmgr -i add cluster Name=micro Fairshare=1 QOS=normal && \
     sacctmgr -i add account name=account1 Fairshare=1 && \
     sacctmgr -i add user name=batchuser DefaultAccount=account1 MaxSubmitJobs=1000 && \
+    sacctmgr -i add user name=akrruser DefaultAccount=account1 MaxSubmitJobs=1000 && \
     cmd_stop slurmdbd && \
     cmd_stop mysqld && \
     cmd_stop munged && \

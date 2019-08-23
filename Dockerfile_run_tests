@@ -8,5 +8,9 @@ VOLUME /root/src/github.com/ubccr/akrr
 
 ENV REPO_FULL_NAME=ubccr/akrr
 
-ENTRYPOINT ["/sbin/cmd_start"]
-CMD ["-set-no-exit-on-fail", "/root/src/github.com/ubccr/akrr/tests/regtest1/run_test_on_shippable.sh", "bash"]
+ENTRYPOINT ["/usr/local/sbin/cmd_start"]
+CMD ["-set-no-exit-on-fail", \
+     "chmod 755 /root", \
+     "chown -R akrruser:akrruser /root/src", \
+     "su akrruser -c 'bash /root/src/github.com/ubccr/akrr/tests/regtest1/run_test_on_shippable.sh'", \
+     "bash_akrruser"]

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# sometimes /usr/local/sbin is not in PATH
+export PATH="/usr/local/sbin:$PATH"
+
 # Install xdebug for php debugging
 # remote host is 127.0.0.1 and ssh tunnel:
 # ssh -N -R 9000:localhost:9000 -p 2210 root@localhost
