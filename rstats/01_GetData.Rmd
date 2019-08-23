@@ -1,0 +1,328 @@
+---
+title: "Meltdown Spectre Update Performance Influence"
+output: html_notebook
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+versionInfo()
+library(XML)
+library(data.table)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(RMariaDB)
+```
+
+
+# Load data
+
+Got tables from appkernel.ccr.buffalo.edu modw database.
+```{r}
+con <- dbConnect(RMariaDB::MariaDB(), group = "appkernel", dbname = "mod_akrr")
+
+#get all tables except jobfact
+res <- dbSendQuery(
+    con, 
+    "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo 
+    WHERE status=1 AND collected > '2017-11-08 00:00:00' AND 
+        ((resource LIKE \"huey%\" AND collected < '2018-01-05 13:00:00') OR
+        (resource LIKE \"edge%\" AND collected < '2018-01-08 00:00:00'));")
+all_res1<- dbFetch(res)
+dbClearResult(res)
+all_res1$state <- 1L
+
+res <- dbSendQuery(con,  
+    "SELECT * FROM mod_akrr.akrr_xdmod_instanceinfo 
+    WHERE status=1 AND collected > '2017-09-01 00:00:00' AND
+        ((resource LIKE \"huey%\" AND collected > '2018-01-05 13:00:00') OR
+        (resource LIKE \"edge%\" AND collected > '2018-01-09 00:00:00'));")
+all_res2 <- dbFetch(res)
+dbClearResult(res)
+all_res2$state <- 2L
+
+all_res  <- rbind(all_res1,all_res2)
+   
+dbDisconnect(con)
+remove(con,res)
+remove(all_res1,all_res2)
+```
+
+
+```{r}
+
+
+all_res %<>% rename(app_long=reporter,task_id=instance_id)
+all_res$nnodes <- as.integer(sub(".+\\.([0-9]+)$","\\1",all_res$reporternickname))
+
+s <- all_res$app == ""
+
+app_conv<-list(
+    "xdmod.app.md.namd" = "NAMD",
+    "xdmod.app.chem.nwchem" = "NWChem",
+    "xdmod.app.chem.gamess" = "GAMESS",
+    "xdmod.app.astro.enzo" = "ENZO",
+    "xdmod.benchmark.hpcc" = "HPCC",
+    "xdmod.benchmark.mpi.imb" = "IMB",
+    "xdmod.benchmark.graph.graph500" ="Graph500",
+    "xdmod.benchmark.io.ior" = "IOR",
+    "xdmod.benchmark.io.mdtest" = "MDTest"
+)
+all_res %<>% filter(app_long %in% names(app_conv))
+
+all_res$app<-sapply(all_res$app_long,function(x){unlist(app_conv[[x]])})
+
+s<-all_res$app=="IOR"&all_res$resource=="huey_local"
+all_res$app[s]<-"IOR.local"
+s<-all_res$app=="MDTest"&all_res$resource=="huey_local"
+all_res$app[s]<-"MDTest.local"
+
+all_res$resource[all_res$resource=="huey_local"]="huey"
+
+#all_res$state <- sample(c(1L,2L),nrow(all_res),replace = TRUE)
+all_res %<>% filter(task_id != 3701390L) %>%
+    filter(task_id != 3701399L) %>%
+    filter(task_id != 3701400)
+
+rm(s)
+```
+
+```{r}
+edge_CPU_L5520 <-c(
+sprintf("cpn-d14-%02d", seq(2,23)),
+sprintf("cpn-d14-%02d", seq(26,39)),
+sprintf("cpn-d15-%02d", c(seq(1,32),seq(34,40))),
+sprintf("cpn-d16-%02d", c(seq(2,14),seq(17,41))),
+"cpn-d15-33",
+"cpn-d16-15",
+"cpn-d16-16"
+)
+
+nodes_CPU_L5520 <- rep(FALSE,times=nrow(all_res))
+for(i in 1:nrow(all_res)){
+    #i<-1
+    m_nodes<-strsplit(trimws(gsub(";"," ",all_res$nodes[[i]]))," ")[[1]]
+    rigth_cpu <- TRUE
+    for(m_node in m_nodes){
+        #print(paste(m_node,m_node %in% edge_CPU_L5520))
+        if(!(m_node %in% edge_CPU_L5520)){
+            rigth_cpu=FALSE
+        }
+    }
+    #print(paste(i,rigth_cpu))
+    nodes_CPU_L5520[i]<-rigth_cpu
+}
+all_res$resource[nodes_CPU_L5520] <- "edge8core_ibm"
+all_res$resource[all_res$resource=="edge"] <- "edge8core_dell"
+
+all <- all_res %>% filter(app!="test") %>%
+    select(state,task_id,resource,app,nnodes,walltime,collected,body)
+```
+
+
+```{r}
+get_metrics <- function(xml){
+   l<-xmlToList(xml) 
+   if(!("benchmark" %in% names(l))){return(NULL)}
+   if(!("statistics" %in% names(l$benchmark))){return(NULL)}
+   
+   ll <- l$benchmark$statistics
+   if(length(ll)==0){return(NULL)}
+   
+   df<-NULL
+   for(i in 1:length(ll)){
+       m_metrics<-NA
+       m_value<-NA
+       m_units<-NA
+       if("ID" %in% names(ll[[i]])){m_metrics<-ll[[i]]$ID}
+       if("value" %in% names(ll[[i]])){m_value<-ll[[i]]$value}
+       if("units" %in% names(ll[[i]])){m_units<-ll[[i]]$units}
+       df <- rbind(df,data.frame(metric=m_metrics,value=m_value,units=m_units,stringsAsFactors = FALSE))
+   }
+   df
+}
+
+metrics <- all %>% group_by(state,resource,app,nnodes,task_id) %>% do(get_metrics(.$body) )
+metrics$value <- as.numeric(metrics$value)
+metrics <- ungroup(metrics)
+
+
+
+metrics$resource <- factor(metrics$resource,levels=unique(metrics$resource))
+metrics$app <- factor(metrics$app,levels=unlist(app_conv, use.names = FALSE))
+metrics$units <- factor(metrics$units)
+metrics$metric <- factor(metrics$metric,levels=unique(c("Wall Clock Time",metrics$metric)))
+
+metrics %<>% left_join(all %>% select(task_id,collected), by="task_id")
+gc()
+```
+
+```{r}
+metrics %<>% filter(resource %in% c("huey","edge12core"))
+
+metrics$resource <- factor(
+    metrics$resource,
+    levels = unique(c("huey","edge12core")))
+
+levels(metrics$resource) <- c("TestCluster","ProductionCluster")
+metrics$nnodes <- factor(metrics$nnodes,levels = unique(c(1,2,4,8,16,metrics$nnodes)))
+
+metrics$state_id <- metrics$state
+metrics$state <- as.character(metrics$state_id)
+metrics$state[metrics$state=="1"]<-"Before"
+metrics$state[metrics$state=="2"]<-"After"
+
+metrics$state <- factor(metrics$state,levels = c("Before","After"))
+
+metrics %<>% arrange(collected)
+
+#convert md performance should be ns/day was sim second per Day
+j <- metrics$metric=="Molecular Dynamics Performance"
+metrics$value[j] <- metrics$value[j]*1e9
+metrics$units[j] <- "ns/day"
+
+
+```
+
+
+```{r}
+write.csv(metrics,"metrics.csv")
+save(
+    list=c("metrics"),
+    file="metrics.Rdata"
+)
+```
+
+
+
+```{r}
+\
+
+metrics %<>% filter(app %in% c("HPCC","NAMD"))
+metrics$app <- factor(as.character(metrics$app),levels = c("HPCC","NAMD"))
+
+selected_metrics <- c(
+    "Wall Clock Time",
+    "Molecular Dynamics Simulation Performance",
+    "High Performance LINPACK Floating-Point Performance",
+    "Fast Fourier Transform (FFTW) Floating-Point Performance",
+    "Average Double-Precision General Matrix Multiplication (DGEMM) Floating-Point Performance",
+    "Average STREAM 'Copy' Memory Bandwidth"
+)
+metrics %<>% filter(metric %in% selected_metrics)
+metrics$metric <- factor(as.character(metrics$metric),levels = selected_metrics)
+metrics$metric_long <- metrics$metric
+levels(metrics$metric) <- c(
+    "Wall Time",
+    "MD Perf.",
+    "LINPACK",
+    "FFT",
+    "DGEMM",
+    "STREAM"
+)
+
+#convert md performance should be ns/day was sim second per Day
+j <- metrics$metric=="Molecular Dynamics Performance"
+metrics$value[j] <- metrics$value[j]*1e9
+
+j <- metrics$metric=="LINPACK"
+metrics$value[j] <- metrics$value[j]/1024
+
+#metrics %>% group_by(metric) %>% summarise(units=last(units))
+metrics$units <- metrics$metric
+levels(metrics$units) <- c(
+    "s",
+    "ns/day",
+    "GFLOP/s",
+    "MFLOP/s",
+    "MFLOP/s",
+    "MB/s"
+)
+
+save(
+    list=c("metrics"),
+    file="metrics_selected.Rdata"
+)
+```
+
+```{r}
+load(file="metrics_selected.Rdata")
+#select only what is needed2
+
+#only up to 30 points for Testing-Cluster
+metrics %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+    
+metrics %<>% group_by(resource, app, nnodes, metric, state) %>% 
+        mutate(id = row_number()) %>% ungroup()
+
+
+metrics %<>% filter(!(resource=="Testing-Cluster" & id > 30L))
+
+#Sparcify After for UBHPC
+metrics %>% filter(resource=="UB-HPC" & app == "NAMD") %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "NAMD" & nnodes == 1L & id > 10)
+set.seed(08122018)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "NAMD" & nnodes == 2L & id > 20)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 10L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "HPCC" & nnodes == 1L & id > 10)
+set.seed(08122018)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+metrics_ubhpc <- metrics %>% filter(resource=="UB-HPC" & state=="After" & metric == "Wall Time" & app == "HPCC" & nnodes == 2L & id > 10)
+remover_task_id <- metrics_ubhpc$task_id[!(metrics_ubhpc$task_id %in% sample(metrics_ubhpc$task_id,size = 20L))]
+metrics %<>% filter(!(task_id %in% remover_task_id))
+
+
+metrics %>% filter(resource=="UB-HPC") %>% group_by(resource, app, nnodes, metric, state) %>% 
+    mutate(id = row_number()) %>% 
+    summarise(n=n(),avg=mean(value),units=last(units))
+
+save(
+    list=c("metrics"),
+    file="metrics_selected2.Rdata"
+)
+```
+
+```{r}
+#Read metrics bigger smaller
+
+ak_metrics <- read.csv("ak_metrics.csv",header = F,col.names = c("app","metric","better"))
+
+m_app<-ak_metrics$app[[1]]
+for(i in 2:nrow(ak_metrics)){
+    if(ak_metrics$app[[i]]==""){
+        ak_metrics$app[[i]]=m_app
+    }else{
+        m_app<-ak_metrics$app[[i]]
+    }
+}
+ak_metrics$BiggerBetter <- ak_metrics$better !="S"
+
+ak_metrics %<>% filter(metric!="" & app %in% unlist(app_conv,use.names = F))  %>% select(-better)
+
+save(
+    list=c("ak_metrics"),
+    file="ak_metrics.Rdata"
+)
+```
+
+
+
+
+
+
+
+

@@ -1,5 +1,5 @@
 # Run regtest1 in docker
-FROM nsimakov/akrr_ready_centos_slurm_single_host_wlm:1
+FROM nsimakov/akrr_ready_centos_slurm_single_host_wlm:last
 
 LABEL description="image to run tests manually"
 

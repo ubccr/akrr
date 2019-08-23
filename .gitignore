@@ -31,3 +31,6 @@
 /tests/.coverage
 /tests/regtest1/.crontmp
 /devel*
+/etc_old
+/log_old
+/venv

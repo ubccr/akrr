@@ -197,6 +197,17 @@ class AkrrDaemon:
                     if len(activate_task) >= cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1):
                         continue
 
+                # checks if there is a limit to the number of active tasks akrr can have
+                if cfg.max_number_of_active_tasks_total >= 0:
+                    # checks list of all active tasks
+                    self.dbCur.execute(
+                        '''SELECT task_id, resource, app
+                           FROM mod_akrr.active_tasks''')
+                    active_tasks_total = self.dbCur.fetchall()
+                    # if there's too many active tasks, break out of the loop
+                    if len(active_tasks_total) >= cfg.max_number_of_active_tasks_total:
+                        return
+
                 if cfg.find_resource_by_name(resource).get('active', True) is False:
                     raise AkrrError("%s is marked as inactive in AKRR" % resource)
 
@@ -435,7 +446,7 @@ class AkrrDaemon:
                 th.status = "Error: Number of errors exceeded allowed maximum and task was terminated." + th.status
                 th.ReportFormat = "Error"
                 th.process_results()
-                if th.push_to_db is not None:
+                if th.push_to_db() is not None:
                     log.error("Can not push to DB")
                 akrr_task.dump_task_handler(th)
                 status = copy.deepcopy(th.status)

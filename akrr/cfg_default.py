@@ -142,6 +142,10 @@ task_pickling_protocol = 0
 # The amount of time that the tasks loop should sleep in between loops.
 scheduled_tasks_loop_sleep_time = 1.0
 
+# maximum number of active tasks for akrr TOTAL (-1 for unlimited)
+max_number_of_active_tasks_total = -1
+
+
 ###############################################################################
 # Error handling and repeat time
 ###############################################################################

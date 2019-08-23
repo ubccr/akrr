@@ -1,9 +1,7 @@
-"""
-This module contains routines for initial AKRR configuration
-"""
-
+"""This module contains routines for initial AKRR configuration"""
 import os
 import sys
+import inspect
 import re
 import getpass
 import subprocess
@@ -233,7 +231,7 @@ class AKRRSetup:
         if errmsg != "":
             log.error(errmsg)
             exit(1)
-    
+
     @staticmethod
     def _check_user_db_priv_on_dbserver(user: str, password: str, host: str, port: int, db_name: str, priv: str) \
             -> Tuple[bool, bool, bool]:
