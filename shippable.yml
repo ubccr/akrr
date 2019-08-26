@@ -6,4 +6,8 @@ build:
         pull: true
         options: "--user root -e HOME=/root -t"
     ci:
-        - su akrruser -c '/root/src/github.com/$REPO_FULL_NAME/tests/regtest1/run_test_on_shippable.sh rpm'
+        - cp -a /root/src/github.com/$REPO_FULL_NAME /home/akrruser/akrr_src
+        - chown -R akrruser:akrruser /home/akrruser
+        - cd /home/akrruser
+        - su akrruser -c "bash /home/akrruser/akrr_src/tests/regtest1/run_test_on_shippable.sh rpm"
+        - cp -a /home/akrruser/akrr_src/shippable /root/src/github.com/$REPO_FULL_NAME/

@@ -11,12 +11,7 @@ echo USER=$USER
 export REPO_FULL_NAME=${REPO_FULL_NAME:-ubccr/akrr}
 export AKRR_SETUP_WAY=${AKRR_SETUP_WAY:-dev}
 export AKRR_SETUP_WAY=${1:-$AKRR_SETUP_WAY}
-
-# line source code to user's home, on local docker run
-# /root/src/github.com/$REPO_FULL_NAME can be mounted from host
-sudo chmod 755 /root
-sudo chown -R "$USER":"$USER" "/root/src"
-ln -s "/root/src/github.com/$REPO_FULL_NAME" "/home/$USER/akrr_src"
+export AKRR_SRC=${AKRR_SRC:-/home/akrruser/akrr_src}
 
 # exit on first error
 set -e
@@ -69,14 +64,14 @@ pytest --junitxml=shippable/testresults/testresults.xml \
 
 # Run this regression test
 echo $highlight "Running regression test"
-export PATH=/root/src/github.com/${REPO_FULL_NAME}/tests/bin:$PATH
-/root/src/github.com/${REPO_FULL_NAME}/tests/regtest1/run_test.sh
+export PATH=${AKRR_SRC}/tests/bin:$PATH
+"${AKRR_SRC}/tests/regtest1/run_test.sh"
 
 #remove akrr from crontab to avoid uncontrolled AKRR launch
 echo $highlight "remove akrr from crontab to avoid uncontrolled AKRR launch"
 cd tests/regtest1
 # @todo add test with crontab
-"/home/$USER/akrr_src/tests/bin/akrrregtest" remove --crontab --crontab-remove-mailto
+"${AKRR_SRC}/tests/bin/akrrregtest" remove --crontab --crontab-remove-mailto
 cd ../..
 
 # Rerun unit tests and run system tests together
