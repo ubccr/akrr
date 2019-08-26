@@ -9,5 +9,7 @@ build:
         - cp -a /root/src/github.com/$REPO_FULL_NAME /home/akrruser/akrr_src
         - chown -R akrruser:akrruser /home/akrruser
         - cd /home/akrruser
+        - ping -c 2 localhost
+        - su akrruser -c "ping -c 2 localhost"
         - su akrruser -c "bash /home/akrruser/akrr_src/tests/regtest1/run_test_on_shippable.sh rpm"
         - cp -a /home/akrruser/akrr_src/shippable /root/src/github.com/$REPO_FULL_NAME/

@@ -108,7 +108,7 @@ def _send_su_user_password(bash, user, password):
     if testInvalidAdministrativeDatabaseUser:
         log.info("Entering invalid administrative database user")
         bash.expectSendline(
-            r'.*INPUT.* Please provide an administrative database user.*\[root]:',
+            r'.*INPUT.* Please provide an administrative database user.*\[root]: ',
             "invalid", timeout=fast_timeout)
         bash.expectSendline(
             r'.*INPUT.* Please provide the password.*\n',
@@ -118,7 +118,7 @@ def _send_su_user_password(bash, user, password):
         log.info("\nEntering valid administrative database user")
 
     bash.expectSendline(
-        r'.*INPUT.* Please provide an administrative database user.*\n[root]:',
+        r'.*INPUT.* Please provide an administrative database user.*\[root]: ',
         user, timeout=fast_timeout)
     bash.expectSendline(
         r'.*INPUT.* Please provide the password.*\n',

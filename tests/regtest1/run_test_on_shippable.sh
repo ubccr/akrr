@@ -46,6 +46,7 @@ elif [ "${AKRR_SETUP_WAY}" == "dev" ]; then
     sudo ./setup.py develop
 elif [ "${AKRR_SETUP_WAY}" == "src" ]; then
     echo "Running in source"
+    export PATH=${AKRR_SRC}/bin:$PATH
 else
     echo "Unknown setup.py call"
     exit 1
@@ -79,6 +80,7 @@ cd ../..
 # Rerun unit tests and run system tests together
 echo $highlight "Rerunning unit tests and run system tests together"
 rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+akrr daemon start
 
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
