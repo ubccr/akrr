@@ -32,15 +32,17 @@ squeue
 sinfo
 ps -Af
 
-cd "/home/$USER/akrr_src"
+cd "${AKRR_SRC}"
 
 #install source code
 if [ "${AKRR_SETUP_WAY}" == "rpm" ]; then
+    echo "Install with RPM"
     # Build RPM
     ./setup.py bdist_rpm
     # Install RPM
     sudo rpm -Uvh dist/akrr-*.noarch.rpm
 elif [ "${AKRR_SETUP_WAY}" == "dev" ]; then
+    echo "Develop install"
     sudo ./setup.py develop
 elif [ "${AKRR_SETUP_WAY}" == "src" ]; then
     echo "Running in source"
