@@ -72,3 +72,9 @@ def set_verbose():
     verbose = True
     basicConfig(level=DEBUG)
     getLogger().setLevel(DEBUG)
+
+
+def flush():
+    import sys
+    sys.stdout.flush()
+    sys.stderr.flush()

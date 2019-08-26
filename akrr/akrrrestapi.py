@@ -1613,6 +1613,7 @@ def start_rest_api(m_proc_queue_to_master=None, m_proc_queue_from_master=None):
 
     srv = SSLWSGIRefServer(host=cfg.restapi_host, port=cfg.restapi_port, certfile=cfg.restapi_certfile)
     # bottle.run(app,server=srv, debug=True, reloader=False)
+    print("Before bottle.run")
     bottle.run(app, server=srv, debug=True, reloader=False)
 
 

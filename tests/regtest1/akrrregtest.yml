@@ -42,7 +42,7 @@ resource:
         network_scratch: /tmp
         appker_dir: /tmp/appker/localhost
         akrr_wd_dir: ""
-        ping_resource: True
+        ping_resource: False
         test_nodes: 1
         deploy_timeout: 120
     -
@@ -64,6 +64,6 @@ resource:
         network_scratch: /tmp
         appker_dir: /tmp/appker/localhost2
         akrr_wd_dir: ""
-        ping_resource: True
+        ping_resource: False
         test_nodes: 1
         deploy_timeout: 120

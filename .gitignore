@@ -1,4 +1,5 @@
 *.pyc
+.crontmp
 /1.xml
 /inca.xml
 /nohup.out

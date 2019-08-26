@@ -22,8 +22,8 @@ catch() {
   echo "Error $1 occurred on line $2"
 }
 
-highlight='-e "\e[32,1m[AKRR_Reg_Test:0]\e[0m"'
-
+highlight='-e "\e[30;48;5;82m[AKRR_Reg_Test:0]\e[0m"'
+red_highlight='-e "\e[30;48;5;1m[AKRR_Reg_Test:0]\e[0m"'
 # Start all daemons
 sudo /usr/local/sbin/cmd_start self_contained_slurm_wlm
 
@@ -80,8 +80,26 @@ cd ../..
 # Rerun unit tests and run system tests together
 echo $highlight "Rerunning unit tests and run system tests together"
 rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+set +e
+ps -Af|grep akrr
+ls -l /home/akrruser/akrr/log/data
+ls -l /home/akrruser/akrr/log/data/srv
 akrr daemon start
-
+if [ $? -ne 0 ]
+then
+  echo $red_highlight "AKRR is not up!"
+  ps -Af|grep akrr
+  akrr daemon status
+  ls -l /home/akrruser/akrr/log/data
+  ls -l /home/akrruser/akrr/log/data/srv
+  for f in /home/akrruser/akrr/log/data/srv/*.log
+  do
+    echo $red_highlight $f
+    cat $f
+    exit 1
+  done
+fi
+set -e
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
 pytest -v --junitxml=../shippable/testresults/testresults.xml \

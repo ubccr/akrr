@@ -19,6 +19,7 @@ import akrr.util.time
 from akrr.util.time import time_stamp_to_datetime_str
 from .util import log
 from . import akrr_task
+import akrr.akrrrestclient
 
 from .akrrerror import AkrrError
 
@@ -633,6 +634,7 @@ class AkrrDaemon:
         log.info("#" * 100)
         log.info("Got into the running loop on " + datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
         log.info("#" * 100 + "\n")
+        log.flush()
         num_of_critical_fails = 0
         while True:
             try:
@@ -1380,7 +1382,11 @@ def daemon_start():
         return_code = ps_command.wait()
         assert return_code == 0, "ps command returned %d" % return_code
         for pid_str in ps_output.decode(encoding=cfg.encoding).split("\n")[:-1]:
-            os.kill(int(pid_str), sig)
+            try:
+                os.kill(int(pid_str), sig)
+            except ProcessLookupError:
+                # i.e. already killed
+                pass
 
     # make dir for logs and check the biggest number
     if not os.path.isdir(cfg.data_dir):
@@ -1445,7 +1451,7 @@ def daemon_start():
         rest_api_up = False
         in_the_main_loop = False
         t0 = time.time()
-        while time.time() - t0 < 20.0:
+        while time.time() - t0 < 30.0:
             line = logfile.readline()
             if len(line) != 0:
                 print(line, end=' ')
@@ -1453,6 +1459,11 @@ def daemon_start():
                     rest_api_up = True
                 if line.count("Got into the running loop on ") > 0:
                     in_the_main_loop = True
+                try:
+                    akrr.akrrrestclient.get_token()
+                    rest_api_up = True
+                except:
+                    pass
                 if rest_api_up and in_the_main_loop:
                     break
             else:
