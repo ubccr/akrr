@@ -10,10 +10,13 @@ cd ${script_dir}
 
 # find akrr and akrrregtest
 which_akrr=$(which akrr 2> /dev/null)
+# argument for setup if akrr is not in standard location
+arg_setup_akrr_bin=""
 
 if [ ! -x "${which_akrr}" ] ; then
-    echo "Can not find akrr executable, should be in PATH"
-    exit 1
+    echo "Can not find akrr executable, assuming insource tests"
+    arg_setup_akrr_bin="--which-akrr $( dirname "$( dirname "${script_dir}" )" )/bin/akrr"
+
 fi
 
 which_akrrregtest=$(which akrrregtest 2> /dev/null)
@@ -27,18 +30,33 @@ if [ ! -x "${which_akrrregtest}" ] ; then
     exit 1
 fi
 
-which_akrrregtest=PYTHONPATH=${AKRR_TEST_PYTHONPATH:-${PYTHONPATH}} "${which_akrrregtest}"
-
-highlight='-e "\e[32,1m[AKRR_Reg_Test:1]\e[0m"'
+highlight='-e "\e[32;1m[AKRR_Reg_Test:1]\e[0m"'
 
 echo $highlight "akrr to use: ${which_akrr}"
 echo $highlight "akrrregtest to use: ${which_akrrregtest}"
 echo $highlight "current work directory: $(pwd)"
+echo $highlight "akrr to use during setup: ${arg_setup_akrr_bin}"
+echo $highlight "setup non-standard akrr home in: ${AKRR_SETUP_HOME}"
 #exit if any command fails
 set -e
 
 echo $highlight "Testing AKRR setup"
-${which_akrrregtest} -v setup
+${which_akrrregtest} -v ${arg_setup_akrr_bin}  setup
+
+# source .bashrc to load AKRR environment variables (AKRR_HOME and PATH in case of non-standard location)
+source ~/.bashrc
+which_akrr=$(which akrr 2> /dev/null)
+
+if [ ! -x "${which_akrr}" ] ; then
+    echo "Can not find akrr executable, should be in PATH by this time"
+    exit 1
+fi
+# print .bachrc and crontab
+echo $highlight ".bachrc:"
+cat ~/.bashrc
+echo $highlight "crontab -l:"
+crontab -l
+
 
 ${which_akrr} daemon status
 

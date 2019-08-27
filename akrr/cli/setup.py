@@ -741,31 +741,40 @@ class AKRRSetup:
         log.info("Updating .bashrc")
 
         akrr_header = '#AKRR Server Environment Variables'
-        bash_content_new = []
+        akrr_bash_content_new = []
 
-        bash_content_new.append("\n" + akrr_header + " [Start]\n")
+        akrr_bash_content_new.append("\n" + akrr_header + " [Start]\n")
         if _in_src_install:
-            bash_content_new.append("export PATH=\"{0}:$PATH\"\n".format(_akrr_bin_dir))
+            akrr_bash_content_new.append("export PATH=\"{0}:$PATH\"\n".format(_akrr_bin_dir))
         if self._initial_akrr_dirs["akrr_home"] != self._akrr_dirs["akrr_home"]:
             # i.e. non standard AKRR home location
-            bash_content_new.append("export AKRR_HOME=\"{0}\"\n".format(_akrr_home))
-        bash_content_new.append(akrr_header + " [End]\n\n")
+            akrr_bash_content_new.append("export AKRR_HOME=\"{0}\"\n".format(_akrr_home))
+        akrr_bash_content_new.append(akrr_header + " [End]\n\n")
 
-        if len(bash_content_new) > 2:
+        if len(akrr_bash_content_new) > 2:
             if os.path.exists(os.path.expanduser("~/.bashrc")):
-                log.info("Updating AKRR record in $HOME/.bashrc, backing to $HOME/.bashrc_akrrbak")
+                log.info("Updating AKRR record in $HOME/.bashrc, backing to $HOME/.bashrc.akrr_back")
                 if not akrr.dry_run:
-                    subprocess.call("cp ~/.bashrc ~/.bashrcakrr", shell=True)
+                    subprocess.call("cp ~/.bashrc ~/.bashrc.akrr_back", shell=True)
+                bash_content_new = []
                 with open(os.path.expanduser('~/.bashrc'), 'r') as f:
                     bashcontent = f.readlines()
                     in_akrr = False
+                    akrr_added = False
                     for l in bashcontent:
                         if l.count(akrr_header + ' [Start]') > 0:
                             in_akrr = True
+                            if not akrr_added:
+                                bash_content_new += akrr_bash_content_new
+                                akrr_added = True
                         if not in_akrr:
                             bash_content_new.append(l)
                         if l.count(akrr_header + ' [End]') > 0:
                             in_akrr = False
+                    if not akrr_added:
+                        bash_content_new += akrr_bash_content_new
+            else:
+                bash_content_new = akrr_bash_content_new
 
             if not akrr.dry_run:
                 with open(os.path.expanduser('~/.bashrc'), 'w') as f:
@@ -862,15 +871,18 @@ class AKRRSetup:
 
         # check
         self.check_utils()
-        self.check_previous_installation()
 
-        # set installation directory
+        # get directories layout
         global _akrr_dirs, _akrr_home, _akrr_cfg
         self._initial_akrr_dirs = _akrr_dirs
         self._akrr_dirs = akrr.get_akrr_dirs(self.akrr_home_dir)
         _akrr_dirs = self._akrr_dirs
         _akrr_home = _akrr_dirs["akrr_home"]
         _akrr_cfg = _akrr_dirs["akrr_cfg"]
+
+        # check previous installation
+        self.check_previous_installation()
+        # set installation directory
         self.init_dir()
 
         # set environment variable in case of non standard AKRR home location

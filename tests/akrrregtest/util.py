@@ -24,8 +24,8 @@ def print_important_env():
     which_python3 = run_cmd_getoutput("which python3").strip()
     msg = msg + "\twhich python3: " + str(which_python3) + "\n"
     # AKRR_CONF
-    akrr_cfg = os.getenv("AKRR_CONF")
-    msg = msg + "\tAKRR_CONF: " + str(akrr_cfg) + "\n"
+    akrr_home = os.getenv("AKRR_HOME")
+    msg = msg + "\tAKRR_HOME: " + str(akrr_home) + "\n"
 
     log.info(msg)
 

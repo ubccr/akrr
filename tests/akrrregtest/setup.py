@@ -221,8 +221,12 @@ def setup():
     bash.runcmd('which python3', printOutput=True)
     bash.runcmd('which ' + cfg.which_akrr, printOutput=True)
 
+    akrr_home_arg = ""
+    if cfg.default_akrr_home_dir != cfg.akrr_home_dir:
+        akrr_home_arg = " --akrr-home " + cfg.akrr_home_dir
+
     # start akrr setup
-    bash.startcmd(cfg.which_akrr + " setup " + dry_run_flag)
+    bash.startcmd(cfg.which_akrr + " setup " + dry_run_flag + akrr_home_arg)
 
     # set database user for AKRR
     _send_user_password(

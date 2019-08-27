@@ -10,10 +10,13 @@ yml = None
 # In all cases akrr command line interface will be taken from $PATH
 
 # install next to source code
-in_source_install = True
+in_source_install = False
+rpm_install = False
+dev_install = False
 # location of config
+default_akrr_home_dir = None
+akrr_home_dir = None
 akrr_conf = None
-
 akrr_conf_dir = None
 akrr_log_dir = None
 
@@ -55,31 +58,45 @@ def set_default_value_for_unset_vars():
     global which_akrr
     global akrr_conf
     global akrr_conf_dir
+    global akrr_home_dir
+    global default_akrr_home_dir
     global akrr_log_dir
+    global in_source_install
+    global rpm_install
+    global dev_install
 
     if which_akrr is None or which_akrr == "akrr":
         try:
             which_akrr = run_cmd_getoutput("which akrr").strip()
-        except:
-            which_akrr = None
+        except Exception as e:
+            log.critical("Can not find akrr executable")
+            raise e
+    if os.path.dirname(which_akrr) == "/usr/bin":
+        rpm_install = True
+    if os.path.dirname(which_akrr) == "/usr/local/bin":
+        dev_install = True
+    else:
+        in_source_install = True
 
-    if which_akrr is not None:
-        if akrr_conf is None:
-            if os.path.dirname(which_akrr) == "/usr/bin":
-                akrr_conf = os.path.expanduser("~/akrr/etc/akrr.conf")
-                akrr_conf_dir = os.path.expanduser("~/akrr/etc")
-                akrr_log_dir = os.path.expanduser("~/akrr/etc")
-            else:
-                akrr_conf_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)), "etc"))
-                akrr_conf = os.path.join(akrr_conf_dir, 'akrr.conf')
-                akrr_log_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(which_akrr)), "log"))
-        else:
-            akrr_conf_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)), "etc"))
-            akrr_log_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(akrr_conf)), "log"))
+    # set default_akrr_home_dir
+    if in_source_install:
+        default_akrr_home_dir = os.path.abspath(os.path.dirname(os.path.dirname(which_akrr)))
+    elif rpm_install or dev_install:
+        default_akrr_home_dir = os.path.expanduser("~/akrr")
+
+    if akrr_home_dir is None:
+        akrr_home_dir = default_akrr_home_dir
+    else:
+        akrr_home_dir = os.path.expanduser(akrr_home_dir)
+
+    akrr_conf_dir = os.path.join(akrr_home_dir, "etc")
+    akrr_conf = os.path.join(akrr_home_dir, "etc", 'akrr.conf')
+    akrr_log_dir = os.path.join(akrr_home_dir, "log")
 
     log.debug(
         "AKRR conf dir and log dir locations:\n"
+        "    akrr_home: {}\n"
         "    akrr_conf: {}\n"
         "    akrr_conf_dir: {}\n"
         "    akrr_log_dir: {}\n"
-        "".format(akrr_conf, akrr_conf_dir, akrr_log_dir))
+        "".format(akrr_home_dir, akrr_conf, akrr_conf_dir, akrr_log_dir))

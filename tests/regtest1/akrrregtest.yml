@@ -1,7 +1,8 @@
 global: |
+    import os
     #This is python code
-    #which_akrr="/home/mikola/xdmod_wsp/akrr/bin/akrr"
     #top level settings
+    akrr_home_dir = os.environ.get("AKRR_SETUP_HOME")
     xd_db_user = "akrruser"
     xd_db_passwd = ""
 

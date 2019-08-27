@@ -13,6 +13,8 @@ export AKRR_SETUP_WAY=${AKRR_SETUP_WAY:-dev}
 export AKRR_SETUP_WAY=${1:-$AKRR_SETUP_WAY}
 export AKRR_SRC=${AKRR_SRC:-/home/akrruser/akrr_src}
 
+# AKRR_SETUP_HOME enviroment variable would set AKRR_HOME installation path
+
 # exit on first error
 set -e
 
@@ -47,7 +49,7 @@ elif [ "${AKRR_SETUP_WAY}" == "dev" ]; then
     sudo ./setup.py develop
 elif [ "${AKRR_SETUP_WAY}" == "src" ]; then
     echo "Running in source"
-    export PATH=${AKRR_SRC}/bin:$PATH
+    # export PATH=${AKRR_SRC}/bin:$PATH
     export AKRR_TEST_PYTHONPATH=${AKRR_SRC}:${PYTHONPATH}
 else
     echo "Unknown setup.py call"
@@ -72,6 +74,8 @@ PYTHONPATH=${AKRR_TEST_PYTHONPATH} pytest \
 echo $highlight "Running regression test"
 export PATH=${AKRR_SRC}/tests/bin:$PATH
 "${AKRR_SRC}/tests/regtest1/run_test.sh"
+# source .bashrc to load AKRR environment variables (AKRR_HOME and PATH in case of non-standard location)
+source ~/.bashrc
 
 #remove akrr from crontab to avoid uncontrolled AKRR launch
 echo $highlight "remove akrr from crontab to avoid uncontrolled AKRR launch"

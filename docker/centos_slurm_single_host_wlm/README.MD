@@ -71,10 +71,20 @@ docker push nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest
 ## Testing AKRR Image
 
 ```bash
-#make image in akrr root directory
-docker build -t pseudo_repo/akrr_centos_slurm_single_host_wlm:latest .
+# make image in akrr root directory
+docker build -t pseudo_repo/akrr_runtest:latest -f Dockerfile_run_tests .
 
-#run
-docker run -it --rm pseudo_repo/akrr_centos_slurm_single_host_wlm:latest
-
+# by default after test you'll drop to akrruser bash
+# run devel test (i.e. build by setup.py devel)
+docker run -it --rm -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src pseudo_repo/akrr_runtest:latest
+# run rpm test
+docker run -it --rm -e AKRR_SETUP_WAY=rpm  -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+    pseudo_repo/akrr_runtest:latest
+# run in source test
+docker run -it --rm -e AKRR_SETUP_WAY=src  -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+    pseudo_repo/akrr_runtest:latest
+# run in source test with non default user home
+docker run -it --rm -e AKRR_SETUP_WAY=src -e AKRR_SETUP_HOME=/home/akrruser/akrrhome\
+    -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+    pseudo_repo/akrr_runtest:latest
 ```
