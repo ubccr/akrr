@@ -34,6 +34,7 @@ ps -Af
 
 cd "${AKRR_SRC}"
 
+export AKRR_TEST_PYTHONPATH=${PYTHONPATH}
 #install source code
 if [ "${AKRR_SETUP_WAY}" == "rpm" ]; then
     echo "Install with RPM"
@@ -47,6 +48,7 @@ elif [ "${AKRR_SETUP_WAY}" == "dev" ]; then
 elif [ "${AKRR_SETUP_WAY}" == "src" ]; then
     echo "Running in source"
     export PATH=${AKRR_SRC}/bin:$PATH
+    export AKRR_TEST_PYTHONPATH=${AKRR_SRC}:${PYTHONPATH}
 else
     echo "Unknown setup.py call"
     exit 1
@@ -60,7 +62,8 @@ pylint --errors-only akrr.util
 echo $highlight "Running unit tests"
 mkdir -p shippable/testresults
 mkdir -p shippable/codecoverage
-pytest --junitxml=shippable/testresults/testresults.xml \
+PYTHONPATH=${AKRR_TEST_PYTHONPATH} pytest \
+       --junitxml=shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
        -m "not openstack" \
        ./tests/unit_tests
@@ -74,7 +77,7 @@ export PATH=${AKRR_SRC}/tests/bin:$PATH
 echo $highlight "remove akrr from crontab to avoid uncontrolled AKRR launch"
 cd tests/regtest1
 # @todo add test with crontab
-"${AKRR_SRC}/tests/bin/akrrregtest" remove --crontab --crontab-remove-mailto
+PYTHONPATH=${AKRR_TEST_PYTHONPATH}  "${AKRR_SRC}/tests/bin/akrrregtest" remove --crontab --crontab-remove-mailto
 cd ../..
 
 # Rerun unit tests and run system tests together
@@ -102,7 +105,7 @@ fi
 set -e
 # Change directory to test to avoid conflicts between local akrr and system akrr
 cd tests
-pytest -v --junitxml=../shippable/testresults/testresults.xml \
+PYTHONPATH=${AKRR_TEST_PYTHONPATH} pytest -v --junitxml=../shippable/testresults/testresults.xml \
        --cov=akrr --cov-report=xml:../shippable/codecoverage/coverage.xml \
        --cov-branch -m "not openstack" \
        ./unit_tests ./sys_tests

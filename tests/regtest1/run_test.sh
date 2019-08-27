@@ -27,6 +27,8 @@ if [ ! -x "${which_akrrregtest}" ] ; then
     exit 1
 fi
 
+which_akrrregtest=PYTHONPATH=${AKRR_TEST_PYTHONPATH:-${PYTHONPATH}} "${which_akrrregtest}"
+
 highlight='-e "\e[32,1m[AKRR_Reg_Test:1]\e[0m"'
 
 echo $highlight "akrr to use: ${which_akrr}"
