@@ -17,6 +17,8 @@
     
     
     * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
+  * [Adding OpenStack Resource and Application Kernels Deployment](AKRR_Add_OpenStack_Resource_and_AppKernels.md.md)
   * [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md)
   * [Setting Walltime Limit](AKRR_Walltimelimit_Setting.md)
+
 * Developing

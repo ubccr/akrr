@@ -1,4 +1,8 @@
-# AKRR: Adding a New HPC Resource
+This section describes how to add traditional HPC resource to AKRR. On 
+addition of OpenStack check 
+[Adding OpenStack Resource and Application Kernels Deployment](AKRR_Add_OpenStack_Resource_and_AppKernels.md.md)
+
+# Adding a New HPC Resource
 
 Addition of new HPC resource to AKRR consists of two steps: configuration of
 new resource and deployment of AKRR's HPC resource-side scripts and application 
@@ -738,7 +742,6 @@ test.job
 ```
 
 Now log into resource, go to the task working directory and manually submit to 
-queue, check the output and determine the problem.  
-
+queue, check the output and determine the problem.
 
 Next: [AKRR: Deployment of Application Kernel on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)
