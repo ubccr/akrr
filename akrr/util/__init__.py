@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import Union, List, Sequence
 
 
 def which(program: str) -> Union[str, None]:
@@ -230,3 +230,19 @@ def get_list_from_comma_sep_values(in_str):
             return [in_str]
     else:
         return in_str
+
+
+def smart_str_merge(str_list: Sequence[str], middle: str = ",", last: str = "or"):
+        """
+        Merge string as "val1, val2 or val3
+        """
+        s = ""
+        for v in str_list:
+            if v == str_list[0]:
+                s += v
+            elif v == str_list[-1]:
+                s += " " + last + " " + v
+            else:
+                s += middle + " " + v
+        return s
+

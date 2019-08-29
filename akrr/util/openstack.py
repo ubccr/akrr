@@ -8,6 +8,8 @@ import random
 from akrr.util import log
 from akrr.util import ssh
 
+from akrr.akrrerror import AkrrOpenStackException
+
 
 class OpenStack:
     """
@@ -114,13 +116,13 @@ class OpenStackServer:
         self.flexible_ip = None
         self.ip = None
 
-    def is_server_running(self):
+    def is_server_running(self, shut_off_is_down: bool = False) -> bool:
         """check if server with same name already up"""
         cmd = "server list -f json --name "+self.name
         out = self.openstack.run_open_stack_cmd(cmd)
         try:
             out = json.loads(out.strip())
-        except json.JSONDecodeError as e: # added to hopefully track error better
+        except json.JSONDecodeError as e:  # added to hopefully track error better
             log.error("Can get status of OpenStack instance:")
             log.error("Command: " + cmd)
             log.error("Output: " + out)
@@ -128,7 +130,17 @@ class OpenStackServer:
         if len(out) == 0:
             return False
         else:
-            return True
+            if shut_off_is_down:
+                if "Status" in out[0]:
+                    if out[0]["Status"] == "SHUTOFF":
+                        return False
+                    else:
+                        return True
+                else:
+                    raise AkrrOpenStackException("No status record for instance:%s" % str(out[0]))
+
+            else:
+                return True
 
     def _detect_network(self):
         out = self.openstack.run_open_stack_cmd("server list -f json --name " + self.name)
@@ -227,9 +239,21 @@ class OpenStackServer:
             time.sleep(5)
 
     def delete(self):
+        # stop
+        count = 0
+        while self.is_server_running(shut_off_is_down=True):
+            if count % 30 == 0:
+                self.openstack.run_open_stack_cmd("server stop " + self.name)
+            if count > 0:
+                time.sleep(1)
+            count += 1
+            if count > 60:
+                raise Exception("Can not stop server!")
+        # delete
         count = 0
         while self.is_server_running():
-            self.openstack.run_open_stack_cmd("server delete " + self.name)
+            if count % 30 == 0:
+                self.openstack.run_open_stack_cmd("server delete " + self.name)
             if count > 0:
                 time.sleep(1)
             count += 1

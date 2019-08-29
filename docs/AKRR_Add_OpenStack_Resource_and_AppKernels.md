@@ -238,6 +238,96 @@ openstack server delete aktest
 You can start an instance again to ensure that docker start up on boot
 
 
+## OpenStack Resource Setup in AKRR
+
+```bash eval=F
+akrr resource add
+```
+```text
+[INFO] Beginning Initiation of New Resource...
+[INFO] Retrieving Resources from XDMoD Database...
+[INFO] Found following resources from XDMoD Database:
+    resource_id  name
+              1  UBHPC                                   
+              2  lakeeffect                                 
+
+[INPUT]: Enter resource_id for import (enter 0 for no match):
+2
+
+[INPUT]: Enter AKRR resource name, hit enter to use same name as in XDMoD Database [ub-hpc]:
+lakeeffect
+
+[INPUT]: Enter queuing system on resource (slurm, pbs or openstack): 
+openstack
+
+[INFO] Initiating lakeeffect at AKRR
+[INFO] Resource configuration is in /home/akrruser/akrr_src2/etc/resources/lakeeffect/resource.conf
+[INFO] Initiation of new resource is completed.
+    Edit batch_job_header_template variable in /home/akrruser/akrr_src2/etc/resources/lakeeffect/resource.conf
+    and move to resource validation and deployment step.
+    i.e. execute:
+        akrr resource deploy -r lakeeffect
+```
+
+Copy environment setter to akrr resource config directory:
+
+```bash
+cp <somewhere>/lakeeffect-xdmod-openrc.sh $(AKRR_HOME:-~/akrr)/etc/resources/lakefffect
+```
+
+Edit resource config
+```python
+# Resource parameters
+
+# Processors (cores) per node
+ppn = 8
+
+# head node for remote access
+remote_access_node = "headnode.somewhere.org"
+# Remote access method to the resource (default ssh)
+remote_access_method = "ssh"
+# Remote copy method to the resource (default scp)
+remote_copy_method = "scp"
+
+# Access authentication
+ssh_username = "centos"
+ssh_password = None
+ssh_private_key_file = "/home/xdtas/.ssh/keyname"
+ssh_private_key_password = None
+
+# Scratch visible across all nodes (absolute path or/and shell environment variable)
+network_scratch = "/home/centos/appkernel/network_scratch"
+# Local scratch only locally visible (absolute path or/and shell environment variable)
+local_scratch = "/home/centos/appkernel/network_scratch"
+# Locations for app. kernels working directories (can or even should be on scratch space)
+akrr_data = "/home/centos/appkernel/akrr_data"
+# Location of executables and input for app. kernels
+appkernel_dir = "/home/centos/appkernel/resource"
+
+# batch options
+batch_scheduler = "openstack"
+
+# job script header
+batch_job_header_template = """#!/bin/bash
+"""
+
+openstack_env_set_script = "lakeeffect-xdmod-openrc.sh"
+openstack_flavor = "c8.m16"
+openstack_volume = "aktestvolume"
+openstack_network = "lakeeffect-149.102.15"
+openstack_security_group = ["default", "SSH"]
+openstack_key_name = "keyname"
+openstack_server_name = "aktest"
+openstack_floating_ip_attach = None
+# due to current implementation (only one volume)
+# the limit is 1 active task
+max_number_of_active_tasks = 1
+```
+
+Deploy
+```bash eval=F
+akrr resource deploy -r lakeeffect
+```
 
 
 Next: [AKRR: Deployment of Application Kernel on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)

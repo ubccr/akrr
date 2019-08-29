@@ -32,10 +32,10 @@ def empty_line():
     print()
 
 
-def log_input(message, *args):
+def log_input(message: str, *args):
     if message:
         if len(args) > 0:
-            formatted_message = message.format(*args)
+            formatted_message = message % args
         else:
             formatted_message = message
     else:

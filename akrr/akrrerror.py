@@ -37,3 +37,5 @@ class AkrrError(AkrrBaseException):
         return s
 
 
+class AkrrOpenStackException(AkrrBaseException):
+    pass

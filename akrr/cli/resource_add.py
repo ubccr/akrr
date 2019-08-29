@@ -15,6 +15,9 @@ from akrr import cfg
 from akrr.util import log
 from akrr.util.ssh import check_dir_simple, check_dir
 
+from akrr.akrrtypes import QueuingSystemType
+from akrr.util import ask
+from typing import Optional
 ###############################################################################
 # VARIABLES
 ###############################################################################
@@ -45,16 +48,29 @@ network_scratch = None
 local_scratch = "/tmp"
 akrr_data = None
 appkernel_dir = None
-batch_scheduler = None
+batch_scheduler: Optional[QueuingSystemType] = None
 batch_job_header_template = None
 
 resource_cfg_filename = None
 
 
+class OpenStackInfo:
+    """
+    Information about OpenStack
+    """
+    openstack_env_set_script = "openrc.sh"
+    openstack_flavor = "c8.m16"
+    openstack_volume = "appkernel_volume"
+    openstack_network = "network"
+    openstack_security_group = ["default", "SSH"]
+    openstack_key_name = "appkernel_key"
+    openstack_server_name = "appkernels"
+    openstack_floating_ip_attach = None
+
+
 ###############################################################################
 # SCRIPT FUNCTIONS
 ###############################################################################
-
 def retrieve_resources_from_xdmod():
     """
     Retrieve the applicable contents of the `modw`.`resourcefact` table.
@@ -165,7 +181,9 @@ def generate_resource_config(resource_id, m_resource_name, queuing_system):
         log.info("Resource configuration is in " + file_path)
 
 
-def validate_resource_id(resource_id, resources):
+def validate_resource_id(resource_id: str, resources):
+    if resource_id == "None":
+        return True
     try:
         resource_id = int(resource_id)
     except (ValueError, TypeError):
@@ -173,12 +191,10 @@ def validate_resource_id(resource_id, resources):
     for _, resource_id2 in resources:
         if int(resource_id2) == int(resource_id):
             return True
-    if resource_id == 0:
-        return True
     return False
 
 
-def validate_resource_name(m_resource_name):
+def validate_resource_name(m_resource_name: str) -> bool:
     if m_resource_name.strip() == "":
         log.error("Bad name for resource, try a different name")
         return False
@@ -219,16 +235,6 @@ def get_resource_name_by_id(resource_id, resources):
         if int(resource_id2) == int(resource_id):
             return m_resource_name
     return None
-
-
-def validate_queuing_system(queuing_system):
-    """
-    Validate that queuing_system is in supported systems
-    """
-    if queuing_system in ['slurm', 'pbs', 'shell', 'openstack']:
-        return True
-    else:
-        return False
 
 
 def check_connection_to_resource():
@@ -632,6 +638,29 @@ def get_file_system_access_points():
     akrr_data = akrr.util.ssh.ssh_command(rsh, "echo %s" % (akrr_data,)).strip()
 
 
+def _get_openstack_details():
+    global ssh_username
+    global ssh_password
+    global ssh_password4thisSession
+    global ssh_private_key_file
+    global ssh_private_key_password
+
+    global network_scratch
+    global local_scratch
+    global akrr_data
+    global appkernel_dir
+
+    ssh_username = "centos"
+    ssh_password = None
+    ssh_private_key_file = None
+    ssh_private_key_password = None
+
+    network_scratch = "/tmp"
+    local_scratch = "/tmp"
+    akrr_data = "/tmp/akrr"
+    appkernel_dir = "/home/centos/appkernels"
+
+
 def resource_add(config):
     """add resource, config should have following members
         dry_run - Dry Run No files will actually be created
@@ -675,53 +704,34 @@ def resource_add(config):
         "\n".join(["    %11d  %-40s" % (resource_id, resource_name) for resource_name, resource_id in resources]) +
         "\n")
 
+    resource_id = None
     if len(resources) > 0:
         while True:
-            log.log_input('Enter resource_id for import (enter 0 for no match):')
+            log.log_input('Enter resource_id for import (enter None for no match):')
             resource_id = input()
             if validate_resource_id(resource_id, resources):
                 break
             log.warning("Incorrect resource_id try again")
         log.empty_line()
-        resource_id = int(resource_id)
-    else:
-        resource_id = 0
-
-    if resource_id <= 0:  # i.e. no match from XDMoD DB
-        resource_id = None
-
-    resource_name = ""
-    while True:
-        if resource_id is None:
-            log.log_input('Enter AKRR resource name:')
-            resource_name = input()
+        if resource_id != "None":
+            resource_id = int(resource_id)
         else:
-            resource_name2 = get_resource_name_by_id(resource_id, resources)
-            log.log_input(
-                'Enter AKRR resource name, hit enter to use same name as in XDMoD Database [%s]:' % (resource_name2,))
-            resource_name = input()
-            if resource_name.strip() == "":
-                resource_name = resource_name2
+            resource_id = None
 
-        if validate_resource_name(resource_name):
-            break
-    log.empty_line()
-
-    while True:
-        log.log_input('Enter queuing system on resource (slurm, pbs, shell or openstack): ')
-        queuing_system = input()
-        if validate_queuing_system(queuing_system):
-            break
-        else:
-            log.error("Incorrect queuing_system try again")
-
-    batch_scheduler = queuing_system
-    log.empty_line()
+    resource_name = ask.ask(
+        'Enter AKRR resource name', validate=validate_resource_name,
+        default=None if resource_id is None else get_resource_name_by_id(resource_id, resources))
+    batch_scheduler = ask.multiple_choice_enum(
+        'Enter queuing system on resource', QueuingSystemType).value
 
     if minimalistic is False:
-        get_remote_access_method()
-        get_system_characteristics()
-        get_file_system_access_points()
+        if batch_scheduler is QueuingSystemType.openstack:
+            _get_openstack_details()
+            get_system_characteristics()
+        else:
+            get_remote_access_method()
+            get_system_characteristics()
+            get_file_system_access_points()
 
     log.debug("Summary of parameters" +
               "resource_name: {}".format(resource_name) +
@@ -739,7 +749,7 @@ def resource_add(config):
               "batch_scheduler: {}".format(batch_scheduler) +
               "batch_job_header_template: {}".format(batch_job_header_template) + "\n")
     
-    generate_resource_config(resource_id, resource_name, queuing_system)
+    generate_resource_config(resource_id, resource_name, batch_scheduler.value)
     log.info(
         "Initiation of new resource is completed.\n"
         "    Edit batch_job_header_template variable in {}\n"

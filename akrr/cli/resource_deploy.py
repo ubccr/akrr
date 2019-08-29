@@ -745,6 +745,8 @@ def resource_deploy(args):
     if resource['batch_scheduler'].lower() == "openstack":
         # Start instance if it is cloud
         openstack_server = akrr.util.openstack.OpenStackServer(resource=resource)
+        if openstack_server.is_server_running():
+            openstack_server.delete()
         resource['openstack_server'] = openstack_server
         openstack_server.create()
         resource['remote_access_node'] = openstack_server.ip
