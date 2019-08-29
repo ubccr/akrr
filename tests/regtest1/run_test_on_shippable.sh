@@ -12,6 +12,7 @@ export REPO_FULL_NAME=${REPO_FULL_NAME:-ubccr/akrr}
 export AKRR_SETUP_WAY=${AKRR_SETUP_WAY:-dev}
 export AKRR_SETUP_WAY=${1:-$AKRR_SETUP_WAY}
 export AKRR_SRC=${AKRR_SRC:-/home/akrruser/akrr_src}
+export AKRR_SHORT_TESTS=${AKRR_SHORT_TESTS:-false}
 
 # AKRR_SETUP_HOME enviroment variable would set AKRR_HOME installation path
 
@@ -56,19 +57,22 @@ else
     exit 1
 fi
 
-#Run pylint tests
-echo $highlight "Running pylint tests"
-pylint --errors-only akrr.util
+if [ "${AKRR_SHORT_TESTS}" == "false" ]; then
+    #Run pylint tests
+    echo $highlight "Running pylint tests"
+    pylint --errors-only akrr.util
 
-#Run unit tests
-echo $highlight "Running unit tests"
-mkdir -p shippable/testresults
-mkdir -p shippable/codecoverage
-PYTHONPATH=${AKRR_TEST_PYTHONPATH} pytest \
-       --junitxml=shippable/testresults/testresults.xml \
-       --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
-       -m "not openstack" \
-       ./tests/unit_tests
+    #Run unit tests
+    echo $highlight "Running unit tests"
+    mkdir -p shippable/testresults
+    mkdir -p shippable/codecoverage
+    PYTHONPATH=${AKRR_TEST_PYTHONPATH} pytest \
+           --junitxml=shippable/testresults/testresults.xml \
+           --cov=akrr --cov-report=xml:shippable/codecoverage/coverage.xml \
+           -m "not openstack" \
+           ./tests/unit_tests
+    rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+fi
 
 # Run this regression test
 echo $highlight "Running regression test"
@@ -86,7 +90,7 @@ cd ../..
 
 # Rerun unit tests and run system tests together
 echo $highlight "Rerunning unit tests and run system tests together"
-rm shippable/testresults/testresults.xml shippable/codecoverage/coverage.xml
+
 set +e
 ps -Af|grep akrr
 ls -l /home/akrruser/akrr/log/data

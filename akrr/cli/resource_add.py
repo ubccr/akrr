@@ -725,7 +725,7 @@ def resource_add(config):
         'Enter queuing system on resource', QueuingSystemType).value
 
     if minimalistic is False:
-        if batch_scheduler is QueuingSystemType.openstack:
+        if batch_scheduler is QueuingSystemType.openstack.value:
             _get_openstack_details()
             get_system_characteristics()
         else:
@@ -749,7 +749,7 @@ def resource_add(config):
               "batch_scheduler: {}".format(batch_scheduler) +
               "batch_job_header_template: {}".format(batch_job_header_template) + "\n")
     
-    generate_resource_config(resource_id, resource_name, batch_scheduler.value)
+    generate_resource_config(resource_id, resource_name, batch_scheduler)
     log.info(
         "Initiation of new resource is completed.\n"
         "    Edit batch_job_header_template variable in {}\n"

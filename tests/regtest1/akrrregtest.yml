@@ -29,7 +29,7 @@ setup:
 resource:
     - 
         #single node self contained Slurm WLM
-        resource_id: 0
+        resource_id: None
         resource_name: localhost
         queuing_system: slurm
         headnode: ""
@@ -48,7 +48,7 @@ resource:
         deploy_timeout: 120
     -
         #single node self contained Slurm WLM
-        resource_id: 0
+        resource_id: None
         resource_name: localhost2
         queuing_system: slurm
         headnode: localhost
