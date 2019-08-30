@@ -77,7 +77,7 @@ fi
 # Run this regression test
 echo $highlight "Running regression test"
 export PATH=${AKRR_SRC}/tests/bin:$PATH
-"${AKRR_SRC}/tests/regtest1/run_test.sh"
+"${AKRR_SRC}/tests/regtest1/_test_install_deploy.sh"
 # source .bashrc to load AKRR environment variables (AKRR_HOME and PATH in case of non-standard location)
 source ~/.bashrc
 
