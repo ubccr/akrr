@@ -10,7 +10,7 @@ from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 
 def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
              time_window_start=None, time_window_end=None, test_run=False,
-             dry_run=False, gen_batch_job_only=False):
+             dry_run=False, gen_batch_job_only=False, app_param=None, task_param=None):
     """
     Handles the appropriate execution of a 'New Task' mode request
     given the provided command line arguments.
@@ -40,8 +40,16 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
             'resource_param': "{'nnodes':%s}" % node
         }
 
+        s_task_param = ""
         if test_run:
-            data['task_param'] = "{'test_run':True}"
+            s_task_param += "'test_run':True"
+        if task_param is not None:
+            s_task_param += task_param if s_task_param == "" else "," + task_param
+        if s_task_param != "":
+            data['task_param'] = "{%s}" % s_task_param
+
+        if app_param is not None:
+            data['app_param'] = "{%s}" % app_param
 
         log.debug("Trying to submit: "+pprint.pformat(data))
 

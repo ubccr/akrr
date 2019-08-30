@@ -449,6 +449,12 @@ def cli_task_new(parent_parser):
     parser.add_argument(
         '--gen-batch-job-only', action='store_true',
         help="Generate batch job script file without actually submitting task, if dry-run is on it will only print it")
+    parser.add_argument(
+        '--app-param', help="additional options for appkernel.\n"
+                            "For example to use different executable:\n"
+                            "--app-param \"'executable':'execs/hpcc/hpcc_skx'\"")
+    parser.add_argument(
+        '--task-param', help="additional options for task")
 
     def handler(args):
         kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
