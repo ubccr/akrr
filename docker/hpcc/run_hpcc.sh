@@ -1,10 +1,14 @@
 #!/bin/bash
+AKRR_APPKER_DIR=${AKRR_APPKER_DIR:-/opt/appker}
+EXECUTABLE=${EXECUTABLE:-execs/hpcc/hpcc}
 
+INPUTS_DIR=${INPUTS_DIR:-${AKRR_APPKER_DIR}/inputs}
+EXECS_DIR=${EXECS_DIR:-${AKRR_APPKER_DIR}/execs}
+MPI_DIR=${MPI_DIR:-/opt/intel/impi/2018.3.222/bin64}
+HPCC_EXE_FULL_PATH=${HPCC_EXE_FULL_PATH:-${AKRR_APPKER_DIR}/${EXECUTABLE}}
+
+source "${MPI_DIR}/mpivars.sh"
 echo "Starting run script for running hpcc in this docker container"
-
-# initializing where the inputs are
-temp="hpcc"
-hpcc_inputs_dir="${INPUTS_DIR}/${temp}"
 
 # gets the number of cores of this machine automatically
 echo "Checking number of cores to determine number of processes to run"
@@ -19,22 +23,27 @@ echo "Number of processes set: ${cpu_cores}"
 # help text essentially
 usage()
 {
-    	echo "usage: setup_hpcc_inputs.sh [-h] [-i] [--norun] [-n NODES] [-ppn PROC_PER_NODE] [--pin]"
-	echo "None are required."
-	echo ""
-    	echo " Options:"
-    	echo "	-h | --help			Display help text"
-	echo "	-v | --verbose			increase verbosity of output (does a set -x)"
-	echo " 	-i | --interactive		Start a bash session after the run (need to also do -it after docker run)"
-	echo "	--norun				Set if you don't want to immediately run hpcc "
-	echo "	-n NODES | --nodes NODES	Specify number of nodes hpcc will be running on"
-	echo "	-ppn PROC_PER_NODE | "
-	echo "	--proc_per_node PROC_PER_NODE	Specify nymber of processes/cores per node" 
-	echo "					(if not specified, number of cpu cores is used,"
-	echo "					as found in /proc/cpuinfo)"
-	echo "  --pin 				Turn on process pinning for mpi (I_MPI_PIN)"
-	echo "  -d DEBUG_LEVEL | "
-	echo "	--debug DEBUG_LEVEL		Set the mpi debug level to the given value (0-5+, default 0)"
+  echo << END
+usage: run_hpcc.sh [-h] [-i] [--norun] [-n NODES] [-ppn PROC_PER_NODE] [--pin]
+None are required.
+
+Options:
+  -h | --help           Display help text
+	-v | --verbose        increase verbosity of output (does a set -x)
+ 	-i | --interactive		Start a bash session after the run (need to also do
+ 	                      -it after docker run)
+	--norun			         	Set if you don't want to immediately run hpcc
+	-n NODES | --nodes NODES
+                        Specify number of nodes hpcc will be running on
+	-ppn PROC_PER_NODE | --proc_per_node PROC_PER_NODE
+	                      Specify nymber of processes/cores per node
+					              (if not specified, number of cpu cores is used,
+					              as found in /proc/cpuinfo)"
+  --pin          				Turn on process pinning for mpi (I_MPI_PIN)
+  -d DEBUG_LEVEL | --debug DEBUG_LEVEL
+			                  Set the mpi debug level to the given value
+			                  (0-5+, default 0)
+END
 } 
 
 # allows script to continue if the argument passed in is a valid number
@@ -125,12 +134,10 @@ validate_number ${I_MPI_DEBUG}
 
 echo "Determining input file based on Nodes and processes per node"
 # setting up paths to do the copying
-temp="x"
-hpcc_input_name="hpccinf.txt.${ppn}${temp}${nodes}"
-hpcc_input_full_path="${hpcc_inputs_dir}/${hpcc_input_name}"
+hpcc_input_name="hpccinf.txt.${ppn}x${nodes}"
+hpcc_input_full_path="${INPUTS_DIR}/hpcc/${hpcc_input_name}"
 
-temp="hpccinf.txt"
-dest_path="${work_dir}/${temp}"
+dest_path="${work_dir}/hpccinf.txt"
 
 # output for testing
 echo "Input file name: ${hpcc_input_name}"
@@ -138,7 +145,7 @@ echo "Input file name: ${hpcc_input_name}"
 # check if input file exists, if it does, copy it over
 echo "Copying over input file to hpccinf.txt in working directory"
 if [[ -f "${hpcc_input_full_path}" ]]; then
-	cp ${hpcc_input_full_path} ${dest_path}
+	cp "${hpcc_input_full_path}" "${dest_path}"
 	echo "${hpcc_input_name} copied over to ${dest_path}"
 else
 	echo "Error: ${hpcc_input_full_path} does not exist"

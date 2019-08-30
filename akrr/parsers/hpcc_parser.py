@@ -200,7 +200,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
                 resname = resource_appker_vars['resource']['name']
                 if resname in resource_appker_vars['app']['theoreticalGFlopsPerCore']:
                     theoretical_gflops_per_core = resource_appker_vars['app']['theoreticalGFlopsPerCore'][resname]
-            if theoretical_gflops_per_core is None:
+            if theoretical_gflops_per_core is not None:
                 theoretical_gflops = theoretical_gflops_per_core * num_cores
                 log.debug("Theoretical GFLOPS for %s is %f", resname, theoretical_gflops)
 

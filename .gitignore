@@ -35,3 +35,4 @@
 /etc_old
 /log_old
 /venv
+/docker/hpcc/bin
