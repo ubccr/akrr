@@ -3,6 +3,7 @@ import os
 import sys
 from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 from akrr.util import get_float_or_int
+from akrr.util import log
 
 
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
@@ -28,7 +29,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     parser.add_must_have_parameter('Input:OpenMP Threads')
     parser.add_must_have_parameter('Input:PTRANS Problem Size')
     parser.add_must_have_parameter('Input:STREAM Array Size')
-    parser.add_must_have_parameter('RunEnv:CPU Speed')
+    # parser.add_must_have_parameter('RunEnv:CPU Speed')
     parser.add_must_have_parameter('RunEnv:Nodes')
 
     parser.add_must_have_statistic(
@@ -38,7 +39,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     parser.add_must_have_statistic("Average STREAM 'Scale' Memory Bandwidth")
     parser.add_must_have_statistic("Average STREAM 'Triad' Memory Bandwidth")
     parser.add_must_have_statistic('Fast Fourier Transform (FFTW) Floating-Point Performance')
-    parser.add_must_have_statistic('High Performance LINPACK Efficiency')
+    # parser.add_must_have_statistic('High Performance LINPACK Efficiency')
     parser.add_must_have_statistic('High Performance LINPACK Floating-Point Performance')
     parser.add_must_have_statistic('High Performance LINPACK Run Time')
     parser.add_must_have_statistic('MPI Random Access')
@@ -183,15 +184,26 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 
     if resource_appker_vars is not None:
         if 'resource' in resource_appker_vars and 'app' in resource_appker_vars:
-            if 'theoreticalGFlopsPerCore' in resource_appker_vars['app']:
+            resname = resource_appker_vars['resource']['name']
+            if num_cores is None:
+                num_cores = resource_appker_vars['resource']['nnodes']*resource_appker_vars['resource']['ppn']
+
+            theoretical_gflops_per_core = None
+            if "appkernel_on_resource" in resource_appker_vars['app'] and \
+                    resname in resource_appker_vars['app']["appkernel_on_resource"] and \
+                    'theoretical_gflops_per_core' in resource_appker_vars['app']["appkernel_on_resource"][resname]:
+                theoretical_gflops_per_core = \
+                    resource_appker_vars['app']["appkernel_on_resource"][resname]["theoretical_gflops_per_core"]
+
+            # @todo theoreticalGFlopsPerCore should be deprecated
+            if theoretical_gflops_per_core is None and 'theoreticalGFlopsPerCore' in resource_appker_vars['app']:
                 resname = resource_appker_vars['resource']['name']
                 if resname in resource_appker_vars['app']['theoreticalGFlopsPerCore']:
-                    theoretical_gflops = resource_appker_vars['app']['theoreticalGFlopsPerCore'][resname] * num_cores
-                    print("theoreticalGFlops", resname, theoretical_gflops)
+                    theoretical_gflops_per_core = resource_appker_vars['app']['theoreticalGFlopsPerCore'][resname]
+            if theoretical_gflops_per_core is None:
+                theoretical_gflops = theoretical_gflops_per_core * num_cores
+                log.debug("Theoretical GFLOPS for %s is %f", resname, theoretical_gflops)
 
-    if theoretical_gflops is None and mhz is not None:
-        # Most modern x86 & POWER processors are superscale and can issue 4 instructions per cycle
-        theoretical_gflops = mhz * num_cores * 4 / 1000.0
     if theoretical_gflops and hpl_tflops:
         # Convert both to GFlops and derive the Efficiency
         percent = (1000.0 * hpl_tflops / theoretical_gflops) * 100.0

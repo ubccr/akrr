@@ -998,7 +998,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         if self.resource['batch_scheduler'].lower() == "openstack":
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.delete()
-        log.info("Done", self.taskDir)
+        log.info("Done")
         self.set_method_to_run_next("task_is_complete", "Done", "Done")
         return None
 

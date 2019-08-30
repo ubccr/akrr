@@ -123,9 +123,28 @@ export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 # set how to run app kernel
 RUN_APPKERNEL="srun {appkernel_dir}/{executable}"
 """
+# gflops: 2 for number of units * 2 for FMA * 8 for data width * 1.9 for frequency 
+theoretical_gflops_per_core = None
 ```
 
-Update loading environment variables and the way how hpcc is executed:
+In the previous AKRR version we calculate theoretical GFLOPs on the fly based on frequencies measured
+after HPCC execution. Nowadays frequencies are tricky and it is difficult to calculate theoretical GFLOPs for
+all possible CPUs so now you need to do it your self. For Intel CPUs sustainable frequencies for different execution mode
+can be found in https://www.intel.com/content/www/us/en/processors/xeon/scalable/xeon-scalable-spec-update.html .
+
+Here is some examples for different CPUs
+```bash
+# Intel CPU Gold 6130
+# frequency for avx512 load on all cores: 1.9 GHz
+# fused multiply add: yes
+# data width: 8 doubles
+# vector arithmetics units: 2
+# gflops: 2 for number of units * 2 for FMA * 8 for data width * 1.9 for frequency 
+theoretical_gflops_per_core = 2 * 2 * 8 * 1.9
+```
+
+
+Update loading environment variables and theoretical_gflops_per_core. The way how hpcc is executed:
 
 **~/akrr/etc/resources/$RESOURCE/hpcc.app.conf**
 ```python
@@ -143,6 +162,7 @@ export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 RUN_APPKERNEL="srun {appkernel_dir}/{executable}"
 """
 ```
+
 
 # Generate Batch Job Script and Execute it Manually (Optional)
 
