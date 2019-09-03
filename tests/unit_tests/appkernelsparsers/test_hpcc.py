@@ -8,7 +8,9 @@ def test_parser(datadir):
         stdout=str(datadir / 'stdout'),
         stderr=str(datadir / 'stderr'),
         geninfo=str(datadir / 'gen.info'),
-        resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
+        resource_appker_vars={'resource': {'name': 'HPC-Cluster','nnodes': 4, 'ppn': 32},
+                              'app': {"appkernel_on_resource": {'HPC-Cluster':
+                                                                {'theoretical_gflops_per_core': 2100.0*2*2}}}}
     )
     # check resulting xml
     xml_out = ElementTree.fromstring(results.replace("'", ""))
@@ -47,7 +49,7 @@ def test_parser(datadir):
         float(stats.find(
             ".//statistic[ID='Fast Fourier Transform (FFTW) Floating-Point Performance']").find('value').text), 67847.4)
     assert floats_are_close(
-        float(stats.find(".//statistic[ID='High Performance LINPACK Efficiency']").find('value').text), 328.531)
+        float(stats.find(".//statistic[ID='High Performance LINPACK Efficiency']").find('value').text), 0.329)
     assert floats_are_close(
         float(stats.find(".//statistic[ID='High Performance LINPACK Floating-Point Performance']").find('value').text),
         3532370.0)
