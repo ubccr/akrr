@@ -52,6 +52,37 @@ akrr_perform_common_tests () {
     akrr_test_dir_writability "$AKRR_LOCAL_SCRATCH" "local scratch directory"
 }
 
+akrr_get_number_of_cores () {
+    # gets the number of cores of this machine automatically
+    sockets="$(grep "physical\\sid" /proc/cpuinfo|sort|uniq|wc -l)"
+    cores_per_sockets="$(grep ^cpu\\scores /proc/cpuinfo|sort|uniq|awk '{print $4}')"
+    cores=$((sockets*cores_per_sockets))
+    echo $cores
+}
+
+akrr_get_arch () {
+    # return sse2, avx, avx2, skx or knl
+    # skx is avx512f avx512dq avx512cd avx512bw avx512vl
+    # knl is avx512f avx512pf avx512er avx512cd
+    if [ "$(grep flags /proc/cpuinfo|head -n 1|awk '/avx512f/ && /avx512dq/ && /avx512cd/ && /avx512bw/ && /avx512vl/'|wc -l)" -eq "1" ]
+    then
+        echo "skx"
+    elif [ "$(grep flags /proc/cpuinfo|head -n 1|awk '/avx512f/ && /avx512pf/ && /avx512er/ && /avx512cd/'|wc -l)" -eq "1" ]
+    then
+        echo "knl"
+    elif [ "$(grep flags /proc/cpuinfo|head -n 1|grep avx2|wc -l)" -eq "1" ]
+    then
+        echo "avx2"
+    elif [ "$(grep flags /proc/cpuinfo|head -n 1|grep avx|wc -l)" -eq "1" ]
+    then
+        echo "sse2"
+    elif [ "$(grep flags /proc/cpuinfo|head -n 1|grep sse2|wc -l)" -eq "1" ]
+    then
+        echo "sse2"
+    else
+        echo "unknown"
+    fi
+}
 
 # Depricated camel-style format
 # function to test that directory/file presence

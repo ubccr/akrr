@@ -1,24 +1,35 @@
 #!/bin/bash
-AKRR_APPKER_DIR=${AKRR_APPKER_DIR:-/opt/appker}
-EXECUTABLE=${EXECUTABLE:-execs/hpcc/hpcc}
-
-INPUTS_DIR=${INPUTS_DIR:-${AKRR_APPKER_DIR}/inputs}
-EXECS_DIR=${EXECS_DIR:-${AKRR_APPKER_DIR}/execs}
+CONT_AKRR_APPKER_DIR=${CONT_AKRR_APPKER_DIR:-/opt/appker}
+INPUTS_DIR=${INPUTS_DIR:-${CONT_AKRR_APPKER_DIR}/inputs}
+EXECS_DIR=${EXECS_DIR:-${CONT_AKRR_APPKER_DIR}/execs}
 MPI_DIR=${MPI_DIR:-/opt/intel/impi/2018.3.222/bin64}
-HPCC_EXE_FULL_PATH=${HPCC_EXE_FULL_PATH:-${AKRR_APPKER_DIR}/${EXECUTABLE}}
 
+export PATH=${EXECS_DIR}/bin:$PATH
+
+source "${CONT_AKRR_APPKER_DIR}/execs/bin/akrr_util.bash"
 source "${MPI_DIR}/mpivars.sh"
+id
 echo "Starting run script for running hpcc in this docker container"
 
-# gets the number of cores of this machine automatically
-echo "Checking number of cores to determine number of processes to run"
-cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-if [[ "${cpu_cores}" == "1" ]]; then
-	echo "Detected only one core. Counting processors instead"
-	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
-fi
-
+# get cores count
+cpu_cores="$(akrr_get_number_of_cores)"
 echo "Number of processes set: ${cpu_cores}"
+
+# get arch type
+arch="$(akrr_get_arch)"
+echo "CPU vectorization highest instractions: ${arch}"
+
+# set optimal executable
+if [ "${EXECUTABLE:-x}" = "x" ]
+then
+    EXECUTABLE=execs/hpcc/hpcc
+    if [ -x "${CONT_AKRR_APPKER_DIR}/execs/hpcc/hpcc_${arch}" ]
+    then
+        EXECUTABLE=execs/hpcc/hpcc_${arch}
+    fi
+fi
+HPCC_EXE_FULL_PATH=${HPCC_EXE_FULL_PATH:-${CONT_AKRR_APPKER_DIR}/${EXECUTABLE}}
+echo "Executable to run: ${HPCC_EXE_FULL_PATH}"
 
 # help text essentially
 usage()
@@ -49,13 +60,11 @@ END
 # allows script to continue if the argument passed in is a valid number
 validate_number()
 {
-	echo "Testing entry: ${1}"
 	# checking if the given argument is an integer
 	re='^[0-9]+$'
 	if ! [[ ${1} =~ ${re} ]] ; then
-   		echo "error: Entry is not an integer, as expected" >&2; exit 1
-	else
-		echo "Entry is valid"
+   		echo "error: ${2:-Entry} is not an integer, as expected" >&2
+   		exit 1
 	fi
 }
 
@@ -128,9 +137,9 @@ if [[ "${verbose}" == "true" ]]; then
 fi
 
 echo "Validating variables to make sure they are numbers"
-validate_number ${nodes}
-validate_number ${ppn}
-validate_number ${I_MPI_DEBUG}
+validate_number "${nodes}" nodes
+validate_number "${ppn}" ppn
+validate_number "${I_MPI_DEBUG}" I_MPI_DEBUG
 
 echo "Determining input file based on Nodes and processes per node"
 # setting up paths to do the copying
@@ -154,12 +163,11 @@ fi
 
 # go to working directory to run hpcc
 echo "Changing work directory to ${work_dir}"
-cd ${work_dir}
+cd "${work_dir}"
 
 echo "Running appsigcheck on HPCC binary..."
-# trying to run the script thing on hpcc
-source ${EXECS_DIR}/bin/akrr_util.bash
-export PATH=${EXECS_DIR}/bin:$PATH
+
+
 
 ${EXECS_DIR}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
 wait

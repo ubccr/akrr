@@ -114,8 +114,8 @@ scp $USER@hpcresource:$AKRR_APPKER_DIR/execs/hpcc/hpcc* ./
 ## Building Docker Container
 
 ```bash
-# in $(AKRR_SRC) directory
-docker build
+docker build -t nsimakov/hpcc:latest -f docker/hpcc/Dockerfile .
+docker run --rm nsimakov/hpcc:latest
 ```
 - Dockerfile - the thing that makes the Docker image
 - execs - location of akrr scripts and hpcc binary

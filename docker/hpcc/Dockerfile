@@ -15,27 +15,20 @@ RUN useradd -m -s /bin/bash akrruser && \
     usermod -a -G wheel akrruser && \
     echo "akrruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# copy docker helpers
-COPY ./docker/utils/* /usr/local/sbin/
-
 # place where the executable is
-ENV AKRR_APPKER_DIR=/opt/appker \
-    EXECUTABLE=execs/hpcc/hpcc \
+ENV CONT_AKRR_APPKER_DIR=/opt/appker \
     MPI_DIR=/opt/intel/impi/2018.3.222/bin64
 
 # copying inpus, executables and scripts
-COPY akrr/appker_repo/inputs/hpcc $AKRR_APPKER_DIR/inputs/hpcc
-COPY akrr/appker_repo/execs/bin $AKRR_APPKER_DIR/execs/bin
-COPY docker/hpcc/bin/* $AKRR_APPKER_DIR/execs/hpcc/
-COPY docker/hpcc/run_hpcc.sh /usr/local/bin
+COPY akrr/appker_repo/inputs/hpcc $CONT_AKRR_APPKER_DIR/inputs/hpcc
+COPY docker/hpcc/bin/* $CONT_AKRR_APPKER_DIR/execs/hpcc/
+COPY akrr/appker_repo/execs/bin docker/hpcc/run_hpcc.sh docker/utils/* $CONT_AKRR_APPKER_DIR/execs/bin/
 
-RUN  chmod -R a+rX $AKRR_APPKER_DIR && \
-     chmod -R a+x $AKRR_APPKER_DIR/execs/bin $AKRR_APPKER_DIR/execs/hpcc /usr/local/bin
+RUN  chmod -R a+rX $CONT_AKRR_APPKER_DIR && \
+     chmod -R a+rx $CONT_AKRR_APPKER_DIR/execs/bin $CONT_AKRR_APPKER_DIR/execs/hpcc
 
 # so that the temp directory gets created there
 WORKDIR /home/akrruser
+USER akrruser
 
-# runs the setup script to start
-# Just using the straightup absolute path;
-ENTRYPOINT ["/usr/local/sbin/cmd_start"]
-CMD ["sudo -u akrruser bash /usr/local/bin/run_hpcc.sh"]
+ENTRYPOINT ["/opt/appker/execs/bin/run_hpcc.sh"]
