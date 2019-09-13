@@ -9,7 +9,7 @@ import signal
 import copy
 import subprocess
 import socket
-
+from collections import OrderedDict
 from typing import Union
 
 from . import cfg
@@ -758,6 +758,9 @@ class AkrrDaemon:
 
     def check_status(self):
         """like monitor only print once"""
+        from prettytable import PrettyTable
+        from akrr.util.task import pack_details, wrap_str_dict, wrap_text, get_task_list_table
+
         pid = get_daemon_pid()
         if pid is None:
             log.info("AKRR Server is down")
@@ -769,36 +772,67 @@ class AkrrDaemon:
 
         task_list()
 
-        msg = "Completed Tasks (%s) :\n" % (str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")))
+        complete_table_details = OrderedDict((
+            ('Resource', ('resource', "l", lambda s: wrap_text(s, width=48))),
+            ('App', ('app', "l", str)),
+            ("Time Finished", ('time_finished', "r", str)),
+            ("Resource Param", ("resource_param", "l", lambda s: wrap_str_dict(s, width=48))),
+            ("App Param", ("app_param", "l", lambda s: wrap_str_dict(s, width=48))),
+            ("Task Param", ("task_param", "l", lambda s: wrap_str_dict(s, width=48))),
+            ("Time to Start", ('time_to_start', "l", str)),
+            ('Repeat In', ('repeat_in', "c", str))))
 
-        self.dbCur.execute(
-            '''SELECT task_id,resource,app,datetime_stamp,resource_param,app_param,status,status_info,time_finished
-            FROM completed_tasks
-            ORDER BY time_finished DESC LIMIT 5;''')
+        complete_table_status = OrderedDict((
+            ('Status', ('status', "l", lambda s: wrap_text(s, width=48))),
+            ('Details', ('status_info', "l", lambda s: wrap_text(s, width=48))),
+        ))
+        complete_table_title_key = OrderedDict((
+            ("Task Id", ('task_id', "r", str)),
+            ("Details", (complete_table_details, "l", pack_details)),
+            ('Status', (complete_table_status, "l", pack_details))
+        ))
 
-        tasks = self.dbCur.fetchall()
-        msg = msg + "\n".join([str(row) for row in tasks])
-        log.info(msg)
+        dbCon, dbCur = akrr.db.get_akrr_db(dict_cursor=True)
+
+        dbCur.execute("SELECT * FROM completed_tasks ORDER BY time_finished DESC LIMIT 5")
+        tasks = dbCur.fetchall()
+
+        if len(tasks) > 0:
+            table = get_task_list_table(tasks, complete_table_title_key)
+            log.info("Last %d Completed Tasks (by %s) :\n%s" %
+                     (len(tasks), str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")), str(table)))
+        else:
+            log.info('There is no complete tasks')
 
         # Tasks completed with errors
-        self.dbCur.execute(
-            '''SELECT task_id,time_finished,status, status_info,time_to_start,datetime_stamp,repeat_in,resource,app,
-            resource_param,app_param,task_param,group_id
-            FROM completed_tasks
-            ORDER BY time_finished  DESC LIMIT 5;''')
-        tasks = self.dbCur.fetchall()
+        dbCur.execute(
+            '''SELECT * FROM akrr_xdmod_instanceinfo WHERE status=0 ORDER BY collected  DESC LIMIT 5;''')
+        tasks = dbCur.fetchall()
 
-        if len(tasks) == 0:
-            log.info("\nThere were no tasks completed with errors.")
+        comp_err_table_details = OrderedDict((
+            ('Resource', ('resource', "l", lambda s: wrap_text(s, width=48))),
+            ('App', ('reporter', "l", str)),
+            ("Time Collected", ('collected', "r", str)),
+            ("reporter", ("reporternickname", "l", lambda s: wrap_text(s, width=48))),
+            ("job_id", ("job_id", "l", str))
+        ))
+
+        comp_err_table_status = OrderedDict((
+            ('Status', ('status', "l", str)),
+            ('Details', ('message', "l", lambda s: wrap_text(s, width=48))),
+        ))
+        comp_err_table_title_key = OrderedDict((
+            ("Task Id", ('instance_id', "r", str)),
+            ("Details", (comp_err_table_details, "l", pack_details)),
+            ('Status', (comp_err_table_status, "l", pack_details))
+        ))
+
+        if len(tasks) > 0:
+            table = get_task_list_table(tasks, comp_err_table_title_key)
+            log.info("Last %d Completed Tasks with Errors (by %s) :\n%s" %
+                     (len(tasks), str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")), str(table)))
         else:
-            log.info("\nTasks completed with errors (last %d):" % (len(tasks)))
-            for row in tasks:
-                (task_id, time_finished, status, status_info, time_to_start, datetime_stamp, repeat_in, resource, app,
-                 resource_param, app_param, task_param, group_id) = row
-                if re.match("ERROR:", status, re.M):
-                    task_dir = akrr_task.get_local_task_dir(resource, app, datetime_stamp, False)
-                    log.info("Done with errors: %s %5d %s\n" % (time_finished, task_id, task_dir), resource_param,
-                             app_param, task_param, group_id, "\n", status, "\n", status_info)
+            log.info("\nThere were no tasks completed with errors.")
 
     def reprocess_completed_tasks(self, resource, appkernel, time_start, time_end, verbose=False):
         """

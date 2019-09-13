@@ -44,6 +44,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
         ('runScriptPreRun', 'run_script_pre_run'),
         ('runScriptPostRun', 'run_script_post_run'),
         ('akrrRunAppKer', 'akrr_run_appkernel'),
+        ('akrrGenerateAppKernelSignature', 'akrr_gen_appker_sign'),
         ('requestTwoNodesForOneNodeAppKer', 'appkernel_requests_two_nodes_for_one'),
         ('runScript', 'run_script'),
     ]

@@ -2,9 +2,11 @@ import io
 import logging as log
 import os
 import sys
+from prettytable import PrettyTable
+from collections import OrderedDict
 
 from akrr.util import log
-
+from akrr.util.task import pack_details, wrap_str_dict, wrap_text, get_task_list_table
 from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 
 
@@ -158,6 +160,36 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
     import json
     from . import akrrrestclient
 
+    scheduled_table_parameters = OrderedDict((
+        ("Res. Param", ("resource_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ("App Param", ("app_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ("Task Param", ("task_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ('Repeat In', ('repeat_in', "c", str))
+    ))
+
+    scheduled_table_title_key = OrderedDict((
+        ("Task Id", ('task_id', "r", str)),
+        ('Resource', ('resource', "l", lambda s: wrap_text(s, width=24))),
+        ('App', ('app', "l", str)),
+        ("Parameters", (scheduled_table_parameters, "l", pack_details)),
+        ("Time to Start", ('time_to_start', "l", str)),
+    ))
+
+    active_table_details = OrderedDict((
+        ('Resource', ('resource', "l", lambda s: wrap_text(s, width=48))),
+        ('App', ('app', "l", str)),
+        ("Resource Param", ("resource_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ("App Param", ("app_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ("Task Param", ("task_param", "l", lambda s: wrap_str_dict(s, width=48))),
+        ("Time to Start", ('time_to_start', "l", str)),
+        ('Repeat In', ('repeat_in', "c", str))))
+
+    active_table_title_key = OrderedDict((
+        ("Task Id", ('task_id', "r", str)),
+        ("Details", (active_table_details, "l", pack_details)),
+        ('Status', ('status', "l", lambda s: wrap_text(s, width=48))),
+    ))
+
     log.debug("List all tasks")
 
     data = {}
@@ -186,20 +218,9 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
                 raise AkrrRestAPIException()
 
         results = json.loads(results.text)['data']
-
         if len(results) > 0:
-            msg = 'Scheduled tasks:\n'
-            msg = msg + "%10s%16s%32s%8s%20s%20s\n" % ('task_id', 'resource', 'app', 'nnodes',
-                                                       'time_to_start', 'repeat_in')
-
-            for r in results:
-                if r is None:
-                    r = {}
-                nodes = eval(r.get('resource_param', "{}")).get("nnodes", "NA")
-                msg = msg + "%10s%16s%32s%8s%20s%20s\n" % (
-                    r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
-                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"))
-            log.info(msg)
+            table = get_task_list_table(results, scheduled_table_title_key)
+            log.info('Scheduled tasks:\n' + str(table))
         else:
             log.info('There is no scheduled tasks')
 
@@ -224,23 +245,8 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
         results = json.loads(results.text)['data']
 
         if len(results) > 0:
-            msg = 'Active tasks:\n'
-            msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % ('task_id', 'resource', 'app', 'nnodes',
-                                                           'time_to_start', 'repeat_in', 'status')
-
-            for r in results:
-                if r is None:
-                    r = {}
-                nodes = eval(r.get('resource_param', "{}")).get("nnodes", "NA")
-
-                if r.get('status', "NA") is None:
-                    status = "NA"
-                else:
-                    status = r.get('status', "NA")
-                msg = msg + "%10s%16s%32s%8s%20s%20s%22s\n" % (
-                    r.get('task_id', "NA"), r.get('resource', "NA"), r.get('app', "NA"), nodes,
-                    r.get('time_to_start', "NA"), r.get('repeat_in', "NA"), status[:19])
-            log.info(msg)
+            table = get_task_list_table(results, active_table_title_key)
+            log.info('Active tasks:\n' + str(table))
         else:
             log.info('There is no active tasks')
 
