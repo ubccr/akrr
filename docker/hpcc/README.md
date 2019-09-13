@@ -16,9 +16,7 @@ Some specs:
 So, you can basically follow the steps for HPCC Deployment for normal AKRR, since that gets you the binary. 
 
 ```bash
-# Everything will be done in the execs directory, we'll use environment variable $EXECS_DIR
-# So for example EXECS_DIR would be /path/to/proper/dir with execs being at end
-# The execs directory should be from the git repo, it contains bin and misc/hpcc (05/29/19)
+# On compilation host
 
 # Go to executable directory
 cd $AKRR_APPKER_DIR/execs
@@ -58,10 +56,6 @@ cd hpcc-1.5.0
 # or start from one of our make file
 # put make file into hpl directory
 cd hpl
-# now we need to get the proper make file
-# the major difference is that its CCFLAGS line is
-# CCFLAGS      = $(HPL_DEFS) -restrict -O3 -ansi-alias -ip -xCORE-AVX512 
-# not just -restrict and -O3
 wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/execs/misc/hpcc/Make.intel64_skx
 
 # go back to hpcc-1.5.0 root dir
@@ -69,6 +63,15 @@ cd ..
 make arch=intel64_skx
 mv hpcc hpcc_skx
 make arch=intel64_skx clean
+
+cd hpl
+wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/execs/misc/hpcc/Make.intel64_knl
+
+# go back to hpcc-1.5.0 root dir
+cd ..
+make arch=intel64_knl
+mv hpcc hpcc_knl
+make arch=intel64_knl clean
 
 # now same for avx2
 cd hpl
@@ -117,14 +120,5 @@ scp $USER@hpcresource:$AKRR_APPKER_DIR/execs/hpcc/hpcc* ./
 docker build -t nsimakov/hpcc:latest -f docker/hpcc/Dockerfile .
 docker run --rm nsimakov/hpcc:latest
 ```
-- Dockerfile - the thing that makes the Docker image
-- execs - location of akrr scripts and hpcc binary
-	- bin - location of akrr help scripts
-	- misc - location of file to make the hpcc binary with (in my case)  
-	- hpcc-1.5.0 - directory with the hpcc binary to run (self provided if getting this from git)
-- inputs/hpcc - location of various possible inputs for hpcc
-- scripts - location of run script called when docker image is run
-- original\_notes.md - original notes as I was setting up the docker image - might be helpful for some more info
-
 
 

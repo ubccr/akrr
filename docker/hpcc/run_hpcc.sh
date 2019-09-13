@@ -71,7 +71,8 @@ validate_number()
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where input file will get copied to
+	work_dir=$(mktemp -d "$(pwd)/tmp.XXXXXXXXXX") # location where input file will get copied to
+	export TMPDIR=${work_dir}
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -167,26 +168,36 @@ cd "${work_dir}"
 
 echo "Running appsigcheck on HPCC binary..."
 
-
-
-${EXECS_DIR}/bin/appsigcheck.sh ${HPCC_EXE_FULL_PATH}
+"${EXECS_DIR}/bin/appsigcheck.sh" "${HPCC_EXE_FULL_PATH}"
 wait
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_hpcc}" == "true" ]]; then
-	echo "Running hpcc with command:"
-	echo "${MPI_DIR}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}"
-	export I_MPI_DEBUG
-	export I_MPI_PIN
-	${MPI_DIR}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}
-	wait
-	echo "Complete! hpccoutf.txt is in ${work_dir}"
-	echo "catting output to standard out:"
-	cat hpccoutf.txt
+  echo "Running hpcc with command:"
+  if [[ "$ppn" == "1" ]] && [[ "$nodes" == "1" ]]
+  then
+    echo "${HPCC_EXE_FULL_PATH}"
+    "${HPCC_EXE_FULL_PATH}"
+  else
+    echo "${MPI_DIR}/mpirun -np ${ppn} ${HPCC_EXE_FULL_PATH}"
+    export I_MPI_DEBUG
+    export I_MPI_PIN
+    # Set I_MPI_HYDRA_BOOTSTRAP to ssh otherwise it will use different method on HPC system
+    export I_MPI_HYDRA_BOOTSTRAP="ssh"
+    "${MPI_DIR}/mpirun" -np "${ppn}" "${HPCC_EXE_FULL_PATH}"
+  fi
+
+  wait
+  echo "Complete! hpccoutf.txt is in ${work_dir}"
+  echo "catting output to standard out:"
+  cat hpccoutf.txt
 fi
 
-
-echo "End of entrypoint script. Interactive session will launch if specified."
+# clean up if not debug 5+
+if [[ "${I_MPI_DEBUG}" -lt 5 ]]
+then
+    rm -rf "${work_dir}"
+fi
 
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then

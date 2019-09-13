@@ -172,7 +172,7 @@ HPL_DEFS     = $(F2CDEFS) $(HPL_OPTS) $(HPL_INCLUDES)
 #
 CC           = mpiicc
 CCNOOPT      = $(HPL_DEFS) -restrict
-CCFLAGS      = $(HPL_DEFS) -restrict -O3 -ansi-alias -ip -xCORE-AVX512 
+CCFLAGS      = $(HPL_DEFS) -restrict -O3 -ansi-alias -ip -xCore-AVX512 -qopt-zmm-usage=high 
  
 #
 LINKER       = mpiicc
