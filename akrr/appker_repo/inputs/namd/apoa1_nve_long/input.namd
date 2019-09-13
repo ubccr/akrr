@@ -33,7 +33,7 @@ exclude              scaled1-4
 timestep             2.0   # changed from 1.0
 fullElectFrequency   2     # changed from 4 to adjust for doubled timestep (2fs from 1fs)
 
-numsteps             1200
+numsteps             10000
 outputEnergies       500
 outputtiming         500
 

@@ -1,34 +1,38 @@
 FROM centos:7
 
-LABEL desc="namd benchmark made ready to run"
+LABEL desc="hpcc benchmark made ready to run"
 
-# copying executable (assumes its in namd_loc/execs
-ENV EXECS_DIR=/opt/appker/execs
-
-COPY execs $EXECS_DIR
-
-# location of namd executable
-ENV NAMD_EXE_FULL_PATH=$EXECS_DIR/NAMD_2.12b1_Linux-x86_64-multicore/namd2
-# ENV CHARMRUN_EXE_FULL_PATH=$EXECS_DIR/charmrun
-
-# copying over inputs to use for namd2
-ENV INPUTS_DIR=/usr/local/appker/inputs
-ENV NAMD_INPUTS_DIR=$INPUTS_DIR/namd
-COPY ./inputs/namd $NAMD_INPUTS_DIR
-
-ENV SCRIPTS_DIR=/opt/scripts
-COPY scripts $SCRIPTS_DIR
-
-# setting up directories and permissions
+# Installing intel-mpi and making hpccuser in one Run
 RUN \
-	mkdir /scratch && \
-	chmod -R 777 /scratch && \
-	chmod -R 755 $EXECS_DIR && \
-	chmod -R 755 $SCRIPTS_DIR && \
-	chmod -R 755 $INPUTS_DIR	
+	yum -y update && \
+	yum -y install vim sudo && \
+	yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && \
+	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
+	yum -y install intel-mkl-core-rt-2018.3-222 && \
+	yum clean all
+# intel-mkl-2018.3-051
 
-WORKDIR /scratch
+RUN useradd -m -s /bin/bash akrruser && \
+    echo 'akrruser:akrruser' |chpasswd && \
+    usermod -a -G wheel akrruser && \
+    echo "akrruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-ENTRYPOINT ["/opt/scripts/setup_run_namd.sh"]
+# place where the executable is
+ENV CONT_AKRR_APPKER_DIR=/opt/appker \
+    MPI_DIR=/opt/intel/impi/2018.3.222/bin64
 
+# copying inpus, executables and scripts
+COPY akrr/appker_repo/inputs/namd $CONT_AKRR_APPKER_DIR/inputs/namd
+COPY docker/namd/bin/NAMD_2.13_Linux-x86_64-multicore $CONT_AKRR_APPKER_DIR/execs/NAMD_2.13_Linux-x86_64-multicore
+COPY docker/namd/bin/NAMD_2.13_Linux-x86_64-multicore-CUDA $CONT_AKRR_APPKER_DIR/execs/NAMD_2.13_Linux-x86_64-multicore-CUDA
+COPY akrr/appker_repo/execs/bin docker/namd/run_namd.sh docker/utils/* $CONT_AKRR_APPKER_DIR/execs/bin/
 
+RUN  chmod -R a+rX $CONT_AKRR_APPKER_DIR
+# && \
+#     chmod -R a+rx $CONT_AKRR_APPKER_DIR/execs/bin $CONT_AKRR_APPKER_DIR/execs/NAMD_2.13_Linux-x86_64-multicore/namd*
+
+# so that the temp directory gets created there
+WORKDIR /home/akrruser
+USER akrruser
+
+ENTRYPOINT ["/opt/appker/execs/bin/run_namd.sh"]
