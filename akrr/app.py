@@ -48,8 +48,67 @@ def app_add(resource, appkernel, dry_run=False):
 
 
 def app_list():
-    from .cfg import apps
-    return list(apps.keys())
+    from prettytable import PrettyTable
+    from .cfg import apps, resources
+    from akrr.db import get_akrr_db
+    from collections import OrderedDict
+    db, cur = get_akrr_db(dict_cursor=True)
+
+    # appkernels
+    cur.execute("select * from app_kernels")
+    app_table = OrderedDict(((a["name"], a) for a in cur.fetchall()))
+    pt = PrettyTable()
+    pt.field_names = ["App", "Enabled"]
+    pt.align["App"] = "l"
+    # Apps in db
+    for app_name, app_opt in app_table.items():
+        pt.add_row([app_name, app_opt["enabled"] > 0])
+    # Apps not in db
+    for app_name in apps.keys():
+        if app_name not in app_table:
+            pt.add_row([app_name, "None"])
+
+    log.info("All available appkernels:\n" + str(pt))
+
+    # get enable table
+    cur.execute("select * from resources")
+    resource_app_enabled = OrderedDict(((r["name"], {"apps": OrderedDict(), **r}) for r in cur.fetchall()))
+
+    cur.execute(
+        "select ra.id as resource_app_kernels_id,\n"
+        "       ra.resource_id,r.name as resource, xdmod_resource_id,\n"
+        "                      r.name as resource,r.enabled as resource_enabled,\n"
+        "       ra.app_kernel_id,a.name as app,a.enabled as app_enabled,\n"
+        "       ra.enabled as resource_app_enabled, a.nodes_list\n"
+        "from resource_app_kernels ra\n"
+        "left join resources r on ra.resource_id=r.id\n"
+        "left join app_kernels a on ra.app_kernel_id=a.id")
+    for ra in cur.fetchall():
+        resource_app_enabled[ra["resource"]]["apps"][ra["app"]] = ra
+
+    pt = PrettyTable()
+    pt.field_names = ["Resource", "App", "Enabled"]
+    pt.align["Resource"] = "l"
+    for resource_name, resource_opt in resources.items():
+        for app_name, app_opt in apps.items():
+            if resource_name in app_opt['appkernel_on_resource']:
+                ra_enabled = None
+                if resource_name in resource_app_enabled and app_name in resource_app_enabled[resource_name]["apps"]:
+                    ra_enabled = resource_app_enabled[resource_name]["apps"][app_name]["resource_app_enabled"] != 0
+                pt.add_row([resource_name, app_name, ra_enabled])
+
+    log.info("Appkernels on resources\n" + str(pt))
+    return
+
+
+def app_enable(resource, appkernel, enable=True, dry_run=False):
+    """enabling/disabline AK on resource"""
+    import argparse
+    log.info(("Enabling " if enable else "Disabling ") + "%s on %s", appkernel, resource)
+    if enable:
+        return on_parsed(argparse.Namespace(resource=resource, application=appkernel))
+    else:
+        return off_parsed(argparse.Namespace(resource=resource, application=appkernel))
 
 
 def on_parsed(args):
@@ -123,8 +182,3 @@ def off_parsed(args):
             ''',
                   e.args[0] if len(e.args) > 0 else '',
                   e.args[1] if len(e.args) > 1 else '')
-
-
-def resource_app_enable(resource=None, appkernel=None, dry_run=False):
-    print(resource, appkernel, dry_run)
-    raise NotImplemented("resource_app_enable is not implemented yet!")

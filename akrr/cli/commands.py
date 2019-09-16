@@ -360,6 +360,8 @@ def add_command_app(parent_parser):
     cli_app_add(subparsers)
     cli_app_validate(subparsers)
     cli_app_list(subparsers)
+    cli_app_enable(subparsers, True)
+    cli_app_enable(subparsers, False)
 
 
 def cli_app_add(parent_parser):
@@ -407,7 +409,23 @@ def cli_app_list(parent_parser):
     def handler(_):
         from akrr.util import log
         from akrr.app import app_list
-        log.info("Appkernels:\n"+"\n    ".join(app_list()))
+        app_list()
+
+    parser.set_defaults(func=handler)
+
+
+def cli_app_enable(parent_parser, enable):
+    """enable/disable appkernel on specified resource for production run"""
+    parser = parent_parser.add_parser('enable' if enable else "disable", description=cli_app_enable.__doc__)
+    parser.add_argument(
+        '-r', '--resource', required=True, help="name of resource")
+    parser.add_argument(
+        '-a', '--appkernel', required=True, help="name of app kernel")
+
+    def handler(args):
+        from akrr.util import log
+        from akrr.app import app_enable
+        app_enable(resource=args.resource, appkernel=args.appkernel, enable=enable)
 
     parser.set_defaults(func=handler)
 
@@ -499,25 +517,6 @@ def cli_task_delete(parent_parser):
     def handler(args):
         from akrr.task_api import task_delete
         task_delete(args.task_id)
-
-    parser.set_defaults(func=handler)
-
-
-def cli_enable(parent_parser):
-    """enable resource, app or specific app on a particular resource"""
-    parser = parent_parser.add_parser('enable',
-                                      description=cli_app_add.__doc__)
-
-    parser.add_argument(
-        '-r', '--resource', required=True, help="name of resource")
-    parser.add_argument(
-        '-a', '--appkernel', required=True, help="name of app kernel")
-    parser.add_argument(
-        '--dry-run', action='store_true', help="Dry Run, just show the changes without doing them")
-
-    def handler(args):
-        from akrr.app import resource_app_enable
-        resource_app_enable(args.resource, args.appkernel, args.dry_run)
 
     parser.set_defaults(func=handler)
 
