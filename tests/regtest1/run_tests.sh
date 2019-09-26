@@ -48,6 +48,7 @@ if [ "${AKRR_SETUP_WAY}" == "rpm" ]; then
 elif [ "${AKRR_SETUP_WAY}" == "dev" ]; then
     echo "Develop install"
     sudo ./setup.py develop
+    sudo chown -R $USER:$(id -gn) akrr.egg-info
 elif [ "${AKRR_SETUP_WAY}" == "src" ]; then
     echo "Running in source"
     # export PATH=${AKRR_SRC}/bin:$PATH

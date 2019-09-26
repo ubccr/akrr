@@ -7,7 +7,7 @@ import warnings
 warnings.filterwarnings("ignore", message=r'.*Certificate for .* has no .*subjectAltName.*')
 
 
-def run_akrr(args, pattern=None, caplog=None, clear_log_before=True, clear_log_after=True):
+def run_akrr(args, pattern=None, caplog=None, clear_log_before=True, clear_log_after=True, re_flags=0):
     if caplog is not None and clear_log_before:
         caplog.clear()
 
@@ -26,9 +26,9 @@ def run_akrr(args, pattern=None, caplog=None, clear_log_before=True, clear_log_a
     return m
 
 
-def search_in_caplog(pattern, caplog, clear_log=False):
+def search_in_caplog(pattern, caplog, clear_log=False, re_flags=0):
     for record in caplog.records:
-        m = re.search(pattern, str(record.msg))
+        m = re.search(pattern, str(record.msg), flags=re_flags)
         if m is not None:
             if clear_log:
                 caplog.clear()
@@ -204,7 +204,8 @@ def test_use_gromacs_micro(caplog):
     assert m is not None
     task_id_3 = m.group(1)
 
-    assert run_akrr("task list", str(task_id_3)+".+0-00-001 00:00:00", caplog) is not None
+    # str(task_id_3) +
+    assert run_akrr("task list", "0-00-001 00:00:00", caplog) is not None
 
     # remove it
     run_akrr("task delete -t {}".format(task_id_3))
