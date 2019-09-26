@@ -286,6 +286,9 @@ tar xzf NAMD_2.13_Linux-x86_64-multicore-CUDA.tar.gz
 ## Building Docker Container
 
 ```bash
-docker build -t nsimakov/namd:latest -f docker/namd/Dockerfile .
-docker run --rm nsimakov/namd:latest
+docker build -t nsimakov/containers:namd -f docker/namd/Dockerfile .
+docker run --rm nsimakov/containers:namd
+docker push nsimakov/containers:namd
+rm singularity/namd.sif
+sudo singularity build singularity/namd.sif docker/namd/Singularity
 ```

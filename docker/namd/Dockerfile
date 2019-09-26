@@ -5,7 +5,7 @@ LABEL desc="hpcc benchmark made ready to run"
 # Installing intel-mpi and making hpccuser in one Run
 RUN \
 	yum -y update && \
-	yum -y install vim sudo && \
+	yum -y install vim-minimal sudo && \
 	yum-config-manager --add-repo https://yum.repos.intel.com/mkl/setup/intel-mkl.repo && \
 	rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB && \
 	yum -y install intel-mkl-core-rt-2018.3-222 && \
@@ -27,9 +27,8 @@ COPY docker/namd/bin/NAMD_2.13_Linux-x86_64-multicore $CONT_AKRR_APPKER_DIR/exec
 COPY docker/namd/bin/NAMD_2.13_Linux-x86_64-multicore-CUDA $CONT_AKRR_APPKER_DIR/execs/NAMD_2.13_Linux-x86_64-multicore-CUDA
 COPY akrr/appker_repo/execs/bin docker/namd/run_namd.sh docker/utils/* $CONT_AKRR_APPKER_DIR/execs/bin/
 
-RUN  chmod -R a+rX $CONT_AKRR_APPKER_DIR
-# && \
-#     chmod -R a+rx $CONT_AKRR_APPKER_DIR/execs/bin $CONT_AKRR_APPKER_DIR/execs/NAMD_2.13_Linux-x86_64-multicore/namd*
+RUN  chmod -R a+rX $CONT_AKRR_APPKER_DIR && \
+     chown -R akrruser:akrruser $CONT_AKRR_APPKER_DIR
 
 # so that the temp directory gets created there
 WORKDIR /home/akrruser

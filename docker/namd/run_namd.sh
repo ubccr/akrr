@@ -71,7 +71,7 @@ validate_number()
 set_defaults()
 {
 	work_dir=$(mktemp -d "$(pwd)/tmp.XXXXXXXXXX") # location where input file will get copied to
-	export TMPDIR=${work_dir}
+	# export TMPDIR=${work_dir}
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
@@ -117,7 +117,7 @@ while [[ "${1}" != "" ]]; do
 			;;
 		--pin)
 			echo "Pin arg detected, adding +setcpuaffinity"
-			CPUAFFINITY="setcpuaffinity"
+			CPUAFFINITY="+setcpuaffinity"
 			;;
 		-d | --debug)
 			echo "Debug arg detected, would not remove work_dir"
@@ -166,7 +166,7 @@ wait
 
 # running hpcc with mpirun, where -np is number of cores for the machine
 if [[ "${run_appker}" == "true" ]]; then
-  CMD="${EXE_FULL_PATH} +p ${ppn} ${CPUAFFINITY} input.namd"
+  CMD="${EXE_FULL_PATH} +p ${ppn} ${CPUAFFINITY} +showcpuaffinity input.namd"
   echo "Running namd with command: $CMD"
   $CMD
 
@@ -177,7 +177,8 @@ fi
 if [[ "${DEBUG}" == "0" ]]
 then
     rm -rf "${work_dir}"
-    export TMPDIR=/tmp
+    #export TMPDIR=/tmp
+    cd
 fi
 
 # if user sets interactive flag, starts up bash at end

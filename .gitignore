@@ -37,3 +37,4 @@
 /venv
 /docker/hpcc/bin
 /docker/namd/bin
+/singularity
