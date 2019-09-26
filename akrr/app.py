@@ -6,7 +6,7 @@ from .util import log
 from .akrrerror import AkrrValueException
 
 
-def app_add(resource, appkernel, dry_run=False):
+def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_run: bool =False):
     """add app configuration to resource"""
     log.info("Generating application kernel configuration for %s on %s", appkernel, resource)
 
@@ -24,7 +24,17 @@ def app_add(resource, appkernel, dry_run=False):
         raise AkrrValueException(msg)
 
     cfg_filename = os.path.join(cfg.cfg_dir, 'resources', resource, appkernel + ".app.conf")
-    cfg_template_filename = os.path.join(cfg.templates_dir, appkernel + ".app.conf")
+    cfg_default_template_filename = os.path.join(cfg.templates_dir, appkernel + ".app.conf")
+    cfg_template_filename = os.path.join(cfg.templates_dir, "%s.%s.app.conf" % (appkernel, execution_method))
+    if (not os.path.isfile(cfg_template_filename)) and execution_method == "hpc":
+        cfg_template_filename = cfg_default_template_filename
+
+    if (not os.path.isfile(cfg_template_filename)) and os.path.isfile(cfg_default_template_filename):
+        msg = ("Can not find template file for %s application kernel in %s execution mode.\n"
+               "Try default execution mode (hpc) and customize it for your needs."
+               ) % (appkernel, cfg_template_filename)
+        log.error(msg)
+        raise AkrrValueException(msg)
 
     if os.path.isfile(cfg_filename):
         msg = "Configuration file for %s on %s already exist. For regeneration delete it, %s" % (appkernel, resource,

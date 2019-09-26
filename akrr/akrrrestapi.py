@@ -1038,7 +1038,7 @@ def _turn_resource_on(resource, application):
                 R.name LIKE %s
             """
         )
-        parameters = (resource, application) if resource and application \
+        parameters = ((resource, application), (resource,)) if resource and application \
             else ((resource,), (resource,))
     else:
         resource_exists = _resource_exists(resource)

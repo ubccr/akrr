@@ -76,16 +76,21 @@ def load_all_app():
     load all resources from configuration directory
     """
     global apps
+    global resources  # pylint: disable=global-statement
     for filename in os.listdir(os.path.join(akrr_mod_dir, 'default_conf')):
         if filename == "default.app.conf":
             continue
-        if filename.endswith(".app.conf"):
-            app_name = re.sub('.app.conf$', '', filename)
-            try:
-                app = load_app(app_name)
-                apps[app_name] = app
-            except Exception as e:  # pylint: disable=broad-except
-                log.exception("Exception occurred during app kernel configuration loading: " + str(e))
+        if not filename.endswith(".app.conf"):
+            continue
+        if filename.count(".") != 2:
+            continue
+
+        app_name = re.sub(r'\.app\.conf$', '', filename)
+        try:
+            app = load_app(app_name, resources)
+            apps[app_name] = app
+        except Exception as e:  # pylint: disable=broad-except
+            log.exception("Exception occurred during app kernel configuration loading: " + str(e))
 
 
 def find_app_by_name(app_name):
@@ -96,8 +101,9 @@ def find_app_by_name(app_name):
     raises error if can not find
     """
     global apps  # pylint: disable=global-statement
+    global resources  # pylint: disable=global-statement
     if app_name not in apps:
-        app = load_app(app_name)
+        app = load_app(app_name, resources)
         apps[app_name] = app
         return apps[app_name]
 
@@ -130,7 +136,7 @@ def find_app_by_name(app_name):
 
     if reload_app_cfg:
         del apps[app_name]
-        app = load_app(app_name)
+        app = load_app(app_name, resources)
         apps[app_name] = app
     return apps[app_name]
 

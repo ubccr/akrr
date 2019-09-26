@@ -374,11 +374,14 @@ def cli_app_add(parent_parser):
     parser.add_argument(
         '-a', '--appkernel', required=True, help="name of app kernel")
     parser.add_argument(
+        '-em', '--execution-method', default="hpc", choices=["hpc", "docker", "singularity"],
+        help="name of app kernel")
+    parser.add_argument(
         '--dry-run', action='store_true', help="Dry Run, just show the changes without doing them")
 
     def handler(args):
         from akrr.app import app_add
-        app_add(args.resource, args.appkernel, args.dry_run)
+        app_add(args.resource, args.appkernel, args.execution_method, args.dry_run)
 
     parser.set_defaults(func=handler)
 

@@ -4,7 +4,11 @@ Configuration utilities for AKRR, resources and app
 
 
 # pylint: disable=too-many-branches
+import copy
 import os
+import re
+
+from typing import Optional, Dict
 
 from akrr.akrrerror import AkrrError
 from akrr.cfg import default_dir, cfg_dir
@@ -254,13 +258,14 @@ def load_resource(resource_name: str):
         raise AkrrError("Can not load resource configuration for %s." % resource_name)
 
 
-def load_app(app_name):
+def load_app(app_name: str, resources: Dict) -> Dict:
     """
     load app configuration file, do minimalistic validation
     return dict with app parameters
 
     raises error if can not load
     """
+    log.debug("Loading app %s", app_name)
     from akrr.util import exec_files_to_dict
     try:
         default_app_cfg_filename = os.path.join(default_dir, "default.app.conf")
@@ -276,16 +281,39 @@ def load_app(app_name):
 
         # load resource specific parameters
         for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
-            if resource_name not in ['notactive', 'templates']:
-                app_on_resource_cfg_filename = os.path.join(cfg_dir, "resources", resource_name,
-                                                            app_name + ".app.conf")
-                if os.path.isfile(app_on_resource_cfg_filename):
-                    app['appkernel_on_resource'][resource_name] = exec_files_to_dict(
-                        app_on_resource_cfg_filename, var_in=app['appkernel_on_resource']['default'])
-                    app['appkernel_on_resource'][resource_name][
-                        'resource_specific_app_cfg_filename'] = app_on_resource_cfg_filename
-                    app['appkernel_on_resource'][resource_name]['resource_specific_app_cfg_file_last_mod_time'] = \
-                        os.path.getmtime(app_on_resource_cfg_filename)
+            if resource_name in ['notactive', 'templates']:
+                continue
+            app_on_resource_cfg_filename = os.path.join(cfg_dir, "resources", resource_name, app_name + ".app.conf")
+            if not os.path.isfile(app_on_resource_cfg_filename):
+                continue
+
+            # init default
+            app_on_resource = copy.deepcopy(app['appkernel_on_resource']['default'])
+
+            # set execution_method from resource config
+            execution_method = resources[resource_name].get("execution_method", "hpc")
+
+            # set execution_method from app on resource config
+
+            execution_method = _get_app_execution_method(app_on_resource_cfg_filename, default=execution_method)
+
+            # read default config
+            app_on_resource_cfg_default = os.path.join(default_dir, "%s.%s.app.conf" % (app_name, execution_method))
+
+            if os.path.isfile(app_on_resource_cfg_default):
+                app_on_resource = exec_files_to_dict(app_on_resource_cfg_default, var_in=app_on_resource)
+            elif execution_method != "hpc":
+                log.warning("%s doen't have default for %s execution method" % (app_name, execution_method))
+
+            # read resource specific configuration
+            app_on_resource['resource_specific_app_cfg_filename'] = app_on_resource_cfg_filename
+            app_on_resource['resource_specific_app_cfg_file_last_mod_time'] = 0
+            if os.path.isfile(app_on_resource_cfg_filename):
+                app_on_resource = exec_files_to_dict(app_on_resource_cfg_filename, var_in=app_on_resource)
+                app_on_resource['resource_specific_app_cfg_file_last_mod_time'] = \
+                    os.path.getmtime(app_on_resource_cfg_filename)
+
+            app['appkernel_on_resource'][resource_name] = app_on_resource
 
         # mapped options in app input file to those used in AKRR
         if 'name' not in app:
@@ -307,3 +335,24 @@ def load_app(app_name):
         log.exception("Exception occurred during app kernel configuration loading for %s." % app_name)
         raise AkrrError("Can not load app configuration for %s." % app_name)
 
+
+def _get_app_execution_method(app_on_resource_cfg_filename: str, default: str = None) -> Optional[str]:
+    """
+    read app kernel execution method from app_on_resource_cfg_filename
+    if app_on_resource_cfg_filename do not exists return default
+    """
+    if not os.path.isfile(app_on_resource_cfg_filename):
+        log.debug("While checking execution_method:"
+                  "Application kernel configuration file do not exists (%s)!"
+                  "It might be ok.", app_on_resource_cfg_filename)
+        return default
+    with open(app_on_resource_cfg_filename, "rt") as fin:
+        line = fin.readline()
+        while line:
+            m = re.match(r"execution_method\s*=\s*", line)
+            if m:
+                var = {}
+                exec(line, var)
+                return var['execution_method']
+            line = fin.readline()
+    return default

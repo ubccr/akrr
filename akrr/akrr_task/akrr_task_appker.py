@@ -762,33 +762,36 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         log.debug("%s %s", root, status)
 
         if root is not None:
-            try:
-                t = root.find('exitStatus').find('completed').text
+            if root.find('exitStatus') is not None and root.find('exitStatus').find('completed') is not None:
+                try:
+                    t = root.find('exitStatus').find('completed').text
 
-                log.debug('exitStatus:completed %s', t)
+                    log.debug('exitStatus:completed %s', t)
 
-                if t.strip().upper() == "TRUE":
-                    completed = True
-                else:
-                    completed = False
+                    if t.strip().upper() == "TRUE":
+                        completed = True
+                    else:
+                        completed = False
 
-                if completed:
-                    root.find('body').find('performance').find('benchmark').find('statistics')
-                self.set_method_to_run_next(None, "Task was completed successfully.", "Done")
-            except Exception as e:
-                log.exception("Got exception in push_to_db_raw: %s", e)
+                    if completed:
+                        root.find('body').find('performance').find('benchmark').find('statistics')
+                    self.set_method_to_run_next(None, "Task was completed successfully.", "Done")
+                except Exception as e:
+                    log.exception("Got exception in push_to_db_raw: %s", e)
 
             log.debug("completedstatus %s %s", completed, status)
             error = None
-            try:
+            if root.find('xdtas') is not None and root.find('xdtas').find('batchJob') is not None and \
+                    root.find('xdtas').find('batchJob').find('status') is not None:
+                try:
 
-                t = root.find('xdtas').find('batchJob').find('status').text
-                if t.upper() == "ERROR":
-                    error = True
-                else:
-                    error = False
-            except Exception as e:
-                log.exception("Got exception in push_to_db_raw: %s", e)
+                    t = root.find('xdtas').find('batchJob').find('status').text
+                    if t.upper() == "ERROR":
+                        error = True
+                    else:
+                        error = False
+                except Exception as e:
+                    log.exception("Got exception in push_to_db_raw: %s", e)
 
             status = 0
             if completed is not None:
@@ -816,7 +819,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                             walltime = float(e.find('value').text)
                 else:
                     # i.e. error caught by parser on resource
-                    try:
+                    if root and root.find('exitStatus') and root.find('exitStatus').find('errorMessage'):
                         message = "ERROR: error caught by parser"
                         stderr = root.find('exitStatus').find('errorMessage').text
                         body = """<xdtas>
@@ -828,8 +831,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
       </batchJob>
      </xdtas>
     """ % (reporter, stderr)
-                    except Exception as e:
-                        log.exception("Got exception in push_to_db_raw: %s", e)
+                    else:
                         message = "ERROR: error caught by parser"
                         stderr = None
                         body = """<xdtas>
@@ -897,7 +899,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         internal_failure_code = 0
         if 'masterTaskID' in self.taskParam and appstdout_file is None:
             internal_failure_code = 10004
-        log.debug("completedstatus", completed, status)
+        log.debug("completedstatus %s %s", completed, status)
         if raw is not None:  # .i.e. new entry
             print("Updating")
             cur.execute("""UPDATE akrr_xdmod_instanceinfo
