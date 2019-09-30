@@ -20,6 +20,7 @@ from akrr.util.time import time_stamp_to_datetime_str
 from .util import log
 from . import akrr_task
 import akrr.akrrrestclient
+import akrr.util.openstack
 
 from .akrrerror import AkrrError
 
@@ -1212,6 +1213,9 @@ def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_qu
             # remove from local disk
             th.delete_remote_folder()
             th.delete_local_folder()
+
+            openstack_server = akrr.util.openstack.OpenStackServer(resource=th.resource)
+            openstack_server.delete()
         else:
             raise Exception("Task can NOT be remove safely. Unimplemented status:" + active_task['status'])
 

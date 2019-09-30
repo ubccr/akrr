@@ -20,7 +20,10 @@ Install OpenStack command line client and authorization
 
 ```bash
 # Get pip if it is not yet installed
-sudo yum install python36-pip
+sudo yum install python36-pip 
+
+# python36-devel, gcc and openssl-devel for python-openstackclient
+sudo yum python36-devel gcc openssl-devel
 
 # Install OpenStack command line client
 sudo pip3.6 install python-cinderclient==3.6.1
@@ -206,7 +209,7 @@ sudo yum-config-manager \
     --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 
 # Install Docker
-sudo yum install docker-ce docker-ce-cli containerd.io
+sudo yum install -y docker-ce docker-ce-cli containerd.io
 
 # Start Docker
 sudo systemctl start docker

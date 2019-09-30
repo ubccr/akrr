@@ -245,4 +245,3 @@ def smart_str_merge(str_list: Sequence[str], middle: str = ",", last: str = "or"
             else:
                 s += middle + " " + v
         return s
-

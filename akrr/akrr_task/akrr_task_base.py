@@ -5,8 +5,9 @@ import copy
 import re
 
 import akrr.util.ssh
-from .. import cfg
-from ..util import log
+from akrr import cfg
+from akrr.util import log
+import akrr.util.openstack
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
@@ -235,6 +236,12 @@ class AkrrTaskHandlerBase:
             raise IOError("can not remove remote task folder. The folder should be in akrr_data")
 
         log.info("removing remote task folder:\n\t%s" % self.remoteTaskDir)
+        if self.resource['batch_scheduler'].lower() == "openstack":
+            openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
+            if not openstack_server.is_server_running():
+                msg = "OpenStack instance is down"
+                log.info(msg)
+                return
         msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % self.remoteTaskDir)
         log.info(msg)
 
