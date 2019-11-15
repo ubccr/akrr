@@ -1,5 +1,6 @@
 *.pyc
 .crontmp
+.DS_Store
 /1.xml
 /inca.xml
 /nohup.out
