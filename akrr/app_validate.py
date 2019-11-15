@@ -331,13 +331,13 @@ def app_validate(resource, appkernel, nnodes):
     if completed_tasks['status'].count("ERROR") > 0:
         if completed_tasks['status'].count("ERROR Can not created batch job script and submit it to remote queue") > 0:
             log.error("Can not created batch job script and/or submit it to remote queue\n" +
-                      "See full error report below",
+                      "See full error report below\n" +
                       results_summary)
             os.remove(test_job_lock_filename)
             exit(1)
         else:
             log.error(completed_tasks['status'] + "\n" +
-                      "See full error report below",
+                      "See full error report below\n" +
                       results_summary)
             os.remove(test_job_lock_filename)
             exit(1)
