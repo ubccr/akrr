@@ -234,7 +234,7 @@ class OpenStackServer:
         # wait for ssh to get up
         if self.ssh_private_key_file is not None:
             ssh.ssh_access_multytry(self.ip, username=self.ssh_username, private_key_file=self.ssh_private_key_file,
-                                    number_of_attempts=12, sleep_time=5, command="uname -a")
+                                    number_of_attempts=20, sleep_time=5, command="uname -a")
         else:
             time.sleep(5)
 
