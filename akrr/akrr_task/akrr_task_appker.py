@@ -887,7 +887,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         if os.path.isfile(nodes_filename):
             parser = AppKerOutputParser()
             parser.parse_common_params_and_stats(geninfo=nodes_filename)
-            if hasattr(parser, 'geninfo') and 'node_list' in parser.geninfo:
+            if hasattr(parser, 'geninfo') and parser.geninfo is not None and 'node_list' in parser.geninfo:
                 nodes_list = parser.geninfo['node_list'].split()
                 nodes = ";"
                 for line in nodes_list:

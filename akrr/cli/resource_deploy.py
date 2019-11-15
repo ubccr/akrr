@@ -372,15 +372,17 @@ def monitor_test_job(task_id):
             elif response_json["data"]["queue"] == "completed_tasks":
                 msg_body += "Task is completed!\n"
                 completed_tasks = r.json()['data']['data']['completed_tasks']
-                akrr_xdmod_instance_info = r.json()['data']['data']['akrr_xdmod_instanceinfo']
+                akrr_xdmod_instance_info = r.json()['data']['data'].get('akrr_xdmod_instanceinfo', None)
                 akrr_errmsg = r.json()['data']['data'].get('akrr_errmsg', "None")
                 if log.verbose:
                     msg_body += "completed_tasks table entry:\n" + pp.pformat(completed_tasks) + "\n"
                     msg_body += "akrr_xdmod_instanceinfo table entry:\n" + pp.pformat(akrr_xdmod_instance_info) + "\n"
-                    msg_body += 'output parsing results:\n' + akrr_xdmod_instance_info['body'] + "\n"
+                    msg_body += 'output parsing results:\n' + \
+                                ("None" if akrr_xdmod_instance_info is None else akrr_xdmod_instance_info['body']) + "\n"
                 else:
-                    msg_body += "\tstatus: " + str(akrr_xdmod_instance_info['status']) + "\n"
-                    if akrr_xdmod_instance_info['status'] == 0:
+                    msg_body += "\tstatus: " + str("None" if akrr_xdmod_instance_info is None
+                                                   else akrr_xdmod_instance_info['status']) + "\n"
+                    if akrr_xdmod_instance_info is not None and akrr_xdmod_instance_info['status'] == 0:
                         msg_body += "\tstatus2: " + completed_tasks['status'] + "\n"
                     msg_body += "\tstatus_info: " + completed_tasks['status_info'] + "\n"
             else:
@@ -433,8 +435,13 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
         exit(1)
 
     completed_tasks = r.json()['data']['data']['completed_tasks']
-    akrr_xdmod_instance_info = r.json()['data']['data']['akrr_xdmod_instanceinfo']
+    akrr_xdmod_instance_info = r.json()['data']['data'].get('akrr_xdmod_instanceinfo', None)
     akrr_errmsg = r.json()['data']['data'].get('akrr_errmsg', "None")
+
+    if akrr_xdmod_instance_info is None:
+        log.error("akrr_xdmod_instance_info is not present something is wrong")
+        os.remove(test_job_lock_filename)
+        exit(1)
 
     results_summary = make_results_summary(
         resource['name'], app_name, completed_tasks, akrr_xdmod_instance_info, akrr_errmsg)

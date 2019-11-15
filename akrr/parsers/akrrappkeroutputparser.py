@@ -369,6 +369,6 @@ class AppKerOutputParser:
     def get_datetime_local(datestr):
         """Return local datatime, will convert the other zones to local. If original datestr does not have
         zone information assuming it is already local"""
-        datestr_loc = os.popen('date -d "' + datestr + '" +"%a %b %d %H:%M:%S %Y"').read().strip()
-        r = datetime.datetime.strptime(datestr_loc, "%a %b %d %H:%M:%S %Y")
-        return r
+        import dateutil.parser
+        from dateutil.tz import tzlocal
+        return dateutil.parser.parse(datestr).astimezone(tzlocal()).replace(tzinfo=None)
