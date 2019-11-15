@@ -463,7 +463,7 @@ class AKRRSetup:
             openssl req \
                 -new \
                 -newkey rsa:4096 \
-                -days 365 \
+                -days 3650 \
                 -nodes \
                 -x509 \
                 -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=localhost" \
