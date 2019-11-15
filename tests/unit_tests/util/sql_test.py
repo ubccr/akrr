@@ -135,7 +135,7 @@ class Test_akrr_util_sql_Functions_with_SQL(unittest.TestCase):
         client_host = get_db_client_host(su_cur)
 
         # create user
-        create_user_if_not_exists(su_cur, self.user1, self.password1, client_host)
+        create_user_if_not_exists(su_con, su_cur, self.user1, self.password1, client_host)
 
         # check su rights
         self.assertEqual(db_check_priv(su_cur, "mysql", "ALL"), True)

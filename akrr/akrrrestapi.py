@@ -702,9 +702,8 @@ def _get_resource_apps(resource, application):
     rows = None
     try:
         connection, cursor = akrr.db.get_akrr_db(True)
-        with connection:
-            cursor.execute(query, parameters)
-            rows = cursor.fetchall()
+        cursor.execute(query, parameters)
+        rows = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -802,9 +801,8 @@ def _get_resource_app_status(resource, application):
     rows = None
     try:
         connection, cursor = akrr.db.get_ak_db(True)
-        with connection:
-            cursor.execute(query, parameters)
-            rows = cursor.fetchall()
+        cursor.execute(query, parameters)
+        rows = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("An error was encountered while trying to retrieve the requested tasks. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -876,18 +874,16 @@ def get_resources():
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            # Make sure we execute the correct query with the correct parametersresources
-            if resource_filter:
-                resource_filter = "%{0}%".format(resource_filter) if not exact_flag else resource_filter
+        # Make sure we execute the correct query with the correct parametersresources
+        if resource_filter:
+            resource_filter = "%{0}%".format(resource_filter) if not exact_flag else resource_filter
 
-                cursor.execute(query, ['%{0}%'.format(resource_filter)])
-            else:
-                cursor.execute(query)
+            cursor.execute(query, ['%{0}%'.format(resource_filter)])
+        else:
+            cursor.execute(query)
 
-            # RETRIEVE: the results and save them for returning.
-            results = cursor.fetchall()
+        # RETRIEVE: the results and save them for returning.
+        results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -965,16 +961,14 @@ def get_kernels():
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            # Make sure we execute the correct query with the correct parametersresources
-            if kernel_filter:
-                cursor.execute(query, [kernel_filter])
-            else:
-                cursor.execute(query)
+        # Make sure we execute the correct query with the correct parametersresources
+        if kernel_filter:
+            cursor.execute(query, [kernel_filter])
+        else:
+            cursor.execute(query)
 
-            # RETRIEVE: the results and save them for returning.
-            results = cursor.fetchall()
+        # RETRIEVE: the results and save them for returning.
+        results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1084,10 +1078,9 @@ def _turn_resource_on(resource, application):
     try:
         connection, cursor = akrr.db.get_akrr_db()
         result = 0
-        with connection:
-            for (query, parameter) in queries_and_parameters:
-                print(query, parameter)
-                result += cursor.execute(query, parameter)
+        for (query, parameter) in queries_and_parameters:
+            print(query, parameter)
+            result += cursor.execute(query, parameter)
         return result
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
@@ -1134,12 +1127,11 @@ def _resource_exists(resource):
     :return: true if it exists, false if it doesn't
     """
     connection, cursor = akrr.db.get_akrr_db(True)
-    with connection:
-        cursor.execute("""
-        SELECT 1 FROM mod_akrr.resources R WHERE R.name = %s
-        """, (resource,))
-        rows = cursor.fetchall()
-        return len(rows) > 0
+    cursor.execute("""
+    SELECT 1 FROM mod_akrr.resources R WHERE R.name = %s
+    """, (resource,))
+    rows = cursor.fetchall()
+    return len(rows) > 0
 
 
 def _app_kernel_exists(app_kernel):
@@ -1150,13 +1142,11 @@ def _app_kernel_exists(app_kernel):
     :return: True if it exists, false if it doesn't
     """
     connection, cursor = akrr.db.get_akrr_db(True)
-    with connection:
-        cursor.execute("""
-        SELECT 1 FROM mod_akrr.app_kernels AK WHERE AK.name = %s
-        """, (app_kernel,))
-        rows = cursor.fetchall()
-        return len(rows) > 0
-
+    cursor.execute("""
+    SELECT 1 FROM mod_akrr.app_kernels AK WHERE AK.name = %s
+    """, (app_kernel,))
+    rows = cursor.fetchall()
+    return len(rows) > 0
 
 def _turn_resource_off(resource, application):
     """
@@ -1255,10 +1245,9 @@ def _turn_resource_off(resource, application):
     try:
         connection, cursor = akrr.db.get_akrr_db()
         result = 0
-        with connection:
-            for (query, parameter) in queries_and_parameters:
-                print(query, parameter)
-                result += cursor.execute(query, parameter)
+        for (query, parameter) in queries_and_parameters:
+            print(query, parameter)
+            result += cursor.execute(query, parameter)
         return result
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
@@ -1325,15 +1314,13 @@ def get_walltime_all():
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            # Make sure we execute the correct query with the correct parametersresources
-            cursor.execute(
-                "SELECT id,resource,app,walltime_limit,resource_param,app_param,"
-                "last_update,comments FROM akrr_default_walllimit")
+        # Make sure we execute the correct query with the correct parametersresources
+        cursor.execute(
+            "SELECT id,resource,app,walltime_limit,resource_param,app_param,"
+            "last_update,comments FROM akrr_default_walllimit")
 
-            # RETRIEVE: the results and save them for returning.
-            results = cursor.fetchall()
+        # RETRIEVE: the results and save them for returning.
+        results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1357,18 +1344,16 @@ def get_walltime(walltime_id):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            # Make sure we execute the correct query with the correct parametersresources
-            cursor.execute(
-                "SELECT resource,app,walltime_limit,resource_param,app_param,"
-                "last_update,comments FROM akrr_default_walllimit WHERE id=%s",
-                (walltime_id,))
-            results = cursor.fetchall()
-            if len(results) > 0:
-                return results[0]
-            else:
-                raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
+        # Make sure we execute the correct query with the correct parametersresources
+        cursor.execute(
+            "SELECT resource,app,walltime_limit,resource_param,app_param,"
+            "last_update,comments FROM akrr_default_walllimit WHERE id=%s",
+            (walltime_id,))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            return results[0]
+        else:
+            raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
 
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
@@ -1417,30 +1402,28 @@ def upsert_walltime(resource, m_app):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                           (resource, m_app, params['resource_param'], params['app_param']))
-            results = cursor.fetchall()
-            if len(results) > 0:
-                cursor.execute('''UPDATE akrr_default_walllimit 
-                    SET walltime_limit=%s,
-                        last_update=NOW(),
-                        comments=%s
-                    WHERE
-                     resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                               (params['walltime'], params['comments'], resource, app, params['resource_param'],
-                                params['app_param']))
-                return {'updated': True}
-            else:
-                cursor.execute(
-                    "INSERT INTO akrr_default_walllimit (resource,app,walltime_limit,"
-                    "resource_param,app_param,last_update,comments)"
-                    "VALUES(%s,%s,%s,%s,%s,NOW(),%s)", (
-                        resource, m_app, params['walltime'], params['resource_param'],
-                        params['app_param'], params['comments']))
-                return {'created': True}
+        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
+                       (resource, m_app, params['resource_param'], params['app_param']))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            cursor.execute('''UPDATE akrr_default_walllimit 
+                SET walltime_limit=%s,
+                    last_update=NOW(),
+                    comments=%s
+                WHERE
+                 resource = %s and app=%s and resource_param=%s and app_param=%s''',
+                           (params['walltime'], params['comments'], resource, app, params['resource_param'],
+                            params['app_param']))
+            return {'updated': True}
+        else:
+            cursor.execute(
+                "INSERT INTO akrr_default_walllimit (resource,app,walltime_limit,"
+                "resource_param,app_param,last_update,comments)"
+                "VALUES(%s,%s,%s,%s,%s,NOW(),%s)", (
+                    resource, m_app, params['walltime'], params['resource_param'],
+                    params['app_param'], params['comments']))
+            return {'created': True}
 
             # RETRIEVE: the results and save them for returning.
             # results = cursor.fetchall()
@@ -1490,19 +1473,17 @@ def get_walltime_by_resource_app(resource, m_app):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
-                           (resource, m_app, params['resource_param'], params['app_param']))
-            results = cursor.fetchall()
-            if len(results) > 0:
-                return results[0]
-            else:
-                raise bottle.HTTPError(400, 'There is no default walltime for this configuration')
+        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
+                       (resource, m_app, params['resource_param'], params['app_param']))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            return results[0]
+        else:
+            raise bottle.HTTPError(400, 'There is no default walltime for this configuration')
 
-            # RETRIEVE: the results and save them for returning.
-            # results = cursor.fetchall()
+        # RETRIEVE: the results and save them for returning.
+        # results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1542,23 +1523,21 @@ def update_walltime_by_id(walltime_id):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE id = %s''', (walltime_id,))
-            results = cursor.fetchall()
-            if len(results) > 0:
-                cursor.execute('''UPDATE akrr_default_walllimit 
-                    SET walltime_limit=%s,
-                        last_update=NOW(),
-                        comments=%s
-                    WHERE id = %s''',
-                               (params['walltime'], params['comments'], walltime_id))
-                return {'updated': True}
-            else:
-                raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
-            # RETRIEVE: the results and save them for returning.
-            # results = cursor.fetchall()
+        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        WHERE id = %s''', (walltime_id,))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            cursor.execute('''UPDATE akrr_default_walllimit 
+                SET walltime_limit=%s,
+                    last_update=NOW(),
+                    comments=%s
+                WHERE id = %s''',
+                           (params['walltime'], params['comments'], walltime_id))
+            return {'updated': True}
+        else:
+            raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
+        # RETRIEVE: the results and save them for returning.
+        # results = cursor.fetchall()
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",
@@ -1580,16 +1559,14 @@ def delete_walltime(walltime_id):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        # UTILIZE: automatic resource clean-up.
-        with connection:
-            cursor.execute('''SELECT * FROM akrr_default_walllimit
-            WHERE id = %s''', (walltime_id,))
-            results = cursor.fetchall()
-            if len(results) > 0:
-                cursor.execute('''DELETE FROM akrr_default_walllimit
-                    WHERE id = %s''', (walltime_id,))
-            else:
-                raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
+        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        WHERE id = %s''', (walltime_id,))
+        results = cursor.fetchall()
+        if len(results) > 0:
+            cursor.execute('''DELETE FROM akrr_default_walllimit
+                WHERE id = %s''', (walltime_id,))
+        else:
+            raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
     except MySQLdb.Error as e:
         log.error("There was a SQL Error while attempting to retrieve the specified resources. %s: %s",
                   e.args[0] if len(e.args) >= 1 else "",

@@ -25,14 +25,13 @@ def check_rw_db(connection_func, pre_msg, post_msg):
         connection, cursor = connection_func()
 
         try:
-            with connection:
-                result = cursor.execute("CREATE TABLE CREATE_ME(`id` INT NOT NULL PRIMARY KEY, `name` VARCHAR(48));")
-                success = True if result == 0 else False
+            result = cursor.execute("CREATE TABLE CREATE_ME(`id` INT NOT NULL PRIMARY KEY, `name` VARCHAR(48));")
+            success = True if result == 0 else False
 
-                if success:
-                    log.debug(post_msg, success)
-                else:
-                    log.error(post_msg, success)
+            if success:
+                log.debug(post_msg, success)
+            else:
+                log.error(post_msg, success)
 
         except MySQLdb.Error as e:
             log.error("Error during: " + pre_msg)
@@ -40,8 +39,7 @@ def check_rw_db(connection_func, pre_msg, post_msg):
 
         connection, cursor = connection_func()
         try:
-            with connection:
-                cursor.execute("DROP TABLE CREATE_ME;")
+            cursor.execute("DROP TABLE CREATE_ME;")
         except MySQLdb.Error as e:
             log.error("Error during: " + pre_msg)
             log.error('Unable to drop the table created to check permissions. %s: %s', e.args[0], e.args[1])
@@ -75,15 +73,14 @@ def check_r_db(connection_func, pre_msg, post_msg):
         connection, cursor = connection_func()
 
         try:
-            with connection:
-                result = cursor.execute("SELECT COUNT(*) FROM `modw`.`resourcefact`;")
-                success = True if result >= 0 else False
+            result = cursor.execute("SELECT COUNT(*) FROM `modw`.`resourcefact`;")
+            success = True if result >= 0 else False
 
-                if success:
-                    log.debug(post_msg, success)
-                else:
-                    log.error("Error during: " + pre_msg)
-                    log.error(post_msg, success)
+            if success:
+                log.debug(post_msg, success)
+            else:
+                log.error("Error during: " + pre_msg)
+                log.error(post_msg, success)
 
         except MySQLdb.Error as e:
             log.error("Error during: " + pre_msg)

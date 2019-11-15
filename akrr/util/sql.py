@@ -1,7 +1,7 @@
 """
 Various utilities for SQL database handling
 """
-
+from akrr.util import log
 from typing import Tuple, Dict, Union, Optional
 
 
@@ -251,32 +251,35 @@ def cv(value):
 
 def cursor_execute(cur, query, args=None, dry_run=False):
     """Execute database affecting command if not in dry run mode"""
-    if not dry_run:
-        cur.execute(query, args)
-    else:
-        from akrr.util import log
+    if log.verbose or dry_run:
         if args is not None:
             if isinstance(args, dict):
-                args = dict((key, cur.connection.literal(item)) for key, item in args.items())
+                args_filled = dict((key, cur.connection.literal(item)) for key, item in args.items())
             else:
-                args = tuple(map(cur.connection.literal, args))
-            query = query % args
+                args_filled = tuple(map(cur.connection.literal, args))
+            query_filled = query % args_filled
+        else:
+            query_filled = query
+        if dry_run:
+            log.dry_run("SQL: " + query_filled)
+        else:
+            log.debug("SQL: " + query_filled)
+    if not dry_run:
+        cur.execute(query, args)
 
-        log.dry_run("SQL: " + query)
 
-
-def create_user_if_not_exists(cur, user, password, client_host, dry_run=False):
+def create_user_if_not_exists(con, cur, user, password, client_host, dry_run=False):
     """Older mysql servers don't support create user if not exists directly"""
     cur.execute("SELECT * FROM mysql.user WHERE User=%s AND Host=%s", (user, client_host))
     if len(cur.fetchall()) == 0:
         # Older version of MySQL do not support CREATE USER IF NOT EXISTS
         # so need to do checking
         if password == "":
-            cursor_execute(
-                cur, "CREATE USER %s@%s", (user, client_host), dry_run=dry_run)
+            cursor_execute(cur, "CREATE USER %s@%s", (user, client_host), dry_run=dry_run)
+            con.commit()
         else:
-            cursor_execute(
-                cur, "CREATE USER %s@%s IDENTIFIED BY %s", (user, client_host, password), dry_run=dry_run)
+            cursor_execute(cur, "CREATE USER %s@%s IDENTIFIED BY %s", (user, client_host, password), dry_run=dry_run)
+            con.commit()
 
 
 def drop_user_if_exists(cur, user, client_host, dry_run=False):

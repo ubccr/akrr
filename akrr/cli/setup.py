@@ -423,7 +423,7 @@ class AKRRSetup:
                 if create:
                     _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
 
-                create_user_if_not_exists(su_cur, user, password, client_host, dry_run=akrr.dry_run)
+                create_user_if_not_exists(su_con, su_cur, user, password, client_host, dry_run=akrr.dry_run)
                 _cursor_execute(su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
 
                 su_con.commit()

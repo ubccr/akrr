@@ -40,24 +40,23 @@ def create_and_populate_tables(
             else:
                 connection, cursor = connection_function(True)
 
-            with connection:
-                for (table_name, table_script) in default_tables:
-                    if not drop_if_needed and table_script[:4].upper() == "DROP":
-                        continue
-                    log.debug("CREATING: %s" % table_name)
-                    try:
-                        result = cursor.execute(table_script)
-                        log.debug("Result of: %s -> %d" % (table_name, result))
-                        log.debug("CREATED: %s SUCCESSFULLY!" % table_name)
-                    except MySQLdb.Warning:
-                        pass
+            for (table_name, table_script) in default_tables:
+                if not drop_if_needed and table_script[:4].upper() == "DROP":
+                    continue
+                log.debug("CREATING: %s" % table_name)
+                try:
+                    result = cursor.execute(table_script)
+                    log.debug("Result of: %s -> %d" % (table_name, result))
+                    log.debug("CREATED: %s SUCCESSFULLY!" % table_name)
+                except MySQLdb.Warning:
+                    pass
 
-                for (description, statement) in population_statements:
-                    log.debug("EXECUTING: %s" % description)
+            for (description, statement) in population_statements:
+                log.debug("EXECUTING: %s" % description)
 
-                    result = cursor.execute(statement)
-                    log.debug("Result of: %s -> %d" % (description, result))
-                    log.debug("EXECUTED: %s SUCCESSFULLY!" % description)
+                result = cursor.execute(statement)
+                log.debug("Result of: %s -> %d" % (description, result))
+                log.debug("EXECUTED: %s SUCCESSFULLY!" % description)
         else:
             for (table_name, table_script) in default_tables:
                 log.dry_run("CREATING: %s" % table_name)
