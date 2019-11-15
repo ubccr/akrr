@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ElementTree
 import xml.dom.minidom
 import traceback
 import akrr.util.log as log
+from akrr.util import base_gzip_encode
 
 
 # add total_seconds function to datetime.timedelta if python is old
@@ -169,7 +170,7 @@ class AppKerOutputParser:
                                     "Resource parameter {} was renamed to {}".format(old_key, new_key))
                     
                     if 'node_list' in gi:
-                        self.nodesList = os.popen('echo "%s"|gzip -9|base64 -w 0' % (gi['node_list'])).read()
+                        self.nodesList = base_gzip_encode(gi['node_list'])
                     if 'start_time' in gi:
                         self.startTime = self.get_datetime_local(gi['start_time'])
                     if 'end_time' in gi:
@@ -203,7 +204,7 @@ class AppKerOutputParser:
                     exe_bin_signature += m.group(1).strip() + '\n'
                 j += 1
             if exe_bin_signature != '':
-                exe_bin_signature = os.popen('echo "%s"|gzip -9|base64 -w 0' % exe_bin_signature).read()
+                exe_bin_signature = base_gzip_encode(exe_bin_signature)
             else:
                 exe_bin_signature = None
             self.set_parameter("App:ExeBinSignature", exe_bin_signature)

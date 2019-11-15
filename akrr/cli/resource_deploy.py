@@ -495,7 +495,8 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
             units = units.strip()
 
         if variable == 'App:ExeBinSignature' or variable == 'RunEnv:Nodes':
-            value = os.popen('echo "%s"|base64 -d|gzip -d' % (value,)).read()
+            from akrr.util import base_gzip_decode
+            value = base_gzip_decode(value)
 
         log.debug2("parameter: {} = {} {}".format(variable, value, units))
         parameters[variable] = value
