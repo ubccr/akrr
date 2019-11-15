@@ -1355,7 +1355,7 @@ def update_task_parameters(task_id, new_param, update_derived_task=True):
 
 def get_daemon_pid(delete_pid_file_if_daemon_down=False):
     """Return the PID of AKRR server"""
-    from akrr.util import pid_alive
+    import psutil
     pid = None
     if os.path.isfile(os.path.join(cfg.data_dir, "akrr.pid")):
         # print "Read process pid from",os.path.join(akrr.data_dir,"akrr.pid")
@@ -1366,11 +1366,9 @@ def get_daemon_pid(delete_pid_file_if_daemon_down=False):
         fin.close()
 
         # Check For the existence of a unix pid
-        if pid_alive(pid):
+        if psutil.pid_exists(pid):
             try:
-                fin = open("/proc/%d/cmdline" % pid, 'r')
-                cmd = fin.read()
-                fin.close()
+                cmd = " ".join(psutil.Process(pid=pid).cmdline())
 
                 if cmd.count('akrr') and cmd.count('daemon') and cmd.count('start'):
                     return pid
@@ -1565,7 +1563,7 @@ def daemon_start():
 
 def daemon_stop():
     """Stop AKRR server"""
-    from akrr.util import pid_alive
+    import psutil
     pid = get_daemon_pid(delete_pid_file_if_daemon_down=True)
     if pid is None:
         log.warning("Can not stop AKRR server because none is running.")
@@ -1575,7 +1573,7 @@ def daemon_stop():
     os.kill(pid, signal.SIGTERM)
 
     # wait till process will finished
-    while pid_alive(pid):
+    while psutil.pid_exists(pid):
         time.sleep(0.2)
 
     log.info("Stopped AKRR server (PID: " + str(pid) + ")")
