@@ -235,6 +235,9 @@ docker run hello-world
 
 If everything fine now we can terminate instance
 ```bash
+openstack server stop aktest
+# ensure that it shut off
+openstack server list --name aktest
 openstack server delete aktest
 ```
 
