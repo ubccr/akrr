@@ -280,6 +280,10 @@ def add_command_resource(parent_parser):
     # remove
     # cli_resource_remove(subparsers)
 
+    # enable/disable
+    cli_resource_enable(subparsers)
+    cli_resource_disable(subparsers)
+
 
 def cli_resource_add(parent_parser):
     """configure new resource to AKRR"""
@@ -350,6 +354,32 @@ def cli_resource_list(parent_parser):
         log.info("Resource:\n    "+"\n    ".join(list(cfg.resources.keys())))
 
     parser.set_defaults(func=handler)
+
+
+def cli_resource_enable(parent_parser):
+    """enable resource for execution"""
+    parser = parent_parser.add_parser('enable', description=cli_resource_enable.__doc__)
+    parser.add_argument(
+        '-r', '--resource', required=True, help="name of resource to enable'")
+
+    def resource_enable_handler(args):
+        from akrr.app import app_enable
+        app_enable(resource=args.resource, appkernel=None, enable=True)
+
+    parser.set_defaults(func=resource_enable_handler)
+
+
+def cli_resource_disable(parent_parser):
+    """disable resource for execution"""
+    parser = parent_parser.add_parser('disable', description=cli_resource_disable.__doc__)
+    parser.add_argument(
+        '-r', '--resource', required=True, help="name of resource to disable'")
+
+    def resource_disable_handler(args):
+        from akrr.app import app_enable
+        app_enable(resource=args.resource, appkernel=None, enable=False)
+
+    parser.set_defaults(func=resource_disable_handler)
 
 
 def add_command_app(parent_parser):

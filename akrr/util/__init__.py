@@ -234,17 +234,11 @@ def smart_str_merge(str_list: Sequence[str], middle: str = ",", last: str = "or"
         return s
 
 
-def base_gzip_encode(value):
+def base_gzip_encode(value: str) -> str:
     import os
-    return os.popen('echo "%s"|gzip -9|base64 -w 0' % value).read()
+    return os.popen('echo "%s"|gzip -9|base64' % value).read().replace('\n', '')
 
 
-def base_gzip_decode(value):
+def base_gzip_decode(value: str) -> str:
     import os
     return os.popen('echo "%s"|base64 -d|gzip -d' % value).read()
-
-from akrr.util import base_gzip_decode
-value = base_gzip_decode(value)
-
-from akrr.util import base_gzip_encode
-value = base_gzip_encode(value)

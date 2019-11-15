@@ -114,7 +114,8 @@ def app_list():
 def app_enable(resource, appkernel, enable=True, dry_run=False):
     """enabling/disabline AK on resource"""
     import argparse
-    log.info(("Enabling " if enable else "Disabling ") + "%s on %s", appkernel, resource)
+    log.info(("Enabling " if enable else "Disabling ") +
+             ("%s" % resource if appkernel is None else"%s on %s" % (appkernel, resource) ))
     if enable:
         return on_parsed(argparse.Namespace(resource=resource, application=appkernel))
     else:

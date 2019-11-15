@@ -1103,20 +1103,19 @@ def _does_resource_app_kernel_exist(resource, app_kernel):
     """
 
     db, cur = akrr.db.get_akrr_db(True)
-    with db:
-        cur.execute("""
-        SELECT 1
-        FROM mod_akrr.resource_app_kernels RAK
-        JOIN mod_akrr.resources R
-          ON RAK.resource_id = R.id
-        JOIN mod_akrr.app_kernels AK
-          ON RAK.app_kernel_id = AK.id
-        WHERE
-          R.name = %s
-          AND AK.name = %s
-        """, (resource, app_kernel))
-        rows = cur.fetchall()
-        return len(rows) > 0
+    cur.execute("""
+    SELECT 1
+    FROM mod_akrr.resource_app_kernels RAK
+    JOIN mod_akrr.resources R
+      ON RAK.resource_id = R.id
+    JOIN mod_akrr.app_kernels AK
+      ON RAK.app_kernel_id = AK.id
+    WHERE
+      R.name = %s
+      AND AK.name = %s
+    """, (resource, app_kernel))
+    rows = cur.fetchall()
+    return len(rows) > 0
 
 
 def _resource_exists(resource):
