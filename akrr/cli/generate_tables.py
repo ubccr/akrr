@@ -1109,3 +1109,71 @@ def copy_mod_akrr_tables(mod_akrr):
         at_once=False)
 
     return
+
+
+def add_fake_modw(con, cur, dry_run=False):
+    from akrr.util.sql import cursor_execute
+    log.info("Creating minimal modw database required for AKRR functioning if needed")
+    create_db = True
+    create_table = True
+    populate_table = True
+
+    from akrr.util.sql import db_exist
+
+    if db_exist(cur, "modw"):
+        create_db = False
+        log.info("modw exists")
+        try:
+            cur.execute("SELECT * FROM modw.resourcefact")
+            cur.fetchall()
+            create_table = False
+            log.info("modw.resourcefact exists")
+
+            cur.execute("SELECT * FROM modw.resourcefact WHERE code='Alpha' OR code='Bravo'")
+            rs = cur.fetchall()
+            if len(rs) == 2:
+                populate_table = False
+                log.info("modw.resourcefact contains Alpha and Bravo")
+        except MySQLdb.Error:
+            log.debug2("Either modw.resourcefact  does not exist or unexpected values")
+
+    if create_db:
+        cursor_execute(cur, "CREATE DATABASE IF NOT EXISTS modw", dry_run=dry_run)
+
+    if create_table:
+        cursor_execute(cur, """
+            USE modw;
+
+            CREATE TABLE `resourcefact`
+            (
+              `id` INT NOT NULL,
+              `resourcetype_id` INT,
+              `organization_id` INT,
+              `name` VARCHAR(200),
+              `code` VARCHAR(64) NOT NULL,
+              `description` VARCHAR(1000),
+              `start_date` DATETIME,
+              `start_date_ts` INT DEFAULT 0 NOT NULL,
+              `end_date` DATETIME,
+              `end_date_ts` INT,
+              PRIMARY KEY (`id`, `start_date_ts`)
+            );
+            CREATE INDEX `aggregation_index` ON `resourcefact` (`resourcetype_id`, `id`);
+        """, dry_run=dry_run)
+
+    if populate_table:
+        cursor_execute(
+            cur,
+            "INSERT INTO modw.resourcefact (" +
+            "id, resourcetype_id, organization_id, name, code, description, " +
+            "    start_date, start_date_ts, end_date, end_date_ts) " +
+            "VALUES (10, 1, 35, 'alpha', 'Alpha', null, " +
+            "    '2010-01-01 00:00:00.0', 1262322000, null, null);", dry_run=dry_run)
+        cursor_execute(
+            cur,
+            "INSERT INTO modw.resourcefact (" +
+            "id, resourcetype_id, organization_id, name, code, description," +
+            "    start_date, start_date_ts, end_date, end_date_ts) " +
+            "VALUES (11, 1, 35, 'bravo', 'Bravo', null, " +
+            "    '2010-01-01 00:00:00.0', 1262322000, null, null); ", dry_run=dry_run)
+    con.commit()

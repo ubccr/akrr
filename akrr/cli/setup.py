@@ -331,7 +331,7 @@ class AKRRSetup:
                                                             self.ak_db_host, self.ak_db_port)
         log.empty_line()
 
-    def get_akrr_db(self, su=False, dbname=""):
+    def get_akrr_db(self, su=False, dbname: Optional[str] = ""):
         """
         get connector and cursor to mod_akrr DB
         """
@@ -341,7 +341,7 @@ class AKRRSetup:
             self.akrr_db_host, self.akrr_db_port,
             self.akrr_db_name if dbname == "" else dbname)
 
-    def get_ak_db(self, su=False, dbname=""):
+    def get_ak_db(self, su=False, dbname: Optional[str] = ""):
         """
         get connector and cursor to mod_appkernel DB
         """
@@ -351,7 +351,7 @@ class AKRRSetup:
             self.ak_db_host, self.ak_db_port,
             self.ak_db_name if dbname == "" else dbname)
 
-    def get_xd_db(self, su=False, dbname=""):
+    def get_xd_db(self, su=False, dbname: Optional[str] = ""):
         """
         get connector and cursor to XDMoD's modw DB
         """
@@ -436,15 +436,21 @@ class AKRRSetup:
                 _create_db_user_gran_priv_if_needed(
                     self.get_akrr_db, self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_name,
                     "ALL", True)
+
+            if self.ak_db_su_user_name is not None:
+                _create_db_user_gran_priv_if_needed(
+                    self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name,
+                    "ALL", True)
             if not self.stand_alone:
-                if self.ak_db_su_user_name is not None:
-                    _create_db_user_gran_priv_if_needed(
-                        self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name,
-                        "ALL", True)
-                if self.xd_db_su_user_name is not None:
-                    _create_db_user_gran_priv_if_needed(
-                        self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name,
-                        "SELECT", False)
+                # add fake modw
+                from akrr.cli.generate_tables import add_fake_modw
+                su_con, su_cur = self.get_xd_db(True, None)
+                add_fake_modw(su_con, su_cur, dry_run=akrr.dry_run)
+
+            if self.xd_db_su_user_name is not None:
+                _create_db_user_gran_priv_if_needed(
+                    self.get_xd_db, self.xd_db_user_name, self.xd_db_user_password, self.xd_db_name,
+                    "SELECT", False)
 
         except Exception as e:
             import traceback
@@ -574,7 +580,7 @@ class AKRRSetup:
             return
 
         from . import db_check
-        if not db_check.db_check(mod_appkernel=not self.stand_alone, modw=not self.stand_alone):
+        if not db_check.db_check():
             exit(1)
 
     def generate_tables(self):
@@ -594,8 +600,7 @@ class AKRRSetup:
 
             copy_mod_akrr_tables(mod_akrr)
 
-        if not self.stand_alone:
-            create_and_populate_mod_appkernel_tables(akrr.dry_run, not self.update)
+        create_and_populate_mod_appkernel_tables(akrr.dry_run, not self.update)
 
     @staticmethod
     def start_daemon():
