@@ -335,5 +335,12 @@ Deploy
 akrr resource deploy -r lakeeffect
 ```
 
+# Add Appkernels
+
+```bash
+akrr app add -r lakeeffect -a hpcc --execution-method docker
+akrr app validate -r lakeeffect -a hpcc -n 1
+``` 
+
 
 Next: [AKRR: Deployment of Application Kernel on Resource](AKRR_Deployment_of_Application_Kernel_on_Resource.md)

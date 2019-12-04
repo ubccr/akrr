@@ -48,7 +48,7 @@ def clear_from_build_in_var(dict_in: dict) -> dict:
     return dict_out
 
 
-def exec_files_to_dict(*files: str, var_in: dict=None) -> dict:
+def exec_files_to_dict(*files: str, var_in: dict = None) -> dict:
     """
     execute python from files and return dict with variables from that files.
     If var_in is specified initiate variables dictionary with it.
@@ -81,7 +81,7 @@ def clean_unicode(s):
     return s
 
 
-def format_recursively(s: str, d: dict, keep_double_brackets: bool=False) -> str:
+def format_recursively(s: str, d: dict, keep_double_brackets: bool = False) -> str:
     """
     Recursively format sting `s` using dictionary `d` until where are no more substitution.
     Return resulting string.
@@ -128,7 +128,7 @@ def replace_at_var_at(s: str, ds: List[dict]):
     return s
 
 
-def floats_are_close(a: float, b: float, rel_tol: float=1.0e-7) -> bool:
+def floats_are_close(a: float, b: float, rel_tol: float = 1.0e-7) -> bool:
     from math import fabs
     if a == 0 and b == 0:
         return True
@@ -220,18 +220,18 @@ def get_list_from_comma_sep_values(in_str):
 
 
 def smart_str_merge(str_list: Sequence[str], middle: str = ",", last: str = "or"):
-        """
-        Merge string as "val1, val2 or val3
-        """
-        s = ""
-        for v in str_list:
-            if v == str_list[0]:
-                s += v
-            elif v == str_list[-1]:
-                s += " " + last + " " + v
-            else:
-                s += middle + " " + v
-        return s
+    """
+    Merge string as "val1, val2 or val3
+    """
+    s = ""
+    for v in str_list:
+        if v == str_list[0]:
+            s += v
+        elif v == str_list[-1]:
+            s += " " + last + " " + v
+        else:
+            s += middle + " " + v
+    return s
 
 
 def base_gzip_encode(value: str) -> str:
