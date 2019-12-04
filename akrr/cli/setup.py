@@ -441,7 +441,7 @@ class AKRRSetup:
                 _create_db_user_gran_priv_if_needed(
                     self.get_ak_db, self.ak_db_user_name, self.ak_db_user_password, self.ak_db_name,
                     "ALL", True)
-            if not self.stand_alone:
+            if self.stand_alone:
                 # add fake modw
                 from akrr.cli.generate_tables import add_fake_modw
                 su_con, su_cur = self.get_xd_db(True, None)
