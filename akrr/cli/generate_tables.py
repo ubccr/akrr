@@ -81,15 +81,19 @@ _mod_akrr_appkernels = [
     (29, 'enzo', '1;2;4;8'),
     (32, 'mdtest', '1;2;4;8'),
     (33, 'hpcg', '1;2;4;8'),
-    (34, 'gromacs_micro', '1')
+    (34, 'gromacs_micro', '1'),
+    (35, 'access_stats', '1'),
 ]
 
 
-def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False):
+def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False, mod_akrr_appkernels=None):
     """
     populate_mod_akrr_appkernels
     """
-    for ak_id, name, nodes_list in _mod_akrr_appkernels:
+    if mod_akrr_appkernels is None:
+        mod_akrr_appkernels = _mod_akrr_appkernels
+
+    for ak_id, name, nodes_list in mod_akrr_appkernels:
         sql = "select * from app_kernels where name='%s'" % name
         cur_akrr.execute(sql)
         result = cur_akrr.fetchall()
@@ -467,16 +471,23 @@ _mod_appkernel_app_kernel_def = [
     (34, 'GROMACS-micro', 'gromacs_micro', 'node', 0,
      """<a href="http://www.gromacs.org/" target="_blank" """
      """alt="GROMACS">GROMACS:</a> based micro-benchmark for testing purposes\r\n<p>""",
+     0, None),
+    (35, 'Access Stats', 'access_stats', 'node', 0,
+     """Resource access statistics.""",
      0, None)
 ]
 
 
-def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=False):
+def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=False,
+                                          mod_appkernel_app_kernel_def=None):
     """
     populate_mod_akrr_appkernels
     """
+    if mod_appkernel_app_kernel_def is None:
+        mod_appkernel_app_kernel_def = _mod_appkernel_app_kernel_def
+
     for ak_def_id, name, ak_base_name, processor_unit, enabled, description, visible, control_criteria in \
-            _mod_appkernel_app_kernel_def:
+            mod_appkernel_app_kernel_def:
         sql = "select * from app_kernel_def where ak_base_name='%s'" % name
         cur_appkernel.execute(sql)
         result = cur_appkernel.fetchall()

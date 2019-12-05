@@ -17,7 +17,7 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
         log.error(msg)
         raise AkrrValueException(msg)
     try:
-        cfg.find_app_by_name(appkernel)
+        appcfg=cfg.find_app_by_name(appkernel)
     except Exception:
         msg = "Can not find application kernel: %s" % appkernel
         log.error(msg)
@@ -47,6 +47,33 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
         msg = "Can not find template file for application kernel: %s" % cfg_template_filename
         log.error(msg)
         raise AkrrValueException(msg)
+
+    # check that app is in db
+    from akrr.cli.generate_tables import populate_mod_akrr_appkernels, populate_mod_appkernel_app_kernel_def
+    from akrr.db import get_akrr_db, get_ak_db
+    con_ak, cur_ak = get_ak_db()
+    con_akrr, cur_akrr = get_akrr_db()
+
+    sql = "select * from app_kernel_def where ak_base_name='%s'" % appkernel
+    cur_ak.execute(sql)
+    result = cur_ak.fetchall()
+    if len(result) > 0:
+        if "db_setup" in appcfg and "mod_appkernel_app_kernel_def" in appcfg['db_setup']:
+            populate_mod_appkernel_app_kernel_def(
+                con_akrr, cur_akrr, dry_run=dry_run,
+                mod_appkernel_app_kernel_def=appcfg['db_setup']["mod_appkernel_app_kernel_def"])
+        else:
+            log.warning("%s is not in database and there is no info on how to add it. XDMoD would not ingest it.")
+
+    sql = "select * from app_kernels where name='%s'" % appkernel
+    cur_akrr.execute(sql)
+    result = cur_akrr.fetchall()
+    if len(result) == 0:
+        if "db_setup" in appcfg and "mod_akrr_appkernels" in appcfg['db_setup']:
+            populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=dry_run,
+                                         mod_akrr_appkernels=appcfg['db_setup']["mod_akrr_appkernels"])
+        else:
+            log.warning("%s is not in database and there is no info on how to add it. XDMoD would not ingest it.")
 
     if dry_run:
         log.dry_run("Initial application kernel configuration for %s on %s, should be copied \n\tfrom %s to %s" %
