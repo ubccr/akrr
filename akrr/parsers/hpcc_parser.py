@@ -6,7 +6,8 @@ from akrr.util import get_float_or_int
 from akrr.util import log
 
 
-def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
+def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, proclog=None, 
+                          resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
         name='hpcc',

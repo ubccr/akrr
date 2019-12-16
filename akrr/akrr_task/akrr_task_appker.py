@@ -43,7 +43,11 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
     def first_step(self):
         if self.resource['batch_scheduler'].lower() == "openstack":
-            return self.start_openstack_server()
+            print("Starting OpenStack instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+            status = self.start_openstack_server()
+            print("OpenStack Instance should be up and running (%s)" %
+                     datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+            return status
         else:
             return self.create_batch_job_script_and_submit_it()
 
@@ -411,6 +415,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             log.info("Deleting all files from remote machine")
             self.delete_remote_folder()
+            if self.resource['batch_scheduler'].lower() == "openstack":
+                print("Shutting down OpenStack instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+                openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
+                openstack_server.delete()
+                print("OpenStack Instance should be down and terminated (%s)" %
+                      datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
+
             self.set_method_to_run_next(
                 "process_results",
                 "Not in queue. Either exited with error or executed successfully. "
@@ -533,7 +544,8 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             performance = this_appker_parser.process_appker_output(
                 appstdout=appstdoutFile, stdout=stdoutFile, stderr=stderrFile,
-                geninfo=os.path.join(batchJobDir, "gen.info"), resource_appker_vars=resource_appker_vars)
+                geninfo=os.path.join(batchJobDir, "gen.info"), proclog=taskexeclogFile,
+                resource_appker_vars=resource_appker_vars)
             if performance is None:
                 self.set_method_to_run_next("push_to_db", "ERROR: Job have not finished successfully", "")
                 self.write_error_xml(result_file)
@@ -997,9 +1009,6 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                          taskexeclog_file_content))
 
     def task_is_complete(self):
-        if self.resource['batch_scheduler'].lower() == "openstack":
-            openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
-            openstack_server.delete()
         log.info("Done")
         self.set_method_to_run_next("task_is_complete", "Done", "Done")
         return None

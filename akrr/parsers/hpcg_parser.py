@@ -11,7 +11,8 @@ from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_second
 import akrr.util.log as log
 
 
-def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
+def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, proclog=None, 
+                          resource_appker_vars=None):
     # set App Kernel Description
     parser = AppKerOutputParser(
         name='hpcg',

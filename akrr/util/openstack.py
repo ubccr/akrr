@@ -159,7 +159,7 @@ class OpenStackServer:
         self.ip = all_ips[-1]
 
     def create(self, delete_if_exists=False):
-        if self.is_server_running():
+        if self.is_server_running(shut_off_is_down=True):
             if delete_if_exists:
                 self.delete()
             else:

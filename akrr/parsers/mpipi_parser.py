@@ -5,7 +5,8 @@ import sys
 from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
 
 
-def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, resource_appker_vars=None):
+def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, proclog=None, 
+                          resource_appker_vars=None):
     # set App Kernel Description
     if resource_appker_vars is not None and 'app' in resource_appker_vars and 'name' in resource_appker_vars['app']:
         akname = resource_appker_vars['app']['name']
