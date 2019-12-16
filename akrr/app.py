@@ -60,7 +60,7 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
     if len(result) > 0:
         if "db_setup" in appcfg and "mod_appkernel_app_kernel_def" in appcfg['db_setup']:
             populate_mod_appkernel_app_kernel_def(
-                con_akrr, cur_akrr, dry_run=dry_run,
+                con_ak, cur_ak, dry_run=dry_run,
                 mod_appkernel_app_kernel_def=appcfg['db_setup']["mod_appkernel_app_kernel_def"])
         else:
             log.warning("%s is not in database and there is no info on how to add it. XDMoD would not ingest it.")
