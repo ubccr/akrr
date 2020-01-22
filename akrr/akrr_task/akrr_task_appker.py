@@ -55,7 +55,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         if self.resource['batch_scheduler'].lower() == "openstack":
             # Start instance if it is cloud
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
-            openstack_server.create()
+            openstack_server.create(delete_if_exists=True)
             self.openstack_server_ip = openstack_server.ip
             self.resource['remote_access_node'] = openstack_server.ip
 
