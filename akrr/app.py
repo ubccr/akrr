@@ -57,11 +57,11 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
     sql = "select * from app_kernel_def where ak_base_name='%s'" % appkernel
     cur_ak.execute(sql)
     result = cur_ak.fetchall()
-    if len(result) > 0:
+    if len(result) == 0:
         if "db_setup" in appcfg and "mod_appkernel_app_kernel_def" in appcfg['db_setup']:
             populate_mod_appkernel_app_kernel_def(
                 con_ak, cur_ak, dry_run=dry_run,
-                mod_appkernel_app_kernel_def=appcfg['db_setup']["mod_appkernel_app_kernel_def"])
+                mod_appkernel_app_kernel_def=(appcfg['db_setup']["mod_appkernel_app_kernel_def"],))
         else:
             log.warning("%s is not in database and there is no info on how to add it. XDMoD would not ingest it.")
 
@@ -71,7 +71,7 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
     if len(result) == 0:
         if "db_setup" in appcfg and "mod_akrr_appkernels" in appcfg['db_setup']:
             populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=dry_run,
-                                         mod_akrr_appkernels=appcfg['db_setup']["mod_akrr_appkernels"])
+                                         mod_akrr_appkernels=(appcfg['db_setup']["mod_akrr_appkernels"],))
         else:
             log.warning("%s is not in database and there is no info on how to add it. XDMoD would not ingest it.")
 
