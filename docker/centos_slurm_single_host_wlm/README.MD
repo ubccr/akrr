@@ -31,11 +31,7 @@ docker run --name slurm_rpm_maker -h slurm_rpm_maker \
            -v `pwd`/centos_slurm_single_host_wlm/RPMS:/RPMS \
            --rm \
            -it slurm_rpm_maker:latest make_slurm_rpms
-
-#delete image and container as they are not needed
-#docker container rm slurm_rpm_maker
-docker image rm slurm_rpm_maker:latest
-```
+```docker/centos_slurm_single_host_wlm/README.MD:35
 
 ## Making Single Host Slurm WLM Image
 
@@ -43,10 +39,10 @@ docker image rm slurm_rpm_maker:latest
 #make image, in docker/centos_slurm_single_host_wlm/
 docker build -t nsimakov/centos_slurm_single_host_wlm:latest -f ./centos_slurm_single_host_wlm/Dockerfile .
 
-#run
+#run (to check workability)
 docker run --name centos_slurm_single_host_wlm -h centos_slurm_single_host_wlm \
        --rm -it nsimakov/centos_slurm_single_host_wlm:latest
-
+#in conteiner run something like squeue to check that it is working
 #push to docker cloud
 docker push nsimakov/centos_slurm_single_host_wlm:latest
 ```
@@ -58,7 +54,7 @@ docker push nsimakov/centos_slurm_single_host_wlm:latest
 docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest \
        -f ./centos_slurm_single_host_wlm/DockerfileAKRRReady .
 
-#run
+#run (to check workability)
 docker run -it --rm \
     -v ~/xmdow_wsp/akrr:/root/src/github.com/ubccr/akrr \
     -e REPO_FULL_NAME=ubccr/akrr \
@@ -76,15 +72,15 @@ docker build -t pseudo_repo/akrr_runtest:latest -f Dockerfile_run_tests .
 
 # by default after test you'll drop to akrruser bash
 # run devel test (i.e. build by setup.py devel)
-docker run -it --rm -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src pseudo_repo/akrr_runtest:latest
+docker run -it --rm -v $HOME/xdmod_wsp/akrr:/home/akrruser/akrr_src pseudo_repo/akrr_runtest:latest
 # run rpm test
-docker run -it --rm -e AKRR_SETUP_WAY=rpm  -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+docker run -it --rm -e AKRR_SETUP_WAY=rpm  -v $HOME/xdmod_wsp/akrr:/home/akrruser/akrr_src \
     pseudo_repo/akrr_runtest:latest
 # run in source test
-docker run -it --rm -e AKRR_SETUP_WAY=src  -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+docker run -it --rm -e AKRR_SETUP_WAY=src  -v $HOME/xdmod_wsp/akrr:/home/akrruser/akrr_src \
     pseudo_repo/akrr_runtest:latest
 # run in source test with non default user home
 docker run -it --rm -e AKRR_SETUP_WAY=src -e AKRR_SETUP_HOME=/home/akrruser/akrrhome\
-    -v /home/$USER/xdmod_wsp/akrr:/home/akrruser/akrr_src \
+    -v /home/$HOMExdmod_wsp/akrr:/home/akrruser/akrr_src \
     pseudo_repo/akrr_runtest:latest
 ```
