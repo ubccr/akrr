@@ -143,7 +143,7 @@ def _add_fake_modw():
     from .db import get_xd_db
     con, cur = get_xd_db(su=True)
     from akrr.cli.generate_tables import add_fake_modw
-    add_fake_modw(cur, con)
+    add_fake_modw(con, cur)
     cur.close()
     con.close()
 

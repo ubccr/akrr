@@ -93,9 +93,7 @@ cd ../..
 echo $highlight "Rerunning unit tests and run system tests together"
 
 set +e
-ps -Af|grep akrr
-ls -l /home/akrruser/akrr/log/data
-ls -l /home/akrruser/akrr/log/data/srv
+
 akrr daemon start
 if [ $? -ne 0 ]
 then
