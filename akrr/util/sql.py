@@ -135,6 +135,7 @@ def set_user_password_host_port_db(user, password, host, port, db):
 
 def get_con_to_db(user: str, password: str, host: str = 'localhost', port: int = 3306, db_name: str = None,
                   dict_cursor: bool = True, raise_exception: bool = True):
+    import MySQLdb
     import MySQLdb.cursors
 
     kwarg = {
