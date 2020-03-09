@@ -2,6 +2,8 @@
 Keep CLI commands setup here outside of implementation, to avoid premature cfg loading
 """
 
+# akrr common args to skip for passing to commands
+_common_args = ['func', 'verbose', 'very_verbose']
 
 def add_command_daemon(parent_parser):
     """
@@ -508,7 +510,7 @@ def cli_task_new(parent_parser):
         '--task-param', help="additional options for task")
 
     def handler(args):
-        kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
+        kwargs = {k: v for k, v in vars(args).items() if k not in _common_args}
         from akrr.task_api import task_new
         task_new(**kwargs)
 
@@ -530,7 +532,7 @@ def cli_task_list(parent_parser):
 
     def handler(args):
         from akrr.task_api import task_list
-        kwargs = {k: v for k, v in vars(args).items() if k not in ['func', 'verbose']}
+        kwargs = {k: v for k, v in vars(args).items() if k not in _common_args}
         if kwargs["active"] is False and kwargs["scheduled"] is False:
             # by default show both
             kwargs["active"] = True
