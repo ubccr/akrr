@@ -583,6 +583,7 @@ class UpdateAKRR:
         self.yes_to_all = yes_to_all  # type: bool
         self.akrr_con = None
         self.akrr_cur = None
+        self.task_id_max = 0  # type: int
 
         # find akrr home if needed
         if self.old_akrr_home is None:
@@ -714,6 +715,15 @@ class UpdateAKRR:
                         break
                     pickle.dump(rows, fout)
 
+        # find current task_id_max
+        self.task_id_max = 0
+        for table in ("COMPLETEDTASKS", "SCHEDULEDTASKS", "ACTIVETASKS"):
+            akrr_cur.execute("SELECT max(task_id) FROM %s" % table)
+            rows = akrr_cur.fetchall()
+            if len(rows) > 0 and len(rows[0]) > 0:
+                if rows[0][0] > self.task_id_max:
+                    self.task_id_max = rows[0][0]
+
     def _update_db_drop_old_tables(self):
         """
         drop old tables
@@ -781,14 +791,13 @@ class UpdateAKRR:
                 akrr_con.commit()
 
         # update auto increment
-        task_id_max = None
-        akrr_cur.execute("SELECT max(task_id) FROM scheduled_tasks")
-        rows = akrr_cur.fetchall()
-        if len(rows) > 0 and len(rows[0]) > 0:
-            task_id_max = rows[0][0]
-        if task_id_max is not None:
-            akrr_cur.execute("ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (task_id_max + 100))
+        if self.task_id_max > 0:
+            akrr_cur.execute("ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (self.task_id_max + 1))
             akrr_con.commit()
+
+        # correct some values
+        akrr_cur.execute("update completed_tasks set app=CONCAT(app,'.core') where resource_param like '%ncpus%'")
+        akrr_con.commit()
 
     def _prepare_db_convertion(self):
         """helper function to prepare convertion statements"""
@@ -831,14 +840,9 @@ class UpdateAKRR:
         akrr_con.commit()
 
         create_and_populate_tables(
-            tuple(mod_akrr_create_tables_dict.items()),
-            tuple(),
-            "Creating mod_akrr Tables / Views...",
-            "mod_akrr Tables / Views Created!",
-            None,
-            connection=akrr_con, cursor=akrr_cur,
-            drop_if_needed=True,
-            dry_run=False
+            tuple(mod_akrr_create_tables_dict.items()), tuple(),
+            "Creating mod_akrr Tables / Views...", "mod_akrr Tables / Views Created!",
+            None, connection=akrr_con, cursor=akrr_cur, drop_if_needed=True, dry_run=False
         )
         akrr_con.commit()
 

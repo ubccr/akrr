@@ -27,13 +27,12 @@ def get_daemon_pid(akrr_pid_file, delete_pid_file_if_daemon_down=False):
             # if here means that previous session was crushed
             if delete_pid_file_if_daemon_down:
                 log.warning("WARNING:File %s exists meaning that the previous execution was finished incorrectly."
-                            "Removing pid file." %
-                            (os.path.join(cfg.data_dir, "akrr.pid")))
-                os.remove(os.path.join(cfg.data_dir, "akrr.pid"))
+                            "Removing pid file." % akrr_pid_file)
+                os.remove(akrr_pid_file)
                 return None
             else:
                 raise IOError("File %s exists meaning that the previous execution was finished incorrectly." %
-                              (os.path.join(cfg.data_dir, "akrr.pid")))
+                              akrr_pid_file)
 
     return pid
 
