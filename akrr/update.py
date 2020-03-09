@@ -10,7 +10,7 @@ import pprint
 from collections import OrderedDict
 from typing import Optional
 
-from akrr.util import log, get_list_from_comma_sep_values
+from akrr.util import log
 from akrr.util.sql import get_con_to_db2, cursor_execute
 from akrr.akrrerror import AkrrValueException, AkrrFileNotFoundError, AkrrException
 from akrr.util.sql import get_con_to_db
@@ -78,7 +78,7 @@ def mod_akrr_db_compare(db_src, db_dest):
         # {'Field': 'task_id', 'Type': 'int(11)', 'Null': 'YES', 'Key': 'UNI', 'Default': None, 'Extra': ''}
         message = "Columns in tables\n"
         message += "%30s %10s %10s %10s %20s %20s\n" % (
-        "Table Name", "same", "in tables1", "in tables2", "type1", "type2")
+            "Table Name", "same", "in tables1", "in tables2", "type1", "type2")
         for field in fields_all:
             in_table1 = field in table1['Field']
             in_table2 = field in table2['Field']
@@ -302,7 +302,7 @@ def convert_appname(iapp: int, row, ireporternickname: int = None):
 
     if ireporternickname is not None:
         # xdmod.app.md.namd2.128 -> (xdmod.app.md.namd2, 128)
-        m = re.match("^(.*)\.([0-9]+)$", row[ireporternickname])
+        m = re.match(r"^(.*)\.([0-9]+)$", row[ireporternickname])
         if m and m.group(1) in ak_rename:
             row[ireporternickname] = ak_rename[m.group(1)] + "." + m.group(2)
 
@@ -423,17 +423,17 @@ _convert_mod_akrr_db = OrderedDict((
         }
     ),
     (
-        "akrr_taks_errors",
+        "akrr_task_errors",
         {
-            "name_new": "akrr_taks_errors",
+            "name_new": "akrr_task_errors",
             "name_old": "akrr_taks_errors",
             "select_old":
                 "SELECT task_id, err_reg_exp_id\n"
                 "FROM akrr_taks_errors",
             "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_taks_errors'],
+            "create_new": mod_akrr_create_tables_dict['akrr_task_errors'],
             "populate_new":
-                "INSERT INTO akrr_taks_errors\n"
+                "INSERT INTO akrr_task_errors\n"
                 "      (task_id, err_reg_exp_id)\n"
                 "VALUES(%s,%s)",
         }
@@ -512,7 +512,7 @@ _convert_mod_akrr_db = OrderedDict((
                 "      (task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param,\n"
                 "       group_id, parent_task_id)\n"
                 "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row : convert_appname(4, row)
+            "convert": lambda row: convert_appname(4, row)
         }
     ),
     (
@@ -682,7 +682,6 @@ class UpdateAKRR:
 
     def get_old_akrr_db_con(self):
         if self.akrr_con is None or self.akrr_cur is None:
-            from akrr.util.sql import get_con_to_db
             self.akrr_con, self.akrr_cur = get_con_to_db(
                 user=self.old_cfg["ak_db_user"], password=self.old_cfg["ak_db_passwd"],
                 host=self.old_cfg["akrr_db_host"], port=self.old_cfg["ak_db_port"],
@@ -785,7 +784,7 @@ class UpdateAKRR:
         task_id_max = None
         akrr_cur.execute("SELECT max(task_id) FROM scheduled_tasks")
         rows = akrr_cur.fetchall()
-        if len(rows)>0 and len(rows[0]) > 0:
+        if len(rows) > 0 and len(rows[0]) > 0:
             task_id_max = rows[0][0]
         if task_id_max is not None:
             akrr_cur.execute("ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (task_id_max + 100))
@@ -867,7 +866,8 @@ class UpdateAKRR:
                 "      (%s)\\n"
                 "VALUES(%s)",
         }
-    ),""" % (name_new, name_new, name_old, old_cols[name_old], name_old, name_new, name_new, new_cols[name_new][0], new_cols[name_new][1]))
+    ),""" % (name_new, name_new, name_old, old_cols[name_old], name_old, name_new, name_new,
+             new_cols[name_new][0], new_cols[name_new][1]))
 
     def update_db(self):
         self._update_db_save_old_db()
@@ -882,4 +882,3 @@ class UpdateAKRR:
         self.remove_old_akrr_from_crontab()
         self.shut_down_old_akrr()
         self.update_db()
-

@@ -211,8 +211,8 @@ mod_akrr_create_tables_dict = OrderedDict(
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
         '''),
-        ('akrr_taks_errors', '''
-        CREATE TABLE IF NOT EXISTS `akrr_taks_errors` (
+        ('akrr_task_errors', '''
+        CREATE TABLE IF NOT EXISTS `akrr_task_errors` (
         `task_id` INT(11) NOT NULL,
         `err_reg_exp_id` INT(11) DEFAULT NULL COMMENT 'errors identified using reg_exp',
         PRIMARY KEY (`task_id`)
@@ -1046,7 +1046,7 @@ def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
 
     copy_table_with_rename(
         cur_akrr, cur_akrr2,
-        "akrr_taks_errors",
+        "akrr_task_errors",
         "task_id,err_reg_exp_id")
 
     copy_table_with_rename(
