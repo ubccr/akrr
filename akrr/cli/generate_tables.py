@@ -155,8 +155,8 @@ mod_akrr_create_tables_dict = OrderedDict(
         `status` INT(11) DEFAULT NULL
         ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
         '''),
-        ('akrr_default_walllimit', '''
-        CREATE TABLE IF NOT EXISTS `akrr_default_walllimit` (
+        ('akrr_default_walltime_limit', '''
+        CREATE TABLE IF NOT EXISTS `akrr_default_walltime_limit` (
         `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         `resource` TEXT,
         `app` TEXT,
@@ -1026,7 +1026,7 @@ def copy_mod_akrr_to_mod_akrr2(mod_akrr, mod_akrr2):
     # ak_on_nodes - not used
     copy_table_with_rename(
         cur_akrr, cur_akrr2,
-        "akrr_default_walllimit",
+        "akrr_default_walltime_limit",
         "id,resource,app,walltime_limit,resource_param,app_param,last_update,comments")
 
     copy_table_with_rename(

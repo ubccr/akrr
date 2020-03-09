@@ -341,17 +341,17 @@ _convert_mod_akrr_db = OrderedDict((
         }
     ),
     (
-        "akrr_default_walllimit",
+        "akrr_default_walltime_limit",
         {
-            "name_new": "akrr_default_walllimit",
+            "name_new": "akrr_default_walltime_limit",
             "name_old": "akrr_default_walllimit",
             "select_old":
                 "SELECT id, resource, app, walllimit,      resource_param, app_param, last_update, comments\n"
                 "FROM akrr_default_walllimit",
             "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_default_walllimit'],
+            "create_new": mod_akrr_create_tables_dict['akrr_default_walltime_limit'],
             "populate_new":
-                "INSERT INTO akrr_default_walllimit\n"
+                "INSERT INTO akrr_default_walltime_limit\n"
                 "      (id, resource, app, walltime_limit, resource_param, app_param, last_update, comments)\n"
                 "VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",
             "convert": lambda row: convert_appname(2, row)
@@ -806,7 +806,7 @@ class UpdateAKRR:
         new_old_table = OrderedDict([
             ('active_tasks', 'ACTIVETASKS'),
             ('ak_on_nodes', 'ak_on_nodes'),
-            ('akrr_default_walllimit', 'akrr_default_walllimit'),
+            ('akrr_default_walltime_limit', 'akrr_default_walllimit'),
             ('akrr_errmsg', 'akrr_errmsg'),
             ('akrr_err_regexp', 'akrr_err_regexp'),
             ('akrr_internal_failure_codes', 'akrr_internal_failure_codes'),

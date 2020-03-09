@@ -83,7 +83,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 (resource, app, resource_param, app_param) = raw[0]
 
                 cur.execute("""SELECT walltime_limit
-                    FROM akrr_default_walllimit
+                    FROM akrr_default_walltime_limit
                     WHERE resource=%s AND app=%s AND resource_param=%s AND app_param=%s """,
                             (resource, app, resource_param, app_param))
                 raw = cur.fetchall()

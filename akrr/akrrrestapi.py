@@ -1316,7 +1316,7 @@ def get_walltime_all():
         # Make sure we execute the correct query with the correct parametersresources
         cursor.execute(
             "SELECT id,resource,app,walltime_limit,resource_param,app_param,"
-            "last_update,comments FROM akrr_default_walllimit")
+            "last_update,comments FROM akrr_default_walltime_limit")
 
         # RETRIEVE: the results and save them for returning.
         results = cursor.fetchall()
@@ -1346,7 +1346,7 @@ def get_walltime(walltime_id):
         # Make sure we execute the correct query with the correct parametersresources
         cursor.execute(
             "SELECT resource,app,walltime_limit,resource_param,app_param,"
-            "last_update,comments FROM akrr_default_walllimit WHERE id=%s",
+            "last_update,comments FROM akrr_default_walltime_limit WHERE id=%s",
             (walltime_id,))
         results = cursor.fetchall()
         if len(results) > 0:
@@ -1401,12 +1401,12 @@ def upsert_walltime(resource, m_app):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        cursor.execute('''SELECT * FROM akrr_default_walltime_limit
         WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
                        (resource, m_app, params['resource_param'], params['app_param']))
         results = cursor.fetchall()
         if len(results) > 0:
-            cursor.execute('''UPDATE akrr_default_walllimit 
+            cursor.execute('''UPDATE akrr_default_walltime_limit 
                 SET walltime_limit=%s,
                     last_update=NOW(),
                     comments=%s
@@ -1417,7 +1417,7 @@ def upsert_walltime(resource, m_app):
             return {'updated': True}
         else:
             cursor.execute(
-                "INSERT INTO akrr_default_walllimit (resource,app,walltime_limit,"
+                "INSERT INTO akrr_default_walltime_limit (resource,app,walltime_limit,"
                 "resource_param,app_param,last_update,comments)"
                 "VALUES(%s,%s,%s,%s,%s,NOW(),%s)", (
                     resource, m_app, params['walltime'], params['resource_param'],
@@ -1472,7 +1472,7 @@ def get_walltime_by_resource_app(resource, m_app):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        cursor.execute('''SELECT * FROM akrr_default_walltime_limit
         WHERE resource = %s and app=%s and resource_param=%s and app_param=%s''',
                        (resource, m_app, params['resource_param'], params['app_param']))
         results = cursor.fetchall()
@@ -1522,11 +1522,11 @@ def update_walltime_by_id(walltime_id):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        cursor.execute('''SELECT * FROM akrr_default_walltime_limit
         WHERE id = %s''', (walltime_id,))
         results = cursor.fetchall()
         if len(results) > 0:
-            cursor.execute('''UPDATE akrr_default_walllimit 
+            cursor.execute('''UPDATE akrr_default_walltime_limit 
                 SET walltime_limit=%s,
                     last_update=NOW(),
                     comments=%s
@@ -1558,11 +1558,11 @@ def delete_walltime(walltime_id):
         # RETRIEVE: a connection and cursor instance for the XDMoD database.
         connection, cursor = akrr.db.get_akrr_db(True)
 
-        cursor.execute('''SELECT * FROM akrr_default_walllimit
+        cursor.execute('''SELECT * FROM akrr_default_walltime_limit
         WHERE id = %s''', (walltime_id,))
         results = cursor.fetchall()
         if len(results) > 0:
-            cursor.execute('''DELETE FROM akrr_default_walllimit
+            cursor.execute('''DELETE FROM akrr_default_walltime_limit
                 WHERE id = %s''', (walltime_id,))
         else:
             raise bottle.HTTPError(400, 'walltime with id %d does not exists' % (walltime_id,))
