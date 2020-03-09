@@ -5,6 +5,7 @@ from logging import basicConfig, critical, error, warning, info, debug, getLogge
 from . import colorize
 
 verbose = False
+very_verbose = False
 error_count = 0
 warning_count = 0
 

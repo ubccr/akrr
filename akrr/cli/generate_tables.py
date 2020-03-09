@@ -10,6 +10,8 @@ This script will perform the following steps:
 ###############################################################################
 
 import sys
+from collections import OrderedDict
+
 import MySQLdb
 
 import akrr.db
@@ -25,6 +27,7 @@ def create_and_populate_tables(
         starting_comment, ending_comment,
         connection_function,
         host=None, user=None, password=None, db=None,
+        connection=None, cursor=None,
         drop_if_needed=True,
         dry_run=False):
     """
@@ -37,7 +40,7 @@ def create_and_populate_tables(
             if host and user and password and db:
                 connection = MySQLdb.connect(host, user, password, db)
                 cursor = connection.cursor()
-            else:
+            elif connection is None and cursor is None:
                 connection, cursor = connection_function(True)
 
             for (table_name, table_script) in default_tables:
@@ -113,13 +116,9 @@ def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False, mod_akrr_app
             con_akrr.commit()
 
 
-def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
-    """
-    Create / Populate the tables required in the mod_akrr database.
-    """
-
-    # DEFINE: the default tables to be created.
-    default_tables = (
+# DEFINE: the default tables to be created.
+mod_akrr_create_tables_dict = OrderedDict(
+    (
         ('active_tasks', '''
         CREATE TABLE IF NOT EXISTS `active_tasks` (
         `task_id` INT(11) DEFAULT NULL,
@@ -195,7 +194,7 @@ def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
         PRIMARY KEY (`id`)
         ) ENGINE=MyISAM AUTO_INCREMENT=1000002 DEFAULT CHARSET=latin1;
         '''),
-        ('akrr_internal_failure_code', '''
+        ('akrr_internal_failure_codes', '''
         CREATE TABLE IF NOT EXISTS `akrr_internal_failure_codes` (
         `id` INT(11) NOT NULL,
         `description` TEXT NOT NULL,
@@ -345,8 +344,12 @@ def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
         `err_regexp_id` AS `err_regexp_id`,`akrr_erran2`.`err_msg` AS `err_msg` 
         from `akrr_erran2` group by `akrr_erran2`.`err_regexp_id` order by `akrr_erran2`.`err_regexp_id`;
         ''')
-
     )
+)
+def create_and_populate_mod_akrr_tables(dry_run=False, populate=True):
+    """
+    Create / Populate the tables required in the mod_akrr database.
+    """
 
     population_statements = (
         ('POPULATE akrr_internal_failure_codes', '''
@@ -386,7 +389,7 @@ INSERT INTO `akrr_err_regexp` VALUES
         connection_function = akrr.db.get_akrr_db
         
     create_and_populate_tables(
-        default_tables,
+        tuple(mod_akrr_create_tables_dict.items()),
         population_statements if populate else tuple(),
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",

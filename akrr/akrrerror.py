@@ -7,7 +7,15 @@ class AkrrBaseException(Exception):
     pass
 
 
+class AkrrException(AkrrBaseException):
+    pass
+
+
 class AkrrValueException(AkrrBaseException):
+    pass
+
+
+class AkrrFileNotFoundError(FileNotFoundError):
     pass
 
 

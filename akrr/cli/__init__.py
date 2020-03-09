@@ -109,6 +109,7 @@ class CLI:
 
         self.root_parser = argparse.ArgumentParser(description='command line interface to AKRR')
         self.root_parser.add_argument('-v', '--verbose', action='store_true', help="turn on verbose logging")
+        self.root_parser.add_argument('-vv', '--very-verbose', action='store_true', help="turn on very verbose logging")
 
         self.subparsers = self.root_parser.add_subparsers(title='commands')
 
@@ -139,7 +140,14 @@ class CLI:
         """
         Process arguments common for all commands. Currently only verbose.
         """
-        if "verbose" in cli_args and cli_args.verbose:
+        if "very_verbose" in cli_args and cli_args.very_verbose:
+            log.verbose = True
+            log.basicConfig(level=log.DEBUG // 2)
+            log.getLogger().setLevel(log.DEBUG // 2)
+            self.verbose = True
+            self.very_verbose = True
+
+        elif "verbose" in cli_args and cli_args.verbose:
             log.verbose = True
             log.basicConfig(level=log.DEBUG)
             log.getLogger().setLevel(log.DEBUG)

@@ -119,9 +119,9 @@ do
         ;;
     akrr_v1)
         echo "Launching akrr v1.0"
-        AKRRUSER_HOME=${AKRRUSER_HOME:-/root}
-        AKRRUSER=${AKRRUSER:-root}
-        /usr/bin/python2 "$AKRRUSER_HOME/akrr/src/akrrscheduler.py" start
+        AKRRUSER_HOME=${AKRRUSER_HOME:-/home/akrruser}
+        AKRRUSER=${AKRRUSER:-akrruser}
+        sudo -u $AKRRUSER /usr/bin/python2 $AKRRUSER_HOME/akrr/src/akrrscheduler.py start
         ;;
     bash)
         echo "Will launching bash at the end"
@@ -130,6 +130,10 @@ do
     bash_akrruser)
         echo "Will launching bash at the end as akrruser"
         run_bash_akrruser=1
+        ;;
+    run_tests)
+        echo "Start Tests: $RUN_TESTS"
+        $RUN_TESTS
         ;;
     -c)
         # from docker cmd skip to next

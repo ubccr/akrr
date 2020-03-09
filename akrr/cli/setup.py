@@ -675,19 +675,19 @@ class AKRRSetup:
         check_and_restart = "33 * * * * " + _akrr_bin_dir + "/akrr daemon checknrestart -cron"
 
         try:
-            crontan_content = subprocess.check_output("crontab -l", shell=True)
-            crontan_content = crontan_content.decode("utf-8").splitlines(True)
+            crontab_content = subprocess.check_output("crontab -l", shell=True)
+            crontab_content = crontab_content.decode("utf-8").splitlines(True)
         except Exception:
             log.info("Crontab does not have user's crontab yet")
-            crontan_content = []
+            crontab_content = []
 
         mail_updated = False
         mail_there = False
         restart_there = False
         check_and_restart_there = False
 
-        for i in range(len(crontan_content)):
-            tmpstr = crontan_content[i]
+        for i in range(len(crontab_content)):
+            tmpstr = crontab_content[i]
             if len(tmpstr.strip()) > 1 and tmpstr.strip()[0] != "#":
                 m = re.match(r'^MAILTO\s*=\s*(.*)', tmpstr.strip())
                 if m:
@@ -696,9 +696,9 @@ class AKRRSetup:
                     mail_there = True
                     if self.cron_email != cron_email:
                         if mail:
-                            crontan_content[i] = mail
+                            crontab_content[i] = mail
                         else:
-                            crontan_content[i] = "#" + crontan_content[i]
+                            crontab_content[i] = "#" + crontab_content[i]
                         mail_updated = True
                 if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("restart") > 0:
                     restart_there = True
@@ -712,14 +712,14 @@ class AKRRSetup:
             log.warning("All AKRR crond entries found. No modifications necessary.")
             return
         if self.cron_email is not None and mail_there is False:
-            crontan_content.insert(0, mail + "\n")
+            crontab_content.insert(0, mail + "\n")
         if restart_there is False:
-            crontan_content.append(restart + "\n")
+            crontab_content.append(restart + "\n")
         if check_and_restart_there is False:
-            crontan_content.append(check_and_restart + "\n")
+            crontab_content.append(check_and_restart + "\n")
 
-        with open(os.path.expanduser('.crontmp'), 'w') as f:
-            for tmpstr in crontan_content:
+        with open(os.path.expanduser('.crontmp'), 'wt') as f:
+            for tmpstr in crontab_content:
                 f.write(tmpstr)
         subprocess.call("crontab .crontmp", shell=True)
         os.remove(".crontmp")

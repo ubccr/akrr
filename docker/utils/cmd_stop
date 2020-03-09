@@ -44,6 +44,15 @@ do
     slurmd)
         stop_process slurmd /run/slurmd.pid
         ;;
+    httpd)
+        httpd -k graceful-stop
+        ;;
+    akrr_v1)
+        echo "Stopping akrr v1.0"
+        AKRRUSER_HOME=${AKRRUSER_HOME:-/home/akrruser}
+        AKRRUSER=${AKRRUSER:-akrruser}
+        sudo -u $AKRRUSER /usr/bin/python2 $AKRRUSER_HOME/akrr/src/akrrscheduler.py stop
+        ;;
     self_contained_slurm_wlm)
         cmd_stop slurmd slurmctld slurmdbd mysqld sshd munged
         ;;

@@ -16,3 +16,9 @@ docker run --rm -it -h xdmod --name centos-openxdmod-appkernels-update --shm-siz
 -p 3310:3306 -p 8010:8080 -p 2210:22 \
 pseudo_repo/centos-openxdmod-appkernels-update
 ```
+
+Building
+```bash
+# in akrr_src directory (one level up from here)
+docker build -t nsimakov/centos_akrr_update_test:1_5b -f ./docker/update_test/Dockerfile_UpdateReady .
+```

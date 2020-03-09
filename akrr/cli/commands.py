@@ -638,15 +638,18 @@ def add_command_update(parent_parser):
     parser = parent_parser.add_parser('update',  description=add_command_archive.__doc__)
 
     parser.add_argument(
-        '--old-akr-cfg', action='store_true', help="location of old akr-cfg")
+        '--old-akrr-home', type=str,
+        help="location of old AKRR home directory, for example ~/akrr. Default: try to find")
+    parser.add_argument('-y', action='store_true', help="answer yes or default to all questions.")
 
     subparsers = parser.add_subparsers(title="individual commands for update")
 
-    cli_update_db_compare(subparsers)
-    cli_update_rename_appkernels(subparsers)
+    # cli_update_db_compare(subparsers)
+    # cli_update_rename_appkernels(subparsers)
 
-    def handler(_):
-        print("Run UPDATE")
+    def handler(args):
+        from akrr.update import UpdateAKRR
+        UpdateAKRR(old_akrr_home=args.old_akrr_home, yes_to_all=args.y).run()
 
     parser.set_defaults(func=handler)
 

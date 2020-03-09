@@ -1,0 +1,6 @@
+FROM nsimakov/centos_akrr_update_test:1_5
+
+ENV RUN_TESTS="su - akrruser -c '/home/akrruser/xdmod_wsp/akrr/docker/update_test/run_update_test.sh'"
+
+ENTRYPOINT ["/sbin/cmd_start"]
+CMD ["-set-no-exit-on-fail", "self_contained_slurm_wlm", "httpd", "akrr_v1", "run_tests", "bash_akrruser"]
