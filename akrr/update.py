@@ -15,7 +15,8 @@ from akrr.util.sql import get_con_to_db2, cursor_execute
 from akrr.akrrerror import AkrrValueException, AkrrFileNotFoundError, AkrrException
 from akrr.util.sql import get_con_to_db
 from akrr.util import exec_files_to_dict
-from akrr.cli.generate_tables import create_and_populate_tables, mod_akrr_create_tables_dict
+from akrr.cli.generate_tables import create_and_populate_tables, mod_akrr_create_tables_dict, \
+    populate_mod_akrr_appkernels
 
 
 def mod_akrr_db_compare(db_src, db_dest):
@@ -581,8 +582,7 @@ class UpdateAKRR:
         self.old_akrr_home = old_akrr_home  # type: Optional[str]
         self.old_akrr_cfg_file = None  # type: Optional[str]
         self.yes_to_all = yes_to_all  # type: bool
-        self.akrr_con = None
-        self.akrr_cur = None
+        self.mod_akrr = {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}, }
         self.task_id_max = 0  # type: int
 
         # find akrr home if needed
@@ -681,14 +681,15 @@ class UpdateAKRR:
     def rename_old_akrr_home(self):
         pass
 
-    def get_old_akrr_db_con(self):
-        if self.akrr_con is None or self.akrr_cur is None:
-            self.akrr_con, self.akrr_cur = get_con_to_db(
+    def get_old_akrr_db_con(self, dict_cursor=False):
+        cursor_type = 'dict' if dict_cursor else 'list'
+        if self.mod_akrr[cursor_type]['con'] is None or self.mod_akrr[cursor_type]['cur'] is None:
+            self.mod_akrr[cursor_type]['con'], self.mod_akrr[cursor_type]['cur'] = get_con_to_db(
                 user=self.old_cfg["ak_db_user"], password=self.old_cfg["ak_db_passwd"],
                 host=self.old_cfg["akrr_db_host"], port=self.old_cfg["ak_db_port"],
                 db_name=self.old_cfg["akrr_db_name"],
-                dict_cursor=False, raise_exception=True)
-        return self.akrr_con, self.akrr_cur
+                dict_cursor=dict_cursor, raise_exception=True)
+        return self.mod_akrr[cursor_type]['con'], self.mod_akrr[cursor_type]['cur']
 
     def _get_table_pkl_name(self, db_name, table_name):
         """
@@ -772,6 +773,7 @@ class UpdateAKRR:
         Populate new tables
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
+        akrr_con_dict, akrr_cur_dict = self.get_old_akrr_db_con(dict_cursor=True)
 
         # scheduled_tasks
         for table_ref, table_info in _convert_mod_akrr_db.items():
@@ -798,6 +800,9 @@ class UpdateAKRR:
         # correct some values
         akrr_cur.execute("update completed_tasks set app=CONCAT(app,'.core') where resource_param like '%ncpus%'")
         akrr_con.commit()
+
+        # add new records if needed
+        populate_mod_akrr_appkernels(akrr_con_dict, akrr_cur_dict)
 
     def _prepare_db_convertion(self):
         """helper function to prepare convertion statements"""

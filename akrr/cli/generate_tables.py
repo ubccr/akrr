@@ -108,8 +108,8 @@ def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False, mod_akrr_app
             sql = "INSERT INTO `app_kernels` (id,name,nodes_list) VALUES" + \
                   "(%d,'%s','%s')" % (ak_id, name, nodes_list) + \
                   "ON DUPLICATE KEY UPDATE id=VALUES(id);"
-            if log.verbose or dry_run:
-                print(sql)
+            log.debug2(sql)
+            log.dry_run(sql)
             if not dry_run:
                 cur_akrr.execute(sql)
         if not dry_run:
