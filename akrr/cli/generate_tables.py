@@ -22,7 +22,7 @@ from akrr.util import log
 # UTILITY FUNCTIONS
 ###############################################################################
 def create_and_populate_tables(
-        default_tables,
+        default_tables: OrderedDict,
         population_statements,
         starting_comment, ending_comment,
         connection_function,
@@ -43,7 +43,7 @@ def create_and_populate_tables(
             elif connection is None and cursor is None:
                 connection, cursor = connection_function(True)
 
-            for (table_name, table_script) in default_tables:
+            for table_name, table_script in default_tables.items():
                 if not drop_if_needed and table_script[:4].upper() == "DROP":
                     continue
                 log.debug("CREATING: %s" % table_name)
@@ -389,7 +389,7 @@ INSERT INTO `akrr_err_regexp` VALUES
         connection_function = akrr.db.get_akrr_db
         
     create_and_populate_tables(
-        tuple(mod_akrr_create_tables_dict.items()),
+        mod_akrr_create_tables_dict,
         population_statements if populate else tuple(),
         "Creating mod_akrr Tables / Views...",
         "mod_akrr Tables / Views Created!",
@@ -523,14 +523,9 @@ def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=
             con_appkernel.commit()
 
 
-def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
-    """
-    Create / Populate the required tables / views in the mod_appkernel database.
-    """
-
-    # DEFINE: the tables / views that mod_appkernel needs.
-    default_tables = (
-        ('a_data', '''
+# DEFINE: the tables / views that mod_appkernel needs.
+mod_appkernel_create_tables_dict = OrderedDict((
+    ('a_data', '''
         CREATE TABLE IF NOT EXISTS `a_data` (
   `ak_name` VARCHAR(64) NOT NULL COMMENT '		',
   `resource` VARCHAR(128) NOT NULL,
@@ -555,7 +550,7 @@ def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('a_data2', '''
+    ('a_data2', '''
     CREATE TABLE IF NOT EXISTS `a_data2` (
   `ak_name` VARCHAR(64) NOT NULL COMMENT '		',
   `resource` VARCHAR(128) NOT NULL,
@@ -589,7 +584,7 @@ def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('app_kernel_def', '''
+    ('app_kernel_def', '''
     CREATE TABLE IF NOT EXISTS `app_kernel_def` (
   `ak_def_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(64) NOT NULL COMMENT '		',
@@ -605,7 +600,7 @@ def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
   KEY `visible` (`visible`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 COMMENT='App kernel definition.';
     '''),
-        ('app_kernel', '''
+    ('app_kernel', '''
     CREATE TABLE IF NOT EXISTS `app_kernel` (
   `ak_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `num_units` INT(10) UNSIGNED NOT NULL DEFAULT '1',
@@ -621,7 +616,7 @@ def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
 ) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=latin1 
 COMMENT='Application kernel info including num processing units';
     '''),
-        ('metric', '''
+    ('metric', '''
     CREATE TABLE IF NOT EXISTS `metric` (
   `metric_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `short_name` VARCHAR(32) NOT NULL,
@@ -632,7 +627,7 @@ COMMENT='Application kernel info including num processing units';
   UNIQUE KEY `unique_guid` (`guid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=latin1 COMMENT='Individual metric definitions';
     '''),
-        ('parameter', '''
+    ('parameter', '''
     CREATE TABLE IF NOT EXISTS `parameter` (
   `parameter_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `tag` VARCHAR(64) DEFAULT NULL,
@@ -643,7 +638,7 @@ COMMENT='Application kernel info including num processing units';
   UNIQUE KEY `unique_guid` (`guid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=latin1 COMMENT='Individual parameter definitions';
     '''),
-        ('resource', '''
+    ('resource', '''
     CREATE TABLE IF NOT EXISTS `resource` (
   `resource_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `resource` VARCHAR(128) NOT NULL,
@@ -657,7 +652,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `visible` (`visible`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 COMMENT='Resource definitions';
     '''),
-        ('ak_has_metric', '''
+    ('ak_has_metric', '''
     CREATE TABLE IF NOT EXISTS `ak_has_metric` (
   `ak_id` INT(10) UNSIGNED NOT NULL,
   `metric_id` INT(10) UNSIGNED NOT NULL,
@@ -672,7 +667,7 @@ COMMENT='Application kernel info including num processing units';
   (`ak_id`, `num_units`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Association between app kernels and metrics';
     '''),
-        ('ak_has_parameter', '''
+    ('ak_has_parameter', '''
     CREATE TABLE IF NOT EXISTS `ak_has_parameter` (
   `ak_id` INT(10) UNSIGNED NOT NULL,
   `parameter_id` INT(10) UNSIGNED NOT NULL,
@@ -685,7 +680,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Association between app kernels and parameters';
     '''),
-        ('ak_instance', '''
+    ('ak_instance', '''
     CREATE TABLE IF NOT EXISTS `ak_instance` (
   `ak_id` INT(10) UNSIGNED NOT NULL COMMENT '	',
   `collected` DATETIME NOT NULL,
@@ -708,7 +703,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Execution instance';
     '''),
-        ('ak_instance_debug', '''
+    ('ak_instance_debug', '''
     CREATE TABLE IF NOT EXISTS `ak_instance_debug` (
   `ak_id` INT(10) UNSIGNED NOT NULL,
   `collected` DATETIME NOT NULL,
@@ -728,7 +723,7 @@ COMMENT='Application kernel info including num processing units';
   (`ak_id`, `collected`, `resource_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Debugging information for application kernels.';
     '''),
-        ('ak_supremme_metrics', '''
+    ('ak_supremme_metrics', '''
     CREATE TABLE IF NOT EXISTS `ak_supremm_metrics` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `ak_def_id` INT(11) NOT NULL,
@@ -736,7 +731,7 @@ COMMENT='Application kernel info including num processing units';
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
     '''),
-        ('a_tree', '''
+    ('a_tree', '''
     CREATE TABLE IF NOT EXISTS `a_tree` (
   `ak_name` VARCHAR(64) NOT NULL COMMENT '		',
   `resource` VARCHAR(128) NOT NULL,
@@ -757,7 +752,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('a_tree2', '''
+    ('a_tree2', '''
     CREATE TABLE IF NOT EXISTS `a_tree2` (
   `ak_name` VARCHAR(64) NOT NULL COMMENT '		',
   `resource` VARCHAR(128) NOT NULL,
@@ -778,7 +773,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('control_set', '''
+    ('control_set', '''
     CREATE TABLE IF NOT EXISTS `control_set` (
   `metric_id` INT(10) NOT NULL,
   `ak_id` INT(10) NOT NULL,
@@ -788,7 +783,7 @@ COMMENT='Application kernel info including num processing units';
   PRIMARY KEY (`metric_id`,`ak_id`,`resource_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('ingester_log', '''
+    ('ingester_log', '''
     CREATE TABLE IF NOT EXISTS `ingester_log` (
   `source` VARCHAR(64) NOT NULL,
   `url` VARCHAR(255) DEFAULT NULL,
@@ -802,13 +797,13 @@ COMMENT='Application kernel info including num processing units';
   KEY `source` (`source`,`last_update`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('log_id_seq', '''
+    ('log_id_seq', '''
     CREATE TABLE IF NOT EXISTS `log_id_seq` (
   `sequence` INT(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`sequence`)
 ) ENGINE=MyISAM AUTO_INCREMENT=415424 DEFAULT CHARSET=latin1;
     '''),
-        ('log_table', '''
+    ('log_table', '''
     CREATE TABLE IF NOT EXISTS `log_table` (
   `id` INT(11) DEFAULT NULL,
   `logtime` DATETIME DEFAULT NULL,
@@ -819,14 +814,14 @@ COMMENT='Application kernel info including num processing units';
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
 
-        ('metric_attribute', '''
+    ('metric_attribute', '''
     CREATE TABLE IF NOT EXISTS `metric_attribute` (
   `metric_id` INT(10) NOT NULL,
   `larger` TINYINT(1) NOT NULL,
   PRIMARY KEY (`metric_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
     '''),
-        ('metric_data', '''
+    ('metric_data', '''
     CREATE TABLE IF NOT EXISTS `metric_data` (
   `metric_id` INT(10) UNSIGNED NOT NULL,
   `ak_id` INT(10) UNSIGNED NOT NULL,
@@ -851,7 +846,7 @@ COMMENT='Application kernel info including num processing units';
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Collected application kernel data fact table';
     '''),
 
-        ('parameter_data', '''
+    ('parameter_data', '''
     CREATE TABLE IF NOT EXISTS `parameter_data` (
   `ak_id` INT(10) UNSIGNED NOT NULL,
   `collected` DATETIME NOT NULL,
@@ -869,7 +864,7 @@ COMMENT='Application kernel info including num processing units';
   REFERENCES `ak_instance` (`ak_id`, `collected`, `resource_id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Collected application kernel parameters fact table';
     '''),
-        ('report', '''
+    ('report', '''
     CREATE TABLE IF NOT EXISTS `report` (
   `user_id` INT(11) NOT NULL,
   `send_report_daily` INT(11) NOT NULL DEFAULT '0',
@@ -881,7 +876,7 @@ COMMENT='Application kernel info including num processing units';
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
     '''),
 
-        ('sumpremm_metrics', '''
+    ('sumpremm_metrics', '''
     CREATE TABLE IF NOT EXISTS `supremm_metrics` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(256) NOT NULL,
@@ -896,7 +891,7 @@ COMMENT='Application kernel info including num processing units';
   UNIQUE KEY `name_2` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
     '''),
-        ('v_ak_metrics', '''
+    ('v_ak_metrics', '''
     CREATE OR REPLACE VIEW `mod_appkernel`.`v_ak_metrics` AS select `mod_appkernel`.`app_kernel_def`.`ak_base_name` 
     AS `name`,`mod_appkernel`.`app_kernel_def`.`enabled` AS `enabled`,`mod_appkernel`.`app_kernel`.`num_units` 
     AS `num_units`,`mod_appkernel`.`app_kernel`.`ak_id` AS `ak_id`,`mod_appkernel`.`ak_has_metric`.`metric_id` 
@@ -907,7 +902,7 @@ COMMENT='Application kernel info including num processing units';
     (`mod_appkernel`.`app_kernel`.`num_units` = `mod_appkernel`.`ak_has_metric`.`num_units`)))) join 
     `mod_appkernel`.`metric` on((`mod_appkernel`.`ak_has_metric`.`metric_id` = `mod_appkernel`.`metric`.`metric_id`)));
     '''),
-        ('v_ak_parameters', '''
+    ('v_ak_parameters', '''
     CREATE OR REPLACE VIEW `mod_appkernel`.`v_ak_parameters` AS select `mod_appkernel`.`app_kernel_def`.`ak_base_name` 
     AS `name`,`mod_appkernel`.`app_kernel_def`.`enabled` AS `enabled`,`mod_appkernel`.`app_kernel`.`num_units` 
     AS `num_units`,`mod_appkernel`.`app_kernel`.`ak_id` AS `ak_id`,`mod_appkernel`.`ak_has_parameter`.`parameter_id` 
@@ -918,7 +913,7 @@ COMMENT='Application kernel info including num processing units';
     `mod_appkernel`.`parameter` on((`mod_appkernel`.`ak_has_parameter`.`parameter_id` = 
     `mod_appkernel`.`parameter`.`parameter_id`)));
     '''),
-        ('v_tree_debug', '''
+    ('v_tree_debug', '''
     CREATE OR REPLACE VIEW `mod_appkernel`.`v_tree_debug` AS select `def`.`name` AS `ak_name`,`r`.`resource` 
     AS `resource`,`def`.`processor_unit` AS `processor_unit`,`ak`.`num_units` AS `num_units`,`def`.`ak_def_id` 
     AS `ak_def_id`,`ai`.`resource_id` AS `resource_id`,unix_timestamp(`ai`.`collected`) AS `collected`,`ai`.`status` 
@@ -928,10 +923,10 @@ COMMENT='Application kernel info including num processing units';
     `r`.`resource_id`))) where ((`def`.`visible` = 1) and (`r`.`visible` = 1)) 
     order by `def`.`name`,`r`.`resource`,`ak`.`num_units`,`ai`.`collected`;
     '''),
-        # not sure how to set CONSTRAINT here
-        # CONSTRAINT `fk_resource_id_ak_def_id` FOREIGN KEY (`resource_id`,`ak_def_id`) REFERENCES `ak_instance`
-        # (`ak_id`, `collected`, `resource_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-        ('control_region_def', """
+    # not sure how to set CONSTRAINT here
+    # CONSTRAINT `fk_resource_id_ak_def_id` FOREIGN KEY (`resource_id`,`ak_def_id`) REFERENCES `ak_instance`
+    # (`ak_id`, `collected`, `resource_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+    ('control_region_def', """
 CREATE TABLE IF NOT EXISTS `control_region_def` (
   `control_region_def_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `resource_id` int(10) unsigned NOT NULL,
@@ -947,7 +942,7 @@ CREATE TABLE IF NOT EXISTS `control_region_def` (
   ON DELETE CASCADE ON UPDATE NO ACTION,
   UNIQUE KEY `resource_id__ak_def_id__control_region_starts` (`resource_id`,`ak_def_id`,`control_region_starts`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;"""),
-        ('control_regions', """
+    ('control_regions', """
 CREATE TABLE IF NOT EXISTS `control_regions` (
   `control_region_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `control_region_def_id` int(10) unsigned NOT NULL,
@@ -965,15 +960,23 @@ CREATE TABLE IF NOT EXISTS `control_regions` (
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_ak_id` FOREIGN KEY (`ak_id`) REFERENCES `app_kernel` (`ak_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;""") 
-    )
+) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;""")
+))
+
+
+def create_and_populate_mod_appkernel_tables(dry_run=False, populate=True):
+    """
+    Create / Populate the required tables / views in the mod_appkernel database.
+    """
+
+
     # EXECUTE: the statements defined previously
     connection_function = None
     if not dry_run:
         connection_function = akrr.db.get_ak_db
     
     create_and_populate_tables(
-        default_tables,
+        mod_appkernel_create_tables_dict,
         tuple(),
         "Creating mod_appkernel Tables / Views...",
         "mod_appkernel Tables / Views Created!",

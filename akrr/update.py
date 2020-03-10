@@ -16,7 +16,7 @@ from akrr.akrrerror import AkrrValueException, AkrrFileNotFoundError, AkrrExcept
 from akrr.util.sql import get_con_to_db
 from akrr.util import exec_files_to_dict
 from akrr.cli.generate_tables import create_and_populate_tables, mod_akrr_create_tables_dict, \
-    populate_mod_akrr_appkernels
+    mod_appkernel_create_tables_dict, populate_mod_akrr_appkernels
 
 
 def mod_akrr_db_compare(db_src, db_dest):
@@ -582,7 +582,10 @@ class UpdateAKRR:
         self.old_akrr_home = old_akrr_home  # type: Optional[str]
         self.old_akrr_cfg_file = None  # type: Optional[str]
         self.yes_to_all = yes_to_all  # type: bool
-        self.mod_akrr = {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}, }
+        self.akrr_db = {
+            "mod_akrr": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
+            "mod_appkernel": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
+        }
         self.task_id_max = 0  # type: int
 
         # find akrr home if needed
@@ -630,6 +633,21 @@ class UpdateAKRR:
             old_cfg['completed_tasks_dir'] = os.path.abspath(os.path.join(old_cfg_dir, old_cfg['completed_tasks_dir']))
 
         log.debug2("AKRR config (%s) content: \n%s", old_akrr_cfg_file, pprint.pformat(old_cfg, indent=4))
+        # set db credential for automatic access
+        old_cfg["DB"] = {
+            "mod_appkernel": {
+                'db_host': 'localhost',
+                'db_name': 'mod_appkernel',
+                'db_passwd': 'akrruser',
+                'db_port': 3306,
+                'db_user': 'akrruser'},
+            "mod_akrr": {
+                'db_host': 'localhost',
+                'db_name': 'mod_akrr',
+                'db_passwd': 'akrruser',
+                'db_port': 3306,
+                'db_user': 'akrruser'}
+        }
         return old_cfg
 
     def remove_old_akrr_from_crontab(self):
@@ -681,15 +699,18 @@ class UpdateAKRR:
     def rename_old_akrr_home(self):
         pass
 
-    def get_old_akrr_db_con(self, dict_cursor=False):
+    def get_akrr_db_con(self, db_name: str, dict_cursor=False):
         cursor_type = 'dict' if dict_cursor else 'list'
-        if self.mod_akrr[cursor_type]['con'] is None or self.mod_akrr[cursor_type]['cur'] is None:
-            self.mod_akrr[cursor_type]['con'], self.mod_akrr[cursor_type]['cur'] = get_con_to_db(
-                user=self.old_cfg["ak_db_user"], password=self.old_cfg["ak_db_passwd"],
-                host=self.old_cfg["akrr_db_host"], port=self.old_cfg["ak_db_port"],
-                db_name=self.old_cfg["akrr_db_name"],
+        if self.akrr_db[db_name][cursor_type]['con'] is None or self.akrr_db[db_name][cursor_type]['cur'] is None:
+            self.akrr_db[db_name][cursor_type]['con'], self.akrr_db[db_name][cursor_type]['cur'] = get_con_to_db(
+                user=self.old_cfg['DB'][db_name]["db_user"], password=self.old_cfg['DB'][db_name]["db_passwd"],
+                host=self.old_cfg['DB'][db_name]["db_host"], port=self.old_cfg['DB'][db_name]["db_port"],
+                db_name=self.old_cfg['DB'][db_name]["db_name"],
                 dict_cursor=dict_cursor, raise_exception=True)
-        return self.mod_akrr[cursor_type]['con'], self.mod_akrr[cursor_type]['cur']
+        return self.akrr_db[db_name][cursor_type]['con'], self.akrr_db[db_name][cursor_type]['cur']
+
+    def get_old_akrr_db_con(self, dict_cursor=False):
+        return self.get_akrr_db_con("mod_akrr", dict_cursor=dict_cursor)
 
     def _get_table_pkl_name(self, db_name, table_name):
         """
@@ -729,6 +750,7 @@ class UpdateAKRR:
         """
         drop old tables
         """
+
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         for name_old in ('akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime'):
             log.debug("Dropping: mod_akrr.%s" % name_old)
@@ -745,27 +767,16 @@ class UpdateAKRR:
         create new tables
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
-        for table_ref, table_info in _convert_mod_akrr_db.items():
+        for db_name, create_tables_dict in (("mod_akrr", mod_akrr_create_tables_dict),
+                                            ("mod_appkernel", mod_appkernel_create_tables_dict)):
+
             create_and_populate_tables(
-                ((table_info['name_new'], table_info['create_new']),),
+                create_tables_dict,
                 tuple(),
-                "Creating mod_akrr.%s Tables ..." % table_info['name_new'],
-                "mod_akrr.%s table created." % table_info['name_new'],
-                None,
-                connection=akrr_con, cursor=akrr_cur,
-                drop_if_needed=True,
-                dry_run=False
-            )
-        for name_new in ('akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime'):
-            create_and_populate_tables(
-                ((name_new, mod_akrr_create_tables_dict[name_new]),),
-                tuple(),
-                "Creating mod_akrr.%s Tables ..." % name_new,
-                "mod_akrr.%s table created." % name_new,
-                None,
-                connection=akrr_con, cursor=akrr_cur,
-                drop_if_needed=True,
-                dry_run=False
+                "Creating %s tables/views ...",
+                "%s tables and views created.",
+                None, connection=akrr_con, cursor=akrr_cur,
+                drop_if_needed=True, dry_run=False
             )
 
     def _update_db_populate_new_db(self):
@@ -845,7 +856,7 @@ class UpdateAKRR:
         akrr_con.commit()
 
         create_and_populate_tables(
-            tuple(mod_akrr_create_tables_dict.items()), tuple(),
+            mod_akrr_create_tables_dict, tuple(),
             "Creating mod_akrr Tables / Views...", "mod_akrr Tables / Views Created!",
             None, connection=akrr_con, cursor=akrr_cur, drop_if_needed=True, dry_run=False
         )
@@ -888,6 +899,7 @@ class UpdateAKRR:
         """
         Do update
         """
+        return
         self.remove_old_akrr_from_crontab()
         self.shut_down_old_akrr()
         self.update_db()
