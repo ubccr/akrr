@@ -255,319 +255,6 @@ def rename_appkernels_mod_akrr(mod_akrr: str, dry_run: bool = False) -> None:
                 "update scheduled_tasks set app=%s where app=%s", (new, old), dry_run)
 
 
-def rename_appkernels_mod_appkernel(mod_appkernel: str, dry_run: bool = False) -> None:
-    """
-    Rename appkernels from long to short format in mod_appkernel db
-    """
-    update_app_kernel_def = True
-    update_app_kernel = True
-    update_app_kernel_def_list = True
-
-    con_appkernel, cur_appkernel = get_con_to_db2(mod_appkernel)
-
-    log.info("Updating mod_appkernel")
-    if update_app_kernel_def:
-        log.info("Updating app_kernel_def")
-        for old, new in ak_rename.items():
-            log.debug("update app_kernel_def: %s -> %s" % (new, old))
-            cursor_execute(
-                cur_appkernel,
-                "update app_kernel_def set ak_base_name=%s where ak_base_name=%s", (new, old), dry_run)
-        if not dry_run:
-            con_appkernel.commit()
-
-    if update_app_kernel:
-        log.info("Updating app_kernel")
-        for old, new in ak_rename.items():
-            log.debug("update app_kernel: %s -> %s" % (new, old))
-            cursor_execute(
-                cur_appkernel,
-                "update app_kernel set name=%s where name=%s", (new, old), dry_run)
-        if not dry_run:
-            con_appkernel.commit()
-
-    if update_app_kernel_def_list:
-        log.info("Updating mod_appkernel.app_kernel_def")
-        from akrr.cli.generate_tables import populate_mod_appkernel_app_kernel_def
-        populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run)
-
-
-def convert_appname(iapp: int, row, ireporternickname: int = None):
-    is_tuple = False
-    if isinstance(row, tuple):
-        row = list(row)
-        is_tuple = True
-
-    if row[iapp] in ak_rename:
-        row[iapp] = ak_rename[row[iapp]]
-
-    if ireporternickname is not None:
-        # xdmod.app.md.namd2.128 -> (xdmod.app.md.namd2, 128)
-        m = re.match(r"^(.*)\.([0-9]+)$", row[ireporternickname])
-        if m and m.group(1) in ak_rename:
-            row[ireporternickname] = ak_rename[m.group(1)] + "." + m.group(2)
-
-    if is_tuple:
-        return tuple(row)
-    else:
-        return row
-
-
-_convert_mod_akrr_db = OrderedDict((
-    (
-        "active_tasks",
-        {
-            "name_new": "active_tasks",
-            "name_old": "ACTIVETASKS",
-            "select_old": None,
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['active_tasks'],
-            "populate_new": None,
-        }
-    ),
-    (
-        "ak_on_nodes",
-        {
-            "name_new": "ak_on_nodes",
-            "name_old": "ak_on_nodes",
-            "select_old":
-                "SELECT resource_id, node_id, task_id, collected, status\n"
-                "FROM ak_on_nodes",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['ak_on_nodes'],
-            "populate_new":
-                "INSERT INTO ak_on_nodes\n"
-                "      (resource_id, node_id, task_id, collected, status)\n"
-                "VALUES(%s,%s,%s,%s,%s)",
-        }
-    ),
-    (
-        "akrr_default_walltime_limit",
-        {
-            "name_new": "akrr_default_walltime_limit",
-            "name_old": "akrr_default_walllimit",
-            "select_old":
-                "SELECT id, resource, app, walllimit,      resource_param, app_param, last_update, comments\n"
-                "FROM akrr_default_walllimit",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_default_walltime_limit'],
-            "populate_new":
-                "INSERT INTO akrr_default_walltime_limit\n"
-                "      (id, resource, app, walltime_limit, resource_param, app_param, last_update, comments)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(2, row)
-        }
-    ),
-    (
-        "akrr_errmsg",
-        {
-            "name_new": "akrr_errmsg",
-            "name_old": "akrr_errmsg",
-            "select_old":
-                "SELECT task_id, err_regexp_id, appstdout, stderr, stdout, taskexeclog\n"
-                "FROM akrr_errmsg",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_errmsg'],
-            "populate_new":
-                "INSERT INTO akrr_errmsg\n"
-                "      (task_id, err_regexp_id, appstdout, stderr, stdout, taskexeclog)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s)",
-        }
-    ),
-    (
-        "akrr_err_regexp",
-        {
-            "name_new": "akrr_err_regexp",
-            "name_old": "akrr_err_regexp",
-            "select_old":
-                "SELECT id, active, resource, app, reg_exp, reg_exp_opt, source, err_msg, description\n"
-                "FROM akrr_err_regexp",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_err_regexp'],
-            "populate_new":
-                "INSERT INTO akrr_err_regexp\n"
-                "      (id, active, resource, app, reg_exp, reg_exp_opt, source, err_msg, description)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(3, row)
-        }
-    ),
-    (
-        "akrr_internal_failure_codes",
-        {
-            "name_new": "akrr_internal_failure_codes",
-            "name_old": "akrr_internal_failure_codes",
-            "select_old":
-                "SELECT id, description\n"
-                "FROM akrr_internal_failure_codes",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_internal_failure_codes'],
-            "populate_new":
-                "INSERT INTO akrr_internal_failure_codes\n"
-                "      (id, description)\n"
-                "VALUES(%s,%s)",
-        }
-    ),
-    (
-        "akrr_resource_maintenance",
-        {
-            "name_new": "akrr_resource_maintenance",
-            "name_old": "akrr_resource_maintenance",
-            "select_old":
-                "SELECT id, resource, start, end, comment\n"
-                "FROM akrr_resource_maintenance",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_resource_maintenance'],
-            "populate_new":
-                "INSERT INTO akrr_resource_maintenance\n"
-                "      (id, resource, start, end, comment)\n"
-                "VALUES(%s,%s,%s,%s,%s)",
-        }
-    ),
-    (
-        "akrr_task_errors",
-        {
-            "name_new": "akrr_task_errors",
-            "name_old": "akrr_taks_errors",
-            "select_old":
-                "SELECT task_id, err_reg_exp_id\n"
-                "FROM akrr_taks_errors",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_task_errors'],
-            "populate_new":
-                "INSERT INTO akrr_task_errors\n"
-                "      (task_id, err_reg_exp_id)\n"
-                "VALUES(%s,%s)",
-        }
-    ),
-    (
-        "akrr_xdmod_instanceinfo",
-        {
-            "name_new": "akrr_xdmod_instanceinfo",
-            "name_old": "akrr_xdmod_instanceinfo",
-            "select_old":
-                "SELECT instance_id, collected, committed, resource, executionhost, reporter, reporternickname,\n"
-                "       status, message, stderr, body, memory, cputime, walltime, job_id, internal_failure, nodes,\n"
-                "       ncores, nnodes\n"
-                "FROM akrr_xdmod_instanceinfo",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['akrr_xdmod_instanceinfo'],
-            "populate_new":
-                "INSERT INTO akrr_xdmod_instanceinfo\n"
-                "      (instance_id, collected, committed, resource, executionhost, reporter, reporternickname, \n"
-                "       status, message, stderr, body, memory, cputime, walltime, job_id, internal_failure, nodes,\n"
-                "       ncores, nnodes)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(5, row, ireporternickname=6)
-        }
-    ),
-    (
-        "completed_tasks",
-        {
-            "name_new": "completed_tasks",
-            "name_old": "COMPLETEDTASKS",
-            "select_old":
-                "SELECT task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, time_activated,\n"
-                "       time_submitted_to_queue, repeat_in, resource, app, resource_param, app_param, task_param,\n"
-                "       group_id, FatalErrorsCount, FailsToSubmitToTheQueue, parent_task_id\n"
-                "FROM COMPLETEDTASKS",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['completed_tasks'],
-            "populate_new":
-                "INSERT INTO completed_tasks\n"
-                "      (task_id, time_finished, status, status_info, time_to_start, datetime_stamp, time_activated,\n"
-                "       time_submitted_to_queue, repeat_in, resource, app, resource_param, app_param, task_param,\n"
-                "       group_id, fatal_errors_count, fails_to_submit_to_the_queue, parent_task_id)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(10, row)
-        }
-    ),
-    (
-        "nodes",
-        {
-            "name_new": "nodes",
-            "name_old": "nodes",
-            "select_old":
-                "SELECT node_id, resource_id, name\n"
-                "FROM nodes",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['nodes'],
-            "populate_new":
-                "INSERT INTO nodes\n"
-                "      (node_id, resource_id, name)\n"
-                "VALUES(%s,%s,%s)",
-        }
-    ),
-    (
-        "scheduled_tasks",
-        {
-            "name_new": "scheduled_tasks",
-            "name_old": "SCHEDULEDTASKS",
-            "select_old":
-                "SELECT task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param,\n"
-                "       group_id, parent_task_id\n"
-                "FROM SCHEDULEDTASKS",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['scheduled_tasks'],
-            "populate_new":
-                "INSERT INTO scheduled_tasks\n"
-                "      (task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param,\n"
-                "       group_id, parent_task_id)\n"
-                "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(4, row)
-        }
-    ),
-    (
-        "resources",
-        {
-            "name_new": "resources",
-            "name_old": "resources",
-            "select_old":
-                "SELECT id, xdmod_resource_id, name, enabled\n"
-                "FROM resources",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['resources'],
-            "populate_new":
-                "INSERT INTO resources\n"
-                "      (id, xdmod_resource_id, name, enabled)\n"
-                "VALUES(%s,%s,%s,%s)",
-        }
-    ),
-    (
-        "app_kernels",
-        {
-            "name_new": "app_kernels",
-            "name_old": "app_kernels",
-            "select_old":
-                "SELECT id, name, enabled, nodes_list\n"
-                "FROM app_kernels",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['app_kernels'],
-            "populate_new":
-                "INSERT INTO app_kernels\n"
-                "      (id, name, enabled, nodes_list)\n"
-                "VALUES(%s,%s,%s,%s)",
-            "convert": lambda row: convert_appname(1, row)
-        }
-    ),
-    (
-        "resource_app_kernels",
-        {
-            "name_new": "resource_app_kernels",
-            "name_old": "resource_app_kernels",
-            "select_old":
-                "SELECT id, resource_id, app_kernel_id, enabled\n"
-                "FROM resource_app_kernels",
-            "drop_old": True,
-            "create_new": mod_akrr_create_tables_dict['resource_app_kernels'],
-            "populate_new":
-                "INSERT INTO resource_app_kernels\n"
-                "      (id, resource_id, app_kernel_id, enabled)\n"
-                "VALUES(%s,%s,%s,%s)",
-        }
-    )
-))
-
-
 class UpdateAKRR:
     """
     Class for updating old AKRR
@@ -712,11 +399,162 @@ class UpdateAKRR:
     def get_old_akrr_db_con(self, dict_cursor=False):
         return self.get_akrr_db_con("mod_akrr", dict_cursor=dict_cursor)
 
+
+def convert_appname(iapp: int, row, ireporternickname: int = None):
+    is_tuple = False
+    if isinstance(row, tuple):
+        row = list(row)
+        is_tuple = True
+
+    if row[iapp] in ak_rename:
+        row[iapp] = ak_rename[row[iapp]]
+
+    if ireporternickname is not None:
+        # xdmod.app.md.namd2.128 -> (xdmod.app.md.namd2, 128)
+        m = re.match(r"^(.*)\.([0-9]+)$", row[ireporternickname])
+        if m and m.group(1) in ak_rename:
+            row[ireporternickname] = ak_rename[m.group(1)] + "." + m.group(2)
+
+    if is_tuple:
+        return tuple(row)
+    else:
+        return row
+
+
+class UpdateDataBase:
+    """
+    Class for updating old AKRR Database
+    """
+    convert_mod_akrr_db = OrderedDict((
+        # active_tasks - just drop it
+        (
+            "ak_on_nodes",
+            {
+                "select_cols_old":
+                    "resource_id, node_id, task_id, collected, status"
+            }
+        ), (
+            "akrr_default_walltime_limit", {
+                "name_old": "akrr_default_walllimit",
+                "select_cols_old":
+                    "id, resource, app, walllimit,      resource_param, app_param, last_update, comments",
+                "populate_cols_new":
+                    "id, resource, app, walltime_limit, resource_param, app_param, last_update, comments",
+                "convert": lambda row: convert_appname(2, row)
+            }
+        ), (
+            "akrr_errmsg", {
+                "select_cols_old":
+                    "task_id, err_regexp_id, appstdout, stderr, stdout, taskexeclog",
+            }
+        ), (
+            "akrr_err_regexp", {
+                "select_cols_old":
+                    "id, active, resource, app, reg_exp, reg_exp_opt, source, err_msg, description",
+                "convert": lambda row: convert_appname(3, row)
+            }
+        ), (
+            "akrr_internal_failure_codes", {
+                "select_cols_old":
+                    "id, description",
+            }
+        ), (
+            "akrr_resource_maintenance", {
+                "select_cols_old":
+                    "id, resource, start, end, comment",
+            }
+        ), (
+            "akrr_task_errors", {
+                "name_old": "akrr_taks_errors",
+                "select_cols_old":
+                    "task_id, err_reg_exp_id"
+            }
+        ), (
+            "akrr_xdmod_instanceinfo", {
+                "select_cols_old":
+                    "instance_id, collected, committed, resource, executionhost, reporter, reporternickname,\n"
+                    "status, message, stderr, body, memory, cputime, walltime, job_id, internal_failure, nodes,\n"
+                    "ncores, nnodes",
+                "convert": lambda row: convert_appname(5, row, ireporternickname=6)
+            }
+        ), (
+            "completed_tasks", {
+                "name_old": "COMPLETEDTASKS",
+                "select_cols_old":
+                    "task_id, time_finished, status, statusinfo, time_to_start, datetimestamp, time_activated,\n"
+                    "time_submitted_to_queue, repeat_in, resource, app, resource_param, app_param, task_param,\n"
+                    "group_id, FatalErrorsCount, FailsToSubmitToTheQueue, parent_task_id",
+                "populate_cols_new":
+                    "task_id, time_finished, status, status_info, time_to_start, datetime_stamp, time_activated,\n"
+                    "time_submitted_to_queue, repeat_in, resource, app, resource_param, app_param, task_param,\n"
+                    "group_id, fatal_errors_count, fails_to_submit_to_the_queue, parent_task_id",
+                "convert": lambda row: convert_appname(10, row)
+            }
+        ), (
+            "nodes", {
+                "select_cols_old":
+                    "node_id, resource_id, name",
+            }
+        ), (
+            "scheduled_tasks", {
+                "name_old": "SCHEDULEDTASKS",
+                "select_cols_old":
+                    "task_id, time_to_start, repeat_in, resource, app, resource_param, app_param, task_param,\n"
+                    "group_id, parent_task_id",
+                "convert": lambda row: convert_appname(4, row)
+            }
+        ), (
+            "resources", {
+                "select_cols_old":
+                    "id, xdmod_resource_id, name, enabled",
+            }
+        ), (
+            "app_kernels", {
+                "select_cols_old":
+                    "id, name, enabled, nodes_list",
+                "convert": lambda row: convert_appname(1, row)
+            }
+        ), (
+            "resource_app_kernels", {
+                "select_cols_old":
+                    "id, resource_id, app_kernel_id, enabled"
+            }
+        )
+    ))
+    tables_to_drop = OrderedDict((
+        ("mod_akrr",
+         {'tables': [
+             'ACTIVETASKS', 'ak_on_nodes', 'akrr_default_walllimit', 'akrr_errmsg',
+             'akrr_err_regexp', 'akrr_internal_failure_codes', 'akrr_resource_maintenance',
+             'akrr_taks_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'nodes',
+             'SCHEDULEDTASKS', 'resources', 'app_kernels', 'resource_app_kernels'],
+             'views': ['akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime']}),
+        # ("mod_appkernel",
+        #  {'tables':
+        #       ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource',
+        #        'ak_has_metric',
+        #        'ak_has_parameter', 'ak_instance', 'ak_instance_debug', 'ak_supremme_metrics', 'a_tree', 'a_tree2',
+        #        'control_set', 'ingester_log', 'log_id_seq', 'log_table', 'metric_attribute', 'metric_data',
+        #        'parameter_data',
+        #        'report', 'sumpremm_metrics', 'control_region_def', 'control_regions'],
+        #   'views': ['v_ak_metrics', 'v_ak_parameters', 'v_tree_debug']
+        #   })
+    ))
+
+    def __init__(self, uppdate_akrr: UpdateAKRR):
+        self.uppdate_akrr = uppdate_akrr
+
+    def get_akrr_db_con(self, db_name: str, dict_cursor=False):
+        return self.uppdate_akrr.get_akrr_db_con(db_name, dict_cursor=dict_cursor)
+
+    def get_old_akrr_db_con(self, dict_cursor=False):
+        return self.uppdate_akrr.get_akrr_db_con("mod_akrr", dict_cursor=dict_cursor)
+
     def _get_table_pkl_name(self, db_name, table_name):
         """
         Get pickeled filename for table dump
         """
-        return os.path.join(self.old_cfg['data_dir'], "%s__%s.pkl" % (db_name, table_name))
+        return os.path.join(self.uppdate_akrr.old_cfg['data_dir'], "%s__%s.pkl" % (db_name, table_name))
 
     def _update_db_save_old_db(self):
         """
@@ -724,13 +562,15 @@ class UpdateAKRR:
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
 
-        for table_ref, table_info in _convert_mod_akrr_db.items():
-            if table_info['select_old'] is None:
+        for table_name, table_info in self.convert_mod_akrr_db.items():
+            if table_info["select_cols_old"] is None:
                 continue
-            log.debug("Saving: mod_akrr.%s" % table_info['name_old'])
-            akrr_cur.execute(table_info['select_old'])
+            name_old = table_name if "name_old" not in table_info else table_info['name_old']
 
-            with open(self._get_table_pkl_name("mod_akrr", table_info['name_new']), "wb") as fout:
+            log.debug("Saving: mod_akrr.%s" % name_old)
+            akrr_cur.execute("SELECT %s \nFROM %s" % (table_info["select_cols_old"], name_old))
+
+            with open(self._get_table_pkl_name("mod_akrr", table_name), "wb") as fout:
                 while True:
                     rows = akrr_cur.fetchmany(4)
                     if not rows:
@@ -750,17 +590,18 @@ class UpdateAKRR:
         """
         drop old tables
         """
+        for db_name, tables_and_views in self.tables_to_drop.items():
+            con, cur = self.get_akrr_db_con(db_name)
+            tables_and_views['views'].reverse()
+            for name_old in tables_and_views['views']:
+                log.debug("Dropping: %s.%s" % (db_name, name_old))
+                cur.execute("DROP VIEW IF EXISTS %s" % name_old)
 
-        akrr_con, akrr_cur = self.get_old_akrr_db_con()
-        for name_old in ('akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime'):
-            log.debug("Dropping: mod_akrr.%s" % name_old)
-            akrr_cur.execute("DROP VIEW IF EXISTS %s" % name_old)
-
-        for table_ref, table_info in _convert_mod_akrr_db.items():
-            if table_info['drop_old']:
-                akrr_cur.execute("DROP TABLE IF EXISTS %s" % table_info['name_old'])
-                log.debug("Dropping: mod_akrr.%s" % table_info['name_old'])
-        akrr_con.commit()
+            tables_and_views['tables'].reverse()
+            for name_old in tables_and_views['tables']:
+                cur.execute("DROP TABLE IF EXISTS %s" % name_old)
+                log.debug("Dropping: %s.%s" % (db_name, name_old))
+            con.commit()
 
     def _update_db_create_new(self):
         """
@@ -769,7 +610,6 @@ class UpdateAKRR:
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         for db_name, create_tables_dict in (("mod_akrr", mod_akrr_create_tables_dict),
                                             ("mod_appkernel", mod_appkernel_create_tables_dict)):
-
             create_and_populate_tables(
                 create_tables_dict,
                 tuple(),
@@ -787,11 +627,15 @@ class UpdateAKRR:
         akrr_con_dict, akrr_cur_dict = self.get_old_akrr_db_con(dict_cursor=True)
 
         # scheduled_tasks
-        for table_ref, table_info in _convert_mod_akrr_db.items():
-            if table_info['populate_new'] is None:
-                continue
-            log.debug("Populating: mod_akrr.%s" % table_info['name_new'])
-            with open(self._get_table_pkl_name("mod_akrr", table_info['name_new']), "rb") as fin:
+        for table_name, table_info in self.convert_mod_akrr_db.items():
+            if "populate_cols_new" in table_info:
+                populate_col_new = table_info["populate_cols_new"]
+            else:
+                populate_col_new = table_info['select_cols_old']
+
+            values_in = ", ".join(["%s"] * (populate_col_new.count(",") + 1))
+            log.debug("Populating: mod_akrr.%s" % table_name)
+            with open(self._get_table_pkl_name("mod_akrr", table_name), "rb") as fin:
                 while True:
                     try:
                         rows = pickle.load(fin)
@@ -800,7 +644,8 @@ class UpdateAKRR:
                     for row in rows:
                         if "convert" in table_info:
                             row = table_info["convert"](row)
-                        akrr_cur.execute(table_info['populate_new'], row)
+                        akrr_cur.execute(
+                            "INSERT INTO %s\n(%s)\nVALUES(%s)" % (table_name, populate_col_new, values_in), row)
                 akrr_con.commit()
 
         # update auto increment
@@ -814,6 +659,45 @@ class UpdateAKRR:
 
         # add new records if needed
         populate_mod_akrr_appkernels(akrr_con_dict, akrr_cur_dict)
+
+        # update mod_appkernel
+        self._rename_appkernels_mod_appkernel()
+
+    def _rename_appkernels_mod_appkernel(self, dry_run: bool = False) -> None:
+        """
+        Rename appkernels from long to short format in mod_appkernel db
+        """
+        update_app_kernel_def = True
+        update_app_kernel = True
+        update_app_kernel_def_list = True
+
+        con_appkernel, cur_appkernel = self.get_akrr_db_con("mod_appkernel", dict_cursor=True)
+
+        log.info("Updating mod_appkernel")
+        if update_app_kernel_def:
+            log.info("Updating app_kernel_def")
+            for old, new in ak_rename.items():
+                log.debug("update app_kernel_def: %s -> %s" % (new, old))
+                cursor_execute(
+                    cur_appkernel,
+                    "update app_kernel_def set ak_base_name=%s where ak_base_name=%s", (new, old), dry_run)
+            if not dry_run:
+                con_appkernel.commit()
+
+        if update_app_kernel:
+            log.info("Updating app_kernel")
+            for old, new in ak_rename.items():
+                log.debug("update app_kernel: %s -> %s" % (new, old))
+                cursor_execute(
+                    cur_appkernel,
+                    "update app_kernel set name=%s where name=%s", (new, old), dry_run)
+            if not dry_run:
+                con_appkernel.commit()
+
+        if update_app_kernel_def_list:
+            log.info("Updating mod_appkernel.app_kernel_def")
+            from akrr.cli.generate_tables import populate_mod_appkernel_app_kernel_def
+            populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run)
 
     def _prepare_db_convertion(self):
         """helper function to prepare convertion statements"""
@@ -868,7 +752,7 @@ class UpdateAKRR:
             akrr_cur.execute("SHOW COLUMNS FROM mod_akrr.%s" % name_new)
             rows = akrr_cur.fetchall()
             cols = ", ".join([r[0] for r in rows])
-            new_cols[name_new] = [cols, ",".join(["%s"]*len(rows))]
+            new_cols[name_new] = [cols, ",".join(["%s"] * len(rows))]
 
         for name_new, name_old in new_old_table.items():
             print("""    (
@@ -876,12 +760,12 @@ class UpdateAKRR:
         {
             "name_new": "%s",
             "name_old": "%s",
-            "select_old":
+            "select_cols_old":
                 "SELECT %s\\n"
                 "FROM %s",
             "drop_old": True,
             "create_new": mod_akrr_create_tables_dict['%s'],
-            "populate_new":
+            "populate_cols_new":
                 "INSERT INTO %s\\n" 
                 "      (%s)\\n"
                 "VALUES(%s)",
@@ -889,17 +773,18 @@ class UpdateAKRR:
     ),""" % (name_new, name_new, name_old, old_cols[name_old], name_old, name_new, name_new,
              new_cols[name_new][0], new_cols[name_new][1]))
 
-    def update_db(self):
+    def update(self):
         self._update_db_save_old_db()
         self._update_db_drop_old_tables()
         self._update_db_create_new()
         self._update_db_populate_new_db()
 
-    def run(self):
-        """
-        Do update
-        """
-        return
-        self.remove_old_akrr_from_crontab()
-        self.shut_down_old_akrr()
-        self.update_db()
+
+def update(old_akrr_home: str = None, yes_to_all: bool = False):
+    """
+    Do update
+    """
+    update_akrr = UpdateAKRR(old_akrr_home=old_akrr_home, yes_to_all=yes_to_all)
+    update_akrr.remove_old_akrr_from_crontab()
+    update_akrr.shut_down_old_akrr()
+    UpdateDataBase(update_akrr).update()

@@ -109,9 +109,10 @@ def populate_mod_akrr_appkernels(con_akrr, cur_akrr, dry_run=False, mod_akrr_app
                   "(%d,'%s','%s')" % (ak_id, name, nodes_list) + \
                   "ON DUPLICATE KEY UPDATE id=VALUES(id);"
             log.debug2(sql)
-            log.dry_run(sql)
             if not dry_run:
                 cur_akrr.execute(sql)
+            else:
+                log.dry_run(sql)
         if not dry_run:
             con_akrr.commit()
 
@@ -507,8 +508,9 @@ def populate_mod_appkernel_app_kernel_def(con_appkernel, cur_appkernel, dry_run=
                   (ak_def_id, name, ak_base_name, processor_unit,
                    enabled, description, visible, str(control_criteria)) + \
                   "ON DUPLICATE KEY UPDATE ak_def_id=VALUES(ak_def_id);;"
+            log.debug(sql)
             if log.verbose or dry_run:
-                print(sql)
+                log.dry_run(sql)
             if not dry_run:
                 cur_appkernel.execute(
                     "INSERT INTO `app_kernel_def` "

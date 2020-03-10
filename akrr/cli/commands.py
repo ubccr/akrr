@@ -650,8 +650,8 @@ def add_command_update(parent_parser):
     # cli_update_rename_appkernels(subparsers)
 
     def handler(args):
-        from akrr.update import UpdateAKRR
-        UpdateAKRR(old_akrr_home=args.old_akrr_home, yes_to_all=args.y).run()
+        from akrr.update import update
+        update(old_akrr_home=args.old_akrr_home, yes_to_all=args.y)
 
     parser.set_defaults(func=handler)
 
