@@ -1,3 +1,5 @@
+from enum import Enum
+
 # Debug flag, if True then akrr executed in debug mode, launched as akrr daemon startdeb
 # it also imply daemon is executed in foreground
 debug = False
@@ -9,53 +11,69 @@ debug_redirect_task_processing_to_log_file = None
 dry_run = False
 
 
+class AKRRHomeType(Enum):
+    unknown = 0
+    in_default_path = 2
+    in_env_path = 3
+
+
 def get_akrr_dirs(akrr_home: str = None):
     """
     return akrr directories
 
     AKRR home is determine in following order
-    1) If akrr_home is set it will use it.
+    1) If akrr_home is set it will use it. And set environment variable
        This is mostly used during setup.
     2) AKRR_HOME if AKRR_HOME environment variable is defined.
        This is the case if akrr configs and appkernels running results
        are stored not in standard place.
     3) ~/akrr if initiated from RPM, that is akrr is in /usr/bin.
-    4) <path to AKRR sources> for in source installation
     """
     import os
     import inspect
     from .util import which
     from akrr.util import log
 
-    in_src_install: bool = False
-
     akrr_mod_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+
+    akrr_home_type = AKRRHomeType.unknown
+
+    # default location
+    akrr_home_default = os.path.expanduser("~/akrr")
+    akrr_cfg_default = os.path.expanduser("~/akrr/etc/akrr.conf")
+
+    if akrr_home:
+        os.environ["AKRR_HOME"] = akrr_home
+
+    # location from env
+    if "AKRR_HOME" in os.environ:
+        akrr_home_env = os.path.abspath(os.path.expanduser(os.environ["AKRR_HOME"]))
+        akrr_cfg_env = os.path.join(akrr_home_env, 'etc', 'akrr.conf')
+    else:
+        akrr_home_env = None
+        akrr_cfg_env = None
+
+    # in source location
     if os.path.isfile(os.path.join(os.path.dirname(akrr_mod_dir), 'bin', 'akrr')):
-        akrr_bin_dir = os.path.join(os.path.dirname(akrr_mod_dir), 'bin')
+        # i.e. akrr running from source code or non-standard location
+        akrr_bin_dir = os.path.abspath(os.path.expanduser(os.path.join(os.path.dirname(akrr_mod_dir), 'bin')))
         akrr_cli_fullpath = os.path.join(akrr_bin_dir, 'akrr')
-        in_src_install = True
+        in_src_run = True
     else:
         akrr_cli_fullpath = which('akrr')
-        akrr_bin_dir = os.path.dirname(akrr_cli_fullpath)
+        akrr_bin_dir = os.path.abspath(os.path.expanduser(os.path.dirname(akrr_cli_fullpath)))
+        in_src_run = False
 
-    # determine akrr_home
-    if akrr_home is None:
-        akrr_home = os.getenv("AKRR_HOME")
-
-    if akrr_home is None:
-        if in_src_install:
-            akrr_home = os.path.dirname(akrr_mod_dir)
-            akrr_cfg = os.path.join(akrr_home, 'etc', 'akrr.conf')
-            log.debug("In-source installation, AKRR configuration is in " + akrr_cfg)
-        else:
-            akrr_home = os.path.expanduser("~/akrr")
-            akrr_cfg = os.path.expanduser("~/akrr/etc/akrr.conf")
-            log.debug("AKRR configuration is in " + akrr_cfg)
-
-    else:
-        akrr_home = os.path.expanduser(akrr_home)
-        akrr_cfg = os.path.join(akrr_home, 'etc', 'akrr.conf')
+    if akrr_home_env and akrr_home_default and akrr_home_env != akrr_home_default:
+        akrr_home = akrr_home_env
+        akrr_cfg = akrr_cfg_env
+        akrr_home_type = AKRRHomeType.in_env_path
         log.debug("AKRR_HOME is set. AKRR configuration is in " + akrr_cfg)
+    else:
+        akrr_home = akrr_home_default
+        akrr_cfg = akrr_cfg_default
+        akrr_home_type = AKRRHomeType.in_default_path
+        log.debug("AKRR_HOME is in default location. AKRR configuration is in " + akrr_cfg)
 
     # location of akrr cfg directory
     cfg_dir = os.path.dirname(akrr_cfg)
@@ -67,7 +85,8 @@ def get_akrr_dirs(akrr_home: str = None):
     appker_repo_dir = os.path.join(akrr_mod_dir, 'appker_repo')
 
     return {
-        'in_src_install': in_src_install,
+        'in_src_install': in_src_run,
+        'akrr_home_type': akrr_home_type,
         'akrr_mod_dir': akrr_mod_dir,
         'akrr_bin_dir': akrr_bin_dir,
         'akrr_cli_fullpath': akrr_cli_fullpath,

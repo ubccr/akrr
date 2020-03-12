@@ -215,54 +215,10 @@ def add_command_setup(parent_parser):
             akrr_db=args.akrr_db,
             ak_db=args.ak_db,
             xd_db=args.xd_db,
-            akrr_home_dir=args.akrr_home,
+            akrr_home=args.akrr_home,
             stand_alone=args.stand_alone
         )
     parser.set_defaults(func=setup_handler)
-
-
-def add_command_setup_update(parent_parser):
-    """Update AKRR"""
-    # @todo should be option to setup
-    parser = parent_parser.add_parser('update', description=add_command_setup.__doc__)
-    parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possble")
-
-    parser.add_argument(
-        "--old-akrr-conf-dir",
-        required=True,
-        help="location of old AKRR configuration directory")
-    parser.add_argument(
-        "--akrr-db",
-        help="mod_akrr database location in [user[:password]@]host[:port] format, "
-             "missing values will be asked. Default: localhost:3306")
-    parser.add_argument(
-        "--ak-db",
-        help="mod_appkernel database location. Usually same host as XDMoD's databases host. Default: same as akrr")
-    parser.add_argument(
-        "--xd-db",
-        help="XDMoD modw database location. It is XDMoD's databases host. Default: same as akrr")
-    parser.add_argument(
-        '--generate-db-only', action='store_true', help="only generate db")
-    parser.add_argument(
-        '--stand-alone', action='store_true',
-        help="install stand alone akrr, fake modw db (normally comes with XDMoD) will be installed")
-
-    def update_handler(args):
-        """call routine for initial AKRR setup"""
-        import akrr
-        akrr.dry_run = args.dry_run
-        from .setup import AKRRSetup
-        return AKRRSetup().run(
-            akrr_db=args.akrr_db,
-            ak_db=args.ak_db,
-            xd_db=args.xd_db,
-            update=True,
-            stand_alone=args.stand_alone,
-            generate_db_only=args.generate_db_only,
-            old_akrr_conf_dir=args.old_akrr_conf_dir
-        )
-
-    parser.set_defaults(func=update_handler)
 
 
 def add_command_resource(parent_parser):
@@ -639,19 +595,26 @@ def add_command_update(parent_parser):
     """AKRR update routings"""
     parser = parent_parser.add_parser('update',  description=add_command_archive.__doc__)
 
+    parser.add_argument("--dry-run", action="store_true", help="Dry run, print commands if possible")
+    parser.add_argument(
+        "--akrr-home",
+        help="AKRR home directory for configuration and app kernels run data. Default: ~/akrr.")
     parser.add_argument(
         '--old-akrr-home', type=str,
         help="location of old AKRR home directory, for example ~/akrr. Default: try to find")
-    parser.add_argument('-y', action='store_true', help="answer yes or default to all questions.")
-
-    subparsers = parser.add_subparsers(title="individual commands for update")
-
-    # cli_update_db_compare(subparsers)
-    # cli_update_rename_appkernels(subparsers)
+    parser.add_argument('-y', '--yes-to-all', action='store_true', help="answer yes or default to all questions.")
 
     def handler(args):
-        from akrr.update import update
-        update(old_akrr_home=args.old_akrr_home, yes_to_all=args.y)
+        """call routine for initial AKRR setup"""
+        import akrr
+        akrr.dry_run = args.dry_run
+        from .setup import AKRRSetup
+        return AKRRSetup().run(
+            update=True,
+            akrr_home=args.akrr_home,
+            old_akrr_home=args.old_akrr_home,
+            yes_to_all=args.yes_to_all
+        )
 
     parser.set_defaults(func=handler)
 

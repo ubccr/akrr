@@ -8,7 +8,7 @@ import subprocess
 import pickle
 import pprint
 from collections import OrderedDict
-from typing import Optional
+from typing import Optional, Tuple
 
 from akrr.util import log
 from akrr.util.sql import get_con_to_db2, cursor_execute
@@ -176,14 +176,6 @@ ak_rename = {
 }
 
 
-def rename_appkernels(mod_akrr: str, mod_appkernel: str, dry_run: bool = False) -> None:
-    """
-    Rename appkernels from long to short format
-    """
-    rename_appkernels_mod_akrr(mod_akrr, dry_run)
-    rename_appkernels_mod_appkernel(mod_appkernel, dry_run)
-
-
 def rename_appkernels_mod_akrr(mod_akrr: str, dry_run: bool = False) -> None:
     """
     Rename appkernels from long to short format in mod_akrr db
@@ -255,6 +247,41 @@ def rename_appkernels_mod_akrr(mod_akrr: str, dry_run: bool = False) -> None:
                 "update scheduled_tasks set app=%s where app=%s", (new, old), dry_run)
 
 
+def find_old_akrr_home_and_cfg(old_akrr_home: str = None) -> Tuple[str, str]:
+    """
+    Find akrr home and cfg file; check that they exist.
+    Raises error if they do not exist.
+    Return home and cfg paths
+    """
+    if old_akrr_home is None:
+        if "AKRR_HOME" in os.environ:
+            old_akrr_home = os.environ["AKRR_HOME"]
+            log.debug2("Found AKRR home in %s", old_akrr_home)
+
+    if old_akrr_home:
+        old_akrr_home = os.path.abspath(os.path.expanduser(old_akrr_home))
+
+    if old_akrr_home is None:
+        msg = "Can not find old AKRR home directory specify AKRR_HOME environment variables"
+        log.error(msg)
+        raise AkrrValueException(msg)
+    if not os.path.isdir(old_akrr_home):
+        msg = "AKRR home is not found (%s is not directory or do not exists)" % old_akrr_home
+        log.error(msg)
+        raise AkrrFileNotFoundError(msg)
+
+    # locate config
+    old_akrr_cfg_file = os.path.join(old_akrr_home, "cfg", "akrr.inp.py")
+    if not os.path.isfile(old_akrr_cfg_file):
+        msg = "AKRR config file not found (was looking for %s)" % old_akrr_cfg_file
+        log.error(msg)
+        raise AkrrFileNotFoundError(msg)
+
+    log.debug2("Found AKRR config is %s", old_akrr_cfg_file)
+
+    return old_akrr_home, old_akrr_cfg_file
+
+
 class UpdateAKRR:
     """
     Class for updating old AKRR
@@ -266,43 +293,35 @@ class UpdateAKRR:
         ----------
         old_akrr_cfg - old AKRR Config path, if None will try to locate based on environment variables
         """
-        self.old_akrr_home = old_akrr_home  # type: Optional[str]
-        self.old_akrr_cfg_file = None  # type: Optional[str]
         self.yes_to_all = yes_to_all  # type: bool
         self.akrr_db = {
             "mod_akrr": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
             "mod_appkernel": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
         }
         self.task_id_max = 0  # type: int
+        self.cron_email = ""  # type: str
 
         # find akrr home if needed
-        if self.old_akrr_home is None:
-            if "AKRR_HOME" in os.environ:
-                self.old_akrr_home = os.environ["AKRR_HOME"]
-                log.debug2("Found AKRR home in %s", self.old_akrr_home)
-
-        if self.old_akrr_home is None:
-            msg = "Can not find old AKRR home directory specify AKRR_HOME environment variables"
-            log.error(msg)
-            raise AkrrValueException(msg)
-        if not os.path.isdir(self.old_akrr_home):
-            msg = "AKRR home is not found (%s is not directory or do not exists)" % self.old_akrr_home
-            log.error(msg)
-            raise AkrrFileNotFoundError(msg)
-
-        self.old_akrr_home = os.path.abspath(os.path.expanduser(self.old_akrr_home))
-
-        # locate config
-        self.old_akrr_cfg_file = os.path.join(self.old_akrr_home, "cfg", "akrr.inp.py")
-        if not os.path.isfile(self.old_akrr_cfg_file):
-            msg = "AKRR config file not found (was looking for %s)" % self.old_akrr_cfg_file
-            log.error(msg)
-            raise AkrrFileNotFoundError(msg)
-
-        log.debug2("Found AKRR config is %s", self.old_akrr_cfg_file)
+        self.old_akrr_home, self.old_akrr_cfg_file = find_old_akrr_home_and_cfg(old_akrr_home)
 
         # read cfg
         self.old_cfg = self._read_config(self.old_akrr_cfg_file)
+
+        # set db credential for automatic access
+        self.db_cred = {
+            "mod_appkernel": {
+                'db_host': self.old_cfg['ak_db_host'],
+                'db_name': self.old_cfg['ak_db_name'],
+                'db_passwd': self.old_cfg['ak_db_passwd'],
+                'db_port': self.old_cfg['ak_db_port'],
+                'db_user': self.old_cfg['ak_db_user']},
+            "mod_akrr": {
+                'db_host': self.old_cfg['akrr_db_host'],
+                'db_name': self.old_cfg['akrr_db_name'],
+                'db_passwd': self.old_cfg['akrr_db_passwd'],
+                'db_port': self.old_cfg['akrr_db_port'],
+                'db_user': self.old_cfg['akrr_db_user']}
+        }
 
     @staticmethod
     def _read_config(old_akrr_cfg_file: str) -> dict:
@@ -320,21 +339,6 @@ class UpdateAKRR:
             old_cfg['completed_tasks_dir'] = os.path.abspath(os.path.join(old_cfg_dir, old_cfg['completed_tasks_dir']))
 
         log.debug2("AKRR config (%s) content: \n%s", old_akrr_cfg_file, pprint.pformat(old_cfg, indent=4))
-        # set db credential for automatic access
-        old_cfg["DB"] = {
-            "mod_appkernel": {
-                'db_host': 'localhost',
-                'db_name': 'mod_appkernel',
-                'db_passwd': 'akrruser',
-                'db_port': 3306,
-                'db_user': 'akrruser'},
-            "mod_akrr": {
-                'db_host': 'localhost',
-                'db_name': 'mod_akrr',
-                'db_passwd': 'akrruser',
-                'db_port': 3306,
-                'db_user': 'akrruser'}
-        }
         return old_cfg
 
     def remove_old_akrr_from_crontab(self):
@@ -350,6 +354,8 @@ class UpdateAKRR:
             log.info("Crontab does not have user's crontab yet")
             return True
 
+        old_akrr_home_env = os.environ['AKRR_HOME'] if 'AKRR_HOME' in os.environ else None
+
         crontab_content_new = []
         for crontab_line in crontab_content:
             if crontab_line == "#AKRR" or crontab_line == "##AKRR" or crontab_line == "## AKRR":
@@ -360,6 +366,14 @@ class UpdateAKRR:
                     continue
                 if os.path.abspath(fields[-1]) == os.path.join(self.old_akrr_home, "bin", "checknrestart.sh"):
                     continue
+                if old_akrr_home_env:
+                    if os.path.abspath(fields[-1]) == os.path.join(old_akrr_home_env, "bin", "restart.sh"):
+                        continue
+                    if os.path.abspath(fields[-1]) == os.path.join(old_akrr_home_env, "bin", "checknrestart.sh"):
+                        continue
+            if len(crontab_line.strip()) > 6 and crontab_line.strip()[:6].upper() == 'MAILTO':
+                fields = crontab_line.strip().split("=")
+                self.cron_email = fields[1].strip('\'"')
 
             crontab_content_new.append(crontab_line)
 
@@ -390,9 +404,9 @@ class UpdateAKRR:
         cursor_type = 'dict' if dict_cursor else 'list'
         if self.akrr_db[db_name][cursor_type]['con'] is None or self.akrr_db[db_name][cursor_type]['cur'] is None:
             self.akrr_db[db_name][cursor_type]['con'], self.akrr_db[db_name][cursor_type]['cur'] = get_con_to_db(
-                user=self.old_cfg['DB'][db_name]["db_user"], password=self.old_cfg['DB'][db_name]["db_passwd"],
-                host=self.old_cfg['DB'][db_name]["db_host"], port=self.old_cfg['DB'][db_name]["db_port"],
-                db_name=self.old_cfg['DB'][db_name]["db_name"],
+                user=self.db_cred[db_name]["db_user"], password=self.db_cred[db_name]["db_passwd"],
+                host=self.db_cred[db_name]["db_host"], port=self.db_cred[db_name]["db_port"],
+                db_name=self.db_cred[db_name]["db_name"],
                 dict_cursor=dict_cursor, raise_exception=True)
         return self.akrr_db[db_name][cursor_type]['con'], self.akrr_db[db_name][cursor_type]['cur']
 
@@ -780,11 +794,24 @@ class UpdateDataBase:
         self._update_db_populate_new_db()
 
 
+class UpdateConfig:
+    def __init__(self, update_akrr: UpdateAKRR):
+        self.update_akrr = update_akrr
+        self.old_cfg = self.update_akrr.old_cfg
+
+    def update(self):
+        pass
+
+
 def update(old_akrr_home: str = None, yes_to_all: bool = False):
     """
     Do update
     """
+    # determine akrr_home
+    old_akrr_home, _ = find_old_akrr_home_and_cfg(old_akrr_home)
+
     update_akrr = UpdateAKRR(old_akrr_home=old_akrr_home, yes_to_all=yes_to_all)
     update_akrr.remove_old_akrr_from_crontab()
     update_akrr.shut_down_old_akrr()
     UpdateDataBase(update_akrr).update()
+    UpdateConfig(update_akrr).update()

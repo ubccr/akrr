@@ -1,7 +1,7 @@
 """
 This module contains routines for initial AKRR configuration
 """
-
+import datetime
 import os
 import sys
 import re
@@ -23,6 +23,7 @@ from akrr.util.sql import cv
 from akrr.util.sql import db_check_priv
 from akrr.util.sql import get_db_client_host
 from akrr.util.sql import create_user_if_not_exists
+import akrr.update
 
 # Since AKRR setup is the first script to execute
 # Lets check python version, proper library presence and external commands.
@@ -190,10 +191,7 @@ class AKRRSetup:
         self.install_cron_scripts_flag: bool = True
         self.akrr_home_dir: Optional[str] = None
 
-        # @todo update will be separate class remove it
-        self.update: bool = False
-        self.old_akrr_conf: Optional[str] = None
-        self.old_akrr_conf_dir: Optional[Dict] = None
+        self.update: Optional[akrr.update.UpdateAKRR] = None
 
         # internals
         self._initial_akrr_dirs: Dict = {}
@@ -417,16 +415,16 @@ class AKRRSetup:
                     log.info("Creating %s and user to access it" % (db,))
                 else:
                     log.info("Setting user to access %s" % (db,))
-                su_con, su_cur = con_fun(True, None)
-                client_host = get_db_client_host(su_cur)
+                m_su_con, m_su_cur = con_fun(True, None)
+                client_host = get_db_client_host(m_su_cur)
 
                 if create:
-                    _cursor_execute(su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
+                    _cursor_execute(m_su_cur, "CREATE DATABASE IF NOT EXISTS %s" % (cv(db),))
 
-                create_user_if_not_exists(su_con, su_cur, user, password, client_host, dry_run=akrr.dry_run)
-                _cursor_execute(su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
+                create_user_if_not_exists(m_su_con, m_su_cur, user, password, client_host, dry_run=akrr.dry_run)
+                _cursor_execute(m_su_cur, "GRANT " + cv(priv) + " ON " + cv(db) + ".* TO %s@%s", (user, client_host))
 
-                su_con.commit()
+                m_su_con.commit()
 
             # During self.read_db_creds db and user was checked and
             # if they do not exist or not good enough super user credentials
@@ -492,9 +490,14 @@ class AKRRSetup:
         log.info("Generating configuration file ...")
         with open(os.path.join(_akrr_mod_dir, 'templates', 'akrr.conf'), 'r') as f:
             akrr_inp_template = f.read()
-        restapi_rw_password = self.get_random_password()
-        restapi_ro_password = self.get_random_password()
-        var = {
+        if not self.update:
+            restapi_rw_password = self.get_random_password()
+            restapi_ro_password = self.get_random_password()
+        else:
+            restapi_rw_password = self.update.old_cfg['restapi_rw_password']
+            restapi_ro_password = self.update.old_cfg['restapi_ro_password']
+
+        cfg = {
             'akrr_db_host': '"%s"' % self.akrr_db_host,
             'akrr_db_port': '%s' % str(self.akrr_db_port),
             'akrr_db_user_name': '"%s"' % self.akrr_db_user_name,
@@ -502,20 +505,42 @@ class AKRRSetup:
             'akrr_db_name': '"%s"' % self.akrr_db_name,
             'ak_db_name': '"%s"' % self.ak_db_name,
             'xd_db_name': '"%s"' % self.xd_db_name,
+            'restapi_host': "localhost",
+            'restapi_port': 8091,
+            'restapi_apiroot': '/api/v1',
+            'restapi_certfile': 'server.pem',
+            'restapi_token_expiration_time': 3600,
+            'restapi_rw_username': 'rw',
             'restapi_rw_password': restapi_rw_password,
-            'restapi_ro_password': restapi_ro_password
+            'restapi_ro_username': 'ro',
+            'restapi_ro_password': restapi_ro_password,
+            'data_dir': "../log/data",
+            'completed_tasks_dir': "../log/comptasks",
+            'max_task_handlers': 4,
+            'task_pickling_protocol': 0,
+            'scheduled_tasks_loop_sleep_time': 1.0,
+            'max_fatal_errors_for_task': 10,
+            'active_task_default_attempt_repeat': 'datetime.timedelta(minutes=30)',
+            'max_wall_time_for_task_handlers': 'datetime.timedelta(minutes=30)',
+            'repeat_after_forcible_termination': 'active_task_default_attempt_repeat',
+            'max_fails_to_submit_to_the_queue': 48,
+            'repeat_after_fails_to_submit_to_the_queue': 'datetime.timedelta(hours=1)',
+            'max_time_in_queue': 'datetime.timedelta(days=10)',
+            'export_db_repeat_attempt_in': 'datetime.timedelta(hours=1)',
+            'export_db_max_repeat_attempts': 48,
+            'default_task_params': "{'test_run': False}",
         }
         if self.akrr_db_host == self.ak_db_host and self.akrr_db_port == self.ak_db_port and \
                 self.akrr_db_user_name == self.ak_db_user_name and \
                 self.akrr_db_user_password == self.ak_db_user_password:
-            var.update({
+            cfg.update({
                 'ak_db_host': 'akrr_db_host',
                 'ak_db_port': 'akrr_db_port',
                 'ak_db_user_name': 'akrr_db_user',
                 'ak_db_user_password': 'akrr_db_passwd'
             })
         else:
-            var.update({
+            cfg.update({
                 'ak_db_host': '"%s"' % self.ak_db_host,
                 'ak_db_port': '%s' % str(self.ak_db_port),
                 'ak_db_user_name': '"%s"' % self.ak_db_user_name,
@@ -525,7 +550,7 @@ class AKRRSetup:
         if self.xd_db_host == self.akrr_db_host and self.xd_db_port == self.akrr_db_port and \
                 self.xd_db_user_name == self.akrr_db_user_name and \
                 self.xd_db_user_password == self.akrr_db_user_password:
-            var.update({
+            cfg.update({
                 'xd_db_host': 'akrr_db_host',
                 'xd_db_port': 'akrr_db_port',
                 'xd_db_user_name': 'akrr_db_user',
@@ -535,21 +560,51 @@ class AKRRSetup:
         elif self.xd_db_host == self.ak_db_host and self.xd_db_port == self.ak_db_port and \
                 self.xd_db_user_name == self.ak_db_user_name and \
                 self.xd_db_user_password == self.ak_db_user_password:
-            var.update({
+            cfg.update({
                 'xd_db_host': 'ak_db_host',
                 'xd_db_port': 'ak_db_port',
                 'xd_db_user_name': 'ak_db_user',
                 'xd_db_user_password': 'ak_db_passwd',
             })
         else:
-            var.update({
+            cfg.update({
                 'xd_db_host': '"%s"' % self.xd_db_host,
                 'xd_db_port': '%s' % str(self.xd_db_port),
                 'xd_db_user_name': '"%s"' % self.xd_db_user_name,
                 'xd_db_user_password': '"%s"' % self.xd_db_user_password,
             })
 
-        akrr_inp = akrr_inp_template.format(**var)
+        if self.update:
+            cfg['restapi_host'] = self.update.old_cfg['restapi_host']
+            cfg['restapi_port'] = self.update.old_cfg['restapi_port']
+            cfg['restapi_apiroot'] = self.update.old_cfg['restapi_apiroot']
+            cfg['restapi_certfile'] = self.update.old_cfg['restapi_certfile']
+            cfg['restapi_token_expiration_time'] = self.update.old_cfg['restapi_token_expiration_time']
+            cfg['restapi_rw_username'] = self.update.old_cfg['restapi_rw_username']
+            cfg['restapi_rw_password'] = self.update.old_cfg['restapi_rw_password']
+            cfg['restapi_ro_username'] = self.update.old_cfg['restapi_ro_username']
+            cfg['restapi_ro_password'] = self.update.old_cfg['restapi_ro_password']
+
+            #cfg['data_dir'] = self.update.old_cfg['data_dir']
+            #cfg['completed_tasks_dir'] = self.update.old_cfg['completed_tasks_dir']
+            cfg['max_task_handlers'] = self.update.old_cfg['max_task_handlers']
+            cfg['task_pickling_protocol'] = self.update.old_cfg['task_pickling_protocol']
+            cfg['scheduled_tasks_loop_sleep_time'] = self.update.old_cfg['scheduled_tasks_loop_sleep_time']
+            cfg['max_fatal_errors_for_task'] = self.update.old_cfg['max_fatal_errors_for_task']
+            cfg['active_task_default_attempt_repeat'] = repr(self.update.old_cfg['active_task_default_attempt_repeat'])
+            cfg['max_wall_time_for_task_handlers'] = repr(self.update.old_cfg['max_wall_time_for_task_handlers'])
+            cfg['repeat_after_forcible_termination'] = repr(self.update.old_cfg['repeat_after_forcible_termination'])
+            cfg['max_fails_to_submit_to_the_queue'] = self.update.old_cfg['max_fails_to_submit_to_the_queue']
+            cfg['repeat_after_fails_to_submit_to_the_queue'] = repr(self.update.old_cfg['repeat_after_fails_to_submit_to_the_queue'])
+            cfg['max_time_in_queue'] = repr(self.update.old_cfg['max_time_in_queue'])
+            cfg['export_db_repeat_attempt_in'] = repr(self.update.old_cfg['export_db_repeat_attempt_in'])
+            cfg['export_db_max_repeat_attempts'] = self.update.old_cfg['export_db_max_repeat_attempts']
+            cfg['default_task_params'] = repr(self.update.old_cfg['default_task_params'])
+
+            if cfg['repeat_after_forcible_termination'] == cfg['active_task_default_attempt_repeat']:
+                cfg['repeat_after_forcible_termination'] = 'active_task_default_attempt_repeat'
+
+        akrr_inp = akrr_inp_template.format(**cfg)
         if not akrr.dry_run:
             with open(_akrr_cfg, 'w') as f:
                 f.write(akrr_inp)
@@ -571,7 +626,8 @@ class AKRRSetup:
                 chmod -R o-rwx {akrr_home}
                 """.format(akrr_home=_akrr_home), shell=True)
 
-    def db_check(self):
+    @staticmethod
+    def db_check():
         """
         Check DB access
         """
@@ -590,17 +646,9 @@ class AKRRSetup:
         log.info("Creating tables and populating them with initial values.")
 
         from .generate_tables import create_and_populate_mod_akrr_tables, create_and_populate_mod_appkernel_tables
-        from .generate_tables import copy_mod_akrr_tables
 
-        create_and_populate_mod_akrr_tables(akrr.dry_run, not self.update)
-        if self.update:
-            mod_akrr = set_user_password_host_port_db(
-                self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_host,
-                self.akrr_db_port, self.akrr_db_name)
-
-            copy_mod_akrr_tables(mod_akrr)
-
-        create_and_populate_mod_appkernel_tables(akrr.dry_run, not self.update)
+        create_and_populate_mod_akrr_tables(akrr.dry_run)
+        create_and_populate_mod_appkernel_tables(akrr.dry_run)
 
     @staticmethod
     def start_daemon():
@@ -642,9 +690,9 @@ class AKRRSetup:
         except Exception:
             # probably no crontab was setup yet
             crontan_content = []
-        for l in crontan_content:
-            if len(l.strip()) > 1 and l.strip()[0] != "#":
-                m = re.match(r'^MAILTO\s*=\s*(.*)', l.strip())
+        for line in crontan_content:
+            if len(line.strip()) > 1 and line.strip()[0] != "#":
+                m = re.match(r'^MAILTO\s*=\s*(.*)', line.strip())
                 if m:
                     self.cron_email = m.group(1)
                     self.cron_email = self.cron_email.replace('"', '')
@@ -725,33 +773,17 @@ class AKRRSetup:
         os.remove(".crontmp")
         log.info("Cron Scripts Processed!")
 
-    def read_old_akrr_conf_dir(self, old_akrr_conf_dir):
-        """Read old AKRR configuration file"""
-
-        if not os.path.isdir(old_akrr_conf_dir):
-            log.error("Directory with old AKRR configuration do not exist: " + old_akrr_conf_dir)
-            exit(1)
-
-        old_akrr_conf_file = os.path.join(old_akrr_conf_dir, "akrr.conf")
-        if not os.path.isfile(old_akrr_conf_file):
-            log.error("File with old AKRR configuration do not exist: " + old_akrr_conf_file)
-            exit(1)
-
-        from akrr.util import exec_files_to_dict
-        log.info("Reading old AKRR configuration from: " + old_akrr_conf_file)
-        self.old_akrr_conf = exec_files_to_dict(old_akrr_conf_file)
-
     def update_bashrc(self):
         """Add AKRR enviroment variables to .bashrc"""
         log.info("Updating .bashrc")
 
         akrr_header = '#AKRR Server Environment Variables'
-        akrr_bash_content_new = []
+        akrr_bash_content_new = list()
 
         akrr_bash_content_new.append("\n" + akrr_header + " [Start]\n")
         if _in_src_install:
             akrr_bash_content_new.append("export PATH=\"{0}:$PATH\"\n".format(_akrr_bin_dir))
-        if self._initial_akrr_dirs["akrr_home"] != self._akrr_dirs["akrr_home"]:
+        if akrr.get_akrr_dirs(self.akrr_home_dir)['akrr_home_type'] == akrr.AKRRHomeType.in_env_path:
             # i.e. non standard AKRR home location
             akrr_bash_content_new.append("export AKRR_HOME=\"{0}\"\n".format(_akrr_home))
         akrr_bash_content_new.append(akrr_header + " [End]\n\n")
@@ -766,15 +798,15 @@ class AKRRSetup:
                     bashcontent = f.readlines()
                     in_akrr = False
                     akrr_added = False
-                    for l in bashcontent:
-                        if l.count(akrr_header + ' [Start]') > 0:
+                    for line in bashcontent:
+                        if line.count(akrr_header + ' [Start]') > 0:
                             in_akrr = True
                             if not akrr_added:
                                 bash_content_new += akrr_bash_content_new
                                 akrr_added = True
                         if not in_akrr:
-                            bash_content_new.append(l)
-                        if l.count(akrr_header + ' [End]') > 0:
+                            bash_content_new.append(line)
+                        if line.count(akrr_header + ' [End]') > 0:
                             in_akrr = False
                     if not akrr_added:
                         bash_content_new += akrr_bash_content_new
@@ -783,8 +815,8 @@ class AKRRSetup:
 
             if not akrr.dry_run:
                 with open(os.path.expanduser('~/.bashrc'), 'w') as f:
-                    for l in bash_content_new:
-                        f.write(l)
+                    for line in bash_content_new:
+                        f.write(line)
                 log.info("Appended AKRR records to $HOME/.bashrc")
             else:
                 log.debug("New .bashrc should be like" + "\n".join(bash_content_new))
@@ -792,15 +824,16 @@ class AKRRSetup:
             log.info("AKRR is in standard location, no updates to $HOME/.bashrc")
 
     def run(self,
-            akrr_db: str = default_akrr_db,
+            akrr_db: str = None,
             ak_db: str = None,
             xd_db: str = None,
             install_cron_scripts: bool = True,
             stand_alone: bool = False,
-            akrr_home_dir: str = None,
+            akrr_home: str = None,
             generate_db_only: bool = False,
             update: bool = False,
-            old_akrr_conf_dir: str = None):
+            old_akrr_home: str = None,
+            yes_to_all: bool = False):
         """
         Setup or update AKRR
 
@@ -812,17 +845,19 @@ class AKRRSetup:
         install_cron_scripts: install cron scripts
         stand_alone: run without XDMoD
         update: update current akrr installation
-        akrr_home_dir: custom location of akrr home
+        akrr_home: custom location of akrr home
         generate_db_only: only generate DB
-        old_akrr_conf_dir
-        generate_db_only
+        update: perform update from previous stable version
+        old_akrr_home: location of old AKRR home for update
+        yes_to_all: says yes to all questions
         """
-        self.old_akrr_conf = None
         if update:
-            self.read_old_akrr_conf_dir(old_akrr_conf_dir)
+            self.update = akrr.update.UpdateAKRR(old_akrr_home, yes_to_all=yes_to_all)
 
         # Set initial db conf
         if not update:
+            if akrr_db is None:
+                akrr_db = self.default_akrr_db
             # if ak_db and xd_db is not set use akrr_db
             if ak_db is None:
                 ak_db = akrr_db
@@ -832,47 +867,35 @@ class AKRRSetup:
             if akrr_db is None:
                 # i.e. not set, use default
                 akrr_db = set_user_password_host_port_db(
-                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
-                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
-                    None)
+                    self.update.old_cfg['akrr_db_user'], self.update.old_cfg['akrr_db_passwd'],
+                    self.update.old_cfg['akrr_db_host'], self.update.old_cfg['akrr_db_port'],
+                    self.update.old_cfg['akrr_db_name'])
             if ak_db is None:
                 ak_db = set_user_password_host_port_db(
-                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
-                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
-                    self.old_akrr_conf['akrr_db_name'])
+                    self.update.old_cfg['ak_db_user'], self.update.old_cfg['ak_db_passwd'],
+                    self.update.old_cfg['ak_db_host'], self.update.old_cfg['ak_db_port'],
+                    self.update.old_cfg['ak_db_name'])
             if xd_db is None:
                 xd_db = set_user_password_host_port_db(
-                    self.old_akrr_conf['akrr_db_user'], self.old_akrr_conf['akrr_db_passwd'],
-                    self.old_akrr_conf['akrr_db_host'], self.old_akrr_conf['akrr_db_port'],
-                    self.old_akrr_conf['akrr_db_name'])
+                    self.update.old_cfg['xd_db_user'], self.update.old_cfg['xd_db_passwd'],
+                    self.update.old_cfg['xd_db_host'], self.update.old_cfg['xd_db_port'],
+                    self.update.old_cfg['xd_db_name'])
 
         # Get db details
-        self.akrr_db_user_name, \
-            self.akrr_db_user_password, \
-            self.akrr_db_host, \
-            self.akrr_db_port, \
-            self.akrr_db_name = get_user_password_host_port_db(akrr_db, default_database="mod_akrr")
+        self.akrr_db_user_name, self.akrr_db_user_password, self.akrr_db_host, self.akrr_db_port, self.akrr_db_name = \
+            get_user_password_host_port_db(akrr_db, default_database="mod_akrr")
 
-        self.ak_db_user_name, \
-            self.ak_db_user_password, \
-            self.ak_db_host, \
-            self.ak_db_port, \
-            self.ak_db_name = get_user_password_host_port_db(ak_db, default_database="mod_appkernel")
+        self.ak_db_user_name, self.ak_db_user_password, self.ak_db_host, self.ak_db_port, self.ak_db_name = \
+            get_user_password_host_port_db(ak_db, default_database="mod_appkernel")
 
-        self.xd_db_user_name, \
-            self.xd_db_user_password, \
-            self.xd_db_host, \
-            self.xd_db_port, \
-            self.xd_db_name = get_user_password_host_port_db(xd_db, default_database="modw")
+        self.xd_db_user_name, self.xd_db_user_password, self.xd_db_host, self.xd_db_port, self.xd_db_name = \
+            get_user_password_host_port_db(xd_db, default_database="modw")
 
         self.stand_alone = stand_alone
+        self.generate_db_only = generate_db_only
         self.install_cron_scripts_flag = install_cron_scripts
 
-        self.akrr_home_dir = akrr_home_dir
-
-        self.update = update
-        self.old_akrr_conf_dir = old_akrr_conf_dir
-        self.generate_db_only = generate_db_only
+        self.akrr_home_dir = akrr_home
 
         # check
         self.check_utils()
@@ -885,43 +908,48 @@ class AKRRSetup:
         _akrr_home = _akrr_dirs["akrr_home"]
         _akrr_cfg = _akrr_dirs["akrr_cfg"]
 
-        # check previous installation
-        self.check_previous_installation()
+        if self.update:
+            # shut down old daemon, remove it from cron and update DB
+            self.update.remove_old_akrr_from_crontab()
+            self.update.shut_down_old_akrr()
+
+        if not self.update:
+            # check previous installation
+            self.check_previous_installation()
         # set installation directory
         self.init_dir()
 
-        # set environment variable in case of non standard AKRR home location
-        # this will be used in child processes
-        if self._initial_akrr_dirs["akrr_home"] != self._akrr_dirs["akrr_home"]:
-            os.environ["AKRR_HOME"] = self._akrr_dirs["akrr_home"]
+        if not self.update:
+            # ask info
+            self.read_db_user_credentials()
 
-        # ask info
-        self.read_db_user_credentials()
+            if self.install_cron_scripts_flag and not self.generate_db_only:
+                self.ask_cron_email()
 
-        if self.install_cron_scripts_flag and not self.generate_db_only:
-            self.ask_cron_email()
-
-        # if it is dry_run
-        # all question are asked, this is dry run, so nothing else to do")
-        self.init_mysql_dbs()
+            # if it is dry_run
+            # all question are asked, this is dry run, so nothing else to do")
+            self.init_mysql_dbs()
+        else:
+            # update DB
+            akrr.update.UpdateDataBase(self.update).update()
 
         self.generate_self_signed_certificate()
-        if not self.update:
-            self.generate_settings_file()
+        self.generate_settings_file()
         self.set_permission_on_files()
         self.db_check()
 
-        self.generate_tables()
+        if not self.update:
+            self.generate_tables()
 
         if self.generate_db_only:
             log.info("AKRR DB Generated")
             return
 
+        self.update_bashrc()
+
         self.start_daemon()
         self.check_daemon()
         if self.install_cron_scripts_flag:
             self.install_cron_scripts()
-
-        self.update_bashrc()
 
         log.info("AKRR is set up and is running.")
