@@ -151,7 +151,11 @@ def get_con_to_db(user: str, password: str, host: str = 'localhost', port: int =
 
     try:
         con = MySQLdb.connect(**kwarg)
+        con.set_character_set('utf8')
         cur = con.cursor()
+        cur.execute('SET NAMES utf8;')
+        cur.execute('SET CHARACTER SET utf8;')
+        cur.execute('SET character_set_connection=utf8;')
     except MySQLdb.Error as e:
         if raise_exception:
             raise e

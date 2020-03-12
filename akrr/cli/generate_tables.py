@@ -21,6 +21,9 @@ from akrr.util import log
 ###############################################################################
 # UTILITY FUNCTIONS
 ###############################################################################
+from akrr.util.sql import get_con_to_db
+
+
 def create_and_populate_tables(
         default_tables: OrderedDict,
         population_statements,
@@ -38,8 +41,9 @@ def create_and_populate_tables(
     try:
         if not dry_run:
             if host and user and password and db:
-                connection = MySQLdb.connect(host, user, password, db)
-                cursor = connection.cursor()
+                connection, cursor = get_con_to_db(
+                    user=user, password=password, host=host,
+                    db_name=db, dict_cursor=False)
             elif connection is None and cursor is None:
                 connection, cursor = connection_function(True)
 
@@ -145,7 +149,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `master_task_id` INT(4) NOT NULL DEFAULT '0' COMMENT '0 - independent task, otherwise task_id of master task ',
         `parent_task_id` INT(11) DEFAULT NULL,
         UNIQUE KEY `task_id` (`task_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('ak_on_nodes', '''
         CREATE TABLE IF NOT EXISTS `ak_on_nodes` (
@@ -154,7 +158,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `task_id` INT(11) NOT NULL,
         `collected` DATETIME NOT NULL,
         `status` INT(11) DEFAULT NULL
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_default_walltime_limit', '''
         CREATE TABLE IF NOT EXISTS `akrr_default_walltime_limit` (
@@ -165,10 +169,8 @@ mod_akrr_create_tables_dict = OrderedDict(
         `resource_param` TEXT,
         `app_param` TEXT,
         `last_update` DATETIME NOT NULL,
-        `comments` TEXT NOT NULL,
-        UNIQUE `resource_app_resource_param_app_param` 
-        ( `resource`(100), `app`(100), `resource_param`(100), `app_param`(100))
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        `comments` TEXT NOT NULL
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_errmsg', '''
         CREATE TABLE IF NOT EXISTS `akrr_errmsg` (
@@ -179,7 +181,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `stdout` LONGTEXT,
         `taskexeclog` LONGTEXT,
         UNIQUE KEY `task_id` (`task_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_err_regexp', '''
         CREATE TABLE IF NOT EXISTS `akrr_err_regexp` (
@@ -193,14 +195,14 @@ mod_akrr_create_tables_dict = OrderedDict(
         `err_msg` TEXT NOT NULL COMMENT 'Brief error message which will reported upstream',
         `description` TEXT NOT NULL,
         PRIMARY KEY (`id`)
-        ) ENGINE=MyISAM AUTO_INCREMENT=1000002 DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM AUTO_INCREMENT=1000002 DEFAULT CHARSET=utf8;
         '''),
         ('akrr_internal_failure_codes', '''
         CREATE TABLE IF NOT EXISTS `akrr_internal_failure_codes` (
         `id` INT(11) NOT NULL,
         `description` TEXT NOT NULL,
         PRIMARY KEY (`id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_resource_maintenance', '''
         CREATE TABLE IF NOT EXISTS `akrr_resource_maintenance` (
@@ -210,14 +212,14 @@ mod_akrr_create_tables_dict = OrderedDict(
         `end` DATETIME NOT NULL,
         `comment` TEXT NOT NULL,
         PRIMARY KEY (`id`)
-        ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
         '''),
         ('akrr_task_errors', '''
         CREATE TABLE IF NOT EXISTS `akrr_task_errors` (
         `task_id` INT(11) NOT NULL,
         `err_reg_exp_id` INT(11) DEFAULT NULL COMMENT 'errors identified using reg_exp',
         PRIMARY KEY (`task_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_xdmod_instanceinfo', '''
         CREATE TABLE IF NOT EXISTS `akrr_xdmod_instanceinfo` (
@@ -241,7 +243,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `ncores` INT(11) DEFAULT NULL,
         `nnodes` INT(11) DEFAULT NULL,
         UNIQUE KEY `instance_id` (`instance_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('completed_tasks', '''
         CREATE TABLE IF NOT EXISTS `completed_tasks` (
@@ -264,7 +266,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `fails_to_submit_to_the_queue` INT(11) DEFAULT '0',
         `parent_task_id` INT(11) DEFAULT NULL,
         UNIQUE KEY `task_id` (`task_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('nodes', '''
         CREATE TABLE IF NOT EXISTS `nodes` (
@@ -272,7 +274,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `resource_id` INT(11) NOT NULL,
         `name` VARCHAR(128) NOT NULL,
         PRIMARY KEY (`node_id`)
-        ) ENGINE=MyISAM AUTO_INCREMENT=1704 DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM AUTO_INCREMENT=1704 DEFAULT CHARSET=utf8;
         '''),
         ('scheduled_tasks', '''
         CREATE TABLE IF NOT EXISTS `scheduled_tasks` (
@@ -287,7 +289,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         `group_id` TEXT,
         `parent_task_id` INT(16) DEFAULT NULL,
         PRIMARY KEY (`task_id`)
-        ) ENGINE=MyISAM AUTO_INCREMENT=3144529 DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM AUTO_INCREMENT=3144529 DEFAULT CHARSET=utf8;
         '''),
         ('resources', '''
         CREATE TABLE IF NOT EXISTS resources (
@@ -296,7 +298,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         name              VARCHAR(256)      NOT NULL,
         enabled           BOOL DEFAULT TRUE NOT NULL,
         CONSTRAINT UNIQUE INDEX resource_name_unique (name)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('app_kernels', '''
         CREATE TABLE IF NOT EXISTS app_kernels (
@@ -305,7 +307,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         enabled BOOL DEFAULT TRUE NOT NULL,
         nodes_list VARCHAR(255) DEFAULT '1;2;4;8;16' COMMENT 'list of nodes numbers on which app kernel can run',
         CONSTRAINT UNIQUE INDEX app_kernels_name_unique (name)
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('resource_app_kernels', '''
         CREATE TABLE IF NOT EXISTS resource_app_kernels (
@@ -319,7 +321,7 @@ mod_akrr_create_tables_dict = OrderedDict(
         CONSTRAINT FOREIGN KEY resource_app_kernels_app_kernel_id (app_kernel_id)
         REFERENCES mod_akrr.app_kernels (id)
           ON DELETE CASCADE
-        ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
         '''),
         ('akrr_erran', '''
         CREATE OR REPLACE VIEW `akrr_erran` AS select `c`.`task_id` AS `task_id`,`c`.`time_finished` AS `time_finished`,
@@ -550,7 +552,7 @@ mod_appkernel_create_tables_dict = OrderedDict((
   KEY `env_version` (`env_version`),
   KEY `collected` (`collected`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('a_data2', '''
     CREATE TABLE IF NOT EXISTS `a_data2` (
@@ -584,7 +586,7 @@ mod_appkernel_create_tables_dict = OrderedDict((
   KEY `env_version` (`env_version`),
   KEY `collected` (`collected`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('app_kernel_def', '''
     CREATE TABLE IF NOT EXISTS `app_kernel_def` (
@@ -600,7 +602,7 @@ mod_appkernel_create_tables_dict = OrderedDict((
   UNIQUE KEY `name_UNIQUE` (`name`),
   UNIQUE KEY `reporter_base` (`ak_base_name`),
   KEY `visible` (`visible`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 COMMENT='App kernel definition.';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='App kernel definition.';
     '''),
     ('app_kernel', '''
     CREATE TABLE IF NOT EXISTS `app_kernel` (
@@ -615,7 +617,7 @@ mod_appkernel_create_tables_dict = OrderedDict((
   KEY `fk_reporter_app_kernel` (`ak_def_id`),
   CONSTRAINT `fk_reporter_app_kernel` FOREIGN KEY (`ak_def_id`) REFERENCES `app_kernel_def` (`ak_def_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=latin1 
+) ENGINE=InnoDB AUTO_INCREMENT=107 DEFAULT CHARSET=utf8 
 COMMENT='Application kernel info including num processing units';
     '''),
     ('metric', '''
@@ -627,7 +629,7 @@ COMMENT='Application kernel info including num processing units';
   `guid` VARCHAR(64) NOT NULL,
   PRIMARY KEY (`metric_id`),
   UNIQUE KEY `unique_guid` (`guid`)
-) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=latin1 COMMENT='Individual metric definitions';
+) ENGINE=InnoDB AUTO_INCREMENT=270 DEFAULT CHARSET=utf8 COMMENT='Individual metric definitions';
     '''),
     ('parameter', '''
     CREATE TABLE IF NOT EXISTS `parameter` (
@@ -638,7 +640,7 @@ COMMENT='Application kernel info including num processing units';
   `guid` VARCHAR(64) NOT NULL,
   PRIMARY KEY (`parameter_id`),
   UNIQUE KEY `unique_guid` (`guid`)
-) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=latin1 COMMENT='Individual parameter definitions';
+) ENGINE=InnoDB AUTO_INCREMENT=162 DEFAULT CHARSET=utf8 COMMENT='Individual parameter definitions';
     '''),
     ('resource', '''
     CREATE TABLE IF NOT EXISTS `resource` (
@@ -652,7 +654,7 @@ COMMENT='Application kernel info including num processing units';
   `xdmod_cluster_id` INT(11) DEFAULT NULL,
   PRIMARY KEY (`resource_id`),
   KEY `visible` (`visible`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=latin1 COMMENT='Resource definitions';
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='Resource definitions';
     '''),
     ('ak_has_metric', '''
     CREATE TABLE IF NOT EXISTS `ak_has_metric` (
@@ -667,7 +669,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_reporter_has_metric_reporter` FOREIGN KEY (`ak_id`, `num_units`) REFERENCES `app_kernel` 
   (`ak_id`, `num_units`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Association between app kernels and metrics';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Association between app kernels and metrics';
     '''),
     ('ak_has_parameter', '''
     CREATE TABLE IF NOT EXISTS `ak_has_parameter` (
@@ -680,7 +682,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_reporter_has_parameter_reporter` FOREIGN KEY (`ak_id`) REFERENCES `app_kernel` (`ak_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Association between app kernels and parameters';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Association between app kernels and parameters';
     '''),
     ('ak_instance', '''
     CREATE TABLE IF NOT EXISTS `ak_instance` (
@@ -703,7 +705,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_reporter_instance_resource` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Execution instance';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Execution instance';
     '''),
     ('ak_instance_debug', '''
     CREATE TABLE IF NOT EXISTS `ak_instance_debug` (
@@ -723,7 +725,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `instance_id` (`instance_id`),
   CONSTRAINT `fk_ak_debug_ak_instance1` FOREIGN KEY (`ak_id`, `collected`, `resource_id`) REFERENCES `ak_instance` 
   (`ak_id`, `collected`, `resource_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Debugging information for application kernels.';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Debugging information for application kernels.';
     '''),
     ('ak_supremme_metrics', '''
     CREATE TABLE IF NOT EXISTS `ak_supremm_metrics` (
@@ -731,7 +733,7 @@ COMMENT='Application kernel info including num processing units';
   `ak_def_id` INT(11) NOT NULL,
   `supremm_metric_id` INT(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
     '''),
     ('a_tree', '''
     CREATE TABLE IF NOT EXISTS `a_tree` (
@@ -752,7 +754,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `start_time` (`start_time`),
   KEY `end_time` (`end_time`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('a_tree2', '''
     CREATE TABLE IF NOT EXISTS `a_tree2` (
@@ -773,7 +775,7 @@ COMMENT='Application kernel info including num processing units';
   KEY `start_time` (`start_time`),
   KEY `end_time` (`end_time`),
   KEY `status` (`status`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('control_set', '''
     CREATE TABLE IF NOT EXISTS `control_set` (
@@ -783,7 +785,7 @@ COMMENT='Application kernel info including num processing units';
   `min_collected` DATETIME NOT NULL,
   `max_collected` DATETIME NOT NULL COMMENT 'This remembers the control region used for each dataset.',
   PRIMARY KEY (`metric_id`,`ak_id`,`resource_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('ingester_log', '''
     CREATE TABLE IF NOT EXISTS `ingester_log` (
@@ -797,13 +799,13 @@ COMMENT='Application kernel info including num processing units';
   `message` VARCHAR(2048) DEFAULT NULL,
   `reportobj` BLOB COMMENT 'Compressed serialized php object with counters',
   KEY `source` (`source`,`last_update`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('log_id_seq', '''
     CREATE TABLE IF NOT EXISTS `log_id_seq` (
   `sequence` INT(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`sequence`)
-) ENGINE=MyISAM AUTO_INCREMENT=415424 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=415424 DEFAULT CHARSET=utf8;
     '''),
     ('log_table', '''
     CREATE TABLE IF NOT EXISTS `log_table` (
@@ -813,7 +815,7 @@ COMMENT='Application kernel info including num processing units';
   `priority` TEXT,
   `message` LONGTEXT,
   KEY `unique_id_idx` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
 
     ('metric_attribute', '''
@@ -821,7 +823,7 @@ COMMENT='Application kernel info including num processing units';
   `metric_id` INT(10) NOT NULL,
   `larger` TINYINT(1) NOT NULL,
   PRIMARY KEY (`metric_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
     ('metric_data', '''
     CREATE TABLE IF NOT EXISTS `metric_data` (
@@ -845,7 +847,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_metric_data_reporter_instance` FOREIGN KEY (`ak_id`, `collected`, `resource_id`) 
   REFERENCES `ak_instance` (`ak_id`, `collected`, `resource_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Collected application kernel data fact table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Collected application kernel data fact table';
     '''),
 
     ('parameter_data', '''
@@ -864,7 +866,7 @@ COMMENT='Application kernel info including num processing units';
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_parameter_data_reporter_instance` FOREIGN KEY (`ak_id`, `collected`, `resource_id`) 
   REFERENCES `ak_instance` (`ak_id`, `collected`, `resource_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Collected application kernel parameters fact table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Collected application kernel parameters fact table';
     '''),
     ('report', '''
     CREATE TABLE IF NOT EXISTS `report` (
@@ -875,13 +877,13 @@ COMMENT='Application kernel info including num processing units';
   `send_report_monthly` INT(11) NOT NULL DEFAULT '0' COMMENT 'negative is none, otherwise day of the month',
   `settings` TEXT NOT NULL,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     '''),
 
     ('sumpremm_metrics', '''
     CREATE TABLE IF NOT EXISTS `supremm_metrics` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(256) NOT NULL,
+  `name` VARCHAR(128) NOT NULL,
   `formula` TEXT NOT NULL,
   `label` TEXT NOT NULL,
   `units` TEXT,
@@ -891,7 +893,7 @@ COMMENT='Application kernel info including num processing units';
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `id_2` (`id`),
   UNIQUE KEY `name_2` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
     '''),
     ('v_ak_metrics', '''
     CREATE OR REPLACE VIEW `mod_appkernel`.`v_ak_metrics` AS select `mod_appkernel`.`app_kernel_def`.`ak_base_name` 
@@ -943,7 +945,7 @@ CREATE TABLE IF NOT EXISTS `control_region_def` (
   CONSTRAINT `fk_resource_id` FOREIGN KEY (`resource_id`) REFERENCES `resource` (`resource_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION,
   UNIQUE KEY `resource_id__ak_def_id__control_region_starts` (`resource_id`,`ak_def_id`,`control_region_starts`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;"""),
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"""),
     ('control_regions', """
 CREATE TABLE IF NOT EXISTS `control_regions` (
   `control_region_id` int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -962,7 +964,7 @@ CREATE TABLE IF NOT EXISTS `control_regions` (
   ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `fk_ak_id` FOREIGN KEY (`ak_id`) REFERENCES `app_kernel` (`ak_id`) 
   ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;""")
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;""")
 ))
 
 
@@ -1157,7 +1159,7 @@ def add_fake_modw(con, cur, dry_run=False):
             log.debug2("Either modw.resourcefact  does not exist or unexpected values")
 
     if create_db:
-        cursor_execute(cur, "CREATE DATABASE IF NOT EXISTS modw", dry_run=dry_run)
+        cursor_execute(cur, "CREATE DATABASE IF NOT EXISTS modw CHARACTER SET utf8", dry_run=dry_run)
 
     if create_table:
         cursor_execute(cur, """

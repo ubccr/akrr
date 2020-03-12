@@ -150,8 +150,8 @@ class Test_akrr_util_sql_Functions_with_SQL(unittest.TestCase):
         self.assertEqual(db_check_priv(su_cur, "dontexists", "ALL", self.user1), False)
 
         # create db and give permission to user1
-        su_cur.execute("CREATE DATABASE IF NOT EXISTS %s" % (cv(self.db1),))
-        su_cur.execute("CREATE DATABASE IF NOT EXISTS %s" % (cv(self.db2),))
+        su_cur.execute("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8" % (cv(self.db1),))
+        su_cur.execute("CREATE DATABASE IF NOT EXISTS %s CHARACTER SET utf8" % (cv(self.db2),))
         su_con.commit()
 
         su_cur.execute("GRANT ALL ON " + cv(self.db1) + ".* TO %s@%s", (self.user1, client_host))

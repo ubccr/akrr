@@ -161,8 +161,8 @@ If there is no access with administrative rights to MySQL server from AKRR host,
 person administer database, ask user with administrative rights execute following:
 
 ```
-CREATE DATABASE IF NOT EXISTS mod_akrr;
-CREATE DATABASE IF NOT EXISTS mod_appkernel;
+CREATE DATABASE IF NOT EXISTS mod_akrr CHARACTER SET utf8;
+CREATE DATABASE IF NOT EXISTS mod_appkernel CHARACTER SET utf8;
 
 CREATE USER akrruser@'AKRR_HOSTNAME' IDENTIFIED BY 'password'
 
