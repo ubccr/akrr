@@ -935,6 +935,11 @@ class AKRRSetup:
 
         self.generate_self_signed_certificate()
         self.generate_settings_file()
+        if self.update():
+            # update config files for resources and appkernels
+            akrr.update.UpdateResourceAppConfigs().update(self.update)
+
+
         self.set_permission_on_files()
         self.db_check()
 

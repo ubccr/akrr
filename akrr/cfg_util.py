@@ -15,79 +15,79 @@ from akrr.cfg import default_dir, cfg_dir
 from akrr.util import log
 
 
+# mapped renamed parameters
+resource_renamed_parameters = [
+    ('localScratch', 'local_scratch'),
+    ('batchJobTemplate', 'batch_job_template'),
+    ('remoteAccessNode', 'remote_access_node'),
+    ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
+    ('sshUserName', 'ssh_username'),
+    ('sshPassword', 'ssh_password'),
+    ('sshPrivateKeyFile', 'ssh_private_key_file'),
+    ('sshPrivateKeyPassword', 'ssh_private_key_password'),
+    ('remoteAccessMethod', 'remote_access_method'),
+    ('batchScheduler', 'batch_scheduler'),
+    ('batchJobHeaderTemplate', 'batch_job_header_template'),
+    ('appKerDir', 'appkernel_dir'),
+    ('AppKerDir', 'appkernel_dir'),
+    ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_template'),
+    ('akrrData', 'akrr_data'),
+    ('autoWalltimeLimit', 'auto_walltime_limit'),
+    ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
+    ('appkernelOnResource', 'appkernel_on_resource'),
+    ('networkScratch', 'network_scratch'),
+    ('nodeListSetterTemplate', 'node_list_setter_template'),
+    ('nodeListSetter', 'node_list_setter'),
+    ('runScriptPreRun', 'run_script_pre_run'),
+    ('runScriptPostRun', 'run_script_post_run'),
+    ('akrrRunAppKer', 'akrr_run_appkernel'),
+    ('akrrGenerateAppKernelSignature', 'akrr_gen_appker_sign'),
+    ('requestTwoNodesForOneNodeAppKer', 'appkernel_requests_two_nodes_for_one'),
+    ('runScript', 'run_script'),
+]
+
+# check that parameters for presents and type
+# format: key,type,can be None,must have parameter
+resource_parameters_types = {
+    'info': [str, False, False],
+    'local_scratch': [str, False, True],
+    'batch_job_template': [str, False, True],
+    'name': [str, False, False],
+    'akrr_common_commands_template': [str, False, True],
+    'network_scratch': [str, False, True],
+    'ppn': [int, False, True],
+    'remote_copy_method': [str, False, True],
+    'ssh_username': [str, False, True],
+    'ssh_password': [str, True, False],
+    'ssh_private_key_file': [str, True, False],
+    'ssh_private_key_password': [str, True, False],
+    'batch_scheduler': [str, False, True],
+    'remote_access_method': [str, False, True],
+    'appkernel_dir': [str, False, True],
+    'akrr_common_cleanup_template': [str, False, True],
+    'akrr_data': [str, False, True],
+    'max_number_of_active_tasks': [int, True, True],
+}
+
+
 def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False) -> dict:
     """
     Perform simplistic resource.py parameters validation
     raises TypeError or NameError on problems
     """
-
-    import warnings
-    # mapped renamed parameters
-    renamed_parameters = [
-        ('localScratch', 'local_scratch'),
-        ('batchJobTemplate', 'batch_job_template'),
-        ('remoteAccessNode', 'remote_access_node'),
-        ('akrrCommonCommandsTemplate', 'akrr_common_commands_template'),
-        ('sshUserName', 'ssh_username'),
-        ('sshPassword', 'ssh_password'),
-        ('sshPrivateKeyFile', 'ssh_private_key_file'),
-        ('sshPrivateKeyPassword', 'ssh_private_key_password'),
-        ('remoteAccessMethod', 'remote_access_method'),
-        ('batchScheduler', 'batch_scheduler'),
-        ('batchJobHeaderTemplate', 'batch_job_header_template'),
-        ('appKerDir', 'appkernel_dir'),
-        ('AppKerDir', 'appkernel_dir'),
-        ('akrrCommonCleanupTemplate', 'akrr_common_cleanup_template'),
-        ('akrrData', 'akrr_data'),
-        ('autoWalltimeLimit', 'auto_walltime_limit'),
-        ('autoWalltimeLimitOverhead', 'auto_walltime_limit_overhead'),
-        ('appkernelOnResource', 'appkernel_on_resource'),
-        ('networkScratch', 'network_scratch'),
-        ('nodeListSetterTemplate', 'node_list_setter_template'),
-        ('nodeListSetter', 'node_list_setter'),
-        ('runScriptPreRun', 'run_script_pre_run'),
-        ('runScriptPostRun', 'run_script_post_run'),
-        ('akrrRunAppKer', 'akrr_run_appkernel'),
-        ('akrrGenerateAppKernelSignature', 'akrr_gen_appker_sign'),
-        ('requestTwoNodesForOneNodeAppKer', 'appkernel_requests_two_nodes_for_one'),
-        ('runScript', 'run_script'),
-    ]
-
-    for old_key, new_key in renamed_parameters:
+    global resource_renamed_parameters
+    for old_key, new_key in resource_renamed_parameters:
         if old_key in resource:
             resource[new_key] = resource[old_key]
 
             if not warnings_as_exceptions:
-                warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
+                log.warning("Resource parameter {} was renamed to {}".format(old_key, new_key))
             else:
                 raise DeprecationWarning("Resource parameter {} was renamed to {}".format(old_key, new_key))
 
     # @todo check string templates for deprecated variables
-
-    # check that parameters for presents and type
-    # format: key,type,can be None,must have parameter
-    parameters_types = {
-        'info': [str, False, False],
-        'local_scratch': [str, False, True],
-        'batch_job_template': [str, False, True],
-        'name': [str, False, False],
-        'akrr_common_commands_template': [str, False, True],
-        'network_scratch': [str, False, True],
-        'ppn': [int, False, True],
-        'remote_copy_method': [str, False, True],
-        'ssh_username': [str, False, True],
-        'ssh_password': [str, True, False],
-        'ssh_private_key_file': [str, True, False],
-        'ssh_private_key_password': [str, True, False],
-        'batch_scheduler': [str, False, True],
-        'remote_access_method': [str, False, True],
-        'appkernel_dir': [str, False, True],
-        'akrr_common_cleanup_template': [str, False, True],
-        'akrr_data': [str, False, True],
-        'max_number_of_active_tasks': [int, True, True],
-    }
-
-    for variable, (m_type, nullable, must) in parameters_types.items():
+    global resource_parameters_types
+    for variable, (m_type, nullable, must) in resource_parameters_types.items():
         if (must is True) and (variable not in resource):
             raise NameError("Syntax error in " + resource['name'] + "\nVariable %s is not set" % (variable,))
         if variable not in resource:
@@ -119,14 +119,30 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
 
     # mapped parameters which still uses internally different name
     # these eventually should be renamed
-    renamed_parameters = [
+    resource_renamed_parameters_internal_name = [
     ]
 
-    for old_key, new_key in renamed_parameters:
+    for old_key, new_key in resource_renamed_parameters_internal_name:
         if old_key in resource:
             resource[new_key] = resource[old_key]
 
     return resource
+
+
+app_renamed_parameters = [
+    ('input', 'input_param'),
+    ('akrrNNodes', 'akrr_num_of_nodes'),
+    ('akrrNCores', 'akrr_num_of_cores'),
+    ('akrrPPN', 'akrr_ppn'),
+    ('akrrPPN4NodesOrCores4OneNode', 'akk_ppn_or_cores_on_one_node'),
+    ('akrrTaskWorkingDir', 'akrr_task_work_dir'),
+    ('akrrAppKerName', 'akrr_appkernel_name'),
+    ('akrrResourceName', 'akrr_resource_name'),
+    ('akrrTimeStamp', 'akrr_time_stamp'),
+    ('akrrWallTimeLimit', 'akrr_walltime_limit'),
+    ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
+    ('akrr_run_appkernelnelTemplate', 'akrr_run_appkernel_template')
+]
 
 
 def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
@@ -138,27 +154,15 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
 
     import warnings
     # mapped renamed parameters
-    renamed_parameters = [
-        ('input', 'input_param'),
-        ('akrrNNodes', 'akrr_num_of_nodes'),
-        ('akrrNCores', 'akrr_num_of_cores'),
-        ('akrrPPN', 'akrr_ppn'),
-        ('akrrTaskWorkingDir', 'akrr_task_work_dir'),
-        ('akrrAppKerName', 'akrr_appkernel_name'),
-        ('akrrResourceName', 'akrr_resource_name'),
-        ('akrrTimeStamp', 'akrr_time_stamp'),
-        ('akrrWallTimeLimit', 'akrr_walltime_limit'),
-        ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
-        ('akrr_run_appkernelnelTemplate', 'akrr_run_appkernel_template')
-    ]
 
-    for old_key, new_key in renamed_parameters:
+    global app_renamed_parameters
+    for old_key, new_key in app_renamed_parameters:
         if old_key in app:
             app[new_key] = app[old_key]
             if not warnings_as_exceptions:
-                warnings.warn("Resource parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
+                warnings.warn("App parameter {} was renamed to {}".format(old_key, new_key), DeprecationWarning)
             else:
-                raise DeprecationWarning("Resource parameter {} was renamed to {}".format(old_key, new_key))
+                raise DeprecationWarning("App parameter {} was renamed to {}".format(old_key, new_key))
 
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
@@ -184,10 +188,10 @@ def verify_app_params(app: dict, warnings_as_exceptions: bool = False) -> dict:
 
     # mapped parameters which still uses internally different name
     # these eventually should be renamed
-    renamed_parameters = [
+    renamed_parameters_internal_name = [
     ]
 
-    for old_key, new_key in renamed_parameters:
+    for old_key, new_key in renamed_parameters_internal_name:
         if old_key in app:
             app[old_key] = app[new_key]
     return app
@@ -214,7 +218,7 @@ def print_resource_and_app_summary(resources=None, apps=None) -> None:
     log.info(msg)
 
 
-def load_resource(resource_name: str):
+def load_resource(resource_name: str, resource_cfg_filename: str = None, validate=True):
     """
     load resource configuration file, do minimalistic validation
     return dict with resource parameters
@@ -226,7 +230,8 @@ def load_resource(resource_name: str):
 
     try:
         default_resource_cfg_filename = os.path.join(default_dir, "default.resource.conf")
-        resource_cfg_filename = os.path.join(cfg_dir, 'resources', resource_name, "resource.conf")
+        if resource_cfg_filename is None:
+            resource_cfg_filename = os.path.join(cfg_dir, 'resources', resource_name, "resource.conf")
 
         if not os.path.isfile(default_resource_cfg_filename):
             raise AkrrError(
@@ -250,7 +255,8 @@ def load_resource(resource_name: str):
         resource['resource_cfg_file_last_mod_time'] = os.path.getmtime(resource_cfg_filename)
 
         # here should be validation
-        resource = verify_resource_params(resource)
+        if validate:
+            resource = verify_resource_params(resource)
 
         return resource
     except Exception:

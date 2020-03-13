@@ -39,7 +39,7 @@ def load_all_resources():
     load all resources from configuration directory
     """
     global resources  # pylint: disable=global-statement
-    for resource_name in os.listdir(cfg_dir + "/resources"):
+    for resource_name in os.listdir(os.path.join(cfg_dir, "resources")):
         if resource_name not in ['notactive', 'templates']:
             log.debug2("loading "+resource_name)
             try:

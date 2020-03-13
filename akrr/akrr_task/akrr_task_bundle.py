@@ -194,9 +194,9 @@ class AkrrTaskHandlerBundle(AkrrTaskHandlerBase):
             batchvars['akrr_resource_name'] = self.resource['name']
             batchvars['akrr_time_stamp'] = self.timeStamp
             if batchvars['akrr_num_of_nodes'] == 1:
-                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_num_of_cores']
+                batchvars['akk_ppn_or_cores_on_one_node'] = batchvars['akrr_num_of_cores']
             else:
-                batchvars['akrrPPN4NodesOrCores4OneNode'] = batchvars['akrr_ppn']
+                batchvars['akk_ppn_or_cores_on_one_node'] = batchvars['akrr_ppn']
             if 'node_list_setter_template' not in batchvars:
                 batchvars['node_list_setter_template'] = batchvars['node_list_setter'][batchvars['batch_scheduler']]
 

@@ -185,9 +185,9 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             batch_vars['akrr_resource_name'] = self.resource['name']
             batch_vars['akrr_time_stamp'] = self.timeStamp
             if batch_vars['akrr_num_of_nodes'] == 1:
-                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_num_of_cores']
+                batch_vars['akk_ppn_or_cores_on_one_node'] = batch_vars['akrr_num_of_cores']
             else:
-                batch_vars['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_ppn']
+                batch_vars['akk_ppn_or_cores_on_one_node'] = batch_vars['akrr_ppn']
 
             if 'node_list_setter_template' not in batch_vars:
                 batch_vars['node_list_setter_template'] = batch_vars['node_list_setter'][batch_vars['batch_scheduler']]
@@ -206,7 +206,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars2['akrr_num_of_cores'] = 2 * batch_vars['akrr_num_of_cores']
                 batch_vars2['akrr_num_of_nodes'] = 2 * batch_vars['akrr_num_of_nodes']
                 batch_vars2['akrrNCoresToBorder'] = 2 * batch_vars['akrrNCoresToBorder']
-                batch_vars2['akrrPPN4NodesOrCores4OneNode'] = batch_vars['akrr_ppn']
+                batch_vars2['akk_ppn_or_cores_on_one_node'] = batch_vars['akrr_ppn']
                 batch_vars['batch_job_header_template'] = akrr.util.format_recursively(
                     batch_vars2['batch_job_header_template'], batch_vars2)
 
