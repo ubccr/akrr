@@ -70,19 +70,23 @@ def app_validate(resource, appkernel, nnodes):
         exit(1)
 
     # now we can load akrr
-    from . import cfg
-    from . import akrrrestclient
-    from .cli.resource_deploy import make_results_summary
+    from akrr import cfg
+    from akrr import akrrrestclient
+    from akrr.cli.resource_deploy import make_results_summary
+    from akrr.cfg_util import load_app_default, load_app_on_resource
 
     resource = cfg.find_resource_by_name(resource_name)
     log.info("Syntax of %s is correct and all necessary parameters are present." % resource_param_filename)
 
     cfg.find_app_by_name(app_name)
-    # check the presence of run_script[resource]
-    # if resource_name not in app['run_script'] and 'default' not in app['run_script']:
-    #    logerr("Can not load application kernel from """+app_ker_param_filename+"\n"+
-    #           "run_script['%s'] is not set"%(resource_name,))
-    #    exit(1)
+    try:
+        app_default = load_app_default(app_name)
+        app = load_app_on_resource(app_name, resource_name, resource, app_default)
+
+        pprint.pprint(app)
+    except Exception as e:  # pylint: disable=broad-except
+        log.exception("Exception occurred during updated app loading:" + str(e))
+        exit(1)
     log.info("Syntax of %s is correct and all necessary parameters are present." % app_ker_param_filename)
 
     # check if AK is in DB

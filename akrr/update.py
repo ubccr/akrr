@@ -800,76 +800,183 @@ class UpdateResourceAppConfigs:
         self.update_akrr = update_akrr
         self.old_cfg = self.update_akrr.old_cfg
 
-    def update(self):
-        import re
+    def get_resource_dir(self, resource_name: str) -> Tuple[str, str]:
+        """
+        Return tuple with old and new directory name for resource
+        """
+        import akrr.cfg
+        resource_dir_old = os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources", resource_name)
+        resource_dir = os.path.join(akrr.cfg.cfg_dir, "resources", resource_name)
+        resource_cfg_filename_old = os.path.join(resource_dir_old, 'resource.inp.py')
+        resource_cfg_filename = os.path.join(resource_dir, 'resource.conf')
+        return resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename
+
+    @staticmethod
+    def config_rename_var(config_text: str,
+                          current_vars: dict,
+                          renamed_vars: Tuple[Tuple[str, str]] = None,
+                          renamed_template_vars: Tuple[Tuple[str, str]] = None) -> str:
+        """
+        Rename var names
+        """
+        # replace old variables with new
+        log.debug2("Replacing old variables with new")
+        if renamed_vars is not None:
+            for old_key, new_key in renamed_vars:
+                if old_key in current_vars:
+                    config_text, nsub = re.subn(r"^(\s*)" + old_key + r"\s*=\s*", "\\1" + new_key + " = ",
+                                                config_text, flags=re.MULTILINE)
+                    if nsub == 0:
+                        log.warning("Was not able to substitute %s to %s, update it manually!", old_key, new_key)
+                    if nsub == 1:
+                        log.debug2("    %s -> %s", old_key, new_key)
+                    if nsub > 1:
+                        log.warning("Too many substitution (%d) for %s to %s conversion. Check the outcome!",
+                                    nsub, old_key, new_key)
+        # update variables in templates
+        if renamed_template_vars is not None:
+            log.debug2("Replacing variables in templates")
+            config_text = config_text.replace('{{', 'LeFtyCurlyBrackets')
+            config_text = config_text.replace('}}', 'RiGhTyCurlyBrackets')
+
+            for old_key, new_key in renamed_template_vars:
+                config_text, nsub = re.subn(r'{' + old_key + r"}", "{" + new_key + "}",
+                                            config_text, flags=re.MULTILINE)
+                if nsub > 0:
+                    log.debug2("    %s -> %s %d times", old_key, new_key, nsub)
+
+            config_text = config_text.replace('LeFtyCurlyBrackets', '{{')
+            config_text = config_text.replace('RiGhTyCurlyBrackets', '}}')
+        return config_text
+
+    def update_app(self, resource_name: str, app_name: str) -> str:
+        """
+        Update app kernel config, return hints on what to do next.
+        """
+        import akrr.cfg
+        from akrr.cfg_util import load_app_default, load_app_on_resource, load_resource, \
+            resource_renamed_parameters, app_renamed_parameters
+
+        # get old and new app name
+        app_name_old = app_name
+        app_name = ak_rename[app_name_old] if app_name_old in ak_rename else app_name
+        if app_name == app_name_old:
+            log.info("Processing: resource: %s, app kernel: %s ", resource_name, app_name)
+        else:
+            log.info("Processing: resource: %s, app kernel: rename %s to %s",
+                     resource_name, app_name_old, app_name)
+
+        hints_to_do_next = "# Test appkernel execution on resource:\n" + \
+                           "akrr app validate -n 2 -r %s -a %s\n" % (resource_name, app_name)
+
+        resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename = \
+            self.get_resource_dir(resource_name)
+        app_cfg_filename_old = os.path.join(resource_dir_old, app_name_old + '.app.inp.py')
+        app_cfg_filename = os.path.join(resource_dir, app_name + '.app.conf')
+        log.info("Old app kernel config file: %s", app_cfg_filename_old)
+
+        if not os.path.isfile(app_cfg_filename_old):
+            log.error("Can not find %s! Will skip it.", app_cfg_filename_old)
+            return "# [ERROR] Can not find %s! Will skip it.\n" % app_cfg_filename_old
+
+        try:
+            resource_old = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename_old, validate=False)
+            app_default = load_app_default(app_name)
+            app = load_app_on_resource(app_name, resource_name, resource_old, app_default,
+                                       app_on_resource_cfg_filename=app_cfg_filename_old, validate=False)
+        except Exception as e:  # pylint: disable=broad-except
+            log.exception("Exception occurred during resource and app loading:" + str(e))
+            return "# [ERROR] old configs for %s on %s has errors, can not convert it\n" % (app_name, resource_name)
+
+        config_text = open(app_cfg_filename_old, "rt").read()
+        config_text = self.config_rename_var(
+            config_text, app, resource_renamed_parameters + app_renamed_parameters,
+            resource_renamed_parameters + app_renamed_parameters)
+
+        log.info("Writing updated app config file to %s", app_cfg_filename)
+        with open(app_cfg_filename, "wt") as fout:
+            fout.write(config_text)
+
+        # Try to load new file
+        log.info("Loading updated app kernel config")
+        try:
+            resource_old = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename, validate=False)
+            app_default = load_app_default(app_name)
+            app = load_app_on_resource(app_name, resource_name, resource_old, app_default,
+                                       app_on_resource_cfg_filename=app_cfg_filename, validate=False)
+        except Exception as e:  # pylint: disable=broad-except
+            log.exception("Exception occurred during updated resources loading:" + str(e) +
+                          "\nYou'll need to maniaully fix it!")
+            return "# [ERROR] Converted config for " + resource_name + \
+                   "contain errors fix them first and deploy/test\n" + hints_to_do_next
+        return hints_to_do_next
+
+    def update_resource(self, resource_name: str) -> str:
+        """
+        Update resource configuration, return hints on what to do next.
+        """
         import akrr.cfg
         from akrr.cfg_util import load_resource, resource_renamed_parameters, app_renamed_parameters
+
+        hints_to_do_next = "# Deploy new utils on resource and check it is working properly:\n" + \
+                           "akrr resource deploy -r %s\n" % resource_name
+
+        log.info("Processing: %s", resource_name)
+
+        resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename = \
+            self.get_resource_dir(resource_name)
+        # make resource dir if needed
+        if not os.path.isdir(resource_dir):
+            os.mkdir(resource_dir, 0o700)
+
+        log.info("Old resource config file: %s", resource_cfg_filename_old)
+
+        if not os.path.isfile(resource_cfg_filename_old):
+            log.error("Can not find %s! Will skip it.", resource_cfg_filename_old)
+            return "# [ERROR] Can not find %s! Will skip it.\n" % resource_cfg_filename_old
+
+        try:
+            resource_old = load_resource(
+                resource_name, resource_cfg_filename=resource_cfg_filename_old, validate=False)
+        except Exception as e:  # pylint: disable=broad-except
+            log.exception("Exception occurred during resources loading:" + str(e))
+            return "# [ERROR] old configs for %s has errors, can not convert it\n" % resource_name
+
+        config_text = open(resource_cfg_filename_old, "rt").read()
+        config_text = self.config_rename_var(
+            config_text, resource_old, resource_renamed_parameters + app_renamed_parameters,
+            resource_renamed_parameters + app_renamed_parameters)
+
+        log.info("Writing updated resource config file to %s", resource_cfg_filename)
+        with open(resource_cfg_filename, "wt") as fout:
+            fout.write(config_text)
+
+        # Try to load new file
+        log.info("Loading updated resource config")
+        try:
+            resource = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename)
+        except Exception as e:  # pylint: disable=broad-except
+            log.exception("Exception occurred during updated resources loading:" + str(e) +
+                          "\nYou'll need to maniaully fix it!")
+            return "# [ERROR] Converted config for " + resource_name + \
+                   "contain errors fix them first and deploy/test\n" + hints_to_do_next
+        return hints_to_do_next
+
+    def update(self) -> str:
+        import akrr.cfg
+        hints_to_do_next = ""
         # get resources
         for resource_name in os.listdir(os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources")):
-            if resource_name not in ['notactive', 'templates']:
-                log.info("Processing: %s", resource_name)
+            if resource_name in ['notactive', 'templates']:
+                continue
 
-                resource_dir_old = os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources", resource_name)
-                resource_dir = os.path.join(akrr.cfg.cfg_dir, "resources", resource_name)
-
-                if not os.path.isdir(resource_dir):
-                    os.mkdir(resource_dir, 0o700)
-
-                resource_cfg_filename_old = os.path.join(resource_dir_old, 'resource.inp.py')
-                resource_cfg_filename = os.path.join(resource_dir, 'resource.conf')
-                log.info("Old resource config file: %s", resource_cfg_filename_old)
-
-                if not os.path.isfile(resource_cfg_filename_old):
-                    log.error("Can nof find %s! Will skip it.", resource_cfg_filename_old)
+            hints_to_do_next += self.update_resource(resource_name)
+            # Update apps
+            resource_dir_old, _, _, _ = self.get_resource_dir(resource_name)
+            for filename in os.listdir(resource_dir_old):
+                if not filename.endswith(".app.inp.py"):
                     continue
 
-                try:
-                    resource_old = load_resource(
-                        resource_name, resource_cfg_filename=resource_cfg_filename_old, validate=False)
-                except Exception as e:  # pylint: disable=broad-except
-                    log.exception("Exception occurred during resources loading:" + str(e))
-                    continue
-
-                resource_cfg_text = open(resource_cfg_filename_old, "rt").read()
-
-                # replace old variables with new
-                log.debug2("Replacing old variables with new")
-                for old_key, new_key in resource_renamed_parameters:
-                    if old_key in resource_old:
-                        resource_cfg_text, nsub = re.subn(r"^(\s*)" + old_key + r"\s*=\s*", "\\1" + new_key + " = ",
-                                                          resource_cfg_text, flags=re.MULTILINE)
-                        if nsub == 0:
-                            log.warning("Was not able to substitute %s to %s, update it manually!", old_key, new_key)
-                        if nsub == 1:
-                            log.debug2("    %s -> %s", old_key, new_key)
-                        if nsub > 1:
-                            log.warning("Too many substitution (%d) for %s to %s conversion. Check the outcome!",
-                                        nsub, old_key, new_key)
-                # update variables in templates
-                log.debug2("Replacing variables in templates")
-                resource_cfg_text = resource_cfg_text.replace('{{', 'LeFtyCurlyBrackets')
-                resource_cfg_text = resource_cfg_text.replace('}}', 'RiGhTyCurlyBrackets')
-
-                for old_key, new_key in app_renamed_parameters:
-                    resource_cfg_text, nsub = re.subn(r'{' + old_key + r"}", "{" + new_key + "}",
-                                                      resource_cfg_text, flags=re.MULTILINE)
-                    if nsub > 0:
-                        log.debug2("    %s -> %s %d times", old_key, new_key, nsub)
-
-                resource_cfg_text = resource_cfg_text.replace('LeFtyCurlyBrackets', '{{')
-                resource_cfg_text = resource_cfg_text.replace('RiGhTyCurlyBrackets', '}}')
-
-                log.info("Writing updated resource config file to %s", resource_cfg_filename)
-                with open(resource_cfg_filename, "wt") as fout:
-                    fout.write(resource_cfg_text)
-
-                # Try to load new file
-                log.info("Loading updated resource config")
-                try:
-                    resource = load_resource(
-                        resource_name, resource_cfg_filename=resource_cfg_filename)
-
-                except Exception as e:  # pylint: disable=broad-except
-                    log.exception("Exception occurred during updated resources loading:" + str(e) +
-                                  "\nYou'll need to maniaully fix it!")
-
+                app_name = re.sub(r'\.app\.inp\.py$', '', filename)
+                hints_to_do_next += self.update_app(resource_name, app_name)
+        return hints_to_do_next

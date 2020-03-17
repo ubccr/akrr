@@ -851,6 +851,7 @@ class AKRRSetup:
         old_akrr_home: location of old AKRR home for update
         yes_to_all: says yes to all questions
         """
+        hints_to_finish_update = ""
         if update:
             self.update = akrr.update.UpdateAKRR(old_akrr_home, yes_to_all=yes_to_all)
 
@@ -931,13 +932,13 @@ class AKRRSetup:
             self.init_mysql_dbs()
         else:
             # update DB
-            akrr.update.UpdateDataBase(self.update).update()
+            hints_to_finish_update = akrr.update.UpdateDataBase(self.update).update()
 
         self.generate_self_signed_certificate()
         self.generate_settings_file()
         if self.update:
             # update config files for resources and appkernels
-            akrr.update.UpdateResourceAppConfigs().update(self.update)
+            akrr.update.UpdateResourceAppConfigs(self.update).update()
 
         self.set_permission_on_files()
         self.db_check()
@@ -957,3 +958,7 @@ class AKRRSetup:
             self.install_cron_scripts()
 
         log.info("AKRR is set up and is running.")
+        if self.update:
+            log.warning("Bellow are instructions to finish conversion " +
+                        "(shell commands, execute them manually one by one ensure correct run):\n" +
+                        hints_to_finish_update)
