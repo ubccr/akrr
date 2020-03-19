@@ -932,13 +932,13 @@ class AKRRSetup:
             self.init_mysql_dbs()
         else:
             # update DB
-            hints_to_finish_update = akrr.update.UpdateDataBase(self.update).update()
+            akrr.update.UpdateDataBase(self.update).update()
 
         self.generate_self_signed_certificate()
         self.generate_settings_file()
         if self.update:
             # update config files for resources and appkernels
-            akrr.update.UpdateResourceAppConfigs(self.update).update()
+            hints_to_finish_update = akrr.update.UpdateResourceAppConfigs(self.update).update()
 
         self.set_permission_on_files()
         self.db_check()
