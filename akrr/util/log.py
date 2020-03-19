@@ -45,6 +45,36 @@ def log_input(message: str, *args):
     print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)
 
 
+def input_choice(message: str, choice=None, default=None):
+    """
+    Ask user for a choice/
+    If arguments choice and default is not set then use yes/no with yes as default
+    """
+    if choice is None:
+        choice = ('yes', 'no')
+        if default is None:
+            default = 'yes'
+
+    if default is not None and default not in choice:
+        raise ValueError("Default is not among choices")
+
+    choice_message = "/".join(choice)
+    if default is not None:
+        choice_message += " or hit enter for " + default
+
+    print('[' + colorize.purple('INPUT') + ']: ' + message + " [" + choice_message + "]:")
+
+    while True:
+        user_input = input()
+        user_input = user_input.strip()
+        if user_input == '' and default is not None:
+            return default
+        if user_input in choice:
+            return user_input
+        else:
+            warning("Unknown choice, select from following " + choice_message)
+
+
 def log_traceback(m_str=None):
     import traceback
     msg = "###### Exception ######\n"
