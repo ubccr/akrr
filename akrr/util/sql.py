@@ -254,8 +254,14 @@ def cv(value):
     return value
 
 
-def cursor_execute(cur, query, args=None, dry_run=False):
+def cursor_execute(cur, query, args=None, dry_run=None):
     """Execute database affecting command if not in dry run mode"""
+    if dry_run is None:
+        import akrr
+        dry_run = akrr.dry_run
+    sql_command = query.split()
+    sql_command = sql_command[0].lower() if len(sql_command) > 0 else "UNKNOWN"
+    sql_non_modified_command = sql_command in ('select', 'show')
     if log.verbose or dry_run:
         if args is not None:
             if isinstance(args, dict):
@@ -269,7 +275,7 @@ def cursor_execute(cur, query, args=None, dry_run=False):
             log.dry_run("SQL: " + query_filled)
         else:
             log.debug("SQL: " + query_filled)
-    if not dry_run:
+    if sql_non_modified_command or not dry_run:
         cur.execute(query, args)
 
 
