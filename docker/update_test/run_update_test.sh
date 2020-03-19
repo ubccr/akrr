@@ -7,4 +7,4 @@ echo "CWD: " `pwd`
 
 mv ~/akrr ~/akrr_old
 
-~/xdmod_wsp/akrr/bin/akrr -vv update --old-akrr-home=~/akrr_old
+~/xdmod_wsp/akrr/bin/akrr -vv update --old-akrr-home=~/akrr_old --dry-run

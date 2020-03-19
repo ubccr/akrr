@@ -26,7 +26,7 @@ def debug2(msg, *args, **kwargs):
 
 
 def dry_run(msg, *_, **__):
-    print("DryRun: "+msg)
+    print("[DryRun] "+msg)
 
 
 def empty_line():
@@ -42,7 +42,7 @@ def log_input(message: str, *args):
     else:
         formatted_message = ''
 
-    print('[' + colorize.purple('INPUT') + ']: ' + formatted_message)
+    print('[' + colorize.purple('INPUT') + '] ' + formatted_message)
 
 
 def input_choice(message: str, choice=None, default=None):
@@ -62,7 +62,7 @@ def input_choice(message: str, choice=None, default=None):
     if default is not None:
         choice_message += " or hit enter for " + default
 
-    print('[' + colorize.purple('INPUT') + ']: ' + message + " [" + choice_message + "]:")
+    print('[' + colorize.purple('INPUT') + '] ' + message + " [" + choice_message + "]:")
 
     while True:
         user_input = input()

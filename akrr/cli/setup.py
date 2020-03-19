@@ -60,7 +60,7 @@ def _cursor_execute(cur, query, args=None):
     cursor_execute(cur, query, args=args, dry_run=akrr.dry_run)
 
 
-def _make_dirs(path):
+def make_dirs(path):
     """Recursively create directories if not in dry run mode"""
     if not akrr.dry_run:
         log.debug("Creating directory: {}".format(path))
@@ -383,21 +383,21 @@ class AKRRSetup:
         try:
             log.info("Creating directories structure.")
             if not os.path.isdir(_akrr_home):
-                _make_dirs(_akrr_home)
+                make_dirs(_akrr_home)
             if not os.path.isdir(os.path.join(_akrr_home, 'etc')):
-                _make_dirs(os.path.join(_akrr_home, 'etc'))
+                make_dirs(os.path.join(_akrr_home, 'etc'))
             if not os.path.isdir(os.path.join(_akrr_home, 'etc', 'resources')):
-                _make_dirs(os.path.join(_akrr_home, 'etc', 'resources'))
+                make_dirs(os.path.join(_akrr_home, 'etc', 'resources'))
             if not os.path.isdir(os.path.join(_akrr_home, 'etc', 'resources')):
-                _make_dirs(os.path.join(_akrr_home, 'etc', 'resources'))
+                make_dirs(os.path.join(_akrr_home, 'etc', 'resources'))
             if not os.path.isdir(os.path.join(_akrr_home, 'log')):
-                _make_dirs(os.path.join(_akrr_home, 'log'))
+                make_dirs(os.path.join(_akrr_home, 'log'))
             if not os.path.isdir(os.path.join(_akrr_home, 'log', 'data')):
-                _make_dirs(os.path.join(_akrr_home, 'log', 'data'))
+                make_dirs(os.path.join(_akrr_home, 'log', 'data'))
             if not os.path.isdir(os.path.join(_akrr_home, 'log', 'comptasks')):
-                _make_dirs(os.path.join(_akrr_home, 'log', 'comptasks'))
+                make_dirs(os.path.join(_akrr_home, 'log', 'comptasks'))
             if not os.path.isdir(os.path.join(_akrr_home, 'log', 'akrrd')):
-                _make_dirs(os.path.join(_akrr_home, 'log', 'akrrd'))
+                make_dirs(os.path.join(_akrr_home, 'log', 'akrrd'))
         except Exception as e:
             log.error("Can not create directories: " + str(e))
             exit(1)
@@ -819,7 +819,7 @@ class AKRRSetup:
                         f.write(line)
                 log.info("Appended AKRR records to $HOME/.bashrc")
             else:
-                log.debug("New .bashrc should be like" + "\n".join(bash_content_new))
+                log.debug("New .bashrc should be like:\n" + "".join(bash_content_new))
         else:
             log.info("AKRR is in standard location, no updates to $HOME/.bashrc")
 
@@ -832,8 +832,7 @@ class AKRRSetup:
             akrr_home: str = None,
             generate_db_only: bool = False,
             update: bool = False,
-            old_akrr_home: str = None,
-            yes_to_all: bool = False):
+            old_akrr_home: str = None):
         """
         Setup or update AKRR
 
@@ -849,11 +848,10 @@ class AKRRSetup:
         generate_db_only: only generate DB
         update: perform update from previous stable version
         old_akrr_home: location of old AKRR home for update
-        yes_to_all: says yes to all questions
         """
         hints_to_finish_update = ""
         if update:
-            self.update = akrr.update.UpdateAKRR(old_akrr_home, yes_to_all=yes_to_all)
+            self.update = akrr.update.UpdateAKRR(old_akrr_home)
 
         # Set initial db conf
         if not update:

@@ -10,10 +10,11 @@ import pprint
 from collections import OrderedDict
 from typing import Optional, Tuple
 
+import akrr
 from akrr.util import log
 from akrr.util.sql import get_con_to_db2, cursor_execute
 from akrr.akrrerror import AkrrValueException, AkrrFileNotFoundError, AkrrException
-from akrr.util.sql import get_con_to_db
+from akrr.util.sql import get_con_to_db, cursor_execute
 from akrr.util import exec_files_to_dict
 from akrr.cli.generate_tables import create_and_populate_tables, mod_akrr_create_tables_dict, \
     mod_appkernel_create_tables_dict, populate_mod_akrr_appkernels
@@ -287,13 +288,12 @@ class UpdateAKRR:
     Class for updating old AKRR
     """
 
-    def __init__(self, old_akrr_home: str = None, yes_to_all: bool = False):
+    def __init__(self, old_akrr_home: str = None):
         """
         Parameters
         ----------
         old_akrr_cfg - old AKRR Config path, if None will try to locate based on environment variables
         """
-        self.yes_to_all = yes_to_all  # type: bool
         self.akrr_db = {
             "mod_akrr": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
             "mod_appkernel": {'list': {'con': None, 'cur': None}, 'dict': {'con': None, 'cur': None}},
@@ -351,6 +351,7 @@ class UpdateAKRR:
         try:
             crontab_content = subprocess.check_output("crontab -l", shell=True)
             crontab_content = crontab_content.decode("utf-8").splitlines(False)
+            log.debug2("Old crontab:\n" + "\n".join(crontab_content))
         except Exception:
             log.info("Crontab does not have user's crontab yet")
             return True
@@ -363,6 +364,7 @@ class UpdateAKRR:
                 continue
             fields = crontab_line.strip().split()
             if len(fields) > 0:
+                # AKRR 1.0
                 if os.path.abspath(fields[-1]) == os.path.join(self.old_akrr_home, "bin", "restart.sh"):
                     continue
                 if os.path.abspath(fields[-1]) == os.path.join(self.old_akrr_home, "bin", "checknrestart.sh"):
@@ -372,6 +374,9 @@ class UpdateAKRR:
                         continue
                     if os.path.abspath(fields[-1]) == os.path.join(old_akrr_home_env, "bin", "checknrestart.sh"):
                         continue
+                # AKRR 2.0
+                if re.search(r"akrr\s+daemon\s+(restart|checknrestart)", crontab_line):
+                    continue
             if len(crontab_line.strip()) > 6 and crontab_line.strip()[:6].upper() == 'MAILTO':
                 fields = crontab_line.strip().split("=")
                 self.cron_email = fields[1].strip('\'"')
@@ -379,12 +384,15 @@ class UpdateAKRR:
             crontab_content_new.append(crontab_line)
 
         tmp_cronfile_fd, tmp_cronfile = mkstemp(prefix="crontmp", dir=os.path.expanduser('~'), text=True)
-        with open(tmp_cronfile_fd, 'wt') as f:
-            for tmp_str in crontab_content_new:
-                f.write(tmp_str + "\n")
-        subprocess.call("crontab " + tmp_cronfile, shell=True)
-        os.remove(tmp_cronfile)
-        log.info("Crontab updated.")
+        if not akrr.dry_run:
+            with open(tmp_cronfile_fd, 'wt') as f:
+                for tmp_str in crontab_content_new:
+                    f.write(tmp_str + "\n")
+            subprocess.call("crontab " + tmp_cronfile, shell=True)
+            os.remove(tmp_cronfile)
+            log.info("Crontab updated.")
+        else:
+            log.dry_run("For removing old AKRR should update crontab to:\n" + "\n".join(crontab_content_new))
 
     def shut_down_old_akrr(self):
         """
@@ -392,8 +400,16 @@ class UpdateAKRR:
         """
         log.info("Shutting down old akrr daemon.")
         import akrr.util.daemon
-        if not akrr.util.daemon.daemon_stop(akrr.util.daemon.get_daemon_pid(
-                os.path.join(self.old_cfg['data_dir'], 'akrr.pid'), delete_pid_file_if_daemon_down=True)):
+        akrr_pid = akrr.util.daemon.get_daemon_pid(os.path.join(self.old_cfg['data_dir'], 'akrr.pid'),
+                                                   delete_pid_file_if_daemon_down=True)
+        if akrr_pid is None:
+            log.info("AKRR daemon is already down.")
+            return
+        if akrr.dry_run:
+            log.dry_run("Should stop AKRR daemon here.")
+            return
+
+        if not akrr.util.daemon.daemon_stop(akrr_pid):
             msg = "Can not stop old daemon please kill it manually!"
             log.error(msg)
             raise AkrrException(msg)
@@ -438,7 +454,7 @@ def convert_appname(iapp: int, row, ireporternickname: int = None):
 
 class UpdateDataBase:
     """
-    Class for updating old AKRR Database
+    Class for updating old AKRR Database 1.0 to early 2.0 to 2.0
     """
     convert_mod_akrr_db = OrderedDict((
         # active_tasks - just drop it
@@ -577,15 +593,16 @@ class UpdateDataBase:
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
 
-        for table_name, table_info in self.convert_mod_akrr_db.items():
+
+        for name_new, table_info in self.convert_mod_akrr_db.items():
             if table_info["select_cols_old"] is None:
                 continue
-            name_old = table_name if "name_old" not in table_info else table_info['name_old']
+            name_old = name_new if "name_old" not in table_info else table_info['name_old']
 
             log.debug("Saving: mod_akrr.%s" % name_old)
             akrr_cur.execute("SELECT %s \nFROM %s" % (table_info["select_cols_old"], name_old))
 
-            with open(self._get_table_pkl_name("mod_akrr", table_name), "wb") as fout:
+            with open(self._get_table_pkl_name("mod_akrr", name_new), "wb") as fout:
                 while True:
                     rows = akrr_cur.fetchmany(4)
                     if not rows:
@@ -610,12 +627,14 @@ class UpdateDataBase:
             tables_and_views['views'].reverse()
             for name_old in tables_and_views['views']:
                 log.debug("Dropping: %s.%s" % (db_name, name_old))
-                cur.execute("DROP VIEW IF EXISTS %s" % name_old)
+                if not akrr.dry_run:
+                    cur.execute("DROP VIEW IF EXISTS %s" % name_old)
 
             tables_and_views['tables'].reverse()
             for name_old in tables_and_views['tables']:
-                cur.execute("DROP TABLE IF EXISTS %s" % name_old)
                 log.debug("Dropping: %s.%s" % (db_name, name_old))
+                if not akrr.dry_run:
+                    cur.execute("DROP TABLE IF EXISTS %s" % name_old)
             con.commit()
 
     def _update_db_create_new(self):
@@ -631,7 +650,7 @@ class UpdateDataBase:
                 "Creating %s tables/views ...",
                 "%s tables and views created.",
                 None, connection=akrr_con, cursor=akrr_cur,
-                drop_if_needed=True, dry_run=False
+                drop_if_needed=True, dry_run=akrr.dry_run
             )
 
     def _update_db_populate_new_db(self):
@@ -659,29 +678,32 @@ class UpdateDataBase:
                     for row in rows:
                         if "convert" in table_info:
                             row = table_info["convert"](row)
-                        akrr_cur.execute(
-                            "INSERT INTO %s\n(%s)\nVALUES(%s)" % (table_name, populate_col_new, values_in), row)
+                        if not akrr.dry_run:
+                            akrr_cur.execute(
+                                "INSERT INTO %s\n(%s)\nVALUES(%s)" % (table_name, populate_col_new, values_in), row)
                 akrr_con.commit()
 
         # update auto increment
         if self.task_id_max > 0:
-            akrr_cur.execute("ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (self.task_id_max + 1))
+            cursor_execute(akrr_cur, "ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (self.task_id_max + 1))
             akrr_con.commit()
 
         # correct some values
-        akrr_cur.execute("update completed_tasks set app=CONCAT(app,'.core') where resource_param like '%ncpus%'")
+        cursor_execute(akrr_cur,
+                       "update completed_tasks set app=CONCAT(app,'.core') where resource_param like '%ncpus%'")
         akrr_con.commit()
 
         # add new records if needed
-        populate_mod_akrr_appkernels(akrr_con_dict, akrr_cur_dict)
+        populate_mod_akrr_appkernels(akrr_con_dict, akrr_cur_dict, dry_run=akrr.dry_run)
 
         # update mod_appkernel
         self._rename_appkernels_mod_appkernel()
 
-    def _rename_appkernels_mod_appkernel(self, dry_run: bool = False) -> None:
+    def _rename_appkernels_mod_appkernel(self) -> None:
         """
         Rename appkernels from long to short format in mod_appkernel db
         """
+        dry_run = akrr.dry_run
         update_app_kernel_def = True
         update_app_kernel = True
         update_app_kernel_def_list = True
@@ -800,13 +822,14 @@ class UpdateResourceAppConfigs:
         self.update_akrr = update_akrr
         self.old_cfg = self.update_akrr.old_cfg
 
-    def get_resource_dir(self, resource_name: str) -> Tuple[str, str]:
+    def get_resource_dir(self, resource_name: str) -> Tuple[str, str, str, str]:
         """
         Return tuple with old and new directory name for resource
         """
-        import akrr.cfg
+        import akrr
+        cfg_dir = akrr.get_akrr_dirs()['cfg_dir']
         resource_dir_old = os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources", resource_name)
-        resource_dir = os.path.join(akrr.cfg.cfg_dir, "resources", resource_name)
+        resource_dir = os.path.join(cfg_dir, "resources", resource_name)
         resource_cfg_filename_old = os.path.join(resource_dir_old, 'resource.inp.py')
         resource_cfg_filename = os.path.join(resource_dir, 'resource.conf')
         return resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename
@@ -853,7 +876,6 @@ class UpdateResourceAppConfigs:
         """
         Update app kernel config, return hints on what to do next.
         """
-        import akrr.cfg
         from akrr.cfg_util import load_app_default, load_app_on_resource, load_resource, \
             resource_renamed_parameters, app_renamed_parameters
 
@@ -894,16 +916,20 @@ class UpdateResourceAppConfigs:
             resource_renamed_parameters + app_renamed_parameters)
 
         log.info("Writing updated app config file to %s", app_cfg_filename)
-        with open(app_cfg_filename, "wt") as fout:
-            fout.write(config_text)
+        if not akrr.dry_run:
+            with open(app_cfg_filename, "wt") as fout:
+                fout.write(config_text)
+        else:
+            log.dry_run("New config file:\n" + config_text)
 
         # Try to load new file
         log.info("Loading updated app kernel config")
         try:
-            resource_old = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename, validate=False)
-            app_default = load_app_default(app_name)
-            app = load_app_on_resource(app_name, resource_name, resource_old, app_default,
-                                       app_on_resource_cfg_filename=app_cfg_filename, validate=False)
+            if not akrr.dry_run:
+                resource_old = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename, validate=False)
+                app_default = load_app_default(app_name)
+                app = load_app_on_resource(app_name, resource_name, resource_old, app_default,
+                                           app_on_resource_cfg_filename=app_cfg_filename, validate=False)
         except Exception as e:  # pylint: disable=broad-except
             log.exception("Exception occurred during updated resources loading:" + str(e) +
                           "\nYou'll need to maniaully fix it!")
@@ -915,7 +941,7 @@ class UpdateResourceAppConfigs:
         """
         Update resource configuration, return hints on what to do next.
         """
-        import akrr.cfg
+        from akrr.cli.setup import make_dirs
         from akrr.cfg_util import load_resource, resource_renamed_parameters, app_renamed_parameters
 
         hints_to_do_next = "# Deploy new utils on resource and check it is working properly:\n" + \
@@ -927,7 +953,7 @@ class UpdateResourceAppConfigs:
             self.get_resource_dir(resource_name)
         # make resource dir if needed
         if not os.path.isdir(resource_dir):
-            os.mkdir(resource_dir, 0o700)
+            make_dirs(resource_dir)
 
         log.info("Old resource config file: %s", resource_cfg_filename_old)
 
@@ -948,22 +974,25 @@ class UpdateResourceAppConfigs:
             resource_renamed_parameters + app_renamed_parameters)
 
         log.info("Writing updated resource config file to %s", resource_cfg_filename)
-        with open(resource_cfg_filename, "wt") as fout:
-            fout.write(config_text)
+        if not akrr.dry_run:
+            with open(resource_cfg_filename, "wt") as fout:
+                fout.write(config_text)
+        else:
+            log.dry_run("New config file:\n" + config_text)
 
         # Try to load new file
-        log.info("Loading updated resource config")
-        try:
-            resource = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename)
-        except Exception as e:  # pylint: disable=broad-except
-            log.exception("Exception occurred during updated resources loading:" + str(e) +
-                          "\nYou'll need to maniaully fix it!")
-            return "# [ERROR] Converted config for " + resource_name + \
-                   "contain errors fix them first and deploy/test\n" + hints_to_do_next
+        if not akrr.dry_run:
+            log.info("Loading updated resource config")
+            try:
+                resource = load_resource(resource_name, resource_cfg_filename=resource_cfg_filename)
+            except Exception as e:  # pylint: disable=broad-except
+                log.exception("Exception occurred during updated resources loading:" + str(e) +
+                              "\nYou'll need to maniaully fix it!")
+                return "# [ERROR] Converted config for " + resource_name + \
+                       "contain errors fix them first and deploy/test\n" + hints_to_do_next
         return hints_to_do_next
 
     def update(self) -> str:
-        import akrr.cfg
         hints_to_do_next = ""
         # get resources
         for resource_name in os.listdir(os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources")):

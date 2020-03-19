@@ -10,10 +10,13 @@ import re
 
 from typing import Optional, Dict
 
+from akrr import get_akrr_dirs
 from akrr.akrrerror import AkrrError
-from akrr.cfg import default_dir, cfg_dir
 from akrr.util import log
 
+akrr_dirs = get_akrr_dirs()
+default_dir = akrr_dirs['default_dir']
+cfg_dir = akrr_dirs['cfg_dir']
 
 # mapped renamed parameters
 resource_renamed_parameters = (

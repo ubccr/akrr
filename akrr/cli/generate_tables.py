@@ -65,7 +65,7 @@ def create_and_populate_tables(
                 log.debug("Result of: %s -> %d" % (description, result))
                 log.debug("EXECUTED: %s SUCCESSFULLY!" % description)
         else:
-            for (table_name, table_script) in default_tables:
+            for (table_name, table_script) in default_tables.items():
                 log.dry_run("CREATING: %s" % table_name)
 
             for (description, statement) in population_statements:

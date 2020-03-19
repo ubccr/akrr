@@ -602,7 +602,6 @@ def add_command_update(parent_parser):
     parser.add_argument(
         '--old-akrr-home', type=str,
         help="location of old AKRR home directory, for example ~/akrr. Default: try to find")
-    parser.add_argument('-y', '--yes-to-all', action='store_true', help="answer yes or default to all questions.")
 
     def handler(args):
         """call routine for initial AKRR setup"""
@@ -612,8 +611,7 @@ def add_command_update(parent_parser):
         return AKRRSetup().run(
             update=True,
             akrr_home=args.akrr_home,
-            old_akrr_home=args.old_akrr_home,
-            yes_to_all=args.yes_to_all
+            old_akrr_home=args.old_akrr_home
         )
 
     parser.set_defaults(func=handler)
