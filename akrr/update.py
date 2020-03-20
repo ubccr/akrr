@@ -272,9 +272,14 @@ def find_old_akrr_home_and_cfg(old_akrr_home: str = None) -> Tuple[str, str]:
         raise AkrrFileNotFoundError(msg)
 
     # locate config
-    old_akrr_cfg_file = os.path.join(old_akrr_home, "cfg", "akrr.inp.py")
-    if not os.path.isfile(old_akrr_cfg_file):
-        msg = "AKRR config file not found (was looking for %s)" % old_akrr_cfg_file
+    old_akrr_cfg_file1 = os.path.join(old_akrr_home, "cfg", "akrr.inp.py")
+    old_akrr_cfg_file2 = os.path.join(old_akrr_home, "etc", "akrr.conf")
+    if os.path.isfile(old_akrr_cfg_file2):
+        old_akrr_cfg_file = old_akrr_cfg_file2
+    elif os.path.isfile(old_akrr_cfg_file1):
+        old_akrr_cfg_file = old_akrr_cfg_file1
+    else:
+        msg = "AKRR config file not found (was looking for %s or %s" % (old_akrr_cfg_file2, old_akrr_cfg_file1)
         log.error(msg)
         raise AkrrFileNotFoundError(msg)
 
@@ -555,10 +560,11 @@ class UpdateDataBase:
     tables_to_drop = OrderedDict((
         ("mod_akrr",
          {'tables': [
-             'ACTIVETASKS', 'ak_on_nodes', 'akrr_default_walllimit', 'akrr_errmsg',
+             'ACTIVETASKS', 'active_tasks', 'ak_on_nodes', 'akrr_default_walllimit', 'akrr_default_walltime_limit',
+             'akrr_errmsg',
              'akrr_err_regexp', 'akrr_internal_failure_codes', 'akrr_resource_maintenance',
-             'akrr_taks_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'nodes',
-             'SCHEDULEDTASKS', 'resources', 'app_kernels', 'resource_app_kernels'],
+             'akrr_taks_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'completed_tasks', 'nodes',
+             'SCHEDULEDTASKS', "scheduled_tasks", 'resources', 'app_kernels', 'resource_app_kernels'],
              'views': ['akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime']}),
         # ("mod_appkernel",
         #  {'tables':
@@ -581,6 +587,9 @@ class UpdateDataBase:
     def get_old_akrr_db_con(self, dict_cursor=False):
         return self.uppdate_akrr.get_akrr_db_con("mod_akrr", dict_cursor=dict_cursor)
 
+    def get_old_ak_db_con(self, dict_cursor=False):
+        return self.uppdate_akrr.get_akrr_db_con("mod_appkernel", dict_cursor=dict_cursor)
+
     def _get_table_pkl_name(self, db_name, table_name):
         """
         Get pickeled filename for table dump
@@ -592,15 +601,32 @@ class UpdateDataBase:
         Save old tables
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
-
+        cursor_execute(akrr_cur, "show tables")
+        tables = tuple((r[0] for r in akrr_cur.fetchall()))
 
         for name_new, table_info in self.convert_mod_akrr_db.items():
             if table_info["select_cols_old"] is None:
                 continue
-            name_old = name_new if "name_old" not in table_info else table_info['name_old']
 
-            log.debug("Saving: mod_akrr.%s" % name_old)
-            akrr_cur.execute("SELECT %s \nFROM %s" % (table_info["select_cols_old"], name_old))
+            name_old = name_new if "name_old" not in table_info else table_info['name_old']
+            name_to_use = name_new if name_new in tables else name_old
+            if name_to_use not in tables:
+                raise akrr.akrrerror.AkrrError("Can not find table %s" % name_to_use)
+
+            cursor_execute(akrr_cur, "show columns from %s" % name_to_use)
+            columns = ",".join(tuple((r[0] for r in akrr_cur.fetchall())))
+            if columns == table_info["select_cols_old"].replace(" ", "").replace("\n", ""):
+                # old format
+                columns = table_info["select_cols_old"]
+            elif "populate_cols_new" in table_info and \
+                    columns == table_info["populate_cols_new"].replace(" ", "").replace("\n", ""):
+                # new format
+                columns = table_info["populate_cols_new"]
+            else:
+                log.warning("Unknown format probably development version, will try anyway")
+
+            log.debug("Saving: mod_akrr.%s" % name_to_use)
+            cursor_execute(akrr_cur, "SELECT %s \nFROM %s" % (columns, name_to_use))
 
             with open(self._get_table_pkl_name("mod_akrr", name_new), "wb") as fout:
                 while True:
@@ -611,10 +637,15 @@ class UpdateDataBase:
 
         # find current task_id_max
         self.task_id_max = 0
-        for table in ("COMPLETEDTASKS", "SCHEDULEDTASKS", "ACTIVETASKS"):
+        if "COMPLETEDTASKS" in tables:
+            task_id_tables = ("COMPLETEDTASKS", "SCHEDULEDTASKS", "ACTIVETASKS")
+        else:
+            task_id_tables = ("completed_tasks", "scheduled_tasks", "active_tasks")
+        for table in task_id_tables:
+            print(table)
             akrr_cur.execute("SELECT max(task_id) FROM %s" % table)
             rows = akrr_cur.fetchall()
-            if len(rows) > 0 and len(rows[0]) > 0:
+            if len(rows) > 0 and len(rows[0]) > 0 and rows[0][0] is not None:
                 if rows[0][0] > self.task_id_max:
                     self.task_id_max = rows[0][0]
 
@@ -642,14 +673,16 @@ class UpdateDataBase:
         create new tables
         """
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
-        for db_name, create_tables_dict in (("mod_akrr", mod_akrr_create_tables_dict),
-                                            ("mod_appkernel", mod_appkernel_create_tables_dict)):
+        ak_con, ak_cur = self.get_old_ak_db_con()
+        for con, cur, db_name, create_tables_dict in (
+                (akrr_con, akrr_cur, "mod_akrr", mod_akrr_create_tables_dict),
+                (ak_con, ak_cur, "mod_appkernel", mod_appkernel_create_tables_dict)):
             create_and_populate_tables(
                 create_tables_dict,
                 tuple(),
                 "Creating %s tables/views ...",
                 "%s tables and views created.",
-                None, connection=akrr_con, cursor=akrr_cur,
+                None, connection=con, cursor=cur,
                 drop_if_needed=True, dry_run=akrr.dry_run
             )
 
@@ -830,7 +863,10 @@ class UpdateResourceAppConfigs:
         cfg_dir = akrr.get_akrr_dirs()['cfg_dir']
         resource_dir_old = os.path.join(self.update_akrr.old_akrr_cfg_dir, "resources", resource_name)
         resource_dir = os.path.join(cfg_dir, "resources", resource_name)
-        resource_cfg_filename_old = os.path.join(resource_dir_old, 'resource.inp.py')
+        resource_cfg_filename_old1 = os.path.join(resource_dir_old, 'resource.inp.py')
+        resource_cfg_filename_old2 = os.path.join(resource_dir_old, 'resource.conf')
+        resource_cfg_filename_old = resource_cfg_filename_old1 if os.path.isfile(resource_cfg_filename_old1) else \
+            resource_cfg_filename_old2
         resource_cfg_filename = os.path.join(resource_dir, 'resource.conf')
         return resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename
 
@@ -893,7 +929,10 @@ class UpdateResourceAppConfigs:
 
         resource_dir_old, resource_dir, resource_cfg_filename_old, resource_cfg_filename = \
             self.get_resource_dir(resource_name)
-        app_cfg_filename_old = os.path.join(resource_dir_old, app_name_old + '.app.inp.py')
+        app_cfg_filename_old1 = os.path.join(resource_dir_old, app_name_old + '.app.inp.py')
+        app_cfg_filename_old2 = os.path.join(resource_dir_old, app_name_old + '.app.conf')
+        app_cfg_filename_old = app_cfg_filename_old1 if os.path.isfile(app_cfg_filename_old1) else \
+            app_cfg_filename_old2
         app_cfg_filename = os.path.join(resource_dir, app_name + '.app.conf')
         log.info("Old app kernel config file: %s", app_cfg_filename_old)
 
@@ -1003,9 +1042,10 @@ class UpdateResourceAppConfigs:
             # Update apps
             resource_dir_old, _, _, _ = self.get_resource_dir(resource_name)
             for filename in os.listdir(resource_dir_old):
-                if not filename.endswith(".app.inp.py"):
-                    continue
-
-                app_name = re.sub(r'\.app\.inp\.py$', '', filename)
-                hints_to_do_next += self.update_app(resource_name, app_name)
+                if filename.endswith(".app.inp.py"):
+                    app_name = re.sub(r'\.app\.inp\.py$', '', filename)
+                    hints_to_do_next += self.update_app(resource_name, app_name)
+                if filename.endswith(".app.conf"):
+                    app_name = re.sub(r'\.app\.conf$', '', filename)
+                    hints_to_do_next += self.update_app(resource_name, app_name)
         return hints_to_do_next
