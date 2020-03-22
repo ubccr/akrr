@@ -566,16 +566,15 @@ class UpdateDataBase:
              'akrr_taks_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'completed_tasks', 'nodes',
              'SCHEDULEDTASKS', "scheduled_tasks", 'resources', 'app_kernels', 'resource_app_kernels'],
              'views': ['akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime']}),
-        # ("mod_appkernel",
-        #  {'tables':
-        #       ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource',
-        #        'ak_has_metric',
-        #        'ak_has_parameter', 'ak_instance', 'ak_instance_debug', 'ak_supremme_metrics', 'a_tree', 'a_tree2',
-        #        'control_set', 'ingester_log', 'log_id_seq', 'log_table', 'metric_attribute', 'metric_data',
-        #        'parameter_data',
-        #        'report', 'sumpremm_metrics', 'control_region_def', 'control_regions'],
-        #   'views': ['v_ak_metrics', 'v_ak_parameters', 'v_tree_debug']
-        #   })
+        ("mod_appkernel",
+         {'tables':
+              ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource',
+               'ak_has_metric', 'ak_has_parameter', 'ak_instance', 'ak_instance_debug',
+               'ak_supremme_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
+               'log_table', 'metric_attribute', 'metric_data', 'parameter_data', 'report',
+               'sumpremm_metrics', 'control_region_def', 'control_regions'],
+          'views': ['v_ak_metrics', 'v_ak_parameters', 'v_tree_debug']
+          })
     ))
 
     def __init__(self, uppdate_akrr: UpdateAKRR):
@@ -603,6 +602,7 @@ class UpdateDataBase:
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         cursor_execute(akrr_cur, "show tables")
         tables = tuple((r[0] for r in akrr_cur.fetchall()))
+        nrecs = 128
 
         for name_new, table_info in self.convert_mod_akrr_db.items():
             if table_info["select_cols_old"] is None:
@@ -630,7 +630,7 @@ class UpdateDataBase:
 
             with open(self._get_table_pkl_name("mod_akrr", name_new), "wb") as fout:
                 while True:
-                    rows = akrr_cur.fetchmany(4)
+                    rows = akrr_cur.fetchmany(nrecs)
                     if not rows:
                         break
                     pickle.dump(rows, fout)
@@ -648,6 +648,26 @@ class UpdateDataBase:
             if len(rows) > 0 and len(rows[0]) > 0 and rows[0][0] is not None:
                 if rows[0][0] > self.task_id_max:
                     self.task_id_max = rows[0][0]
+
+        # save mod_appkernel
+        ak_con, ak_cur = self.get_old_ak_db_con()
+        cursor_execute(akrr_cur, "show tables")
+        tables = tuple((r[0] for r in akrr_cur.fetchall()))
+
+        for name in self.tables_to_drop['mod_appkernel']['tables']:
+            if name not in tables:
+                continue
+            cursor_execute(ak_cur, "show columns from %s" % name)
+            columns = ",".join(tuple((r[0] for r in ak_cur.fetchall())))
+            log.debug("Saving: mod_appkernel.%s" % name)
+            cursor_execute(ak_cur, "SELECT %s \nFROM %s" % (columns, name))
+
+            with open(self._get_table_pkl_name("mod_appkernel", name), "wb") as fout:
+                while True:
+                    rows = ak_cur.fetchmany(nrecs)
+                    if not rows:
+                        break
+                    pickle.dump(rows, fout)
 
     def _update_db_drop_old_tables(self):
         """
@@ -729,6 +749,33 @@ class UpdateDataBase:
         # add new records if needed
         populate_mod_akrr_appkernels(akrr_con_dict, akrr_cur_dict, dry_run=akrr.dry_run)
 
+        # load mod_appkernel
+        ak_con, ak_cur = self.get_old_ak_db_con()
+        tables_to_load = self.tables_to_drop['mod_appkernel']['tables']
+        tables_to_load.reverse()
+        for table_name in tables_to_load:
+            table_pkl_name = self._get_table_pkl_name("mod_appkernel", table_name)
+            if not os.path.isfile(table_pkl_name):
+                log.debug("Table %s was not saved (might not present in previous version)", table_name)
+                continue
+            log.debug("Populating: mod_appkernel.%s" % table_name)
+
+            cursor_execute(ak_cur, "show columns from %s" % table_name)
+            columns = ",".join(tuple((r[0] for r in ak_cur.fetchall())))
+
+            values_in = ", ".join(["%s"] * (columns.count(",") + 1))
+
+            with open(table_pkl_name, "rb") as fin:
+                while True:
+                    try:
+                        rows = pickle.load(fin)
+                    except EOFError:
+                        break
+                    for row in rows:
+                        if not akrr.dry_run:
+                            ak_cur.execute(
+                                "INSERT INTO %s\n(%s)\nVALUES(%s)" % (table_name, columns, values_in), row)
+                ak_con.commit()
         # update mod_appkernel
         self._rename_appkernels_mod_appkernel()
 
