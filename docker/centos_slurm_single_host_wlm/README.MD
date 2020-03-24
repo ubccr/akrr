@@ -81,6 +81,6 @@ docker run -it --rm -e AKRR_SETUP_WAY=src  -v $HOME/xdmod_wsp/akrr:/home/akrruse
     pseudo_repo/akrr_runtest:latest
 # run in source test with non default user home
 docker run -it --rm -e AKRR_SETUP_WAY=src -e AKRR_SETUP_HOME=/home/akrruser/akrrhome\
-    -v /home/$HOMExdmod_wsp/akrr:/home/akrruser/akrr_src \
+    -v $HOMExdmod_wsp/akrr:/home/akrruser/akrr_src \
     pseudo_repo/akrr_runtest:latest
 ```
