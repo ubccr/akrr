@@ -12,13 +12,14 @@ import socket
 from collections import OrderedDict
 from typing import Union
 
-from . import cfg
+from akrr import cfg
 import akrr.db
 
 import akrr.util.time
 from akrr.util.time import time_stamp_to_datetime_str
-from .util import log
-from . import akrr_task
+from akrr.util import log
+from akrr import akrr_task
+from akrr.util import make_dirs
 import akrr.akrrrestclient
 import akrr.util.openstack
 
@@ -455,8 +456,6 @@ class AkrrDaemon:
                 status_info = copy.deepcopy(th.status_info)
                 del th
 
-            # Read log
-
             # Update error counters on DB
             self.dbCur.execute('''UPDATE active_tasks
                 SET fatal_errors_count=%s,fails_to_submit_to_the_queue=%s
@@ -510,9 +509,17 @@ class AkrrDaemon:
                 self.dbCon.commit()
                 self.dbCon.commit()
 
-                # now the last thing moving the directory
+                # now the last thing moving the directory to complete dir
+                # complete dir structure is <completed_tasks_dir>/<resource>/<app>/<year>/<month>/<this task>
                 task_dir = os.path.join(cfg.data_dir, resource, app, datetime_stamp)
-                comp_tasks_dir = os.path.join(cfg.completed_tasks_dir, resource, app)
+                datetime_stamp_split = datetime_stamp.split(".")
+                if len(datetime_stamp_split) > 2:
+                    year = datetime_stamp_split[0]
+                    month = datetime_stamp_split[1]
+                    comp_tasks_dir = os.path.join(cfg.completed_tasks_dir, resource, app, year, month)
+                else:
+                    comp_tasks_dir = os.path.join(cfg.completed_tasks_dir, resource, app)
+                make_dirs(comp_tasks_dir)
                 log.info(
                     "Task is completed. Moving its' working directory\n" +
                     "\tfrom %s" % task_dir + "\n" +
