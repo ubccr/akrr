@@ -14,8 +14,6 @@
     * [NWChem Deployment](AKRR_NWChem_Deployment.md)
     * [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
     * [Enzo Deployment](AKRR_Enzo_Deployment.md)
-    
-    
     * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
   * [Adding OpenStack Resource and Application Kernels Deployment](AKRR_Add_OpenStack_Resource_and_AppKernels.md.md)
   * [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md)
