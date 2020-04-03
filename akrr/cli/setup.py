@@ -475,9 +475,10 @@ class AKRRSetup:
         else:
             log.dry_run("run command: " + cmd)
 
-    def generate_settings_file(self):
+    def generate_settings_file(self) -> dict:
         """
         Generate configuration (akrr.conf) file
+        Return dictionary with configuration
         """
         log.info("Generating configuration file ...")
         with open(os.path.join(_akrr_mod_dir, 'templates', 'akrr.conf'), 'r') as f:
@@ -604,6 +605,14 @@ class AKRRSetup:
         else:
             log.dry_run("New config should be written to: {}".format(_akrr_cfg))
             log.debug2(akrr_inp)
+
+        # reset data_dir completed_tasks_dir as absolute path for further use during setup/update
+        if not os.path.isabs(cfg['data_dir']):
+            cfg['data_dir'] = os.path.abspath(os.path.join(os.path.dirname(_akrr_cfg), cfg['data_dir']))
+        if not os.path.isabs(cfg['completed_tasks_dir']):
+            cfg['completed_tasks_dir'] = os.path.abspath(
+                os.path.join(os.path.dirname(_akrr_cfg), cfg['completed_tasks_dir']))
+        return cfg
 
     @staticmethod
     def set_permission_on_files():
@@ -900,6 +909,12 @@ class AKRRSetup:
         _akrr_cfg = _akrr_dirs["akrr_cfg"]
 
         if self.update:
+            # require that old and new akrr home was different
+            if _akrr_dirs == self.update.old_akrr_home:
+                log.error(
+                    "Old and new akrr home directories should be different. Rename old akrr home.\n" +
+                    "\tOld AKRR home: %s\n\tNew AKRR home: %s", self.update.old_akrr_home, _akrr_dirs)
+                exit(1)
             # shut down old daemon, remove it from cron and update DB
             self.update.remove_old_akrr_from_crontab()
             self.update.shut_down_old_akrr()
@@ -920,13 +935,19 @@ class AKRRSetup:
             # if it is dry_run
             # all question are asked, this is dry run, so nothing else to do")
             self.init_mysql_dbs()
-        else:
+
+        self.generate_self_signed_certificate()
+        cfg = self.generate_settings_file()
+
+        if self.update:
+            # copy old logs
+            akrr.update.UpdateCompletedDirs(
+                self.update.old_cfg["completed_tasks_dir"], cfg["completed_tasks_dir"]).run()
+            return
+
             # update DB
             akrr.update.UpdateDataBase(self.update).update()
 
-        self.generate_self_signed_certificate()
-        self.generate_settings_file()
-        if self.update:
             # update config files for resources and appkernels
             hints_to_finish_update = akrr.update.UpdateResourceAppConfigs(self.update).update()
 

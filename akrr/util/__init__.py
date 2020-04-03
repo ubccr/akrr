@@ -244,7 +244,7 @@ def base_gzip_decode(value: str) -> str:
     return os.popen('echo "%s"|base64 -d|gzip -d' % value).read()
 
 
-def make_dirs(path):
+def make_dirs(path, verbose=True):
     """
     Recursively create directories if not in dry run mode
     """
@@ -255,9 +255,11 @@ def make_dirs(path):
 
     if not akrr.dry_run:
         if os.path.isdir(path):
-            log.debug2("Directory %s already exists.", path)
+            if verbose:
+                log.debug2("Directory %s already exists.", path)
         elif not os.path.exists(path):
-            log.debug2("Creating directory: {}".format(path))
+            if verbose:
+                log.debug2("Creating directory: {}".format(path))
             os.makedirs(path, mode=0o755)
         else:
             raise akrrerror.AkrrError("Can not create directory %s, because it exists and is not directory" % path)
