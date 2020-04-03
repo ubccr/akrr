@@ -1,7 +1,7 @@
-Application Kernels Remote Runner
+Application Kernels Remote Runner (AKRR)
 =========================================
 
-# XDMoD: Application Kernel Performance Monitoring Module
+AKRR is a tool used in XDMoD's Application Kernel Performance Monitoring Module.
 
 Application Kernel Performance Monitoring Module of XDMoD tool is designed to 
 measure quality of service as well as preemptively identify underperforming 
@@ -16,7 +16,8 @@ on users to report failures or underperforming hardware and software.
 
 * [Overview](docs/AKRR_Overview.md)
 * [Download](docs/AKRR_Download.md)
-* [installation](docs/AKRR_Install.md)
+* [Installation](docs/AKRR_Install.md)
+* [Update](docs/AKRR_Update.md)
 * [Usage](docs/AKRR_Usage.md)
   * [Add HPC resource](docs/AKRR_Add_Resource.md)
   * [Deployment of Application Kernels on Resource](docs/AKRR_Deployment_of_Application_Kernel_on_Resource.md)

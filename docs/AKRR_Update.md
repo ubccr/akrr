@@ -26,5 +26,24 @@ mv akrr akrr_old
 
 ## RPM Installation
 
+Download RPM from:
 
-New installation 
+```shell script
+wget 
+```
+
+Install:
+ 
+```shell script
+sudo yum install akrr-2.1.0-1.noarch.rpm
+```
+
+## Run Update Script
+
+Run update script:
+
+```shell script
+akrr -vv update --akrr-home=<New AKRR Home, default is ~/akrr> --old-akrr-home=<Old AKRR Home>
+```
+
+Now you need to update xdmod-appkernel module for XDMoD.
