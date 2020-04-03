@@ -15,11 +15,23 @@ class AkrrValueException(AkrrBaseException):
     pass
 
 
-class AkrrFileNotFoundError(FileNotFoundError):
+class AkrrFileNotFoundError(AkrrBaseException):
     pass
 
 
 class AkrrRestAPIException(AkrrBaseException):
+    pass
+
+
+class AkrrFileNotFoundError(AkrrBaseException):
+    pass
+
+
+class AkrrNotADirectoryError(AkrrBaseException):
+    pass
+
+
+class AkrrPermissionError(AkrrBaseException):
     pass
 
 

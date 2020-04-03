@@ -24,6 +24,7 @@ from akrr.util.sql import db_check_priv
 from akrr.util.sql import get_db_client_host
 from akrr.util.sql import create_user_if_not_exists
 import akrr.update
+from akrr.util import make_dirs
 
 # Since AKRR setup is the first script to execute
 # Lets check python version, proper library presence and external commands.
@@ -58,15 +59,6 @@ _akrr_cfg:  Optional[str] = _akrr_dirs["akrr_cfg"]
 def _cursor_execute(cur, query, args=None):
     from akrr.util.sql import cursor_execute
     cursor_execute(cur, query, args=args, dry_run=akrr.dry_run)
-
-
-def make_dirs(path):
-    """Recursively create directories if not in dry run mode"""
-    if not akrr.dry_run:
-        log.debug("Creating directory: {}".format(path))
-        os.makedirs(path)
-    else:
-        log.dry_run("_make_dirs({})".format(path))
 
 
 def _read_username_password(

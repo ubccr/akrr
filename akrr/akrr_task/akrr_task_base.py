@@ -7,7 +7,9 @@ import re
 import akrr.util.ssh
 from akrr import cfg
 from akrr.util import log
+from akrr.util import make_dirs
 import akrr.util.openstack
+from akrr.akrrerror import AkrrFileNotFoundError, AkrrNotADirectoryError, AkrrPermissionError
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
 
@@ -161,39 +163,38 @@ class AkrrTaskHandlerBase:
         """
         resource_dir = os.path.join(cfg.data_dir, self.resourceName)
         app_dir = os.path.join(resource_dir, self.appName)
-        time_stamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
-        task_dir = os.path.join(app_dir, time_stamp)
 
+        # check that directory layout is correct if needed create directories
         if not os.path.isdir(cfg.data_dir):
-            raise IOError("Directory %s does not exist or is not directory." % cfg.data_dir)
+            raise AkrrNotADirectoryError("Directory %s does not exist or is not directory." % cfg.data_dir)
         if not os.path.isdir(resource_dir):
             log.info("Directory %s does not exist, creating it." % resource_dir)
-            os.mkdir(resource_dir)
+            make_dirs(resource_dir)
         if not os.path.isdir(app_dir):
             log.info("Directory %s does not exist, creating it." % app_dir)
-            os.mkdir(app_dir)
+            make_dirs(app_dir)
         if not os.path.isdir(cfg.completed_tasks_dir):
-            raise IOError("Directory %s does not exist or is not directory." % cfg.completed_tasks_dir)
-        if not os.path.isdir(os.path.join(cfg.completed_tasks_dir, self.resourceName)):
-            log.info("Directory %s does not exist, creating it." % (
-                os.path.join(cfg.completed_tasks_dir, self.resourceName)))
-            os.mkdir(os.path.join(cfg.completed_tasks_dir, self.resourceName))
-        if not os.path.isdir(os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName)):
+            raise AkrrFileNotFoundError("Directory %s does not exist or is not directory." % cfg.completed_tasks_dir)
+
+        completed_resource_app_dir = os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName)
+        if not os.path.isdir(completed_resource_app_dir):
             log.info("Directory %s does not exist, creating it." % (
                 os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName)))
-            os.mkdir(os.path.join(cfg.completed_tasks_dir, self.resourceName, self.appName))
+            make_dirs(completed_resource_app_dir)
 
         # Generate unique time_stamp
-        while os.path.exists(task_dir):
-            log.debug2(os.path.exists(task_dir))
+        while True:
             time_stamp = datetime.datetime.today().strftime("%Y.%m.%d.%H.%M.%S.%f")
             task_dir = os.path.join(app_dir, time_stamp)
+            if not os.path.exists(task_dir):
+                break
+
         log.info("Creating task directory: %s" % task_dir)
-        os.mkdir(task_dir)
+        make_dirs(task_dir)
         log.info("Creating task directories: \n\t%s\n\t%s" % (os.path.join(task_dir, "jobfiles"),
                                                               os.path.join(task_dir, "proc")))
-        os.mkdir(os.path.join(task_dir, "jobfiles"))
-        os.mkdir(os.path.join(task_dir, "proc"))
+        make_dirs(os.path.join(task_dir, "jobfiles"))
+        make_dirs(os.path.join(task_dir, "proc"))
         return time_stamp
 
     def first_step(self):
@@ -225,15 +226,15 @@ class AkrrTaskHandlerBase:
     def delete_remote_folder(self):
         # trying to be carefull
         if self.remoteTaskDir == '/':
-            raise IOError("can not remove /")
+            raise AkrrPermissionError("can not remove /")
 
         # should remove ../../ etc
         rt = os.path.normpath(self.remoteTaskDir)
         ad = os.path.normpath(self.resource['akrr_data'])
         if rt == ad:
-            raise IOError("can not remove akrr_data")
+            raise AkrrPermissionError("can not remove akrr_data")
         if os.path.commonprefix([rt, ad]) != ad:
-            raise IOError("can not remove remote task folder. The folder should be in akrr_data")
+            raise AkrrPermissionError("can not remove remote task folder. The folder should be in akrr_data")
 
         log.info("removing remote task folder:\n\t%s" % self.remoteTaskDir)
         if self.resource['batch_scheduler'].lower() == "openstack":

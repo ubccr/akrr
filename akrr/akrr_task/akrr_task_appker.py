@@ -746,7 +746,6 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             resource = self.resourceName
             executionhost = self.resource.get('__regexp__', self.resourceName)
             reporter = self.appName
-            # reporternickname="%s.%d"%(self.appName,self.resourceParam['ncpus'])
             reporternickname = akrr.util.replace_at_var_at(self.app['nickname'],
                                                            [self.resource, self.app, self.resourceParam, self.appParam])
 
