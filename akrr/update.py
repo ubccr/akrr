@@ -651,8 +651,8 @@ class UpdateDataBase:
 
         # save mod_appkernel
         ak_con, ak_cur = self.get_old_ak_db_con()
-        cursor_execute(akrr_cur, "show tables")
-        tables = tuple((r[0] for r in akrr_cur.fetchall()))
+        cursor_execute(ak_cur, "show tables")
+        tables = tuple((r[0] for r in ak_cur.fetchall()))
 
         for name in self.tables_to_drop['mod_appkernel']['tables']:
             if name not in tables:
