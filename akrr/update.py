@@ -1,6 +1,7 @@
 """
 Routings for AKRR update
 """
+import datetime
 import os
 import copy
 import re
@@ -10,6 +11,7 @@ import pickle
 import pprint
 from collections import OrderedDict
 from typing import Optional, Tuple
+import tarfile
 
 import akrr
 from akrr.util import log
@@ -19,6 +21,7 @@ from akrr.util.sql import get_con_to_db, cursor_execute
 from akrr.util import exec_files_to_dict, make_dirs
 from akrr.cli.generate_tables import create_and_populate_tables, mod_akrr_create_tables_dict, \
     mod_appkernel_create_tables_dict, populate_mod_akrr_appkernels
+from akrr.archive import Archive
 
 
 def mod_akrr_db_compare(db_src, db_dest):
@@ -382,6 +385,8 @@ class UpdateAKRR:
                         continue
                 # AKRR 2.0
                 if re.search(r"akrr\s+daemon\s+(restart|checknrestart)", crontab_line):
+                    continue
+                if re.search(r"akrr\s+archive", crontab_line):
                     continue
             if len(crontab_line.strip()) > 6 and crontab_line.strip()[:6].upper() == 'MAILTO':
                 fields = crontab_line.strip().split("=")
@@ -1103,9 +1108,12 @@ class UpdateCompletedDirs:
     def __init__(self, old_completed_task_dir, completed_task_dir):
         self.old_completed_task_dir = old_completed_task_dir
         self.completed_task_dir = completed_task_dir
+        self.days_to_archive_task = datetime.timedelta(days=90)
 
-    def run(self):
-        # if old and new completed task dir are the same rename old one
+    def _check_completed_task_dir(self):
+        """
+        if old and new completed task dir are the same rename old one
+        """
         if self.old_completed_task_dir == self.completed_task_dir:
             old_completed_task_dir = self.old_completed_task_dir + '.bak'
             i = 1
@@ -1115,21 +1123,118 @@ class UpdateCompletedDirs:
             log.info("Renamed old complete task dir %s to %s.", self.old_completed_task_dir, old_completed_task_dir)
             self.old_completed_task_dir = old_completed_task_dir
 
+    def _get_app_name(self, app_old):
+        """
+        Get new app name
+        """
+        return app_old if app_old not in ak_rename else ak_rename[app_old]
+
+
+    def _get_resource_dir(self, resource):
+        """
+        Return resource old and new dir, return None, None if old dir do not exists
+        """
+        resource_old_dir = os.path.join(self.old_completed_task_dir, resource)
+        resource_dir = os.path.join(self.completed_task_dir, resource)
+        if not os.path.isdir(resource_old_dir):
+            return None, None
+        return resource_old_dir, resource_dir
+
+    def _get_resource_app_dir(self, resource, app_old):
+        """
+        Get resource app dir
+        """
+        resource_old_dir, resource_dir = self._get_resource_dir(resource)
+        if not resource_old_dir:
+            return None, None
+
+        app = self._get_app_name(app_old)
+        app_old_dir = os.path.join(resource_old_dir, app_old)
+        app_dir = os.path.join(resource_dir, app)
+
+        if not os.path.isdir(app_old_dir):
+            return None, None
+        return app_old_dir, app_dir
+
+    def _copy_task_v1(self, resource, app_old, task_time_stamp):
+        """
+        Copy logs with old layout
+        """
+        app = self._get_app_name(app_old)
+        app_old_dir, app_dir = self._get_resource_app_dir(resource, app_old)
+        if not app_old_dir:
+            return
+        task_old_dir = os.path.join(app_old_dir, task_time_stamp)
+        if not os.path.isdir(task_old_dir):
+            return
+
+        datetime_stamp_split = task_time_stamp.split(".")
+        if len(datetime_stamp_split) > 3:
+            year = datetime_stamp_split[0]
+            month = datetime_stamp_split[1]
+            day = datetime_stamp_split[2]
+        else:
+            # unknown format just copy
+            task_parent_dir = os.path.join(app_old_dir, task_time_stamp)
+            task_dir = os.path.join(app_dir, task_time_stamp)
+            if not akrr.dry_run:
+                shutil.copytree(task_parent_dir, task_dir)
+            return
+
+        task_dir = os.path.join(app_dir, year, month, task_time_stamp)
+        if not akrr.dry_run:
+            # move only logs and app output
+            make_dirs(task_dir, verbose=False)
+            filename_old = os.path.join(task_old_dir, 'result.xml')
+            filename = os.path.join(task_dir, 'result.xml')
+
+            if os.path.isfile(filename_old):
+                shutil.copyfile(filename_old, filename)
+
+            filename_old = os.path.join(task_old_dir, 'proc', 'log')
+            filename = os.path.join(task_dir, 'proc', 'log')
+
+            if os.path.isfile(filename_old):
+                make_dirs(os.path.join(task_dir, 'proc'), verbose=False)
+                shutil.copyfile(filename_old, filename)
+
+            jobfiles_old_dir = os.path.join(task_old_dir, 'jobfiles')
+            jobfiles_dir = os.path.join(task_dir, 'jobfiles')
+            if os.path.isdir(jobfiles_old_dir):
+                make_dirs(jobfiles_dir, verbose=False)
+                for filename in ('appstdout', 'gen.info', 'job.id', 'stderr', 'stdout'):
+                    filename_old = os.path.join(jobfiles_old_dir, filename)
+                    filename = os.path.join(jobfiles_dir, filename)
+                    if os.path.isfile(filename_old):
+                        shutil.copyfile(filename_old, filename)
+
+                batch_job_file_old = os.path.join(jobfiles_old_dir, app_old + ".job")
+                batch_job_file = os.path.join(jobfiles_dir, app + ".job")
+                if os.path.isfile(batch_job_file_old):
+                    shutil.copyfile(batch_job_file_old, batch_job_file)
+        # Archive completed tasks to save space and file counts
+        # zip task dir after 90 days
+        if datetime.date.today() - datetime.date(int(year), int(month), int(day)) > self.days_to_archive_task:
+            out = tarfile.open(task_dir + '.tar.gz', mode='w|gz')
+            out.add(task_dir, task_time_stamp)
+            out.close()
+            shutil.rmtree(task_dir)
+
+    def run(self):
+        self._check_completed_task_dir()
         # Moving old complete tasks logs
         log.info("Moving old complete tasks logs from %s to %s", self.old_completed_task_dir, self.completed_task_dir)
         for resource in os.listdir(self.old_completed_task_dir):
-            resource_old_dir = os.path.join(self.old_completed_task_dir, resource)
-            resource_dir = os.path.join(self.completed_task_dir, resource)
-            if not os.path.isdir(resource_old_dir):
+            resource_old_dir, resource_dir = self._get_resource_dir(resource)
+            if not resource_old_dir:
                 continue
             log.info("\tMoving %s resource", resource)
             for app_old in os.listdir(resource_old_dir):
-                app_old_dir = os.path.join(resource_old_dir, app_old)
-                app = app_old if app_old not in ak_rename else ak_rename[app_old]
-                app_dir = os.path.join(resource_dir, app)
-                
-                if not os.path.isdir(app_old_dir):
+                app = self._get_app_name(app_old)
+                app_old_dir, app_dir = self._get_resource_app_dir(resource, app_old)
+                if not app_old_dir:
                     continue
+
                 tasks = [f for f in os.listdir(app_old_dir) if os.path.isdir(os.path.join(app_old_dir, f))]
                 if len(tasks) == 0:
                     log.info("\t\tNo completed tasks in %s", app_old)
@@ -1149,48 +1254,10 @@ class UpdateCompletedDirs:
                             shutil.copytree(year_old_dir, year_dir)
                 else:
                     # 1.0 format
-                    for task in tasks:
-                        task_old_dir = os.path.join(app_old_dir, task)
-
-                        datetime_stamp_split = task.split(".")
-                        if len(datetime_stamp_split) > 2:
-                            year = datetime_stamp_split[0]
-                            month = datetime_stamp_split[1]
-                        else:
-                            # unknown format just copy
-                            task_parent_dir = os.path.join(app_old_dir, task)
-                            task_dir = os.path.join(app_dir, task)
-                            if not akrr.dry_run:
-                                shutil.copytree(task_parent_dir, task_dir)
-                            continue
-
-                        task_dir = os.path.join(app_dir, year, month, task)
-                        if not akrr.dry_run:
-                            make_dirs(task_dir, verbose=False)
-                            filename_old = os.path.join(task_old_dir, 'result.xml')
-                            filename = os.path.join(task_dir, 'result.xml')
-
-                            if os.path.isfile(filename_old):
-                                shutil.copyfile(filename_old, filename)
-
-                            filename_old = os.path.join(task_old_dir, 'proc', 'log')
-                            filename = os.path.join(task_dir, 'proc', 'log')
-
-                            if os.path.isfile(filename_old):
-                                make_dirs(os.path.join(task_dir, 'proc'), verbose=False)
-                                shutil.copyfile(filename_old, filename)
-
-                            jobfiles_old_dir = os.path.join(task_old_dir, 'jobfiles')
-                            jobfiles_dir = os.path.join(task_dir, 'jobfiles')
-                            if os.path.isdir(jobfiles_old_dir):
-                                make_dirs(jobfiles_dir, verbose=False)
-                                for filename in ('appstdout', 'gen.info', 'job.id', 'stderr', 'stdout'):
-                                    filename_old = os.path.join(jobfiles_old_dir, filename)
-                                    filename = os.path.join(jobfiles_dir, filename)
-                                    if os.path.isfile(filename_old):
-                                        shutil.copyfile(filename_old, filename)
-
-                                batch_job_file_old = os.path.join(jobfiles_old_dir, app_old + ".job")
-                                batch_job_file = os.path.join(jobfiles_dir, app + ".job")
-                                if os.path.isfile(batch_job_file_old):
-                                    shutil.copyfile(batch_job_file_old, batch_job_file)
+                    for task_time_stamp in tasks:
+                        self._copy_task_v1(resource, app_old, task_time_stamp)
+        # Archive completed tasks to save space and file counts
+        # zip task dir after 90 days
+        # zip month dir after half a year
+        Archive(comp_task_dir=self.completed_task_dir).archive_tasks_by_months(months_old=6)
+        Archive(comp_task_dir=self.completed_task_dir).archive_tasks(days_old=90)

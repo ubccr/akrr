@@ -5,13 +5,15 @@ import os
 import re
 import datetime
 import shutil
+import tarfile
 
-from akrr.util import log, get_list_from_comma_sep_values
+from akrr.util import log, get_list_from_comma_sep_values, progress_bar
 from akrr.util.time import time_stamp_to_datetime
 
 _digits_dots = re.compile('^[0-9.]+$')
 _digits = re.compile('^[0-9]+$')
 _state_dump = re.compile('^[0-9]+\.st$')
+
 
 class Archive:
     """
@@ -19,10 +21,12 @@ class Archive:
     """
     def __init__(self, dry_run=False, comp_task_dir=None):
         self.dry_run = dry_run
-        self.comp_task_dir = os.path.abspath(comp_task_dir)
-        if self.comp_task_dir is None:
+
+        if comp_task_dir is None:
             import akrr.cfg
             self.comp_task_dir = akrr.cfg.completed_tasks_dir
+        else:
+            self.comp_task_dir = os.path.abspath(comp_task_dir)
 
     @staticmethod
     def get_resources_dir_list(comp_task_dir, resources):
@@ -72,7 +76,13 @@ class Archive:
                         if _digits.match(month_dir) is None:
                             continue
                         month_dir_fullpath = os.path.join(task_dir_fullpath, month_dir)
-                        tasks_dir_list += Archive.get_tasks_in_resource_app_dir(month_dir_fullpath)
+                        if not os.path.isdir(month_dir_fullpath):
+                            continue
+                        for real_task_dir in os.listdir(month_dir_fullpath):
+                            real_task_dir_fullpath = os.path.join(month_dir_fullpath, real_task_dir)
+                            if not os.path.isdir(real_task_dir_fullpath):
+                                continue
+                            tasks_dir_list.append(real_task_dir_fullpath)
             elif _digits_dots.match(task_dir):
                 # old layout
                 tasks_dir_list.append(task_dir_fullpath)
@@ -84,9 +94,33 @@ class Archive:
         """
         tasks_dir_list = []
 
-        for resouce_dir in Archive.get_resources_dir_list(self.comp_task_dir, resources):
-            for resource_app_dir in Archive.get_appker_dir_list(resouce_dir, appkernels):
+        for resource_dir in Archive.get_resources_dir_list(self.comp_task_dir, resources):
+            for resource_app_dir in Archive.get_appker_dir_list(resource_dir, appkernels):
                 tasks_dir_list += Archive.get_tasks_in_resource_app_dir(resource_app_dir, old_layout_only)
+
+        return tasks_dir_list
+
+    def get_tasks_month_dir_list(self, resources=None, appkernels=None, old_layout_only=False):
+        """
+        Get list of task directories
+        """
+        tasks_dir_list = []
+
+        for resource_dir in Archive.get_resources_dir_list(self.comp_task_dir, resources):
+            for resource_app_dir in Archive.get_appker_dir_list(resource_dir, appkernels):
+                for year_dir in os.listdir(resource_app_dir):
+                    year_dir_fullpath = os.path.join(resource_app_dir, year_dir)
+                    if not os.path.isdir(year_dir_fullpath):
+                        continue
+                    if not _digits.match(year_dir):
+                        continue
+                    for month_dir in os.listdir(year_dir_fullpath):
+                        if _digits.match(month_dir) is None:
+                            continue
+                        month_dir_fullpath = os.path.join(year_dir_fullpath, month_dir)
+                        if not os.path.isdir(month_dir_fullpath):
+                            continue
+                        tasks_dir_list.append(month_dir_fullpath)
 
         return tasks_dir_list
 
@@ -120,14 +154,10 @@ class Archive:
                 if not os.path.isdir(proc_dir):
                     continue
 
-                if log.verbose:
-                    print("in:", task_dir)
-
                 for state_file in os.listdir(proc_dir):
                     if _state_dump.match(state_file) is None:
                         continue
-                    if log.verbose:
-                        print("    delete:", state_file)
+                    log.debug2("    delete:", state_file)
                     state_file_fullpath = os.path.join(proc_dir, state_file)
                     count += 1
                     if not self.dry_run:
@@ -216,16 +246,90 @@ class Archive:
                 traceback.print_exc()
         log.info("Moved %d task dirs" % count)
 
+    def archive_tasks(self, days_old: int, resources=None, appkernels=None) -> None:
+        """
+        archive old task
+        """
+        resources = get_list_from_comma_sep_values(resources)
+        appkernels = get_list_from_comma_sep_values(appkernels)
 
-    def run(self):
-        log.info("Running archiving")
-        log.debug("update_dir_layout: " + str(self.update_dir_layout))
-        log.debug("remove_tasks_state_dumps: " + str(self.remove_tasks_state_dumps))
-        log.debug("resources: " + str(self.resources))
-        log.debug("appkernels: " + str(self.appkernels))
-        log.debug("days: " + str(self.days))
+        log.info("Archiving tasks")
+        log.debug("resources filter: " + str(resources))
+        log.debug("appkernels filter: " + str(appkernels))
+        log.debug("days: " + str(days_old))
         log.debug("dry_run: " + str(self.dry_run))
         log.debug("comp_task_dir: "+str(self.comp_task_dir))
 
-        if self.remove_tasks_state_dumps:
-            self.do_remove_tasks_state_dumps()
+        time_now = datetime.datetime.now()
+        seconds_in_day = 24*3600
+        count = 0
+        task_dirs = self.get_tasks_dir_list(resources, appkernels)
+        n_task_dirs = len(task_dirs)
+        progress_update = max(int(round(n_task_dirs / 50)), 1)
+        for i in range(n_task_dirs):
+            task_dir = task_dirs[i]
+            if i % progress_update == 0:
+                progress_bar(i / n_task_dirs)
+            try:
+                time_stamp = os.path.basename(task_dir)
+                activate_time = time_stamp_to_datetime(time_stamp)
+                days_passed = (time_now-activate_time).total_seconds()/seconds_in_day
+                if days_passed < days_old:
+                    continue
+
+                out = tarfile.open(task_dir + '.tar.gz', mode='w|gz')
+                out.add(task_dir, time_stamp)
+                out.close()
+                shutil.rmtree(task_dir)
+                count += 1
+            except:
+                log.error("Cannot process: "+task_dir)
+        progress_bar()
+        log.info("Archived %d tasks" % count)
+
+    def archive_tasks_by_months(self, months_old: int, resources=None, appkernels=None) -> None:
+        """
+        archive old task by months
+        """
+        log.info("Archiving tasks by months")
+
+        resources = get_list_from_comma_sep_values(resources)
+        appkernels = get_list_from_comma_sep_values(appkernels)
+        time_now = datetime.datetime.now()
+        mega_month_now = time_now.month + time_now.year * 12
+        count = 0
+        task_month_dirs = self.get_tasks_month_dir_list(resources, appkernels)
+        n_task_month_dirs = len(task_month_dirs)
+        progress_update = max(int(round(n_task_month_dirs/50)), 1)
+        for i in range(n_task_month_dirs):
+            task_month_dir = task_month_dirs[i]
+            if i % progress_update == 0:
+                progress_bar(i/n_task_month_dirs)
+            month = os.path.basename(task_month_dir)
+            year = os.path.basename(os.path.dirname(task_month_dir))
+            mega_month = int(month) + int(year) * 12
+
+            if mega_month_now - mega_month < months_old:
+                continue
+
+            # unzip archives
+            for archive in [f for f in os.listdir(task_month_dir) if f.endswith(".tar.gz")]:
+                archive_path = os.path.join(task_month_dir, archive)
+                try:
+                    targz = tarfile.open(archive_path, "r|gz")
+                    targz.extractall(task_month_dir)
+                    targz.close()
+                    os.remove(archive_path)
+                except Exception as e:
+                    log.error("Can not extract %s:\n %s", archive_path, str(e))
+            # zip month
+            try:
+                targz = tarfile.open(task_month_dir + '.tar.gz', "w|gz")
+                targz.add(task_month_dir, month)
+                targz.close()
+                shutil.rmtree(task_month_dir)
+                count += 1
+            except Exception as e:
+                log.error("Can not archive %s\n %s", task_month_dir, str(e))
+        progress_bar()
+        log.info("Archived %d task months" % count)

@@ -265,3 +265,23 @@ def make_dirs(path, verbose=True):
             raise akrrerror.AkrrError("Can not create directory %s, because it exists and is not directory" % path)
     else:
         log.dry_run("make_dirs(%s)", path)
+
+
+def progress_bar(progress: float = None):
+    import sys
+
+    bar_width = 50
+    if progress is None:
+        bar_progress = bar_width
+    else:
+        bar_progress = int(round(progress*bar_width))
+    bar_todo = bar_width - bar_progress
+    sys.stdout.write("[" + "#" * bar_progress + " " * bar_todo + "]")
+    sys.stdout.flush()
+    if progress is None:
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+    else:
+        sys.stdout.write("\b" * (bar_width + 2))
+
+

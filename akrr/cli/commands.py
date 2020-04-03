@@ -514,14 +514,40 @@ def cli_task_delete(parent_parser):
 
 def add_command_archive(parent_parser):
     """
-    AK runs output, logs, pickles and batch jobs script manipulation
+    tar-gzip old app kernels output and logs
     """
     parser = parent_parser.add_parser('archive',  description=add_command_archive.__doc__)
-    subparsers = parser.add_subparsers(title="commands for archive")
+    parser.add_argument(
+        '-pd', '--pickle-days', default=90, type=int, help="remove pickels older than <pickle-days>. Default: 90.")
+    parser.add_argument(
+        '-ad', '--archive-days', default=90, type=int,
+        help="tar-gzip completed tasks older than <archive-days>. Default: 90.")
+    parser.add_argument(
+        '-am', '--archive-months', default=6, type=int,
+        help="tar-gzip completed tasks run at same month together if more than <archive-months> months passed."
+        "Default: 6.")
+    parser.add_argument('-cron', action='store_true', help="for launching by cron, no output on normal operation")
 
-    cli_archive_remove_state_dumps(subparsers)
-    cli_archive_remove_tasks_workdir(subparsers)
-    cli_archive_update_layout(subparsers)
+    def handler(args):
+        from akrr.util import log
+        from akrr.daemon import get_daemon_pid, daemon_start, daemon_stop
+
+        if args.cron is True:
+            run_akrr_for_cron()
+        else:
+            log.info("Archiving old completed tasks")
+            from akrr.archive import Archive
+            if args.pickle_days > args.archive_days:
+                log.error("pickle_days should be less or equal to archive_days")
+                exit(1)
+            if args.archive_months <1:
+                log.error("archive_months should be at least 1")
+                exit(1)
+            Archive().remove_tasks_state_dumps(days_old=args.pickle_days)
+            Archive().archive_tasks(days_old=args.archive_days)
+            Archive().archive_tasks_by_months(months_old=args.archive_months)
+
+    parser.set_defaults(func=handler)
 
 
 def cli_archive_remove_common_args(parser):

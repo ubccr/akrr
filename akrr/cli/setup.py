@@ -25,7 +25,7 @@ from akrr.util.sql import get_db_client_host
 from akrr.util.sql import create_user_if_not_exists
 import akrr.update
 from akrr.util import make_dirs
-from akrrversion import akrrversion
+from akrr.akrrversion import akrrversion
 
 # Since AKRR setup is the first script to execute
 # Lets check python version, proper library presence and external commands.
@@ -724,6 +724,7 @@ class AKRRSetup:
             mail = None
         restart = "50 23 * * * " + _akrr_bin_dir + "/akrr daemon restart -cron"
         check_and_restart = "33 * * * * " + _akrr_bin_dir + "/akrr daemon checknrestart -cron"
+        archive = "43 1 * * * " + _akrr_bin_dir + "/akrr archive -cron"
 
         try:
             crontab_content = subprocess.check_output("crontab -l", shell=True)
@@ -736,6 +737,7 @@ class AKRRSetup:
         mail_there = False
         restart_there = False
         check_and_restart_there = False
+        archive_there = False
 
         for i in range(len(crontab_content)):
             tmpstr = crontab_content[i]
@@ -755,6 +757,8 @@ class AKRRSetup:
                     restart_there = True
                 if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("checknrestart") > 0:
                     check_and_restart_there = True
+                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("archive") > 0:
+                    archive_there = True
         if mail_updated:
             log.info("Cron's MAILTO was updated")
         if ((self.cron_email is not None and mail_there) or (
@@ -768,6 +772,8 @@ class AKRRSetup:
             crontab_content.append(restart + "\n")
         if check_and_restart_there is False:
             crontab_content.append(check_and_restart + "\n")
+        if archive_there is False:
+            crontab_content.append(archive + "\n")
 
         with open(os.path.expanduser('.crontmp'), 'wt') as f:
             for tmpstr in crontab_content:
@@ -945,7 +951,6 @@ class AKRRSetup:
             # copy old logs
             akrr.update.UpdateCompletedDirs(
                 self.update.old_cfg["completed_tasks_dir"], cfg["completed_tasks_dir"]).run()
-            return
 
             # update DB
             akrr.update.UpdateDataBase(self.update).update()
