@@ -25,6 +25,7 @@ from akrr.util.sql import get_db_client_host
 from akrr.util.sql import create_user_if_not_exists
 import akrr.update
 from akrr.util import make_dirs
+from akrrversion import akrrversion
 
 # Since AKRR setup is the first script to execute
 # Lets check python version, proper library presence and external commands.
@@ -522,6 +523,7 @@ class AKRRSetup:
             'export_db_repeat_attempt_in': 'datetime.timedelta(hours=1)',
             'export_db_max_repeat_attempts': 48,
             'default_task_params': "{'test_run': False}",
+            'akrr_version': akrrversion
         }
         if self.akrr_db_host == self.ak_db_host and self.akrr_db_port == self.ak_db_port and \
                 self.akrr_db_user_name == self.ak_db_user_name and \
