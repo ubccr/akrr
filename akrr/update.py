@@ -605,6 +605,7 @@ class UpdateDataBase:
         """
         Save old tables
         """
+        log.info("Saving old tables ...")
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         cursor_execute(akrr_cur, "show tables")
         tables = tuple((r[0] for r in akrr_cur.fetchall()))
@@ -674,11 +675,13 @@ class UpdateDataBase:
                     if not rows:
                         break
                     pickle.dump(rows, fout)
+        log.info("\t\tDone")
 
     def _update_db_drop_old_tables(self):
         """
         drop old tables
         """
+        log.info("Dropping old tables ...")
         for db_name, tables_and_views in self.tables_to_drop.items():
             con, cur = self.get_akrr_db_con(db_name)
             tables_and_views['views'].reverse()
@@ -693,11 +696,13 @@ class UpdateDataBase:
                 if not akrr.dry_run:
                     cur.execute("DROP TABLE IF EXISTS %s" % name_old)
             con.commit()
+        log.info("\t\tDone")
 
     def _update_db_create_new(self):
         """
         create new tables
         """
+        log.info("Creating new tables ...")
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         ak_con, ak_cur = self.get_old_ak_db_con()
         for con, cur, db_name, create_tables_dict in (
@@ -711,11 +716,13 @@ class UpdateDataBase:
                 None, connection=con, cursor=cur,
                 drop_if_needed=True, dry_run=akrr.dry_run
             )
+        log.info("\t\tDone")
 
     def _update_db_populate_new_db(self):
         """
         Populate new tables
         """
+        log.info("Populating new tables ...")
         akrr_con, akrr_cur = self.get_old_akrr_db_con()
         akrr_con_dict, akrr_cur_dict = self.get_old_akrr_db_con(dict_cursor=True)
 
@@ -784,6 +791,7 @@ class UpdateDataBase:
                 ak_con.commit()
         # update mod_appkernel
         self._rename_appkernels_mod_appkernel()
+        log.info("\t\tDone")
 
     def _rename_appkernels_mod_appkernel(self) -> None:
         """

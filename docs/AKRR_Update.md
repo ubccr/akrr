@@ -26,10 +26,10 @@ mv akrr akrr_old
 
 ## RPM Installation
 
-Download RPM from:
+Download RPM from https://github.com/ubccr/akrr/releases:
 
 ```shell script
-wget 
+wget https://github.com/ubccr/akrr/releases/download/v2.1.0/akrr-2.1.0-1.noarch.rpm
 ```
 
 Install:
