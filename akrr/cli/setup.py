@@ -722,9 +722,9 @@ class AKRRSetup:
             mail = "MAILTO = " + self.cron_email
         else:
             mail = None
-        restart = "50 23 * * * " + _akrr_bin_dir + "/akrr daemon restart -cron"
-        check_and_restart = "33 * * * * " + _akrr_bin_dir + "/akrr daemon checknrestart -cron"
-        archive = "43 1 * * * " + _akrr_bin_dir + "/akrr archive -cron"
+        restart = '50 23 * * * bash -l -c "' + _akrr_bin_dir + '/akrr daemon restart -cron"'
+        check_and_restart = '33 * * * * bash -l "' + _akrr_bin_dir + '/akrr daemon checknrestart -cron"'
+        archive = '43 1 * * * bash -l -c "' + _akrr_bin_dir + '/akrr archive -cron"'
 
         try:
             crontab_content = subprocess.check_output("crontab -l", shell=True)
