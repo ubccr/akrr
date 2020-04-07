@@ -8,6 +8,7 @@ import re
 import getpass
 import subprocess
 import string
+from tempfile import mkstemp
 from typing import Optional, Dict, Tuple
 
 import MySQLdb
@@ -775,12 +776,16 @@ class AKRRSetup:
         if archive_there is False:
             crontab_content.append(archive + "\n")
 
-        with open(os.path.expanduser('.crontmp'), 'wt') as f:
-            for tmpstr in crontab_content:
-                f.write(tmpstr)
-        subprocess.call("crontab .crontmp", shell=True)
-        os.remove(".crontmp")
-        log.info("Cron Scripts Processed!")
+        tmp_cronfile_fd, tmp_cronfile = mkstemp(prefix="crontmp", dir=os.path.expanduser('~'), text=True)
+        if not akrr.dry_run:
+            with open(tmp_cronfile_fd, 'wt') as f:
+                for tmp_str in crontab_content:
+                    f.write(tmp_str)
+            subprocess.call("crontab " + tmp_cronfile, shell=True)
+            os.remove(tmp_cronfile)
+            log.info("Crontab updated.")
+        else:
+            log.dry_run("For removing old AKRR should update crontab to:\n" + "".join(crontab_content))
 
     def update_bashrc(self):
         """Add AKRR enviroment variables to .bashrc"""
