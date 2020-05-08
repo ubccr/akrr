@@ -4,7 +4,7 @@ import traceback
 import re
 import copy
 from typing import Optional
-
+import subprocess
 
 import akrr.db
 import akrr.util
@@ -275,9 +275,48 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
                 # report
                 if self.resource["gateway_reporting"]:
-                    ssh.ssh_command(sh, "module load gateway-usage-reporting")
-                    ssh.ssh_command(sh, r'gateway_submit_attributes -gateway_user ' + self.resource[
-                        "gateway_user"] + r''' -submit_time "`date '+%F %T %:z'`" -jobid ''' + str(job_id))
+                    can_submit = True
+                    if 'gateway_user' not in self.resource:
+                        log.error("Can not submit information to xdcdb! gateway_user is not set!")
+                        can_submit = False
+                    if 'xsede_resource_name' not in self.resource:
+                        log.error("Can not submit information to xdcdb! xsede_resource_name is not set!")
+                        can_submit = False
+                    if not os.path.isfile(os.path.expanduser("~/.xsede-gateway-attributes-apikey")):
+                        log.error("Can not submit information to xdcdb!"
+                                  "~/.xsede-gateway-attributes-apikey does not exist!")
+                        can_submit = False
+                    if can_submit:
+                        fields = {
+                            'gateway_attributes_apikey': os.path.expanduser("~/.xsede-gateway-attributes-apikey"),
+                            'gateway_user': self.resource["gateway_user"],
+                            'xsede_resource_name': self.resource["xsede_resource_name"],
+                            'job_id': str(job_id),
+                            'submit_time': datetime.datetime.today().astimezone().strftime("%Y-%m-%d %H:%M %Z")
+                        }
+                        cmd = [
+                            'curl', '-XPOST',
+                            '--data', f'@{fields["gateway_attributes_apikey"]}',
+                            '--data-urlencode', f'gatewayuser={fields["gateway_user"]}',
+                            '--data-urlencode', f'xsederesourcename={fields["xsede_resource_name"]}',
+                            '--data-urlencode', f'jobid={fields["job_id"]}',
+                            '--data-urlencode', f'submittime={fields["submit_time"]}',
+                            'https://xsede-xdcdb-api.xsede.org/gateway/v2/job_attributes'
+                        ]
+                        fields = {
+                            'gateway_attributes_apikey': os.path.expanduser("~/.xsede-gateway-attributes-apikey"),
+                            'gateway_user': "gateway_user123",
+                            'xsede_resource_name': "comet.sdsc.xsede",
+                            'job_id': "123",
+                            'submit_time': datetime.datetime.today().astimezone().strftime("%Y-%m-%d %H:%M %Z")
+                        }
+
+                        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        out = result.stdout.decode("utf8")
+                        if result.returncode!=0 or out.lower().count("errors found") >0:
+                            log.error("Can not submit information to xdcdb!\n"+out)
+                        else:
+                            log.info("Submitted information to xdcdb:\n" + out)
 
             ssh.ssh_command(sh, "echo %d > job.id" % job_id)
 
