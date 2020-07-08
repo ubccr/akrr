@@ -117,12 +117,12 @@ class AkrrDaemon:
         self.proc_queue_from_master = None
 
     def __del__(self):
-        if self.dbCon is not None:
+        if getattr(self, 'dbCon', None) is not None:
             self.dbCon.commit()
             if self.dbCur is not None:
                 self.dbCur.close()
             self.dbCon.close()
-        if self.restapi_proc is not None:
+        if getattr(self, 'restapi_proc', None) is not None:
             self.restapi_proc.terminate()
 
     def add_fatal_errors_for_task_count(self, task_id: Union[str, int], count: int=1):
