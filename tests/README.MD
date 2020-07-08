@@ -10,7 +10,7 @@ sudo chown -R mikola:mikola ../akrr;rm -rf etc log;\
 find . -type f -name '__pycache__' -exec rm -rf {} + ;\
 find . -type f -name '*.pyc' -exec rm -rf {} + ;
 # build image
-sudo docker build -t akrr_test -f dockerfile_run_tests .
+docker build -t akrr_test -f dockerfile_run_tests .
 #run
-sudo docker run -v `pwd`:/root/src/github.com/ubccr/akrr -it --rm akrr_test
+docker run -v `pwd`:/root/src/github.com/ubccr/akrr -it --rm akrr_test
 ```
