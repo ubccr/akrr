@@ -629,10 +629,10 @@ def add_command_update(parent_parser):
         '--old-akrr-home', type=str,
         help="location of old AKRR home directory, for example ~/akrr. Default: try to find")
     parser.add_argument(
-        '--skip_update_completed_dirs', action='store_true',
+        '--skip-update-completed-dirs', action='store_true',
         help="skip updating completed directories")
     parser.add_argument(
-        '--skip_update_db', action='store_true',
+        '--skip-update-db', action='store_true',
         help="skip updating db")
 
     def handler(args):
