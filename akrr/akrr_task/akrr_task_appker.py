@@ -303,13 +303,6 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                             '--data-urlencode', f'submittime={fields["submit_time"]}',
                             'https://xsede-xdcdb-api.xsede.org/gateway/v2/job_attributes'
                         ]
-                        fields = {
-                            'gateway_attributes_apikey': os.path.expanduser("~/.xsede-gateway-attributes-apikey"),
-                            'gateway_user': "gateway_user123",
-                            'xsede_resource_name': "comet.sdsc.xsede",
-                            'job_id': "123",
-                            'submit_time': datetime.datetime.today().astimezone().strftime("%Y-%m-%d %H:%M %Z")
-                        }
 
                         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                         out = result.stdout.decode("utf8")
