@@ -143,7 +143,7 @@ def app_validate(resource, appkernel, nnodes):
         sys.stdout = sys.__stdout__
         sys.stderr = sys.__stderr__
         msg = "Can not connect to """ + resource['name'] + "\n" + \
-              "Probably invalid credential, see full error report below", msg2
+              "Probably invalid credential, see full error report below\n" + msg2
         log.error(msg)
         raise e
     print("=" * 80)
@@ -210,12 +210,12 @@ def app_validate(resource, appkernel, nnodes):
         r = akrrrestclient.get('/scheduled_tasks')
         if r.status_code != 200:
             log.error("Can not get token for AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
-                      "See server response below", json.dumps(r.json(), indent=4))
+                      "See server response below:\n %s", json.dumps(r.json(), indent=4))
             exit(1)
     except Exception:
         log.error("Can not connect to AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                   "Is it running?\n" +
-                  "See full error report below", traceback.format_exc())
+                  "See full error report below:\n" + traceback.format_exc())
         exit(1)
 
     # check if the test job is already submitted
@@ -252,7 +252,7 @@ def app_validate(resource, appkernel, nnodes):
         except Exception:
             log.error("Can not submit task through AKRR REST API ( """ + akrrrestclient.restapi_host + " )\n" +
                       "Is it still running?\n" +
-                      "See full error report below", traceback.format_exc())
+                      "See full error report below:\n" + traceback.format_exc())
             exit(1)
         # write file with tast_id
         fout = open(os.path.join(test_job_lock_filename), "w")
@@ -335,13 +335,13 @@ def app_validate(resource, appkernel, nnodes):
     if completed_tasks['status'].count("ERROR") > 0:
         if completed_tasks['status'].count("ERROR Can not created batch job script and submit it to remote queue") > 0:
             log.error("Can not created batch job script and/or submit it to remote queue\n" +
-                      "See full error report below\n" +
+                      "See full error report below:\n" +
                       results_summary)
             os.remove(test_job_lock_filename)
             exit(1)
         else:
             log.error(completed_tasks['status'] + "\n" +
-                      "See full error report below\n" +
+                      "See full error report below:\n" +
                       results_summary)
             os.remove(test_job_lock_filename)
             exit(1)
