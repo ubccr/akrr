@@ -846,7 +846,9 @@ class AKRRSetup:
             akrr_home: str = None,
             generate_db_only: bool = False,
             update: bool = False,
-            old_akrr_home: str = None):
+            old_akrr_home: str = None,
+            skip_update_completed_dirs = False,
+            skip_update_db = False):
         """
         Setup or update AKRR
 
@@ -954,11 +956,13 @@ class AKRRSetup:
 
         if self.update:
             # copy old logs
-            akrr.update.UpdateCompletedDirs(
-                self.update.old_cfg["completed_tasks_dir"], cfg["completed_tasks_dir"]).run()
+            if not skip_update_completed_dirs:
+                akrr.update.UpdateCompletedDirs(
+                    self.update.old_cfg["completed_tasks_dir"], cfg["completed_tasks_dir"]).run()
 
             # update DB
-            akrr.update.UpdateDataBase(self.update).update()
+            if not skip_update_db:
+                akrr.update.UpdateDataBase(self.update).update()
 
             # update config files for resources and appkernels
             hints_to_finish_update = akrr.update.UpdateResourceAppConfigs(self.update).update()

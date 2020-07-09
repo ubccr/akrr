@@ -628,6 +628,12 @@ def add_command_update(parent_parser):
     parser.add_argument(
         '--old-akrr-home', type=str,
         help="location of old AKRR home directory, for example ~/akrr. Default: try to find")
+    parser.add_argument(
+        '--skip_update_completed_dirs', action='store_true',
+        help="skip updating completed directories")
+    parser.add_argument(
+        '--skip_update_db', action='store_true',
+        help="skip updating db")
 
     def handler(args):
         """call routine for initial AKRR setup"""
@@ -637,7 +643,9 @@ def add_command_update(parent_parser):
         return AKRRSetup().run(
             update=True,
             akrr_home=args.akrr_home,
-            old_akrr_home=args.old_akrr_home
+            old_akrr_home=args.old_akrr_home,
+            skip_update_completed_dirs=args.skip_update_completed_dirs,
+            skip_update_db=args.skip_update_db
         )
 
     parser.set_defaults(func=handler)
