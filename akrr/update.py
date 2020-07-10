@@ -904,8 +904,9 @@ class UpdateDataBase:
     ),""" % (name_new, name_new, name_old, old_cols[name_old], name_old, name_new, name_new,
              new_cols[name_new][0], new_cols[name_new][1]))
 
-    def update(self):
-        self._update_db_save_old_db()
+    def update(self, skip_saving_db_for_update=False):
+        if not skip_saving_db_for_update:
+            self._update_db_save_old_db()
         self._update_db_drop_old_tables()
         self._update_db_create_new()
         self._update_db_populate_new_db()

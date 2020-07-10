@@ -634,6 +634,9 @@ def add_command_update(parent_parser):
     parser.add_argument(
         '--skip-update-db', action='store_true',
         help="skip updating db")
+    parser.add_argument(
+        '--skip-saving-db-for-update', action='store_true',
+        help="skip saving db, used in case if update failed and one need to reuse previously saved db ")
 
     def handler(args):
         """call routine for initial AKRR setup"""
@@ -645,7 +648,8 @@ def add_command_update(parent_parser):
             akrr_home=args.akrr_home,
             old_akrr_home=args.old_akrr_home,
             skip_update_completed_dirs=args.skip_update_completed_dirs,
-            skip_update_db=args.skip_update_db
+            skip_update_db=args.skip_update_db,
+            skip_saving_db_for_update=args.skip_saving_db_for_update
         )
 
     parser.set_defaults(func=handler)

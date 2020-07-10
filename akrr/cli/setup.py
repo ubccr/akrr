@@ -848,7 +848,8 @@ class AKRRSetup:
             update: bool = False,
             old_akrr_home: str = None,
             skip_update_completed_dirs = False,
-            skip_update_db = False):
+            skip_update_db = False,
+            skip_saving_db_for_update = False):
         """
         Setup or update AKRR
 
@@ -962,7 +963,7 @@ class AKRRSetup:
 
             # update DB
             if not skip_update_db:
-                akrr.update.UpdateDataBase(self.update).update()
+                akrr.update.UpdateDataBase(self.update).update(skip_saving_db_for_update=skip_saving_db_for_update)
 
             # update config files for resources and appkernels
             hints_to_finish_update = akrr.update.UpdateResourceAppConfigs(self.update).update()
