@@ -632,10 +632,11 @@ class UpdateDataBase:
             else:
                 log.warning("Unknown format probably development version, will try anyway")
 
-            log.debug("Saving: mod_akrr.%s" % name_to_use)
+            filename = self._get_table_pkl_name("mod_akrr", name_new)
+            log.debug("Saving: mod_akrr.%s to %s" % (name_to_use, filename))
             cursor_execute(akrr_cur, "SELECT %s \nFROM %s" % (columns, name_to_use))
 
-            with open(self._get_table_pkl_name("mod_akrr", name_new), "wb") as fout:
+            with open(filename, "wb") as fout:
                 while True:
                     rows = akrr_cur.fetchmany(nrecs)
                     if not rows:
