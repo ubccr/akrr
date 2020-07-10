@@ -574,7 +574,7 @@ class UpdateDataBase:
              'views': ['akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime']}),
         ("mod_appkernel",
          {'tables':
-              ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'ak_on_resource', 'resource',
+              ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource', 'ak_on_resource',
                'ak_has_metric', 'ak_has_parameter', 'ak_instance', 'ak_instance_debug',
                'ak_supremme_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
                'log_table', 'metric_attribute', 'metric_data', 'parameter_data', 'report',
