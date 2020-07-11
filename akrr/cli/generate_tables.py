@@ -777,16 +777,6 @@ COMMENT='Application kernel info including num processing units';
   KEY `status` (`status`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
     '''),
-    ('control_set', '''
-    CREATE TABLE IF NOT EXISTS `control_set` (
-  `metric_id` INT(10) NOT NULL,
-  `ak_id` INT(10) NOT NULL,
-  `resource_id` INT(10) NOT NULL,
-  `min_collected` DATETIME NOT NULL,
-  `max_collected` DATETIME NOT NULL COMMENT 'This remembers the control region used for each dataset.',
-  PRIMARY KEY (`metric_id`,`ak_id`,`resource_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-    '''),
     ('ingester_log', '''
     CREATE TABLE IF NOT EXISTS `ingester_log` (
   `source` VARCHAR(64) NOT NULL,
