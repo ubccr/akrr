@@ -585,6 +585,7 @@ class UpdateDataBase:
 
     def __init__(self, uppdate_akrr: UpdateAKRR):
         self.uppdate_akrr = uppdate_akrr
+        self.task_id_max = None
 
     def get_akrr_db_con(self, db_name: str, dict_cursor=False):
         return self.uppdate_akrr.get_akrr_db_con(db_name, dict_cursor=dict_cursor)
@@ -751,7 +752,7 @@ class UpdateDataBase:
                 akrr_con.commit()
 
         # update auto increment
-        if self.task_id_max > 0:
+        if self.task_id_max is not None and self.task_id_max > 0:
             cursor_execute(akrr_cur, "ALTER TABLE scheduled_tasks AUTO_INCREMENT=%s" % (self.task_id_max + 1))
             akrr_con.commit()
 
