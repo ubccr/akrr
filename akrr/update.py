@@ -768,10 +768,17 @@ class UpdateDataBase:
         ak_con, ak_cur = self.get_old_ak_db_con()
         tables_to_load = self.tables_to_drop['mod_appkernel']['tables']
         tables_to_load.reverse()
+
+        cursor_execute(ak_cur, "show tables")
+        ak_tables = tuple((r[0] for r in akrr_cur.fetchall()))
+
         for table_name in tables_to_load:
             table_pkl_name = self._get_table_pkl_name("mod_appkernel", table_name)
             if not os.path.isfile(table_pkl_name):
                 log.debug("Table %s was not saved (might not present in previous version)", table_name)
+                continue
+            if table_name not in ak_tables:
+                log.debug("Table %s is not in current mod_appkernel", table_name)
                 continue
             log.debug("Populating: mod_appkernel.%s" % table_name)
 
