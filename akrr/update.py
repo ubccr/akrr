@@ -569,16 +569,16 @@ class UpdateDataBase:
              'ACTIVETASKS', 'active_tasks', 'ak_on_nodes', 'akrr_default_walllimit', 'akrr_default_walltime_limit',
              'akrr_errmsg',
              'akrr_err_regexp', 'akrr_internal_failure_codes', 'akrr_resource_maintenance',
-             'akrr_taks_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'completed_tasks', 'nodes',
+             'akrr_taks_errors', 'akrr_task_errors', 'akrr_xdmod_instanceinfo', 'COMPLETEDTASKS', 'completed_tasks', 'nodes',
              'SCHEDULEDTASKS', "scheduled_tasks", 'resources', 'app_kernels', 'resource_app_kernels'],
              'views': ['akrr_erran', 'akrr_erran2', 'akrr_err_distribution_alltime']}),
         ("mod_appkernel",
          {'tables':
               ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource', 'ak_on_resource',
                'ak_has_metric', 'ak_has_parameter', 'ak_instance', 'ak_instance_debug',
-               'ak_supremm_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
+               'ak_supremme_metrics', 'ak_supremm_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
                'log_table', 'metric_attribute', 'metric_data', 'parameter_data', 'report',
-               'supremm_metrics', 'control_region_def', 'control_regions'],
+               'sumpremm_metrics', 'supremm_metrics', 'control_region_def', 'control_regions'],
           'views': ['v_ak_metrics', 'v_ak_parameters', 'v_tree_debug']
           })
     ))
