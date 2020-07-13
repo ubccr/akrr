@@ -576,9 +576,9 @@ class UpdateDataBase:
          {'tables':
               ['a_data', 'a_data2', 'app_kernel_def', 'app_kernel', 'metric', 'parameter', 'resource', 'ak_on_resource',
                'ak_has_metric', 'ak_has_parameter', 'ak_instance', 'ak_instance_debug',
-               'ak_supremme_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
+               'ak_supremm_metrics', 'a_tree', 'a_tree2', 'control_set', 'ingester_log', 'log_id_seq',
                'log_table', 'metric_attribute', 'metric_data', 'parameter_data', 'report',
-               'sumpremm_metrics', 'control_region_def', 'control_regions'],
+               'supremm_metrics', 'control_region_def', 'control_regions'],
           'views': ['v_ak_metrics', 'v_ak_parameters', 'v_tree_debug']
           })
     ))
@@ -770,7 +770,7 @@ class UpdateDataBase:
         tables_to_load.reverse()
 
         cursor_execute(ak_cur, "show tables")
-        ak_tables = tuple((r[0] for r in akrr_cur.fetchall()))
+        ak_tables = tuple((r[0] for r in ak_cur.fetchall()))
 
         for table_name in tables_to_load:
             table_pkl_name = self._get_table_pkl_name("mod_appkernel", table_name)
