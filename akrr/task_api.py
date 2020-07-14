@@ -20,7 +20,7 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
     import pprint
     from akrr.util.time import calculate_random_start_time, get_formatted_time_to_start
 
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
+    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [nodes]
 
     if time_to_start is not None:
         time_to_start = get_formatted_time_to_start(time_to_start)
