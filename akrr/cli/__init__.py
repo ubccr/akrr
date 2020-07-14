@@ -39,7 +39,7 @@ def wall_time_parsed(args):
     nodes = args.nodes
     walltime = args.walltime
     comments = args.comments
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else list(nodes)
+    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
 
     for nodes in node_list:
         data = {
