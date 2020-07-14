@@ -38,7 +38,7 @@ HDF5 is a popular format and are often deployed system-wide. Ensure that it was 
 support (for example by checking presence of h5pcc in $HDF5_HOME/bin). If there is no system-wide 
 installed parallel HDF5 library than you might want to skip it.
 
-Bellow are brief notes on parallel hdf5 installation,  
+Below are brief notes on parallel hdf5 installation,  
 [http://www.hdfgroup.org/HDF5/](http://www.hdfgroup.org/HDF5/) for HDF5 installation details.
 
 ior-3.2.0 does not work yet with hdf5-1.10.5, so use hdf5-1.8.*.
@@ -76,7 +76,7 @@ IOR can also use parallel NetCDF format to test file system IO. Parallel NetCDF
 than other APIs and therefore significantly increases the application kernel execution time. 
 Therefore, if you know that parallel NetCDF is used on your system and you want to monitor its 
 performance then go ahead and add it. If you use system-wide installed library, check that it is 
-parallel. Regular  serial NetCDF will not work (IOR needs the parallel version). Bellow is brief 
+parallel. Regular  serial NetCDF will not work (IOR needs the parallel version). Below is brief 
 note on parallel-netcdf installation, refer to 
 [https://parallel-netcdf.github.io/](https://parallel-netcdf.github.io/) 
 for more details - note that currently IOR needs the linked version of parallel NetCDF, not the 
@@ -85,7 +85,7 @@ for more details - note that currently IOR needs the linked version of parallel 
 Similar to HDF5, if there is no system-wide installation and no use on the system than skip it as it
 would be not that much useful.
 
-Bellow are brief notes on parallel NetCDF installation,  
+Below are brief notes on parallel NetCDF installation,  
 ```bash
 #get to application kernel executable directory
 cd $AKRR_APPKER_DIR/execs
@@ -521,7 +521,7 @@ RESOURCE_SPECIFIC_OPTION_N_to_1 will be passed to IOR for tests there all proces
 single file and RESOURCE_SPECIFIC_OPTION_N_to_N will be passed to IOR for tests there all processes 
 writes to their own independent files.
 
-Bellow is a fragment example from ior.app.conf which will instruct IOR to use 
+Below is a fragment example from ior.app.conf which will instruct IOR to use 
 striping equal to the number of nodes when all processes write to a single file.
 
 **appkernel_run_env_template fragment of ior.app.conf**

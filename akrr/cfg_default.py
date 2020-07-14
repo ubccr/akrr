@@ -122,7 +122,7 @@ completed_tasks_dir = "../comptasks"
 
 ###############################################################################
 #
-#  PARAMETERS BELLOW THIS POINT DO NOT OFTEN NEED TO BE CHANGED.
+#  PARAMETERS BELOW THIS POINT DO NOT OFTEN NEED TO BE CHANGED.
 #  PROCEED AT YOUR OWN RISK!
 #
 ###############################################################################

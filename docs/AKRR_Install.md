@@ -54,7 +54,7 @@ During this step AKRR will be configured and AKRR daemon will be started.
 In more details the setup script creates AKRR databases, sets new user for 
 accessing these databases, creates self-signed SSL certificate for AKRR 
 REST API (AKRR REST API used only internally for communication between AKRR 
-and OpenXDMoD),  creates and populates AKRR database tables, followed by 
+and Open XDMoD), creates and populates AKRR database tables, followed by 
 first start of AKRR daemon and creation of cronjobs for periodic log rotation 
 and AKRR daemon status check.
 
