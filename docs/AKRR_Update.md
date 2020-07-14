@@ -46,4 +46,11 @@ Run update script:
 akrr -vv update --akrr-home=<New AKRR Home, default is ~/akrr> --old-akrr-home=<Old AKRR Home>
 ```
 
-Now you need to update xdmod-appkernel module for XDMoD.
+New AKRR home should be different from old one. The old home can be renamed, for example if it was in default location:
+
+```shell script
+mv ~/akrr ~/akrr_old
+akrr -vv update --akrr-home=~/akrr --old-akrr-home=~/akrr_old
+```
+
+Now you can update xdmod-appkernel module for XDMoD.
