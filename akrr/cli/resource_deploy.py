@@ -21,6 +21,7 @@ from akrr.akrrerror import AkrrError
 import akrr.util.log as log
 import akrr.util.openstack
 from akrr.util.ssh import check_dir
+from akrr.akrr_task import get_local_task_dir
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -35,7 +36,7 @@ def make_results_summary(resource_name, app_name, completed_tasks,
         else:
             return comment + ": " + "Not Present" + "\n"
 
-    task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, completed_tasks['datetime_stamp'])
+    task_dir = get_local_task_dir(resource_name, app_name, completed_tasks['datetime_stamp'], task_is_active=False)
 
     msg = ""
     msg += "status: " + str(akrr_xdmod_instanceinfo['status']) + "\n"

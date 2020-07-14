@@ -11,14 +11,25 @@ from .akrr_task_appker import AkrrTaskHandlerAppKer
 from .akrr_task_bundle import AkrrTaskHandlerBundle
 
 
-def get_local_task_dir(resource_name, app_name, time_stamp, task_is_active=True):
+def get_local_task_dir(resource_name, app_name, time_stamp, task_is_active=True, version=None):
     if task_is_active:
         task_dir = os.path.join(cfg.data_dir, resource_name, app_name, time_stamp)
         if not os.path.isdir(task_dir):
             raise IOError("Directory %s does not exist or is not directory." % task_dir)
         return task_dir
     else:
-        task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
+        if version is not None and version==1:
+            task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
+        else:
+            time_stamp_split = time_stamp.split(".")
+            if len(time_stamp_split) > 3:
+                year = time_stamp_split[0]
+                month = time_stamp_split[1]
+                day = time_stamp_split[2]
+                task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
+            else:
+                task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
+
         if not os.path.isdir(task_dir):
             raise IOError("Directory %s does not exist or is not directory." % task_dir)
         return task_dir

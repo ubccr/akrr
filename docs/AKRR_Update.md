@@ -24,8 +24,14 @@ If you like the old name rename it to reuse for new one.
 mv akrr akrr_old
 ```
 
-## RPM Installation
+## Installation
 
+In the previous version AKRR was source installed. In this version RPM installation is recommended, 
+in source and using regular python methods are also possible.
+ 
+The akrr update command should work for all combinations of older and new installations. 
+
+### RPM Installation
 Download RPM from https://github.com/ubccr/akrr/releases:
 
 ```shell script
@@ -40,7 +46,7 @@ sudo yum install akrr-2.1.0-1.noarch.rpm
 
 ## Run Update Script
 
-Run update script:
+Run update script (as user which will run akrr, don't use root for that):
 
 ```shell script
 akrr -vv update --akrr-home=<New AKRR Home, default is ~/akrr> --old-akrr-home=<Old AKRR Home>
