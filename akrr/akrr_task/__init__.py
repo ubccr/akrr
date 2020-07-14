@@ -26,7 +26,7 @@ def get_local_task_dir(resource_name, app_name, time_stamp, task_is_active=True,
                 year = time_stamp_split[0]
                 month = time_stamp_split[1]
                 day = time_stamp_split[2]
-                task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
+                task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, year, month, time_stamp)
             else:
                 task_dir = os.path.join(cfg.completed_tasks_dir, resource_name, app_name, time_stamp)
 
