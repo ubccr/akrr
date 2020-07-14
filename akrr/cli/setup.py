@@ -987,6 +987,6 @@ class AKRRSetup:
 
         log.info("AKRR is set up and is running.")
         if self.update:
-            log.warning("Bellow are instructions to finish conversion " +
+            log.warning("Below are instructions to finish conversion " +
                         "(shell commands, execute them manually one by one ensure correct run):\n" +
                         hints_to_finish_update)
