@@ -12,7 +12,7 @@ ability to proactively monitor system performance as opposed to having to rely
 on users to report failures or underperforming hardware and software.
 
 The XDMoD's application kernel performance monitoring consists of two parts: 
-application kernel remote runner (AKRR) and XDMoD appkernel module (xdmod-appkernel).
+application kernel remote runner (AKRR) and XDMoD appkernel module (`xdmod-appkernels`).
 
 Application kernel remote runner (AKRR) executes the scheduled jobs, 
 monitors their execution, processes the output, extracts performance metrics 
@@ -23,8 +23,8 @@ visualization tools and web-base interface to control AKRR. Among analysis tools
 has automatic anomaly detector, that analyzes the performance of all application kernels 
 executed on a resource and automatically recognizes poorly performing systems. 
 
-XDMoD should be install first, then AKRR and then xdmod-appkenle. In addition before 
-installing xdmod-appkernel module, add your HPC resource to AKRR and run few appkernels 
-jobs, this will help to check that xdmod-appkernel is working properly.
+XDMoD should be install first, then AKRR and then `xdmod-appkernels`. In addition before 
+installing `xdmod-appkernels` module, add your HPC resource to AKRR and run few appkernels 
+jobs, this will help to check that `xdmod-appkernels` is working properly.
 
 Next: [AKRR Download](AKRR_Download.md)
