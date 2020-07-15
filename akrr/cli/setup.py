@@ -724,7 +724,7 @@ class AKRRSetup:
         else:
             mail = None
         restart = '50 23 * * * bash -l -c "' + _akrr_bin_dir + '/akrr daemon restart -cron"'
-        check_and_restart = '33 * * * * bash -l "' + _akrr_bin_dir + '/akrr daemon checknrestart -cron"'
+        check_and_restart = '33 * * * * bash -l -c "' + _akrr_bin_dir + '/akrr daemon checknrestart -cron"'
         archive = '43 1 * * * bash -l -c "' + _akrr_bin_dir + '/akrr archive -cron"'
 
         try:
