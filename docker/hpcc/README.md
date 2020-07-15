@@ -119,6 +119,7 @@ scp $USER@hpcresource:$AKRR_APPKER_DIR/execs/hpcc/hpcc* ./
 ```bash
 docker build -t nsimakov/hpcc:latest -f docker/hpcc/Dockerfile .
 docker run --rm nsimakov/hpcc:latest
+docker push nsimakov/hpcc:latest
 ```
 
 
