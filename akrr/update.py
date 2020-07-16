@@ -1054,8 +1054,8 @@ class UpdateResourceAppConfigs:
         from akrr.cli.setup import make_dirs
         from akrr.cfg_util import load_resource, resource_renamed_parameters, app_renamed_parameters
 
-        hints_to_do_next = "# Deploy new utils on resource and check it is working properly:\n" + \
-                           "akrr resource deploy -r %s\n" % resource_name
+        hints_to_do_next = "# Deploy new utils on resource and check it is working properly (it will otherwrite AK inputs as well):\n" + \
+                           "akrr resource deploy --overwrite -r %s\n" % resource_name
 
         log.info("Processing: %s", resource_name)
 

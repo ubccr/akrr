@@ -59,4 +59,12 @@ mv ~/akrr ~/akrr_old
 akrr -vv update --akrr-home=~/akrr --old-akrr-home=~/akrr_old
 ```
 
+At the end it will print recommended commands to run to finish update. The most important is to run:
+
+```bash
+akrr resource deploy --overwrite -r <resource>
+```
+
+This will install new app kernel utilities. But be careful it will overwrites inputs, so keep a copy if you modified some.
+ 
 Now you can update the `xdmod-appkernels` module for Open XDMoD.

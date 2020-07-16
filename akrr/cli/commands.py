@@ -268,6 +268,8 @@ def cli_resource_deploy(parent_parser):
                                       description=cli_resource_deploy.__doc__)
     parser.add_argument(
         '-r', '--resource', required=True, help="name of resource for validation and deployment'")
+    parser.add_argument(
+        '--overwrite', action='store_true', help="Overwrite input and appkernel utilities")
     parser.add_argument('-a', '--appkernel', default="test",
                         help='Specify which application kernel to use as probe.'
                              ' Default is test, special appkernel for deployment')

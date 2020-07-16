@@ -182,20 +182,23 @@ def check_create_dirs(rsh, resource):
     log.empty_line()
 
 
-def copy_exec_sources_and_inputs(rsh, resource):
+def copy_exec_sources_and_inputs(rsh, resource, overwrite=False):
     """Copy exec sources and inputs to remote resource"""
     log.info(
         "Preparing to copy application signature calculator,\n"
-        "    app. kernel input files and \n"
-        "    HPCC, IMB, IOR and Graph500 source code to remote resource\n")
+        "    app. kernel input files and to remote resource\n")
 
     try:
         akrr.util.ssh.ssh_command(rsh, "cd %s" % resource['appkernel_dir'])
         out = akrr.util.ssh.ssh_command(rsh, "ls " + resource['appkernel_dir'])
         files_in_appker_dir = out.strip().split()
 
-        if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
-            log.info("Copying app. kernel input tarball to %s", resource['appkernel_dir'])
+        if overwrite or not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
+            if not ("inputs" in files_in_appker_dir or "inputs/" in files_in_appker_dir):
+                log.info("Copying app. kernel input tarball to %s", resource['appkernel_dir'])
+            else:
+                log.info("Overwriting app. kernel input tarball to %s", resource['appkernel_dir'])
+
             if not akrr.dry_run:
                 akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/inputs.tar.gz", resource['appkernel_dir'])
 
@@ -216,13 +219,18 @@ def copy_exec_sources_and_inputs(rsh, resource):
             log.warning("WARNING %d: App. kernel inputs directory %s/inputs is present, assume they are correct.\n",
                         log.warning_count, resource['appkernel_dir'])
 
-        if not ("execs" in files_in_appker_dir or "execs/" in files_in_appker_dir):
-            log.info(
-                "Copying app. kernel execs tarball to %s\n" % (resource['appkernel_dir']) +
-                "It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator")
+        if overwrite or not ("execs" in files_in_appker_dir or "execs/" in files_in_appker_dir):
+            if not ("execs" in files_in_appker_dir or "execs/" in files_in_appker_dir):
+                log.info(
+                    "Copying app. kernel execs tarball to %s\n" % (resource['appkernel_dir']) +
+                    "It contains app kernel utilities")
+            else:
+                log.info(
+                    "Overwriting app. kernel execs tarball to %s\n" % (resource['appkernel_dir']) +
+                    "It contains app kernel utilities")
             if not akrr.dry_run:
                 akrr.util.ssh.scp_to_resource(resource, cfg.appker_repo_dir + "/execs.tar.gz", resource['appkernel_dir'])
-            log.info("Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to %s/execs",
+            log.info("Unpacking app kernel utilities to %s/execs",
                      resource['appkernel_dir'])
             if not akrr.dry_run:
                 out = akrr.util.ssh.ssh_command(rsh, "tar xvfz %s/execs.tar.gz" % resource['appkernel_dir'])
@@ -766,7 +774,7 @@ def resource_deploy(args):
     check_create_dirs(rsh, resource)
 
     # deploy inputs and sources
-    copy_exec_sources_and_inputs(rsh, resource)
+    copy_exec_sources_and_inputs(rsh, resource, overwrite=args.overwrite)
 
     # check that app.signature calculator on headnode
     check_appsig(rsh, resource)
