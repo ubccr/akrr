@@ -56,7 +56,7 @@ cd hpcc-1.5.0
 # or start from one of our make file
 # put make file into hpl directory
 cd hpl
-wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/execs/misc/hpcc/Make.intel64_skx
+wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/makefiles/Make.intel64_skx
 
 # go back to hpcc-1.5.0 root dir
 cd ..
@@ -65,7 +65,7 @@ mv hpcc hpcc_skx
 make arch=intel64_skx clean
 
 cd hpl
-wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/execs/misc/hpcc/Make.intel64_knl
+wget https://raw.githubusercontent.com/ubccr/akrr/master/docker/hpcc/makefiles/Make.intel64_knl
 
 # go back to hpcc-1.5.0 root dir
 cd ..
