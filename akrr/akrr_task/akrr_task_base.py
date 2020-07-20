@@ -116,6 +116,10 @@ class AkrrTaskHandlerBase:
             return app_name + ".job"
         return self.appName + ".job"
 
+    def set_old_method_to_run_next_to_current(self):
+        self._old_method_to_run_next = self._method_to_run_next
+        self._old_status = self.status
+
     def set_method_to_run_next(self, method_to_run_next=None, status=None, status_info=None):
         """
         update method_to_run_next, status and status_info if they are not None
