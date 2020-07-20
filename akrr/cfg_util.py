@@ -144,6 +144,7 @@ app_renamed_parameters = (
     ('akrrTimeStamp', 'akrr_time_stamp'),
     ('akrrWallTimeLimit', 'akrr_walltime_limit'),
     ('appKernelRunEnvironmentTemplate', 'appkernel_run_env_template'),
+    ('akrrRunAppKernelTemplate', 'akrr_run_appkernel_template'),
     ('akrr_run_appkernelnelTemplate', 'akrr_run_appkernel_template')
 )
 
