@@ -160,7 +160,7 @@ def get_task_handler_from_pkl(pickle_filename: str) -> AkrrTaskHandlerBase:
     th.app = cfg.find_app_by_name(th.appName)
 
     # Set old status and old method to run next to this one
-    th.set_old_method_to_run_next_to_current
+    th.set_old_method_to_run_next_to_current()
 
     # if openstack set remote_access_node to instance ip
     if th.resource['batch_scheduler'].lower() == "openstack" and getattr(th, "openstack_server_ip", None) is not None:
