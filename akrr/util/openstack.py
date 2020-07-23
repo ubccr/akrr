@@ -151,6 +151,8 @@ class OpenStackServer:
 
         s = out["Networks"]
         all_ips = s[s.find('=') + 1:].replace(',', ' ').split()
+        # Get only ip4
+        all_ips = [ip for ip in all_ips if ip.count(".") > 0]
         self.internal_network_ip = all_ips[0]
         log.debug("internal_network_ip: "+self.internal_network_ip)
         if len(all_ips) > 1:
