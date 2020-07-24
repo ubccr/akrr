@@ -1,0 +1,159 @@
+#!/bin/bash
+#SBATCH -J ior
+#SBATCH -e /scratch/01482/xdtas/akrrdata/stampede2-knl/ior/2020.07.24.01.50.03.468909/stderr
+#SBATCH -o /scratch/01482/xdtas/akrrdata/stampede2-knl/ior/2020.07.24.01.50.03.468909/stdout
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=1
+#SBATCH -p normal
+#SBATCH -t 03:00:00
+#SBATCH -A TG-CCR120014
+#SBATCH --mail-user=xdtas@ccr.buffalo.edu
+
+
+
+#Common commands
+export AKRR_NODES=2
+export AKRR_CORES=2
+export AKRR_CORES_PER_NODE=1
+export AKRR_NETWORK_SCRATCH="/scratch/01482/xdtas"
+export AKRR_LOCAL_SCRATCH="/tmp"
+export AKRR_TASK_WORKDIR="/scratch/01482/xdtas/akrrdata/stampede2-knl/ior/2020.07.24.01.50.03.468909"
+export AKRR_APPKER_DIR="/work/01482/xdtas/appker/stampede2-knl"
+export AKRR_AKRR_DIR="/scratch/01482/xdtas/akrrdata/stampede2-knl"
+
+export AKRR_APPKER_NAME="ior"
+export AKRR_RESOURCE_NAME="stampede2-knl"
+export AKRR_TIMESTAMP="2020.07.24.01.50.03.468909"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/work/01482/xdtas/appker/stampede2-knl/inputs"
+export AKRR_APPKERNEL_EXECUTABLE="/work/01482/xdtas/appker/stampede2-knl/execs/ior"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrr_perform_common_tests
+
+#Write some info to gen.info, JSON-Like file
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
+
+
+
+# MPI IO hints (optional)
+# MPI IO hints are environment variables in the following format:
+#
+# 'IOR_HINT__<layer>__<hint>=<value>', where <layer> is either 'MPI'
+# or 'GPFS', <hint> is the full name of the hint to be set, and <value>
+# is the hint value.  E.g., 'export IOR_HINT__MPI__IBM_largeblock_io=true'
+# 'export IOR_HINT__GPFS__hint=value' in mpi_io_hints
+
+
+#create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d /scratch/01482/xdtas/ior.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+
+
+#load application environment
+module load  pnetcdf phdf5
+export LD_LIBRARY_PATH=$TACC_HDF5_LIB:$LD_LIBRARY_PATH
+module list
+
+#set executable location
+EXE=/work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior
+
+#set how to run mpirun on all nodes
+RUNMPI="ibrun -n $AKRR_NODES -o 0"
+
+#set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+RUNMPI_OFFSET="ibrun -n $AKRR_NODES -o 1"
+
+#set striping for lustre file system
+RESOURCE_SPECIFIC_OPTION_N_to_1=""
+#-O lustreStripeCount=$AKRR_NODES"
+RESOURCE_SPECIFIC_OPTION_N_to_N=""
+
+#other resource specific options
+RESOURCE_SPECIFIC_OPTION=""
+
+
+# Generate AppKer signature
+appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. >> $AKRR_APP_STDOUT_FILE
+
+
+
+#blockSize and transferSize
+COMMON_TEST_PARAM="-b 200m -t 20m"
+#2 level of verbosity, don't clear memory
+COMMON_OPTIONS="-vv"
+CACHING_BYPASS="-Z"
+
+#list of test to perform
+TESTS_LIST=("-a POSIX $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a POSIX -F $RESOURCE_SPECIFIC_OPTION_N_to_N"
+"-a MPIIO $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a MPIIO -c $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a MPIIO -F $RESOURCE_SPECIFIC_OPTION_N_to_N"
+"-a HDF5 $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a HDF5 -c $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a HDF5 -F $RESOURCE_SPECIFIC_OPTION_N_to_N"
+"-a NCMPI $RESOURCE_SPECIFIC_OPTION_N_to_1"
+"-a NCMPI -c $RESOURCE_SPECIFIC_OPTION_N_to_1")
+
+#combine common parameters
+COMMON_PARAM="$COMMON_OPTIONS $RESOURCE_SPECIFIC_OPTION $CACHING_BYPASS $COMMON_TEST_PARAM"
+
+
+echo "Using $AKRR_TMP_WORKDIR for test...." >> $AKRR_APP_STDOUT_FILE 2>&1
+
+#determine filesystem for file
+canonicalFilename=`readlink -f $AKRR_TMP_WORKDIR`
+filesystem=`awk -v canonical_path="$canonicalFilename" '{if ($2!="/" && 1==index(canonical_path, $2)) print $3 " " $1 " " $2;}' /proc/self/mounts`
+echo "File System To Test: $filesystem" >> $AKRR_APP_STDOUT_FILE 2>&1
+akrr_write_to_gen_info "file_system" "$filesystem"
+
+#start the tests
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
+
+for TEST_PARAM in "${TESTS_LIST[@]}"
+do
+    echo "# Starting Test: $TEST_PARAM" >> $AKRR_APP_STDOUT_FILE 2>&1
+    fileName=`echo ior_test_file_$TEST_PARAM |tr  '-' '_'|tr  ' ' '_'|tr  '=' '_'`
+    
+    #run the test
+    command_to_run="$RUNMPI $EXE $COMMON_PARAM $TEST_PARAM -o $AKRR_TMP_WORKDIR/$fileName"
+    echo "executing: $command_to_run" >> $AKRR_APP_STDOUT_FILE 2>&1
+    $command_to_run >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
+
+
+
+
+
+
+#clean-up
+cd $AKRR_TASK_WORKDIR
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+
+
+
+akrr_write_to_gen_info "end_time" "`date`"

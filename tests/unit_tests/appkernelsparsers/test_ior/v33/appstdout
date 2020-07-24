@@ -1,0 +1,549 @@
+===ExeBinSignature=== MD5: c84b34dccaf3cdfb30f62077603edb5a /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior
+===ExeBinSignature=== MD5: f26f2e0499f250d2a9caadfc95db40a0 /opt/apps/intel18/impi18_0/phdf5/1.10.4/x86_64/lib/libhdf5.so.103
+===ExeBinSignature=== MD5: 4ef6c623f4537579f2f40215476cee06 /lib64/libz.so.1
+===ExeBinSignature=== MD5: 0f65391c22de4d15744ea80ec857419a /opt/intel/compilers_and_libraries_2018.2.199/linux/mpi/intel64/lib/libmpifort.so.12
+===ExeBinSignature=== MD5: 5f6b7589cd309bf3c7a6d1bcfa540a7e /opt/intel/compilers_and_libraries_2018.2.199/linux/mpi/intel64/lib/libmpi.so.12
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: 80bad4ce67fc00fb9ef08b4220e3479f /opt/apps/gcc/6.3.0/lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
+===ExeBinSignature=== MD5: 8a3e438abbddf6ff8a20837be107abb1 /opt/apps/intel18/impi18_0/phdf5/1.10.4/x86_64/lib/libsz.so.2
+===ExeBinSignature=== MD5: f6237a96544e39dd8425ae1ac44bed30 /opt/intel/compilers_and_libraries_2018.2.199/linux/compiler/lib/intel64_lin/libimf.so
+===ExeBinSignature=== MD5: b687f005a518595ec7c79076fb036a67 /opt/intel/compilers_and_libraries_2018.2.199/linux/compiler/lib/intel64_lin/libsvml.so
+===ExeBinSignature=== MD5: a8f97904494f32f15a50f7c9f00dbd65 /opt/intel/compilers_and_libraries_2018.2.199/linux/compiler/lib/intel64_lin/libirng.so
+===ExeBinSignature=== MD5: b652c3bb78115c4cf6a2a00447599377 /opt/intel/compilers_and_libraries_2018.2.199/linux/compiler/lib/intel64_lin/libiomp5.so
+===ExeBinSignature=== MD5: 361805670cfbf489f9a3cfa8026ed8a4 /opt/intel/compilers_and_libraries_2018.2.199/linux/compiler/lib/intel64_lin/libintlc.so.5
+Using /scratch/01482/xdtas/ior.9BzrhiNHI for test....
+File System To Test: lustre 192.168.193.11@o2ib193:192.168.193.12@o2ib193:/scratch /scratch
+# Starting Test: -a POSIX 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:02:52 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:02:52 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:02:52 2020
+write     426.77     21.38      0.093502    204800     20480      0.001392   0.935444   0.037859   0.937271   0   
+Commencing read performance test: Fri Jul 24 03:02:53 2020
+
+read      332.55     16.65      0.088386    204800     20480      0.000866   1.20       0.318282   1.20       0   
+remove    -          -          -           -          -          -          -          -          0.156993   0   
+Max Write: 426.77 MiB/sec (447.50 MB/sec)
+Max Read:  332.55 MiB/sec (348.70 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         426.77     426.77     426.77       0.00      21.34      21.34      21.34       0.00    0.93727         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 POSIX      0
+read          332.55     332.55     332.55       0.00      16.63      16.63      16.63       0.00    1.20283         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 POSIX      0
+Finished            : Fri Jul 24 03:02:54 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a POSIX -F 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX -F  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX__F
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:02:59 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -F -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX__F
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:02:59 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : POSIX
+apiVersion          : 
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_POSIX__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:02:59 2020
+write     571.46     28.64      0.069777    204800     20480      0.001859   0.698319   0.001348   0.699962   0   
+Commencing read performance test: Fri Jul 24 03:03:00 2020
+
+read      429.89     21.52      0.092507    204800     20480      0.000747   0.929291   0.004589   0.930467   0   
+remove    -          -          -           -          -          -          -          -          0.002218   0   
+Max Write: 571.46 MiB/sec (599.22 MB/sec)
+Max Read:  429.89 MiB/sec (450.77 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         571.46     571.46     571.46       0.00      28.57      28.57      28.57       0.00    0.69996         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 POSIX      0
+read          429.89     429.89     429.89       0.00      21.49      21.49      21.49       0.00    0.93047         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 POSIX      0
+Finished            : Fri Jul 24 03:03:01 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a MPIIO 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:05 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:05 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:05 2020
+write     430.38     22.91      0.087312    204800     20480      0.054701   0.873167   0.078115   0.929415   0   
+Commencing read performance test: Fri Jul 24 03:03:06 2020
+
+read      377.96     18.96      0.094243    204800     20480      0.002237   1.05       0.113593   1.06       0   
+remove    -          -          -           -          -          -          -          -          0.179264   0   
+Max Write: 430.38 MiB/sec (451.28 MB/sec)
+Max Read:  377.96 MiB/sec (396.32 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         430.38     430.38     430.38       0.00      21.52      21.52      21.52       0.00    0.92941         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+read          377.96     377.96     377.96       0.00      18.90      18.90      18.90       0.00    1.05831         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+Finished            : Fri Jul 24 03:03:07 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a MPIIO -c 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -c  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__c
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:12 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -c -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__c
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:12 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:13 2020
+write     115.87     11.72      0.170586    204800     20480      1.00       1.71       0.745603   3.45       0   
+Commencing read performance test: Fri Jul 24 03:03:17 2020
+
+read      144.62     11.49      0.174022    204800     20480      1.02       1.74       0.000845   2.77       0   
+remove    -          -          -           -          -          -          -          -          0.222497   0   
+Max Write: 115.87 MiB/sec (121.50 MB/sec)
+Max Read:  144.62 MiB/sec (151.65 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         115.87     115.87     115.87       0.00       5.79       5.79       5.79       0.00    3.45216         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+read          144.62     144.62     144.62       0.00       7.23       7.23       7.23       0.00    2.76581         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+Finished            : Fri Jul 24 03:03:19 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a MPIIO -F 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a MPIIO -F  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__F
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:25 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a MPIIO -F -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__F
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:25 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : MPIIO
+apiVersion          : (3.1)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_MPIIO__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:25 2020
+write     564.00     28.36      0.070513    204800     20480      0.003634   0.705128   0.018831   0.709220   0   
+Commencing read performance test: Fri Jul 24 03:03:25 2020
+
+read      418.41     21.01      0.095214    204800     20480      0.003415   0.952135   0.061284   0.955999   0   
+remove    -          -          -           -          -          -          -          -          0.004190   0   
+Max Write: 564.00 MiB/sec (591.40 MB/sec)
+Max Read:  418.41 MiB/sec (438.74 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         564.00     564.00     564.00       0.00      28.20      28.20      28.20       0.00    0.70922         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+read          418.41     418.41     418.41       0.00      20.92      20.92      20.92       0.00    0.95600         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 MPIIO      0
+Finished            : Fri Jul 24 03:03:26 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a HDF5 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:32 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:32 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.10.4 (Parallel)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:32 2020
+write     215.10     13.98      0.143090    204800     20480      0.018534   1.43       0.763809   1.86       0   
+Commencing read performance test: Fri Jul 24 03:03:34 2020
+
+read      416.17     20.93      0.095567    204800     20480      0.004109   0.955772   0.281176   0.961136   0   
+remove    -          -          -           -          -          -          -          -          0.001736   0   
+Max Write: 215.10 MiB/sec (225.55 MB/sec)
+Max Read:  416.17 MiB/sec (436.39 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         215.10     215.10     215.10       0.00      10.75      10.75      10.75       0.00    1.85960         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+read          416.17     416.17     416.17       0.00      20.81      20.81      20.81       0.00    0.96114         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+Finished            : Fri Jul 24 03:03:35 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a HDF5 -c 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -c  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__c
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:40 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -c -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__c
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:40 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.10.4 (Parallel)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:40 2020
+write     76.18      11.31      0.176824    204800     20480      0.014872   1.77       3.47       5.25       0   
+Commencing read performance test: Fri Jul 24 03:03:45 2020
+
+read      486.98     24.48      0.081697    204800     20480      0.003159   0.817038   0.001189   0.821384   0   
+remove    -          -          -           -          -          -          -          -          0.001812   0   
+Max Write: 76.18 MiB/sec (79.88 MB/sec)
+Max Read:  486.98 MiB/sec (510.64 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write          76.18      76.18      76.18       0.00       3.81       3.81       3.81       0.00    5.25054         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+read          486.98     486.98     486.98       0.00      24.35      24.35      24.35       0.00    0.82138         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+Finished            : Fri Jul 24 03:03:46 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a HDF5 -F 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a HDF5 -F  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__F
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:03:52 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a HDF5 -F -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__F
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:03:52 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : HDF5
+apiVersion          : 1.10.4 (Parallel)
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_HDF5__F
+access              : file-per-process
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:03:52 2020
+write     587.81     29.82      0.067070    204800     20480      0.007402   0.670700   0.003093   0.680490   0   
+Commencing read performance test: Fri Jul 24 03:03:53 2020
+
+read      430.84     36.43      0.046790    204800     20480      0.468912   0.548959   0.082250   0.928422   0   
+remove    -          -          -           -          -          -          -          -          0.001936   0   
+Max Write: 587.81 MiB/sec (616.37 MB/sec)
+Max Read:  430.84 MiB/sec (451.77 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         587.81     587.81     587.81       0.00      29.39      29.39      29.39       0.00    0.68049         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+read          430.84     430.84     430.84       0.00      21.54      21.54      21.54       0.00    0.92842         NA            NA     0      2   1    1   1     0        1         1    0      1 209715200 20971520     400.0 HDF5      0
+Finished            : Fri Jul 24 03:03:54 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a NCMPI 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:04:00 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:04:00 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.0 of 19 Dec 2018
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:04:00 2020
+write     388.08     19.82      0.100896    204800     20480      0.012919   1.01       0.068334   1.03       0   
+Commencing read performance test: Fri Jul 24 03:04:01 2020
+
+read      204.63     12.42      0.126800    204800     20480      0.007073   1.61       0.679564   1.95       0   
+remove    -          -          -           -          -          -          -          -          0.180379   0   
+Max Write: 388.08 MiB/sec (406.93 MB/sec)
+Max Read:  204.63 MiB/sec (214.57 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         388.08     388.08     388.08       0.00      19.40      19.40      19.40       0.00    1.03072         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 NCMPI      0
+read          204.63     204.63     204.63       0.00      10.23      10.23      10.23       0.00    1.95471         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 NCMPI      0
+Finished            : Fri Jul 24 03:04:03 2020
+TACC:  Shutdown complete. Exiting. 
+# Starting Test: -a NCMPI -c 
+executing: ibrun -n 2 -o 0 /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a NCMPI -c  -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI__c
+TACC:  Starting up job 6113411 
+TACC:  Starting parallel tasks... 
+IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+Began               : Fri Jul 24 03:04:07 2020
+Command line        : /work/01482/xdtas/appker/stampede2-knl/execs/ior/src/ior -vv -Z -b 200m -t 20m -a NCMPI -c -o /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI__c
+Machine             : Linux c457-011.stampede2.tacc.utexas.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Fri Jul 24 03:04:07 2020
+Path                : /scratch/01482/xdtas/ior.9BzrhiNHI
+FS                  : 18353.4 TiB   Used FS: 83.0%   Inodes: 6076.9 Mi   Used Inodes: 30.7%
+Participating tasks: 2
+
+Options: 
+api                 : NCMPI
+apiVersion          : 1.11.0 of 19 Dec 2018
+test filename       : /scratch/01482/xdtas/ior.9BzrhiNHI/ior_test_file__a_NCMPI__c
+access              : single-shared-file
+type                : collective
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+nodes               : 2
+tasks               : 2
+clients per node    : 1
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 400 MiB
+
+Results: 
+
+access    bw(MiB/s)  IOPS       Latency(s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ----       ----------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Fri Jul 24 03:04:07 2020
+write     229.05     11.54      0.173299    204800     20480      0.012060   1.73       0.001257   1.75       0   
+Commencing read performance test: Fri Jul 24 03:04:09 2020
+
+read      240.25     12.05      0.166009    204800     20480      0.003617   1.66       0.026892   1.66       0   
+remove    -          -          -           -          -          -          -          -          0.218159   0   
+Max Write: 229.05 MiB/sec (240.17 MB/sec)
+Max Read:  240.25 MiB/sec (251.92 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Stonewall(s) Stonewall(MiB) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         229.05     229.05     229.05       0.00      11.45      11.45      11.45       0.00    1.74636         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 NCMPI      0
+read          240.25     240.25     240.25       0.00      12.01      12.01      12.01       0.00    1.66493         NA            NA     0      2   1    1   0     0        1         1    0      1 209715200 20971520     400.0 NCMPI      0
+Finished            : Fri Jul 24 03:04:11 2020
+TACC:  Shutdown complete. Exiting. 

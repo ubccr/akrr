@@ -476,6 +476,177 @@ def process_ior_output_v32(parser, lines):
     return total_number_of_tests, tests_passed
 
 
+def process_ior_output_v33(parser, lines):
+    """
+    IOR output processing for version 3.3
+    """
+    total_number_of_tests = 0
+    tests_passed = 0
+    i = 0
+    input_summary = {}
+    filesystem = None
+    while i < len(lines) - 1:
+        m = re.match(r'^IOR-([3-9]\.[0-9]+\.[0-9]+\S*): MPI Coordinated Test of Parallel I/O', lines[i])
+        if m:
+            parser.set_parameter("App:Version", m.group(1).strip())
+
+        m = re.match(r'^File System To Test:(.+)', lines[i])
+        if m:
+            filesystem = m.group(1).strip()
+
+        m = re.match(r'^# Starting Test:', lines[i])
+        if m:
+            total_number_of_tests += 1
+
+        summary_header = re.match(r'^Summary:$', lines[i].strip()) is not None
+        options_header = re.match(r'^Options:$', lines[i].strip()) is not None
+        if summary_header or options_header:
+            # input summary section
+            input_summary = {}
+            i += 1
+            while i < len(lines):
+                if summary_header:
+                    m1 = re.match(r'^\t([^=\n\r\f\v]+)=(.+)', lines[i])
+                else:
+                    m1 = re.match(r'^([^=\n\r\f\v]+):(.+)', lines[i])
+                if m1:
+                    input_summary[m1.group(1).strip()] = m1.group(2).strip()
+                else:
+                    break
+                i += 1
+            # process input_summary
+            input_summary['filesystem'] = filesystem
+            input_summary['API'] = input_summary['api']
+            if input_summary['api'].count("MPIIO") > 0:
+                input_summary['API'] = "MPIIO"
+                if "apiVersion" in input_summary:
+                    input_summary['API_Version'] = input_summary['apiVersion']
+                else:
+                    input_summary['API_Version'] = input_summary['api'].replace("MPIIO", "").strip()
+                parser.set_parameter("MPIIO Version", input_summary['API_Version'])
+            if input_summary['api'].count("HDF5") > 0:
+                input_summary['API'] = "HDF5"
+                if "apiVersion" in input_summary:
+                    input_summary['API_Version'] = input_summary['apiVersion']
+                else:
+                    input_summary['API_Version'] = input_summary['api'].replace("HDF5-", "").replace("HDF5", "").strip()
+                parser.set_parameter("HDF Version", input_summary['API_Version'])
+            if input_summary['api'].count("NCMPI") > 0:
+                input_summary['API'] = "Parallel NetCDF"
+                if "apiVersion" in input_summary:
+                    input_summary['API_Version'] = input_summary['apiVersion']
+                else:
+                    input_summary['API_Version'] = input_summary['api'].replace("NCMPI", "").strip()
+                parser.set_parameter("Parallel NetCDF Version", input_summary['API_Version'])
+
+
+
+            # fileAccessPattern
+            input_summary['fileAccessPattern'] = ""
+            input_summary['collectiveOrIndependent'] = ""
+            if input_summary['access'].count('single-shared-file') > 0:
+                input_summary['fileAccessPattern'] = "N-to-1"
+            elif input_summary['access'].count('file-per-process') > 0:
+                input_summary['fileAccessPattern'] = "N-to-N"
+            else:
+                log.error("Cannot determine fileAccessPattern")
+
+            # collectiveOrIndependent
+            input_summary['collectiveOrIndependent'] = ""
+            if "type" in input_summary:
+                if input_summary['type'].count('independent') > 0:
+                    input_summary['collectiveOrIndependent'] = "Independent"
+                elif input_summary['type'].count('collective') > 0:
+                    input_summary['collectiveOrIndependent'] = "Collective"
+            else:
+                if input_summary['access'].count('independent') > 0:
+                    input_summary['collectiveOrIndependent'] = "Independent"
+                elif input_summary['access'].count('collective') > 0:
+                    input_summary['collectiveOrIndependent'] = "Collective"
+            if input_summary['collectiveOrIndependent'] == "":
+                log.error("Cannot determine collectiveOrIndependent")
+
+            # N-to-N always Independent
+            if input_summary['fileAccessPattern'] == "N-to-N" and \
+                    input_summary['collectiveOrIndependent'] == "Independent":
+                input_summary['collectiveOrIndependent'] = ""
+            # POSIX always Independent
+            if input_summary['API'] == "POSIX":
+                input_summary['collectiveOrIndependent'] = ""
+
+            if input_summary['collectiveOrIndependent'] != "":
+                input_summary['method'] = " ".join((input_summary['API'],
+                                                    input_summary['collectiveOrIndependent'],
+                                                    input_summary['fileAccessPattern']))
+            else:
+                input_summary['method'] = " ".join((input_summary['API'],
+                                                    input_summary['fileAccessPattern']))
+
+            if input_summary['filesystem'] is not None:
+                parser.set_parameter(input_summary['method'] + ' Test File System', input_summary['filesystem'])
+
+            if "pattern" in input_summary:
+                m1 = re.match(r'^segmented \(([0-9]+) segment', input_summary["pattern"])
+                if m1:
+                    input_summary["segmentCount"] = int(m1.group(1).strip())
+            if "segments" in input_summary:
+                input_summary["segmentCount"] = int(input_summary["segments"])
+
+            if "blocksize" in input_summary and "segmentCount" in input_summary:
+                val, unit = input_summary["blocksize"].split()
+                block_size = get_MiB(float(val), unit)
+                segment_count = input_summary["segmentCount"]
+                parser.set_parameter("Per-Process Data Size", block_size * segment_count, "MByte")
+                parser.set_parameter("Per-Process I/O Block Size", block_size, "MByte")
+
+            if "xfersize" in input_summary:
+                val, unit = input_summary["xfersize"].split()
+                transfer_size = get_MiB(float(val), unit)
+                parser.set_parameter("Transfer Size Per I/O", transfer_size, "MByte")
+
+        m0 = re.match(
+            r'^access\s+bw\(MiB/s\)\s+IOPS\s+Latency\(s\)\s+block\(KiB\)\s+xfer\(KiB\)\s+'
+            r'open\(s\)\s+wr/rd\(s\)\s+close\(s\)\s+total\(s\)\s+iter',
+            lines[i])
+        if m0:
+            i += 1
+            while i < len(lines):
+                m1 = re.match(
+                    r'^write\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+'
+                    r'([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)',
+                    lines[i])
+                m2 = re.match(
+                    r'^read\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+'
+                    r'([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)',
+                    lines[i])
+                if m1 or m2:
+                    if m1:
+                        access = "Write"
+                        bw, iops, latency, block, xfer, open_s, wrrd_s, close_s, total_s, iter_s = m1.groups()
+                    else:
+                        access = "Read"
+                        bw, iops, latency, block, xfer, open_s, wrrd_s, close_s, total_s, iter_s = m2.groups()
+                        tests_passed += 1
+                        parser.successfulRun = True
+
+                    parser.set_statistic(input_summary['method'] + " %s Aggregate Throughput" % access, bw,
+                                         "MByte per Second")
+                    parser.set_statistic(input_summary['method'] + "  File Open Time (%s)" % access, open_s,
+                                         "Second")
+                    parser.set_statistic(input_summary['method'] + "  File Close Time (%s)" % access, close_s,
+                                         "Second")
+
+                m1 = re.match(r'^Summary of all tests:', lines[i])
+                if m1:
+                    break
+                i += 1
+            # reset variables
+            input_summary = {}
+            # filesystem=None
+        i += 1
+    return total_number_of_tests, tests_passed
+
+
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, proclog=None, 
                           resource_appker_vars=None):
     # set App Kernel Description
@@ -592,13 +763,16 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         m = re.match(r'^#\s+IOR RELEASE:\s(.+)', lines[j])
         if m:
             ior_output_version = 20
-
-        m = re.match(r'^IOR-([3-9])\.([0-9])+\.[0-9]: MPI Coordinated Test of Parallel I/O', lines[j])
+        # IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+        # IOR-3.3.0+dev: MPI Coordinated Test of Parallel I/O
+        m = re.match(r'^IOR-([3-9])\.([0-9])+\.[0-9]\S*: MPI Coordinated Test of Parallel I/O', lines[j])
         if m:
             ior_major = int(m.group(1))
             ior_minor = int(m.group(2))
             if ior_major >=3:
-                if ior_minor >= 2:
+                if ior_minor >= 3:
+                    ior_output_version = 33
+                elif ior_minor >= 2:
                     ior_output_version = 32
                 else:
                     ior_output_version = 30
@@ -620,6 +794,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 
     if ior_output_version == 32:
         total_number_of_tests, tests_passed = process_ior_output_v32(parser, lines)
+
+    if ior_output_version == 33:
+        total_number_of_tests, tests_passed = process_ior_output_v33(parser, lines)
 
     if app_vars is not None and 'doAllWritesFirst' in app_vars:
         if app_vars['doAllWritesFirst']:

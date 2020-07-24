@@ -238,3 +238,30 @@ def test_parser_v32(datadir):
     assert floats_are_close(parstat_val_f(stats, "Parallel NetCDF Independent N-to-1 Write Aggregate Throughput"),
                             87.93)
     assert floats_are_close(parstat_val_f(stats, "Wall Clock Time"), 561.0)
+
+
+def test_parser_v33(datadir):
+    from akrr.parsers.ior_parser import process_appker_output
+    import xml.etree.ElementTree as ElementTree
+    from akrr.util import floats_are_close
+    from .xml_comparison import parstat_val, parstat_val_f, parstat_val_i
+
+    results = process_appker_output(
+        appstdout=str(datadir / 'v33' / 'appstdout'),
+        stdout=str(datadir / 'v33' / 'stdout'),
+        stderr=str(datadir / 'v33' / 'stderr'),
+        geninfo=str(datadir / 'v33' / 'gen.info'),
+        resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
+    )
+    # check resulting xml
+    xml_out = ElementTree.fromstring(results)
+    params = xml_out.find(".//parameters")
+    stats = xml_out.find(".//statistics")
+
+    assert xml_out.find('./exitStatus/completed').text == "true"
+
+    # Compare parameters to reference
+    assert len(parstat_val(params, "App:ExeBinSignature")) > 5
+    assert len(parstat_val(params, "RunEnv:Nodes")) > 5
+    assert parstat_val(params, "App:Version") == "3.3.0+dev"
+    assert parstat_val(params, "HDF Version") == "1.10.4 (Parallel)"

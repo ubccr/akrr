@@ -1,0 +1,6 @@
+"start_time":"""Fri Jul 24 03:02:45 CDT 2020""",
+"node_list":"""c457-011 c459-062 """,
+"file_system":"""lustre 192.168.193.11@o2ib193:192.168.193.12@o2ib193:/scratch /scratch""",
+"appkernel_start_time":"""Fri Jul 24 03:02:47 CDT 2020""",
+"appkernel_end_time":"""Fri Jul 24 03:04:11 CDT 2020""",
+"end_time":"""Fri Jul 24 03:04:15 CDT 2020""",
