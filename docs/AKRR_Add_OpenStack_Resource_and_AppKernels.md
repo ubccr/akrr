@@ -20,10 +20,10 @@ Install OpenStack command line client and authorization
 
 ```bash
 # Get pip if it is not yet installed
-sudo yum install python36-pip 
+sudo yum install -y python36-pip 
 
 # python36-devel, gcc and openssl-devel for python-openstackclient
-sudo yum python36-devel gcc openssl-devel
+sudo yum install -y python36-devel gcc openssl-devel
 
 # Install OpenStack command line client
 sudo pip3.6 install python-cinderclient==3.6.1

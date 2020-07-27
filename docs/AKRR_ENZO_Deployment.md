@@ -26,6 +26,7 @@ cd $AKRR_APPKER_DIR/execs
 # see https://enzo-project.org/BootCamp.html for more details
 git clone https://github.com/enzo-project/enzo-dev
 cd enzo-dev
+git checkout enzo-2.6.1
 ./configure
 cd src/enzo
 # choose something close to you machine from:
@@ -55,28 +56,19 @@ akrr app add -a $APPKER -r $RESOURCE
 ```
 Sample output:
 ```text
-[INFO] Generating application kernel configuration for gamess on ub-hpc
+[INFO] Generating application kernel configuration for enzo on ub-hpc
 [INFO] Application kernel configuration for gamess on ub-hpc is in: 
-        /home/akrruser/akrr/etc/resources/ub-hpc/gamess.app.conf
+        /home/akrruser/akrr/etc/resources/ub-hpc/enzo.app.conf
 ```
 
 # Edit Configuration File
 
 Below is listing of example configuration file located at ~/akrr/etc/resources/$RESOURCE/gamess.app.conf
 
-**~/akrr/etc/resources/$RESOURCE/gamess.app.conf**
+**~/akrr/etc/resources/$RESOURCE/enzo.app.conf**
 ```python
 appkernel_run_env_template = """
-# Load application enviroment
-module load gamess
-module list
-
-# set executable location
-VERNO=01
-EXE=$GAMESS_DIR/gamess.$VERNO.x
-
-# set how to run app kernel
-RUN_APPKERNEL="$AKRR_APPKER_DIR/execs/gamess/rungms $INPUT $VERNO $AKRR_CORES"
+...
 """
 ```
 

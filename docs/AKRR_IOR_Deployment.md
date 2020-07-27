@@ -49,17 +49,17 @@ ior-3.2.0 does not work yet with hdf5-1.10.5, so use hdf5-1.8.*.
 cd $AKRR_APPKER_DIR/execs
 
 #create lib directory if needed and temporary directory for compilation
-mkdir -p libs
-mkdir -p libs\tmp
-cd libs\tmp
+mkdir -p lib
+mkdir -p lib\tmp
+cd lib\tmp
 
-#obtain parallel-netcdf source code
-wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8/hdf5-1.8.21/src/hdf5-1.8.21.tar.gz
-tar xvzf hdf5-1.8.21.tar.gz
-cd hdf5-1.8.21
+# obtain parallel-netcdf source code
+wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.gz
+tar xvzf hdf5-1.10.6.tar.gz
+cd hdf5-1.10.6
 
 #configure hdf5
-./configure --prefix=$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21 --enable-parallel CC=`which mpiicc` CXX=`which mpiicpc`
+./configure --prefix=$AKRR_APPKER_DIR/execs/lib/hdf5-1.10.6 --enable-parallel CC=`which mpiicc` CXX=`which mpiicpc`
 make -j 4
 
 #install
@@ -67,7 +67,7 @@ make install
 cd $AKRR_APPKER_DIR/execs
 
 #optionally clean-up
-rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/hdf5-1.8.21
+rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/hdf5-1.10.6
 ```
 
 ### Installing Parallel NetCDF (optional)
@@ -91,18 +91,18 @@ Below are brief notes on parallel NetCDF installation,  
 cd $AKRR_APPKER_DIR/execs
 
 #create lib directory if needed and temporary directory for compilation
-mkdir -p libs
-mkdir -p libs/tmp
-cd libs/tmp
+mkdir -p lib
+mkdir -p lib/tmp
+cd lib/tmp
 
 #obtain parallel-netcdf source code
-wget https://parallel-netcdf.github.io/Release/pnetcdf-1.11.1.tar.gz
-tar xvzf pnetcdf-1.11.1.tar.gz
-cd pnetcdf-1.11.1
+wget https://parallel-netcdf.github.io/Release/pnetcdf-1.12.1.tar.gz
+tar xvzf pnetcdf-1.12.1.tar.gz
+cd pnetcdf-1.12.1
 
 
 #configure parallel-netcdf, specify installation location and which mpi compiler to use
-./configure --prefix=$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1
+./configure --prefix=$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.12.1
 
 #compile (do not use parallel compilation i.e. -j option)
 make
@@ -112,7 +112,7 @@ make install
 cd $AKRR_APPKER_DIR/execs
 
 #optionally clean-up
-rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/pnetcdf-1.11.1
+rm -rf $AKRR_APPKER_DIR/execs/lib/tmp/pnetcdf-1.12.1
 ```
 
 ## Installing IOR
@@ -124,20 +124,28 @@ IOR benchmark documentation for more installation details (
 Following is done on HPC resource.
 
 ```bash
-#cd to application kernel executable directory
+# cd to application kernel executable directory
 cd $AKRR_APPKER_DIR/execs
 #remove older version of ior
 rm -rf ior
 
 
-#obtain latest version of IOR from our repository
-wget https://github.com/hpc/ior/releases/download/3.2.0/ior-3.2.0.tar.gz
-tar -xzf ior-3.2.0.tar.gz
-#make configuration scripts
-cd ior-3.2.0
+# Obtain latest version of IOR from our repository
+# Option 1 use latest stable release (it have troubles with newer version of HDF5)
+wget https://github.com/hpc/ior/releases/download/3.2.1/ior-3.2.1.tar.gz
+tar -xzf ior-3.2.1.tar.gz
+ln -s ior-3.2.1 ior
+cd ior-3.2.1
 
-#load proper compilers and libs 
-module intel intel-mpi
+# Option 2 using github
+git clone https://github.com/hpc/ior.git
+cd ior
+git checkout 3.3.0rc1
+./bootstrap
+# load proper compilers and libs
+# phdf5 and pnetcdf are optional only if you need to test hdf5 paralel library and 
+# parallel netcdf  
+module intel intel-mpi phdf5 pnetcdf
 ```
 
 Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):
@@ -150,8 +158,8 @@ Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):
 > module load hdf5
 > #configure IOR, note the specification of netcdf and hdf include and lib directories
 > ./configure --with-hdf5=yes --with-ncmpi=yes \
->     CPPFLAGS="-I$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1/include -I$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21/include" \
->     LDFLAGS="-L$AKRR_APPKER_DIR/execs/libs/pnetcdf-1.11.1/lib -L$AKRR_APPKER_DIR/execs/libs/hdf5-1.8.21/lib " \
+>     CPPFLAGS="-I$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.12.1/include -I$AKRR_APPKER_DIR/execs/lib/hdf5-1.10.6/include" \
+>     LDFLAGS="-L$AKRR_APPKER_DIR/execs/lib/pnetcdf-1.12.1/lib -L$AKRR_APPKER_DIR/execs/lib/hdf5-1.10.6/lib " \
 >     MPICC=mpiicc
 > ```
 
@@ -163,8 +171,6 @@ make
 
 Post installation
 ```bash
-# Create ior sym-link
-ln -s ior-3.2.0 ior
 # The binary should be src/ior
 ls $AKRR_APPKER_DIR/execs/ior/src/ior
 ```
