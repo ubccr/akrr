@@ -1,31 +1,29 @@
+# Should be executed from AKRR root
 FROM nwchemorg/nwchem-qc:latest
 
 # have to run these so we can do objcopy for the appsigcheck
 RUN \
 	apt-get -y update && \
-	apt-get -y install binutils
+	apt-get -y install binutils vim sudo mc
 
-ENV EXECS_DIR=/opt/appker/execs
-COPY ./execs $EXECS_DIR
+RUN useradd -m -s /bin/bash akrruser && \
+    echo 'akrruser:akrruser' |chpasswd && \
+    usermod -a -G sudo akrruser && \
+    echo "akrruser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-ENV INPUTS_DIR=/usr/local/appker/inputs
-COPY inputs $INPUTS_DIR
-ENV NWCHEM_INPUTS_DIR=$INPUTS_DIR/nwchem
+# place where the executable is
+ENV CONT_AKRR_APPKER_DIR=/opt/appker \
+    MPI_DIR=/usr/bin
 
+# copying inpus, executables and scripts
+COPY akrr/appker_repo/inputs/nwchem $CONT_AKRR_APPKER_DIR/inputs/nwchem
+COPY akrr/appker_repo/execs/bin docker/nwchem/run_nwchem.sh docker/utils/* $CONT_AKRR_APPKER_DIR/execs/bin/
 
-# The path to the nwchem executable is stored in $NWCHEM_EXECUTABLE
+RUN  chmod -R a+rX $CONT_AKRR_APPKER_DIR && \
+     chmod -R a+rx $CONT_AKRR_APPKER_DIR/execs/bin
 
-ENV SCRIPTS_DIR=/opt/scripts
-COPY scripts $SCRIPTS_DIR
+# so that the temp directory gets created there
+WORKDIR /home/akrruser
+USER akrruser
 
-
-RUN \ 
-	mkdir /scratch && \
-	chmod -R 777 /scratch && \
-	chmod -R 755 $EXECS_DIR && \
-	chmod -R 755 $SCRIPTS_DIR && \
-	chmod -R 755 $INPUTS_DIR
-
-WORKDIR /scratch
-
-ENTRYPOINT ["/opt/scripts/setup_run_nwchem.sh"]
+ENTRYPOINT ["/opt/appker/execs/bin/run_nwchem.sh"]

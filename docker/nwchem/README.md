@@ -16,5 +16,14 @@ docker run --shm-size 8g --cap-add=SYS_PTRACE <nwchem docker>
 ```
 The other docker directory has the nwchem version used on ubhpc.
 
+## Building
+
+In AKRR source code root
+
+```bash
+docker build -t nsimakov/nwchem:latest -f docker/nwchem/Dockerfile .
+docker run --rm nsimakov/nwchem:latest
+docker push nsimakov/hpcc:latest
+```
 
 

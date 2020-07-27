@@ -1,18 +1,30 @@
 #!/bin/bash
+CONT_AKRR_APPKER_DIR=${CONT_AKRR_APPKER_DIR:-/opt/appker}
+INPUTS_DIR=${INPUTS_DIR:-${CONT_AKRR_APPKER_DIR}/inputs}
+EXECS_DIR=${EXECS_DIR:-${CONT_AKRR_APPKER_DIR}/execs}
+MPI_DIR=${MPI_DIR:-/usr/bin}
 
-# name of input we want to use in inputs location
-nwchem_input_files_dir=${NWCHEM_INPUTS_DIR}
-input_file_name="aump2.nw"
+NWCHEM_INPUT_DIR=${NWCHEM_INPUT_DIR:-${INPUTS_DIR}/nwchem}
+NWCHEM_INPUT_FILENAME=${NWCHEM_INPUT_FILENAME:-aump2.nw}
 
-# gets the number of cores of this machine (used for later mpirun -np flag
-cpu_cores="$(grep ^cpu\\scores /proc/cpuinfo | uniq |  awk '{print $4}')"
-if [[ "${cpu_cores}" == "1" ]]; then
-	echo "Detected only one core. Counting processors instead"
-	cpu_cores="$(grep "processor" /proc/cpuinfo | wc -l)"
-fi
+export PATH=${EXECS_DIR}/bin:$PATH
 
-echo "Number of cores detected: ${cpu_cores}"
+source "${CONT_AKRR_APPKER_DIR}/execs/bin/akrr_util.bash"
 
+id
+echo "Starting run script for running nwchem in this docker container"
+
+# get cores count
+cpu_cores="$(akrr_get_number_of_cores)"
+echo "Number of processes set: ${cpu_cores}"
+
+# get arch type
+arch="$(akrr_get_arch)"
+echo "CPU vectorization highest instractions: ${arch}"
+
+# set optimal executable (run what you got)
+EXE_FULL_PATH=${EXE_FULL_PATH:-${NWCHEM_EXECUTABLE}}
+echo "Executable to run: ${EXE_FULL_PATH}"
 
 # help text essentially
 usage()
@@ -48,66 +60,68 @@ validate_number()
 	fi
 }
 
-
 # setting default values for variables
 set_defaults()
 {
-	work_dir=$(mktemp -d $PWD/tmp.XXXXXXXXXX) # location where hpcc input file gets copied to
+	work_dir=$(mktemp -d "$(pwd)/tmp.XXXXXXXXXX") # location where input file will get copied to
+	export TMPDIR=${work_dir}
 	nodes=1
 	ppn=${cpu_cores}
 	verbose=false
 	interactive=false
-	run_namd=true
+	run_appker=true
 	I_MPI_PIN=0
+	I_MPI_DEBUG=0
 }
 
+echo "Setting default values for some parameters"
 set_defaults
 
 while [[ "${1}" != "" ]]; do
-        case $1 in
-                -h | --help)
-                        usage
-                        exit
-                        ;;
-                -v | --verbose)
-                        echo "Verbose arg detected, running set -x after arg processing"
-                        verbose=true
-                        ;;
-                -i | --interactive)
-                        echo "Interactive arg detected, starting bash session at end of script"
-                        interactive=true
-                        ;;
-                --norun)
-                        echo "Norun arg detected, will not run hpcc executable"
-                        run_hpcc=false
-                        ;;
-                -n | --nodes)
-                        echo "Nodes arg detected. Purely used to determine hpcc input file"
-                        echo "Using the docker image assumes you're working on one node"
-                        shift
-                        nodes=${1}
-                        ;;
-                -ppn | --proc_per_node)
-                        echo "Processes Per Node arg detected, overwriting previous processes value found from looking at number of cores"
-                        shift
-                        ppn=${1}
-                        ;;
-                --pin)
-                        echo "Pin arg detected, setting I_MPI_PIN to 1"
-                        I_MPI_PIN=1
-                        ;;
-                -d | --debug)
-                        echo "Debug arg detected, setting I_MPI_DEBUG to value after it"
-                        shift
-                        I_MPI_DEBUG=${1}
-                        ;;
-                *)
-                        echo "Error: unrecognized argument"
-                        usage
-                        exit 1
-                        ;;
-        esac
-        shift # to go to next argument
+    case $1 in
+        -h | --help)
+            usage
+            exit
+            ;;
+        -v | --verbose)
+            echo "Verbose arg detected, running set -x after arg processing"
+            verbose=true
+            ;;
+        -i | --interactive)
+            echo "Interactive arg detected, starting bash session at end of script"
+            interactive=true
+            ;;
+        --norun)
+            echo "Norun arg detected, will not run hpcc executable"
+            run_appker=false
+            ;;
+        -n | --nodes)
+            echo "Nodes arg detected. Purely used to determine hpcc input file"
+            echo "Using the docker image assumes you're working on one node"
+            shift
+            nodes=${1}
+            ;;
+        -ppn | --proc_per_node)
+            echo "Processes Per Node arg detected, overwriting previous processes value found from looking at number of cores"
+            shift
+            ppn=${1}
+            ;;
+        --pin)
+            echo "Pin arg detected, setting I_MPI_PIN to 1"
+            I_MPI_PIN=1
+            ;;
+        -d | --debug)
+            echo "Debug arg detected, setting I_MPI_DEBUG to value after it"
+            shift
+            I_MPI_DEBUG=${1}
+            ;;
+        *)
+            echo "Error: unrecognized argument"
+            usage
+            exit 1
+            ;;
+    esac
+    shift # to go to next argument
 done
 
 if [[ "${verbose}" == "true" ]]; then
@@ -118,40 +132,45 @@ echo "nodes: ${nodes}"
 echo "ppn: ${ppn}"
 echo "interactive: ${interactive}"
 
+echo "Validating variables to make sure they are numbers"
 validate_number ${nodes}
 validate_number ${ppn}
+validate_number "${I_MPI_DEBUG}" I_MPI_DEBUG
 
-input_files_path="${nwchem_input_files_dir}"
+echo "Determining input file"
+echo "NWChem Input dir path: ${NWCHEM_INPUT_DIR}"
+echo "Input file path: ${NWCHEM_INPUT_FILENAME}"
 
 dest_path="${work_dir}"
-echo "Input file path: ${input_files_path}"
-echo "Namd Input dir path: ${nwchem_input_files_dir}"
 
-if [[ -f "${input_files_path}/${input_file_name}" ]]; then
-	cp ${input_files_path}/* ${dest_path}
+# check if input file exists, if it does, copy it over
+echo "Copying over input file to working directory"
+if [[ -f "${NWCHEM_INPUT_DIR}/${NWCHEM_INPUT_FILENAME}" ]]; then
+	cp ${NWCHEM_INPUT_DIR}/* ${dest_path}
+	echo "${NWCHEM_INPUT_DIR}/* copied over to ${dest_path}"
 
+	echo "scratch_dir ${work_dir}" >> "${dest_path}/${NWCHEM_INPUT_FILENAME}"
+    echo "permanent_dir ${work_dir}" >> "${dest_path}/${NWCHEM_INPUT_FILENAME}"
 else
-	echo "Error: ${input_files_path}/${input_file_name} input file does not exist"
+	echo "Error: ${NWCHEM_INPUT_DIR}/${NWCHEM_INPUT_FILENAME} input file does not exist"
 	exit 1
 fi
-
 
 cd $work_dir
 
 echo "Running appsigcheck..."
-${EXECS_DIR}/bin/appsigcheck.sh ${NWCHEM_EXECUTABLE}
+${EXECS_DIR}/bin/appsigcheck.sh ${EXE_FULL_PATH}
 wait
-export I_MPI_DEBUG=5
+
 # running hpcc with mpirun, where -np is number of cores for the machine
-if [[ "${run_namd}" == "true" ]]; then
-	echo "Running namd..."
+if [[ "${run_appker}" == "true" ]]; then
+	echo "Running nwchem..."
 	export I_MPI_PIN
 	export I_MPI_DEBUG
-	mpirun --allow-run-as-root -np ${ppn} ${NWCHEM_EXECUTABLE} ${input_file_name}
+	mpirun -np ${cpu_cores} ${EXE_FULL_PATH} ${NWCHEM_INPUT_FILENAME}
 	wait
 	echo "Complete! outputs are in is in ${work_dir}"
 fi
-
 
 # if user sets interactive flag, starts up bash at end
 if [[ "${interactive}" == "true" ]]; then
