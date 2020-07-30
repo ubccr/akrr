@@ -86,7 +86,8 @@ class OpenStackServer:
     def __init__(self, resource=None, openstack=None, name=None,
                  flavor=None, volume=None, network=None, security_group=None, key_name=None,
                  ssh_username=None, ssh_private_key_file=None,
-                 floating_ip_attach=False):
+                 floating_ip_attach=False, floating_ip_network=None,
+                 floating_ip_delete_after_use=False):
         from akrr.util import get_full_path
         if resource is not None:
             # @todo check that it is not spinning already
@@ -100,7 +101,9 @@ class OpenStackServer:
             self.name = resource["openstack_server_name"]
             self.ssh_username = resource["ssh_username"]
             self.ssh_private_key_file = resource["ssh_private_key_file"]
-            self.floating_ip_attach = resource["openstack_floating_ip_attach"]
+            self.floating_ip_attach = resource.get("openstack_floating_ip_attach", False)
+            self.floating_ip_network = resource.get("openstack_floating_ip_network", None)
+            self.floating_ip_delete_after_use = resource.get("openstack_floating_ip_delete_after_use", False)
         else:
             self.openstack = openstack
             self.flavor = flavor
@@ -112,6 +115,8 @@ class OpenStackServer:
             self.ssh_private_key_file = ssh_private_key_file
             self.name = name
             self.floating_ip_attach = floating_ip_attach
+            self.floating_ip_network = floating_ip_network
+            self.floating_ip_delete_after_use = floating_ip_delete_after_use
         self.internal_network_ip = None
         self.flexible_ip = None
         self.ip = None
@@ -212,10 +217,17 @@ class OpenStackServer:
         # attach floating ip
         if self.floating_ip_attach:
             # get unused ip
-            out = self.openstack.run_open_stack_cmd("floating ip list --long --status DOWN -f json")
-            out = json.loads(out.strip())
-            if len(out) == 0:
-                raise Exception("Can not attach floating ip, there is no one available.!")
+            floating_ip_creating_count = 0
+            while True:
+                out = self.openstack.run_open_stack_cmd("floating ip list --long --status DOWN -f json")
+                out = json.loads(out.strip())
+                if len(out) == 0 and (self.floating_ip_network is None or floating_ip_creating_count > 0):
+                    raise Exception("Can not attach floating ip, there is no one available.!")
+                if len(out) == 0 and self.floating_ip_network is not None:
+                    # create floating ip, if floating_ip_network provided
+                    self.openstack.run_open_stack_cmd("floating ip create " + self.floating_ip_network)
+                    floating_ip_creating_count += 1
+
             # attach ip
             ip = out[random.randrange(len(out))]["Floating IP Address"]
             self.openstack.run_open_stack_cmd("server add floating ip %s %s" % (self.name, ip))
@@ -241,6 +253,9 @@ class OpenStackServer:
             time.sleep(5)
 
     def delete(self):
+        # release floating ip
+        if self.floating_ip_attach and self.flexible_ip:
+            self.openstack.run_cmd("server remove floating %s %s" % (self.name, self.flexible_ip))
         # stop
         count = 0
         while self.is_server_running(shut_off_is_down=True):
@@ -261,6 +276,9 @@ class OpenStackServer:
             count += 1
             if count > 60:
                 raise Exception("Can not delete server!")
+        # delete floating ip
+        if self.floating_ip_delete_after_use and self.flexible_ip:
+            self.openstack.run_cmd("floating ip delete %s" % self.flexible_ip)
 
 
 if __name__ == "__main__":
@@ -273,7 +291,9 @@ if __name__ == "__main__":
         "security_group": ("default", "allow-from-ub"),
         "key_name": "nikolays",
         "name": "aktest",
-        "floating_ip_attach": True
+        "floating_ip_attach": True,
+        "floating_ip_network": True,
+        "floating_ip_delete_after_use": False
     }
     server = OpenStackServer(**server_param)
     server.create(delete_if_exists=True)
