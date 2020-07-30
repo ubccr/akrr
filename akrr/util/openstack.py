@@ -168,8 +168,10 @@ class OpenStackServer:
     def create(self, delete_if_exists=False):
         if self.is_server_running(shut_off_is_down=True):
             if delete_if_exists:
+                log.debug("Container with same name is already running. Will delete it and create it again.")
                 self.delete()
             else:
+                log.debug("Container with same name is already running, will reuse it.")
                 self._detect_network()
                 return
 
