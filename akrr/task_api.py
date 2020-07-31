@@ -27,7 +27,7 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
         appkernel_list = []
         resource_app_enabled = akrr.app.app_get_enabled()
         for ak in akrr.cfg.apps.keys():
-            if resource not in akrr.cfg.apps[ak]['appkernel_on_resource'][resource]:
+            if resource not in akrr.cfg.apps[ak]['appkernel_on_resource']:
                 continue
             if resource not in resource_app_enabled:
                 continue
