@@ -45,6 +45,7 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
                 time_window_start=time_window_start, time_window_end=time_window_end, test_run=test_run,
                 dry_run=dry_run, gen_batch_job_only=gen_batch_job_only, app_param=app_param, task_param=task_param,
                 n_runs=n_runs, group_id=group_id)
+        return
 
     if nodes == "all":
         import akrr.cfg
