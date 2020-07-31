@@ -23,15 +23,15 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
 
     if nodes == "all":
         import akrr.cfg
-        if appkernel not in akrr.cfg.app:
+        if appkernel not in akrr.cfg.apps:
             raise AkrrValueException("Unknown appkernel %s" % appkernel)
-        if resource not in akrr.cfg.app[appkernel]['appkernel_on_resource']:
+        if resource not in akrr.cfg.apps[appkernel]['appkernel_on_resource']:
             raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
-        if resource not in akrr.cfg.app[appkernel]['appkernel_on_resource']:
+        if resource not in akrr.cfg.apps[appkernel]['appkernel_on_resource']:
             raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
-        if "num_of_nodes" not in akrr.cfg.app[appkernel]['appkernel_on_resource'][resource]:
+        if "num_of_nodes" not in akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]:
             raise AkrrValueException("There is no default nodes for resource %s for appkernel %s" % (resource, appkernel))
-        node_list = akrr.cfg.app[appkernel]['appkernel_on_resource'][resource]['num_of_nodes']
+        node_list = akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]['num_of_nodes']
     else:
         node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [nodes]
 
