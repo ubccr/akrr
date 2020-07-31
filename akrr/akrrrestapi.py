@@ -1593,5 +1593,74 @@ def start_rest_api(m_proc_queue_to_master=None, m_proc_queue_from_master=None):
     bottle.run(app, server=srv, debug=True, reloader=False)
 
 
+@app.post(apiroot + '/scheduler/no_new_tasks')
+@bottle.auth_basic(auth_by_token_for_write)
+def scheduler_no_new_tasks():
+    """
+    Temporary stop new tasks start up
+    """
+    global proc_queue_to_master
+    m_request = {
+        'fun': 'daemon_no_new_tasks',
+        'args': tuple(),
+        'kargs': {}
+    }
+    proc_queue_to_master.put(m_request)
+    while not proc_queue_from_master.empty():
+        pass
+    m_response = proc_queue_from_master.get()
+
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Temporary stopped new tasks start up!"
+
+    return m_response
+
+
+@app.post(apiroot + '/scheduler/no_active_tasks_check')
+@bottle.auth_basic(auth_by_token_for_write)
+def scheduler_no_active_tasks_check():
+    """
+    Temporary stop active tasks status checking
+    """
+    global proc_queue_to_master
+    m_request = {
+        'fun': 'daemon_no_active_tasks_check',
+        'args': tuple(),
+        'kargs': {}
+    }
+    proc_queue_to_master.put(m_request)
+    while not proc_queue_from_master.empty():
+        pass
+    m_response = proc_queue_from_master.get()
+
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Temporary stopped active tasks status checking!"
+
+    return m_response
+
+
+@app.post(apiroot + '/scheduler/new_tasks_on')
+@bottle.auth_basic(auth_by_token_for_write)
+def scheduler_no_active_tasks_check():
+    """
+    Allow new task to be started
+    """
+    global proc_queue_to_master
+    m_request = {
+        'fun': 'daemon_new_tasks_on',
+        'args': tuple(),
+        'kargs': {}
+    }
+    proc_queue_to_master.put(m_request)
+    while not proc_queue_from_master.empty():
+        pass
+    m_response = proc_queue_from_master.get()
+
+    if ("success" in m_response) and (m_response["success"] is True):
+        m_response["message"] = "Allowed new task to be started!"
+
+    return m_response
+
+
 if __name__ == '__main__':
     start_rest_api()

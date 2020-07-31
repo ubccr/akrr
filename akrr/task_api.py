@@ -301,13 +301,14 @@ def task_list(resource=None, appkernel=None, scheduled=True, active=True):
             log.info('There is no active tasks')
 
 
-def task_delete(task_id):
+def task_delete_by_task_id(task_id: int = None):
     """
     Remove task from schedule
 
     :param task_id:
     :return:
     """
+
     import re
     import json
     from akrr import akrrrestclient
@@ -332,8 +333,76 @@ def task_delete(task_id):
                                                                                                         results.text))
     else:
         if hasattr(results, "text"):
-            msg = "Can not delete task. Message from AKRR server: "+results.text
+            msg = "Can not delete task. Message from AKRR server: " + results.text
             log.error(msg)
             raise AkrrRestAPIException(msg)
         else:
             raise AkrrRestAPIException()
+
+
+def task_delete(task_id: int = None, resource: str = None, appkernel: str = None, nodes: str = None,
+                group_id: str = None, all_scheduled_tasks=False, all_active_tasks=False):
+    """
+    Remove task from schedule
+
+    :param task_id:
+    :return:
+    """
+    if task_id:
+        if resource or appkernel or nodes or group_id or all_scheduled_tasks or all_active_tasks:
+            raise AkrrValueException("task_id can not be specified with other values")
+        task_delete_by_task_id(task_id)
+        return
+
+    data = {}
+    if resource or appkernel or nodes:
+        if resource or appkernel or nodes or group_id or all_scheduled_tasks or all_active_tasks:
+            raise AkrrValueException("resource/appkernel/nodes can not be specified with other values")
+        if resource:
+            data["resource"] = resource
+        if appkernel:
+            appkernel_list = [ak.strip() for ak in appkernel.split(',')] if ',' in appkernel else [appkernel]
+            data["appkernel"] = appkernel_list
+        if nodes:
+            node_list = [int(node.strip()) for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
+            data["nodes"] = node_list
+
+    if group_id:
+        data["group_id"] = group_id
+
+    if all_scheduled_tasks:
+        if all_active_tasks:
+            raise AkrrValueException("all_scheduled_tasks can not be specified with other values")
+        data["all_scheduled_tasks"] = all_scheduled_tasks
+
+    if all_active_tasks:
+        data["all_active_tasks"] = all_active_tasks
+
+    try:
+        from akrr import akrrrestclient
+        import json
+
+        result = akrrrestclient.post(
+            '/scheduler/no_new_tasks',
+            data=data)
+        result = akrrrestclient.post(
+            '/scheduler/no_active_tasks_check',
+            data=data)
+
+
+        if result.status_code == 200:
+            data_out = json.loads(result.text)["data"]["data"]
+            log.info('Successfully deleted tasks. Message:\n %s.' % str(data_out))
+        else:
+            log.error(
+                'something went wrong. %s:%s',
+                result.status_code,
+                result.text)
+
+    except Exception as e:
+        log.error('''
+        An error occured while communicating
+        with the REST API.
+        %s: %s
+        ''', e.args[0] if len(e.args) > 0 else '', e.args[1] if len(e.args) > 1 else '')
+        raise e

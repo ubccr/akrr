@@ -509,11 +509,33 @@ def cli_task_delete(parent_parser):
     parser = parent_parser.add_parser('delete', description=cli_task_list.__doc__)
 
     parser.add_argument(
-        '-t', '--task-id', required=True, type=int, help="task id")
+        '-t', '--task-id', type=int,
+        help="delete task from scheduled and active tasks (not compatible with other options)")
+    parser.add_argument(
+        '-r', '--resource',
+        help="delete all scheduled tasks from resource. Can be combined with --appkernel and --nodes.")
+    parser.add_argument(
+        '-a', '--appkernel',
+        help="delete appkernel from scheduled tasks. Multiple appkernels separated by comma. " +
+             "Can be combined with --resource amd --nodes.")
+    parser.add_argument(
+        '-n', '--nodes',
+        help="delete tasks which specified nodes count. Multiple nodes separated by comma. " +
+             "Can be combined with --resource amd --appkernel.")
+    parser.add_argument(
+        '--all-scheduled-tasks', action='store_true',
+        help="delete all scheduled tasks (not compatible with other options).")
+    parser.add_argument(
+        '--all-active-tasks', action='store_true',
+        help="delete all active tasks (not compatible with other options).")
+    parser.add_argument(
+        '--group-id',
+        help="delete all tasks with same group-id (not compatible with other options).")
 
     def handler(args):
         from akrr.task_api import task_delete
-        task_delete(args.task_id)
+        kwargs = {k: v for k, v in vars(args).items() if k not in _common_args}
+        task_delete(**kwargs)
 
     parser.set_defaults(func=handler)
 

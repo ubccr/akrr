@@ -116,6 +116,9 @@ class AkrrDaemon:
         self.proc_queue_to_master = None
         self.proc_queue_from_master = None
 
+        self.timer_no_new_tasks = None
+        self.timer_no_active_tasks_check = None
+
     def __del__(self):
         if getattr(self, 'dbCon', None) is not None:
             self.dbCon.commit()
@@ -554,6 +557,26 @@ class AkrrDaemon:
         if init_workers_num != len(self.workers):
             self.dbCon.commit()
 
+    def no_new_tasks(self):
+        log.info("Activation of new tasks is postponed.")
+        self.bRunScheduledTasks = False
+        self.bRunActiveTasks_StartTheStep = False
+        self.bRunActiveTasks_CheckTheStep = True
+        self.LastOpSignal = "Run"
+        self.timer_no_new_tasks = datetime.datetime.now()
+
+    def no_active_tasks_check(self):
+        log.info("Checking new tasks is postponed.")
+        self.bRunActiveTasks_CheckTheStep = False
+        self.timer_no_active_tasks_check = datetime.datetime.now()
+
+    def new_tasks_on(self):
+        log.info("Activation of new tasks is allowed.")
+        self.bRunScheduledTasks = True
+        self.bRunActiveTasks_StartTheStep = True
+        self.bRunActiveTasks_CheckTheStep = True
+        self.LastOpSignal = "Run"
+
     def run(self):
         self.bRunScheduledTasks = True
         self.bRunActiveTasks_StartTheStep = True
@@ -580,24 +603,16 @@ class AkrrDaemon:
             self.bRunActiveTasks_CheckTheStep = True
             self.LastOpSignal = "SEGTERM"
 
-        def no_new_tasks(_signum, _):
-            log.info("Activation of new tasks is postponed.")
-            self.bRunScheduledTasks = False
-            self.bRunActiveTasks_StartTheStep = False
-            self.bRunActiveTasks_CheckTheStep = True
-            self.LastOpSignal = "Run"
+        def gotsignal_no_new_tasks(_signum, _):
+            self.no_new_tasks()
 
-        def new_tasks_on(_signum, _):
-            log.info("Activation of new tasks is allowed.")
-            self.bRunScheduledTasks = True
-            self.bRunActiveTasks_StartTheStep = True
-            self.bRunActiveTasks_CheckTheStep = True
-            self.LastOpSignal = "Run"
+        def gotsignal_new_tasks_on(_signum, _):
+            self.new_tasks_on()
 
         signal.signal(signal.SIGTERM, sigterm_handler)
         signal.signal(signal.SIGINT, sigterm_handler)
-        signal.signal(signal.SIGUSR1, no_new_tasks)
-        signal.signal(signal.SIGUSR2, new_tasks_on)
+        signal.signal(signal.SIGUSR1, gotsignal_no_new_tasks)
+        signal.signal(signal.SIGUSR2, gotsignal_new_tasks_on)
 
         # start rest api
         from . import akrrrestapi
@@ -667,6 +682,16 @@ class AkrrDaemon:
                     self.run_active_tasks__check_the_step()
 
                 self.run_rest_api_requests()
+
+                if self.timer_no_new_tasks and datetime.datetime.now()-self.timer_no_new_tasks>datetime.timedelta(minutes=3):
+                    log.info("timer_no_new_tasks expired enabling new task start-up")
+                    self.timer_no_new_tasks = None
+                    self.new_tasks_on()
+
+                if self.timer_no_active_tasks_check and datetime.datetime.now()-self.timer_no_new_tasks>datetime.timedelta(minutes=3):
+                    log.info("timer_no_active_tasks_check expired, enabling new task start-up")
+                    self.timer_no_active_tasks_check = None
+                    self.new_tasks_on()
 
                 if self.LastOpSignal == "SEGTERM":
                     log.info("Trying to shut down REST API...")
@@ -1596,3 +1621,18 @@ def daemon_start_in_debug_mode(max_task_handlers=None, redirect_task_processing_
     akrr_scheduler = AkrrDaemon()
     akrr_scheduler.run()
     del akrr_scheduler
+
+
+def daemon_no_new_tasks():
+    global akrr_scheduler
+    return akrr_scheduler.no_new_tasks()
+
+
+def daemon_no_active_tasks_check():
+    global akrr_scheduler
+    return akrr_scheduler.no_active_tasks_check()
+
+
+def daemon_new_tasks_on():
+    global akrr_scheduler
+    return akrr_scheduler.no_new_tasks()
