@@ -10,9 +10,10 @@ from akrr.util.task import pack_details, wrap_str_dict, wrap_text, get_task_list
 from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 
 
-def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
+def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, periodicity=None,
              time_window_start=None, time_window_end=None, test_run=False,
-             dry_run=False, gen_batch_job_only=False, app_param=None, task_param=None):
+             dry_run:bool = False, gen_batch_job_only: bool = False, app_param=None, task_param=None,
+             n_runs: int = 1):
     """
     Handles the appropriate execution of a 'New Task' mode request
     given the provided command line arguments.
@@ -26,6 +27,9 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
         time_to_start = get_formatted_time_to_start(time_to_start)
         if time_to_start is None:
             raise AkrrValueException("Unknown date-time format for time to start!")
+
+    if n_runs > 1 and periodicity:
+        raise AkrrValueException("n_runs larger than one can not be set with periodicity")
 
     for node in node_list:
         if time_window_start is not None and time_window_end is not None:
@@ -45,8 +49,12 @@ def task_new(resource, appkernel, nodes, time_to_start=None, periodicity=None,
         s_task_param = ""
         if test_run:
             s_task_param += "'test_run':True"
+        if n_runs > 1:
+            s_task_param += "" if s_task_param == "" else ","
+            s_task_param += "'n_runs':%d" % n_runs
         if task_param is not None:
-            s_task_param += task_param if s_task_param == "" else "," + task_param
+            s_task_param += "" if s_task_param == "" else ","
+            s_task_param += task_param
         if s_task_param != "":
             data['task_param'] = "{%s}" % s_task_param
 

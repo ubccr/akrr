@@ -453,6 +453,8 @@ def cli_task_new(parent_parser):
     parser.add_argument(
         '-p', '--periodicity', help='Specify the amount of time that should elapse between executions.')
     parser.add_argument(
+        '--n-runs', default=1, type=int, help='Execute appkernel n-runs times.')
+    parser.add_argument(
         '-test-run', '--test-run', action='store_true',
         help='Run appkernel on resource even if it is not validated yet.')
     parser.add_argument(

@@ -171,7 +171,11 @@ class AkrrDaemon:
             if task_param.get('test_run', False) is False:
                 if resource_enabled.get(resource, 0) == 0 or appkernel_enabled.get(app, 0) == 0:
                     continue
-
+            if task_param.get('n_runs', 1) < 1:
+                # Now we need to delete it from ScheduledTasks
+                log.info("Task %d has 0 times to run left, deleting it from scheduled_tasks", task_param.get('n_runs', 1))
+                self.dbCur.execute('''DELETE FROM scheduled_tasks WHERE task_id=%s;''', (task_id,))
+                self.dbCon.commit()
 
             task_activated = False
             task_handler = None
@@ -275,7 +279,16 @@ class AkrrDaemon:
                         log.info("Schedule another task for %s" % next_time)
                         self.add_task(next_time, repeat_in, resource, app, resource_param, app_param, task_param_str,
                                       group_id, parent_task_id)
-                        # self.dbCon.commit()
+                    if task_param.get('n_runs', 1) > 1:
+                        task_param['n_runs'] = task_param['n_runs'] - 1
+                        task_param_str = re.sub(r"[\"']n_runs[\"']\s*:\s*[0-9]+", "'n_runs':%d" % task_param['n_runs'], task_param_str)
+                        # give it couple minutes for next run
+                        next_time = akrr.util.time.get_next_time(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "0-00-000 00:02:00")
+                        self.add_task(next_time, repeat_in, resource, app, resource_param, app_param, task_param_str,
+                                      group_id, parent_task_id)
+
+
+
                 if self.bRunScheduledTasks is False:
                     # means that the termination signal was send while this function is already running
                     raise IOError("Can not activate task because got a massage to postpone activation")
@@ -291,8 +304,6 @@ class AkrrDaemon:
             if task_activated is True:
                 # Now commit the changes
                 self.dbCon.commit()
-                if repeat_in is not None:
-                    self.dbCon.commit()
                 # Now we need to delete it from ScheduledTasks
                 self.dbCur.execute('''DELETE FROM scheduled_tasks
                     WHERE task_id=%s;''', (task_id,))
