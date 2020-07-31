@@ -379,12 +379,12 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
     # now we can work with db
     where = []
     if resource:
-        where.append("resource='%s'", resource)
+        where.append("resource='%s'" % resource)
     if appkernel:
         appkernel_list = ["'" + ak.strip() + "'" for ak in appkernel.split(',')] if ',' in appkernel else [appkernel]
         where.append("app IN (" + ",".join(appkernel_list) + ")")
     if group_id:
-        where.append("group_id='%s'", group_id)
+        where.append("group_id='%s'" % group_id)
 
     active_tasks_ids = []
 
@@ -407,10 +407,10 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
             log.debug(sql)
             cur.execute(sql)
         if active_tasks:
-                sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where_node)
-                log.debug(sql)
-                cur.execute(sql)
-                active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
+            sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where)
+            log.debug(sql)
+            cur.execute(sql)
+            active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
 
     if active_tasks:
         if len(active_tasks_ids)==0:
