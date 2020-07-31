@@ -84,6 +84,29 @@ def app_add(resource: str, appkernel: str, execution_method: str = "hpc", dry_ru
             log.info("Application kernel configuration for %s on %s is in: \n\t%s", appkernel, resource, cfg_filename)
 
 
+def app_get_enabled():
+    from collections import OrderedDict
+    from akrr.db import get_akrr_db
+    db, cur = get_akrr_db(dict_cursor=True)
+
+    cur.execute("select * from resources")
+    resource_app_enabled = OrderedDict(((r["name"], {"apps": OrderedDict(), **r}) for r in cur.fetchall()))
+
+    cur.execute(
+        "select ra.id as resource_app_kernels_id,\n"
+        "       ra.resource_id,r.name as resource, xdmod_resource_id,\n"
+        "                      r.name as resource,r.enabled as resource_enabled,\n"
+        "       ra.app_kernel_id,a.name as app,a.enabled as app_enabled,\n"
+        "       ra.enabled as resource_app_enabled, a.nodes_list\n"
+        "from resource_app_kernels ra\n"
+        "left join resources r on ra.resource_id=r.id\n"
+        "left join app_kernels a on ra.app_kernel_id=a.id")
+    for ra in cur.fetchall():
+        resource_app_enabled[ra["resource"]]["apps"][ra["app"]] = ra
+
+    return resource_app_enabled
+
+
 def app_list():
     from prettytable import PrettyTable
     from .cfg import apps, resources
@@ -108,20 +131,7 @@ def app_list():
     log.info("All available appkernels:\n" + str(pt))
 
     # get enable table
-    cur.execute("select * from resources")
-    resource_app_enabled = OrderedDict(((r["name"], {"apps": OrderedDict(), **r}) for r in cur.fetchall()))
-
-    cur.execute(
-        "select ra.id as resource_app_kernels_id,\n"
-        "       ra.resource_id,r.name as resource, xdmod_resource_id,\n"
-        "                      r.name as resource,r.enabled as resource_enabled,\n"
-        "       ra.app_kernel_id,a.name as app,a.enabled as app_enabled,\n"
-        "       ra.enabled as resource_app_enabled, a.nodes_list\n"
-        "from resource_app_kernels ra\n"
-        "left join resources r on ra.resource_id=r.id\n"
-        "left join app_kernels a on ra.app_kernel_id=a.id")
-    for ra in cur.fetchall():
-        resource_app_enabled[ra["resource"]]["apps"][ra["app"]] = ra
+    resource_app_enabled = app_get_enabled()
 
     pt = PrettyTable()
     pt.field_names = ["Resource", "App", "Enabled"]

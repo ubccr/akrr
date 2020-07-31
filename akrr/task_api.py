@@ -21,6 +21,31 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
     import pprint
     from akrr.util.time import calculate_random_start_time, get_formatted_time_to_start
 
+    if appkernel == "all":
+        import akrr.cfg
+        import akrr.app
+        appkernel_list = []
+        resource_app_enabled = akrr.app.app_get_enabled()
+        for ak in akrr.cfg.apps.keys():
+            if resource not in akrr.cfg.apps[ak]['appkernel_on_resource'][resource]:
+                continue
+            if resource not in resource_app_enabled:
+                continue
+            if ak not in resource_app_enabled[resource]["apps"]:
+                continue
+            if "resource_app_enabled" not in resource_app_enabled[resource]["apps"][ak]:
+                continue
+            if not resource_app_enabled[resource]["apps"][ak]["resource_app_enabled"]:
+                continue
+            appkernel_list.append(ak)
+
+        for ak in appkernel_list:
+            task_new(
+                resource, ak, nodes, time_to_start=time_to_start, periodicity=periodicity,
+                time_window_start=time_window_start, time_window_end=time_window_end, test_run=test_run,
+                dry_run=dry_run, gen_batch_job_only=gen_batch_job_only, app_param=app_param, task_param=task_param,
+                n_runs=n_runs, group_id=group_id)
+
     if nodes == "all":
         import akrr.cfg
         if appkernel not in akrr.cfg.apps:
