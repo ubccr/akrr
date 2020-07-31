@@ -440,9 +440,9 @@ def cli_task_new(parent_parser):
     parser.add_argument(
         '-r', '--resource', required=True, help="name of resource")
     parser.add_argument(
-        '-a', '--appkernel', required=True, help="name of app kernel")
+        '-a', '--appkernel', required=True, help="name of app kernel, use 'all' to start tasks for all enabled appkernels.")
     parser.add_argument(
-        '-n', '--nodes', required=True, help='Specify how many nodes the new task should be setup with.')
+        '-n', '--nodes', required=True, help="Specify how many nodes the new task should be setup with, use 'all' to start tasks for all default nodes.")
     parser.add_argument(
         '-s', '--time-to-start',
         help='Specify what time the newly created task should start. If it is not specified then start now.')

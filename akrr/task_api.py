@@ -21,7 +21,19 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
     import pprint
     from akrr.util.time import calculate_random_start_time, get_formatted_time_to_start
 
-    node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [nodes]
+    if nodes == "all":
+        import akrr.cfg
+        if appkernel not in akrr.cfg.app:
+            raise AkrrValueException("Unknown appkernel %s" % appkernel)
+        if resource not in akrr.cfg.app[appkernel]['appkernel_on_resource']:
+            raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
+        if resource not in akrr.cfg.app[appkernel]['appkernel_on_resource']:
+            raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
+        if "num_of_nodes" not in akrr.cfg.app[appkernel]['appkernel_on_resource'][resource]:
+            raise AkrrValueException("There is no default nodes for resource %s for appkernel %s" % (resource, appkernel))
+        node_list = akrr.cfg.app[appkernel]['appkernel_on_resource'][resource]['num_of_nodes']
+    else:
+        node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [nodes]
 
     if time_to_start is not None:
         time_to_start = get_formatted_time_to_start(time_to_start)
