@@ -13,7 +13,7 @@ from akrr.akrrerror import AkrrRestAPIException, AkrrValueException
 def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, periodicity=None,
              time_window_start=None, time_window_end=None, test_run=False,
              dry_run:bool = False, gen_batch_job_only: bool = False, app_param=None, task_param=None,
-             n_runs: int = 1):
+             n_runs: int = 1, group_id: str = ""):
     """
     Handles the appropriate execution of a 'New Task' mode request
     given the provided command line arguments.
@@ -57,6 +57,9 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
             s_task_param += task_param
         if s_task_param != "":
             data['task_param'] = "{%s}" % s_task_param
+
+        if group_id != "":
+            data['group_id'] = group_id
 
         if app_param is not None:
             data['app_param'] = "{%s}" % app_param

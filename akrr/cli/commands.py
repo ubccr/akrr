@@ -468,6 +468,8 @@ def cli_task_new(parent_parser):
                             "--app-param \"'executable':'execs/hpcc/hpcc_skx'\"")
     parser.add_argument(
         '--task-param', help="additional options for task")
+    parser.add_argument(
+        '--group-id', help="group id string to identify set of appkernel tasks, for example: tests_before_update")
 
     def handler(args):
         kwargs = {k: v for k, v in vars(args).items() if k not in _common_args}
