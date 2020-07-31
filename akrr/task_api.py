@@ -362,8 +362,6 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
         raise AkrrRestAPIException("Can not post scheduler/no_new_tasks")
 
     if active_tasks:
-        if akrrrestclient.post('/scheduler/no_active_tasks_check').status_code != 200:
-            raise AkrrRestAPIException("Can not post scheduler/no_active_tasks_check")
         # Now we need to wait till scheduler will be done checking active tasks
         while True:
             sql = "SELECT task_id FROM active_tasks WHERE task_lock > 0"
@@ -372,7 +370,7 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
             n_active_checking_task = len(cur.fetchall())
             if n_active_checking_task==0:
                 break
-            log.info("There are %d task which daemon is working on, waiting for it to finish.", n_active_checking_task)
+            log.info("There are %d task which daemon is actively working on, waiting for it to pause.", n_active_checking_task)
             time.sleep(5)
         # now daemon is not working on any tasks
 

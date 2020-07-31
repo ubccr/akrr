@@ -576,11 +576,6 @@ class AkrrDaemon:
         self.LastOpSignal = "Run"
         self.timer_no_new_tasks = datetime.datetime.now()
 
-    def no_active_tasks_check(self):
-        log.info("Checking new tasks is postponed.")
-        self.bRunActiveTasks_CheckTheStep = False
-        self.timer_no_active_tasks_check = datetime.datetime.now()
-
     def new_tasks_on(self):
         log.info("Activation of new tasks is allowed.")
         self.bRunScheduledTasks = True
@@ -1636,11 +1631,6 @@ def daemon_start_in_debug_mode(max_task_handlers=None, redirect_task_processing_
 def daemon_no_new_tasks():
     global akrr_scheduler
     return akrr_scheduler.no_new_tasks()
-
-
-def daemon_no_active_tasks_check():
-    global akrr_scheduler
-    return akrr_scheduler.no_active_tasks_check()
 
 
 def daemon_new_tasks_on():

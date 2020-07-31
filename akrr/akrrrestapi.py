@@ -1616,29 +1616,6 @@ def scheduler_no_new_tasks():
     return m_response
 
 
-@app.post(apiroot + '/scheduler/no_active_tasks_check')
-@bottle.auth_basic(auth_by_token_for_write)
-def scheduler_no_active_tasks_check():
-    """
-    Temporary stop active tasks status checking
-    """
-    global proc_queue_to_master
-    m_request = {
-        'fun': 'daemon_no_active_tasks_check',
-        'args': tuple(),
-        'kargs': {}
-    }
-    proc_queue_to_master.put(m_request)
-    while not proc_queue_from_master.empty():
-        pass
-    m_response = proc_queue_from_master.get()
-
-    if ("success" in m_response) and (m_response["success"] is True):
-        m_response["message"] = "Temporary stopped active tasks status checking!"
-
-    return m_response
-
-
 @app.post(apiroot + '/scheduler/new_tasks_on')
 @bottle.auth_basic(auth_by_token_for_write)
 def scheduler_no_active_tasks_check():
