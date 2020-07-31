@@ -513,24 +513,26 @@ def cli_task_delete(parent_parser):
         help="delete task from scheduled and active tasks (not compatible with other options)")
     parser.add_argument(
         '-r', '--resource',
-        help="delete all scheduled tasks from resource. Can be combined with --appkernel and --nodes.")
+        help="delete all scheduled tasks from resource. Can be combined with --appkernel, --nodes and --group-id.")
     parser.add_argument(
         '-a', '--appkernel',
         help="delete appkernel from scheduled tasks. Multiple appkernels separated by comma. " +
-             "Can be combined with --resource amd --nodes.")
+             "Can be combined with --resource, --nodes and --group-id.")
     parser.add_argument(
         '-n', '--nodes',
         help="delete tasks which specified nodes count. Multiple nodes separated by comma. " +
-             "Can be combined with --resource amd --appkernel.")
+             "Can be combined with --resource, --appkernel and --group-id.")
+    parser.add_argument(
+        '--group-id',
+        help="delete all tasks with same group-id." +
+             "Can be combined with --resource, --appkernel and --nodes.")
     parser.add_argument(
         '--all-scheduled-tasks', action='store_true',
         help="delete all scheduled tasks (not compatible with other options).")
     parser.add_argument(
         '--all-active-tasks', action='store_true',
         help="delete all active tasks (not compatible with other options).")
-    parser.add_argument(
-        '--group-id',
-        help="delete all tasks with same group-id (not compatible with other options).")
+
 
     def handler(args):
         from akrr.task_api import task_delete

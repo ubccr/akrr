@@ -688,7 +688,7 @@ class AkrrDaemon:
                     self.timer_no_new_tasks = None
                     self.new_tasks_on()
 
-                if self.timer_no_active_tasks_check and datetime.datetime.now()-self.timer_no_new_tasks>datetime.timedelta(minutes=3):
+                if self.timer_no_active_tasks_check and datetime.datetime.now()-self.timer_no_active_tasks_check>datetime.timedelta(minutes=3):
                     log.info("timer_no_active_tasks_check expired, enabling new task start-up")
                     self.timer_no_active_tasks_check = None
                     self.new_tasks_on()

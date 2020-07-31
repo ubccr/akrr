@@ -391,7 +391,7 @@ def task_delete(task_id: int = None, resource: str = None, appkernel: str = None
 
 
         if result.status_code == 200:
-            data_out = json.loads(result.text)["data"]["data"]
+            #data_out = json.loads(result.text)["data"]["data"]
             log.info('Successfully deleted tasks. Message:\n %s.' % str(data_out))
         else:
             log.error(
