@@ -206,6 +206,29 @@ class AkrrDaemon:
                             "Parent task id: %s" % parent_task_id)
                         continue
 
+                if cfg.find_app_by_name(app)['appkernel_on_resource'][resource].get('max_number_of_app_active_tasks', -1) >= 0:
+                    # maximal number of appkernel active tasks (on this resource), default is -1, that is no limits
+                    max_number_of_app_active_tasks = cfg.find_app_by_name(app)['appkernel_on_resource'][resource].get('max_number_of_app_active_tasks', -1)
+                    # get number of active tasks
+                    self.dbCur.execute(
+                        '''SELECT task_id, resource, app
+                           FROM mod_akrr.active_tasks
+                           WHERE resource=%s AND app=%s''', (resource, app))
+                    activate_task = self.dbCur.fetchall()
+                    if len(activate_task) >= max_number_of_app_active_tasks:
+                        log.debug(
+                            "Can not activate Task too many active tasks on resource for this app already\n" +
+                            "Task Number: %s\n\t" % task_id +
+                            "Start time: %s\n\t" % time_to_start +
+                            "Repeating period: %s\n\t" % repeat_in +
+                            "Resource: %s\n\t" % resource +
+                            "Resource parameters: %s\n\t" % resource_param +
+                            "Application kernel: %s\n\t" % app +
+                            "Application kernel parameters: %s\n\t" % app_param +
+                            "Task parameters: %s\n\t" % task_param_str +
+                            "Parent task id: %s" % parent_task_id)
+                        continue
+
                 log.info(
                     "Activating Task\n" +
                     "Task Number: %s\n\t" % task_id +
