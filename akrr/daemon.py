@@ -184,6 +184,28 @@ class AkrrDaemon:
             task_handler = None
             start_task_execution = True
             try:
+                # check limit for resource on max number of active tasks
+                if cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1) >= 0:
+                    # get number of active tasks
+                    self.dbCur.execute(
+                        '''SELECT task_id, resource, app
+                           FROM mod_akrr.active_tasks
+                           WHERE resource like %s''', (resource,))
+                    activate_task = self.dbCur.fetchall()
+                    if len(activate_task) >= cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1):
+                        log.debug(
+                            "Can not activate Task too many active tasks on resource already\n" +
+                            "Task Number: %s\n\t" % task_id +
+                            "Start time: %s\n\t" % time_to_start +
+                            "Repeating period: %s\n\t" % repeat_in +
+                            "Resource: %s\n\t" % resource +
+                            "Resource parameters: %s\n\t" % resource_param +
+                            "Application kernel: %s\n\t" % app +
+                            "Application kernel parameters: %s\n\t" % app_param +
+                            "Task parameters: %s\n\t" % task_param_str +
+                            "Parent task id: %s" % parent_task_id)
+                        continue
+
                 log.info(
                     "Activating Task\n" +
                     "Task Number: %s\n\t" % task_id +
@@ -195,17 +217,6 @@ class AkrrDaemon:
                     "Application kernel parameters: %s\n\t" % app_param +
                     "Task parameters: %s\n\t" % task_param_str +
                     "Parent task id: %s" % parent_task_id)
-
-                # check limit for resource on max number of active tasks
-                if cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1) >= 0:
-                    # get number of active tasks
-                    self.dbCur.execute(
-                        '''SELECT task_id, resource, app
-                           FROM mod_akrr.active_tasks
-                           WHERE resource like %s''', (resource,))
-                    activate_task = self.dbCur.fetchall()
-                    if len(activate_task) >= cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1):
-                        continue
 
                 # checks if there is a limit to the number of active tasks akrr can have
                 if cfg.max_number_of_active_tasks_total >= 0:
@@ -683,12 +694,12 @@ class AkrrDaemon:
 
                 self.run_rest_api_requests()
 
-                if self.timer_no_new_tasks and datetime.datetime.now()-self.timer_no_new_tasks>datetime.timedelta(minutes=3):
+                if self.timer_no_new_tasks and datetime.datetime.now()-self.timer_no_new_tasks>datetime.timedelta(minutes=30):
                     log.info("timer_no_new_tasks expired enabling new task start-up")
                     self.timer_no_new_tasks = None
                     self.new_tasks_on()
 
-                if self.timer_no_active_tasks_check and datetime.datetime.now()-self.timer_no_active_tasks_check>datetime.timedelta(minutes=3):
+                if self.timer_no_active_tasks_check and datetime.datetime.now()-self.timer_no_active_tasks_check>datetime.timedelta(minutes=30):
                     log.info("timer_no_active_tasks_check expired, enabling new task start-up")
                     self.timer_no_active_tasks_check = None
                     self.new_tasks_on()
@@ -743,7 +754,6 @@ class AkrrDaemon:
         request = self.proc_queue_to_master.get()
 
         log.info(request)
-        log.info(list(globals().keys()))
         try:
             if request['fun'] in globals():
                 globals()[request['fun']](*(request['args']), **(request['kargs']))

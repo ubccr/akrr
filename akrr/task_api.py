@@ -340,8 +340,99 @@ def task_delete_by_task_id(task_id: int = None):
             raise AkrrRestAPIException()
 
 
+def task_delete_selection(resource: str = None, appkernel: str = None, nodes: str = None, group_id: str = None,
+                          active_tasks=False, scheduled_tasks=False):
+    """
+    delete tasks from schedule
+    """
+    from akrr import akrrrestclient
+    import json
+
+    from akrr.db import get_akrr_db
+    from akrr.daemon import delete_task
+    import time
+
+    if not (resource or appkernel or nodes or group_id):
+        raise AkrrValueException("Something out of resource/appkernel/nodes/group id should be set!")
+
+    db, cur = get_akrr_db(dict_cursor=True)
+
+    # ask scheduler not to start new tasks
+    if akrrrestclient.post('/scheduler/no_new_tasks') != 200:
+        raise AkrrRestAPIException("Can not post scheduler/no_new_tasks")
+
+    if active_tasks:
+        if akrrrestclient.post('/scheduler/no_active_tasks_check') != 200:
+            raise AkrrRestAPIException("Can not post scheduler/no_active_tasks_check")
+        # Now we need to wait till scheduler will be done checking active tasks
+        while True:
+            sql = "SELECT task_id FROM active_tasks WHERE task_lock > 0"
+            log.debug(sql)
+            cur.execute(sql)
+            n_active_checking_task = len(cur.fetchall())
+            if n_active_checking_task==0:
+                break
+            log.info("There are %d task which daemon is working on, waiting for it to finish.")
+            time.sleep(5)
+        # now daemon is not working on any tasks
+
+    # now we can work with db
+    where = []
+    if resource:
+        where.append("resource='%s'", resource)
+    if appkernel:
+        appkernel_list = ["'" + ak.strip() + "'" for ak in appkernel.split(',')] if ',' in appkernel else [appkernel]
+        where.append("app IN (" + ",".join(appkernel_list) + ")")
+    if group_id:
+        where.append("group_id='%s'", group_id)
+
+    active_tasks_ids = []
+
+    if nodes:
+        node_list = [int(node.strip()) for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
+        for node in node_list:
+            where_node = where + ["resource_param LIKE \"%'nnodes':%d%\"" % node]
+            if scheduled_tasks:
+                sql = "DELETE FROM scheduled_tasks WHERE " + " AND ".join(where_node)
+                log.debug(sql)
+                cur.execute(sql)
+            if active_tasks:
+                sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where_node)
+                log.debug(sql)
+                cur.execute(sql)
+                active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
+    else:
+        if scheduled_tasks:
+            sql = "DELETE FROM scheduled_tasks WHERE " + " AND ".join(where)
+            log.debug(sql)
+            cur.execute(sql)
+        if active_tasks:
+                sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where_node)
+                log.debug(sql)
+                cur.execute(sql)
+                active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
+
+    if active_tasks:
+        if len(active_tasks_ids)==0:
+            log.info("No active tasks to delete")
+        else:
+            for task_id in active_tasks_ids:
+                log.info("Deleting task_id %d", task_id)
+                delete_task(task_id, remove_from_scheduled_queue=False, remove_from_active_queue=True,
+                                remove_derived_task=False)
+
+    if scheduled_tasks or active_tasks:
+        db.commit()
+
+    # ask scheduler can start new tasks now
+    if akrrrestclient.post('/scheduler/new_tasks_on') != 200:
+        raise AkrrRestAPIException("Can not post scheduler/new_tasks_on")
+
+    log.info("Done")
+
+
 def task_delete(task_id: int = None, resource: str = None, appkernel: str = None, nodes: str = None,
-                group_id: str = None, all_scheduled_tasks=False, all_active_tasks=False):
+                group_id: str = None, active_tasks=False, scheduled_tasks=False):
     """
     Remove task from schedule
 
@@ -351,58 +442,18 @@ def task_delete(task_id: int = None, resource: str = None, appkernel: str = None
     if task_id:
         if resource or appkernel or nodes or group_id or all_scheduled_tasks or all_active_tasks:
             raise AkrrValueException("task_id can not be specified with other values")
-        task_delete_by_task_id(task_id)
+        if active_tasks:
+            from akrr.daemon import delete_task
+            delete_task(task_id, remove_from_scheduled_queue=False, remove_from_active_queue=True,
+                        remove_derived_task=False)
+        else:
+            task_delete_by_task_id(task_id)
         return
 
-    data = {}
-    if resource or appkernel or nodes:
-        if resource or appkernel or nodes or group_id or all_scheduled_tasks or all_active_tasks:
-            raise AkrrValueException("resource/appkernel/nodes can not be specified with other values")
-        if resource:
-            data["resource"] = resource
-        if appkernel:
-            appkernel_list = [ak.strip() for ak in appkernel.split(',')] if ',' in appkernel else [appkernel]
-            data["appkernel"] = appkernel_list
-        if nodes:
-            node_list = [int(node.strip()) for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
-            data["nodes"] = node_list
+    if not (resource or appkernel or nodes or group_id):
+        task_delete_selection(resource=resource, appkernel=appkernel, nodes=nodes, group_id=group_id,
+                              active_tasks=active_tasks, scheduled_tasks=scheduled_tasks)
+        return
 
-    if group_id:
-        data["group_id"] = group_id
+    log.error("task delete: no option were specified!")
 
-    if all_scheduled_tasks:
-        if all_active_tasks:
-            raise AkrrValueException("all_scheduled_tasks can not be specified with other values")
-        data["all_scheduled_tasks"] = all_scheduled_tasks
-
-    if all_active_tasks:
-        data["all_active_tasks"] = all_active_tasks
-
-    try:
-        from akrr import akrrrestclient
-        import json
-
-        result = akrrrestclient.post(
-            '/scheduler/no_new_tasks',
-            data=data)
-        result = akrrrestclient.post(
-            '/scheduler/no_active_tasks_check',
-            data=data)
-
-
-        if result.status_code == 200:
-            #data_out = json.loads(result.text)["data"]["data"]
-            log.info('Successfully deleted tasks.')
-        else:
-            log.error(
-                'something went wrong. %s:%s',
-                result.status_code,
-                result.text)
-
-    except Exception as e:
-        log.error('''
-        An error occured while communicating
-        with the REST API.
-        %s: %s
-        ''', e.args[0] if len(e.args) > 0 else '', e.args[1] if len(e.args) > 1 else '')
-        raise e
