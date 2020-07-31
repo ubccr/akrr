@@ -372,7 +372,7 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
             n_active_checking_task = len(cur.fetchall())
             if n_active_checking_task==0:
                 break
-            log.info("There are %d task which daemon is working on, waiting for it to finish.")
+            log.info("There are %d task which daemon is working on, waiting for it to finish.", n_active_checking_task)
             time.sleep(5)
         # now daemon is not working on any tasks
 
@@ -381,7 +381,7 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
     if resource:
         where.append("resource='%s'" % resource)
     if appkernel:
-        appkernel_list = ["'" + ak.strip() + "'" for ak in appkernel.split(',')] if ',' in appkernel else [appkernel]
+        appkernel_list = ["'" + ak.strip() + "'" for ak in appkernel.split(',')] if ',' in appkernel else ["'" + appkernel + "'"]
         where.append("app IN (" + ",".join(appkernel_list) + ")")
     if group_id:
         where.append("group_id='%s'" % group_id)
@@ -391,16 +391,18 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
     if nodes:
         node_list = [int(node.strip()) for node in nodes.split(',')] if ',' in nodes else [int(nodes)]
         for node in node_list:
-            where_node = where + ["resource_param LIKE \"%'nnodes':%d%\"" % node]
-            if scheduled_tasks:
-                sql = "DELETE FROM scheduled_tasks WHERE " + " AND ".join(where_node)
-                log.debug(sql)
-                cur.execute(sql)
-            if active_tasks:
-                sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where_node)
-                log.debug(sql)
-                cur.execute(sql)
-                active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
+            where_node1 = where + ["resource_param LIKE \"%'nnodes':"+str(node)+"}%\""]
+            where_node2 = where + ["resource_param LIKE \"%'nnodes':"+str(node)+",%\""]
+            for where_node in [where_node1, where_node2]:
+                if scheduled_tasks:
+                    sql = "DELETE FROM scheduled_tasks WHERE " + " AND ".join(where_node)
+                    log.debug(sql)
+                    cur.execute(sql)
+                if active_tasks:
+                    sql = "SELECT task_id FROM active_tasks WHERE " + " AND ".join(where_node)
+                    log.debug(sql)
+                    cur.execute(sql)
+                    active_tasks_ids += [int(t['task_id']) for t in cur.fetchall()]
     else:
         if scheduled_tasks:
             sql = "DELETE FROM scheduled_tasks WHERE " + " AND ".join(where)
