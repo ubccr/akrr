@@ -29,9 +29,10 @@ def task_new(resource: str, appkernel: str, nodes: str, time_to_start=None, peri
             raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
         if resource not in akrr.cfg.apps[appkernel]['appkernel_on_resource']:
             raise AkrrValueException("Unknown resource %s for appkernel %s" % (resource, appkernel))
-        if "num_of_nodes" not in akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]:
-            raise AkrrValueException("There is no default nodes for resource %s for appkernel %s" % (resource, appkernel))
-        node_list = akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]['num_of_nodes']
+        if "num_of_nodes" in akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]:
+            node_list = akrr.cfg.apps[appkernel]['appkernel_on_resource'][resource]['num_of_nodes']
+        else:
+            node_list = akrr.cfg.apps[appkernel]['num_of_nodes']
     else:
         node_list = [node.strip() for node in nodes.split(',')] if ',' in nodes else [nodes]
 
