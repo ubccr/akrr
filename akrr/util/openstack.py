@@ -229,6 +229,8 @@ class OpenStackServer:
                     # create floating ip, if floating_ip_network provided
                     self.openstack.run_open_stack_cmd("floating ip create " + self.floating_ip_network)
                     floating_ip_creating_count += 1
+                if len(out) > 0:
+                    break
 
             # attach ip
             ip = out[random.randrange(len(out))]["Floating IP Address"]
