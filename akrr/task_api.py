@@ -358,11 +358,11 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
     db, cur = get_akrr_db(dict_cursor=True)
 
     # ask scheduler not to start new tasks
-    if akrrrestclient.post('/scheduler/no_new_tasks') != 200:
+    if akrrrestclient.post('/scheduler/no_new_tasks').status_code != 200:
         raise AkrrRestAPIException("Can not post scheduler/no_new_tasks")
 
     if active_tasks:
-        if akrrrestclient.post('/scheduler/no_active_tasks_check') != 200:
+        if akrrrestclient.post('/scheduler/no_active_tasks_check').status_code != 200:
             raise AkrrRestAPIException("Can not post scheduler/no_active_tasks_check")
         # Now we need to wait till scheduler will be done checking active tasks
         while True:
@@ -425,7 +425,7 @@ def task_delete_selection(resource: str = None, appkernel: str = None, nodes: st
         db.commit()
 
     # ask scheduler can start new tasks now
-    if akrrrestclient.post('/scheduler/new_tasks_on') != 200:
+    if akrrrestclient.post('/scheduler/new_tasks_on').status_code != 200:
         raise AkrrRestAPIException("Can not post scheduler/new_tasks_on")
 
     log.info("Done")
@@ -440,7 +440,7 @@ def task_delete(task_id: int = None, resource: str = None, appkernel: str = None
     :return:
     """
     if task_id:
-        if resource or appkernel or nodes or group_id or all_scheduled_tasks or all_active_tasks:
+        if resource or appkernel or nodes or group_id:
             raise AkrrValueException("task_id can not be specified with other values")
         if active_tasks:
             from akrr.daemon import delete_task
@@ -450,10 +450,9 @@ def task_delete(task_id: int = None, resource: str = None, appkernel: str = None
             task_delete_by_task_id(task_id)
         return
 
-    if not (resource or appkernel or nodes or group_id):
+    if resource or appkernel or nodes or group_id:
         task_delete_selection(resource=resource, appkernel=appkernel, nodes=nodes, group_id=group_id,
                               active_tasks=active_tasks, scheduled_tasks=scheduled_tasks)
         return
 
     log.error("task delete: no option were specified!")
-
