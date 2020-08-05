@@ -14,7 +14,7 @@ a given run frequency. Accordingly, through XDMoD, system managers have the
 ability to proactively monitor system performance as opposed to having to rely 
 on users to report failures or underperforming hardware and software.
 
-* [Overview](docs/AKRR_Overview.md)
+* [Overview](docs/index.md)
 * [Download](docs/AKRR_Download.md)
 * [Installation](docs/AKRR_Install.md)
 * [Update](docs/AKRR_Update.md)

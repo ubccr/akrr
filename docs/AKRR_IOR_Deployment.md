@@ -41,7 +41,7 @@ installed parallel HDF5 library than you might want to skip it.
 Below are brief notes on parallel hdf5 installation,  
 [http://www.hdfgroup.org/HDF5/](http://www.hdfgroup.org/HDF5/) for HDF5 installation details.
 
-ior-3.2.0 does not work yet with hdf5-1.10.5, so use hdf5-1.8.*.
+> **Note:** ior-3.2.0 does not work with hdf5-1.10.\*, so use hdf5-1.8.\* for that version or use development version of ior (3.3-dev).
 
 **On target resource:**
 ```bash
@@ -799,6 +799,9 @@ akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8
 
 #Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00
 akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
+
+# Run on all nodes count 20 times (default number of runs to establish baseline)
+akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 --n-runs 20
 ```
 
 see [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md) and 

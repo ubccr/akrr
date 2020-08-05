@@ -26,7 +26,7 @@ baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://akrr.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/akrr
-xdmod_module_name: Application Kernel Remote Runner
+xdmod_module_name: Application Kernel Remote Runner (AKRR)
 
 defaults:
     -
@@ -35,7 +35,8 @@ defaults:
             type: "pages"
         values:
             layout: "page"
-            sw_version: "2.0.0"
+            sw_version: "2.1.0"
+            version: "2.1.0"
             style: "effervescence"
             tocversion: "toc"
 

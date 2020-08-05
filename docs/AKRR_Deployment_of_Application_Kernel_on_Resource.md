@@ -34,9 +34,13 @@ rarely installed system-wide and thus they need to be installed first.
 
 ## Generate Initiate Configuration File
 
-The initial configuration file is generated with 
-_akrr app add_ command. It will generate an initial 
-configuration file and place it to $AKRR_HOME/cfg/resource/<app kernelname>.conf.
+The initial configuration file is generated.
+
+```bash
+akrr app add -r <resource_name> -a <appkernel_name>
+``` 
+It will generate an initial 
+configuration file and place it to _$AKRR_HOME/etc/resource/<resource_name>/<appkernel_name>.conf_.
 
 # Edit Configuration File
 
@@ -47,11 +51,17 @@ application kernel on this particular machine/resource.  
 # Generate Batch Job Script and Execute it Manually (Optional)
 
 The purpose of this step is to ensure that the configuration lead to a correct 
-(and workable) batch job script. First the batch job script is generated with 
-**'akrr_ctl.sh batch_job'**. Then this script is executed in an interactive 
-session (this improves the turn-around in case of errors). If the script fails 
-to execute, the issues can be fixed first in that script itself and then merged 
-with the configuration file.
+(and workable) batch job script. First the batch job script is generated as:
+```bash
+# only print batch job script
+akrr task new --dry-run --gen-batch-job-only -r <resource_name> -a <appkernel_name> -n <number_of_nodes>
+# generate batch job script and copy it to resource (without running it)
+akrr task new --gen-batch-job-only -r <resource_name> -a <appkernel_name> -n <number_of_nodes>
+```
+
+Then this script is submitted manually ot executed in an interactive session 
+(this improves the turn-around in case of errors). If the script fails 
+to execute, the issues can be fixed first in that script itself followed by respective updates in configuration file.
 
 This step is somewhat optional because it is very similar to the next step. 
 However the opportunity to work in an interactive session will often improve the 
@@ -59,9 +69,13 @@ turn-around time because there is no need to stay in queue for each iteration.
 
 # Perform Validation Run
 
-For this step **appkernel_validation.py** utility is used to validate 
-application kernel installation on particular resource. It execute the 
-application kernel and analyses its results. If it fails the problems need to be 
+This step validates application kernel installation on the resource. 
+
+```bash
+akrr app validate -r <resource_name> -a <appkernel_name> -n <number_of_nodes>
+```
+
+It execute the application kernel and analyses its results. If it fails the problems need to be 
 fixed and another round of validation should be performed
 
 # Schedule regular execution of application kernel
@@ -69,17 +83,22 @@ fixed and another round of validation should be performed
 Finally, if validation was successful the application kernel can be submited for 
 regular execution on that resource.
 
+```bash
+akrr task new -r <resource_name> -a <appkernel_name> -n <list of nodes counts> -p <periodicity> \
+    -s <first submit date-time>
+```
+
 # Details on the Individual Application Kernels Deployment
 
 * [NAMD Deployment](AKRR_NAMD_Deployment.md)
 * [HPCC Deployment](AKRR_HPCC_Deployment.md)
+* [HPCG Deployment](AKRR_HPCG_Deployment.md)
 * [IMB Deployment](AKRR_IMB_Deployment.md)
 * [IOR Deployment](AKRR_IOR_Deployment.md)
-* [HPCG Deployment](AKRR_HPCG_Deployment.md)
+* [MDTest Deployment](AKRR_MDTest_Deployment.md)
 * [NWChem Deployment](AKRR_NWChem_Deployment.md)
 * [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
 * [Enzo Deployment](AKRR_Enzo_Deployment.md)
-
 * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
 
 

@@ -2,7 +2,7 @@ toc:
   - title: About
     subfolderitems:
       - page: Overview
-        url: /AKRR_Overview.html
+        url: /
   - title: Download
     subfolderitems:
       - page: Download
@@ -11,14 +11,40 @@ toc:
     subfolderitems:
       - page: Install
         url: /AKRR_Install.html
-  - title: Use
+      - page: Update
+        url: /AKRR_Update.html
+  - title: Using
     subfolderitems:
-      - page: Use
+      - page: Using
         url: /AKRR_Usage.html
-      - page: Add New Resource
+      - page: Adding New Resource
         url: /AKRR_Add_Resource.html
-      - page: Adding New Application
-        url: /akrr-install.html
+      - page: Adding Appkernel to Resource
+        url: /AKRR_Deployment_of_Application_Kernel_on_Resource.html
+      - page: Adding NAMD
+        url: /AKRR_NAMD_Deployment.html
+      - page: Adding HPCC
+        url: /AKRR_HPCC_Deployment.html
+      - page: Adding HPCG
+        url: /AKRR_HPCG_Deployment.html
+      - page: Adding IMB
+        url: /AKRR_IMB_Deployment.html
+      - page: Adding IOR
+        url: /AKRR_IOR_Deployment.html
+      - page: Adding MDTest
+        url: /AKRR_MDTest_Deployment.html
+      - page: Adding NWChem
+        url: /AKRR_NWChem_Deployment.html
+      - page: Adding GAMESS
+        url: /AKRR_GAMESS_Deployment.html
+      - page: Adding ENZO
+        url: /AKRR_ENZO_Deployment.html
+#      - page: New Application Kernel
+#        url: /AKRR_Creating_New_Application_Kernel.html
+      - page: Scheduling Appkernels
+        url: /AKRR_Tasks_Scheduling.html
+      - page: Setting AK Walltime
+        url: /AKRR_Walltimelimit_Setting.html
   - title: Details
     subfolderitems:
       - page: Batch Job Script Generation

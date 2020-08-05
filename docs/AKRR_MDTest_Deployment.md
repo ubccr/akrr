@@ -283,6 +283,9 @@ akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8
 
 #Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00
 akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 -t0 "01:00" -t1 "05:00" -p 1
+
+# Run on all nodes count 20 times (default number of runs to establish baseline)
+akrr task new -r $RESOURCE -a $APPKER -n 1,2,4,8 --n-runs 20
 ```
 
 see [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md) and 

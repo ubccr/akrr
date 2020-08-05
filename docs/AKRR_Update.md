@@ -6,7 +6,7 @@ The update script will update the database, config files and move logs/outputs f
 > Most of developmental version in-between AKRR-1.0 to AKRR-2.0 should be able to update with these instructions. 
 
 
-## Create Back-Up of MySQL Databases
+## Create Back-Up of MySQL Databases (Strongly Recommended)
 
 To be on safe side make a back-up of the AKRR databases:
 
@@ -15,10 +15,9 @@ mysqldump --extended-insert=FALSE -u <user> -p mod_akrr| gzip -c > mod_akrr_1.0.
 mysqldump --extended-insert=FALSE -u <user> -p mod_appkernel| gzip -c > mod_appkernel_1.0.gz
 ```
 
-## Rename Old AKRR Home directory (Optional)
+## Rename Old AKRR Home directory
 
-The update doesn't do an in place update and so the old AKRR home directory should be different from new one. 
-If you like the old name rename it to reuse it for the new one.
+The update script will move updated configs and logs to new location. So if you want to keep AKRR in same directory rename old one:
 
 ```shell script
 mv akrr akrr_old
@@ -27,22 +26,18 @@ mv akrr akrr_old
 ## Installation
 
 In the previous version AKRR was source installed. In this version RPM installation is recommended, 
-in source and using regular python methods are also possible.
+in-source and using regular python methods are also possible.
  
-The akrr update command should work for all combinations of older and new installations. 
+The akrr update command should work for most combinations of older and newer installations. 
 
 ### RPM Installation
-Download RPM from https://github.com/ubccr/akrr/releases:
+Download RPM from https://github.com/ubccr/akrr/releases and install it:
 
 ```shell script
-wget https://github.com/ubccr/akrr/releases/download/v2.1.0/akrr-2.1.0-1.noarch.rpm
+wget https://github.com/ubccr/akrr/releases/download/v{{ page.sw_version }}/akrr-{{ page.sw_version }}-1.noarch.rpm
+sudo yum install akrr-{{ page.sw_version }}-1.noarch.rpm
 ```
 
-Install:
- 
-```shell script
-sudo yum install akrr-2.1.0-1.noarch.rpm
-```
 
 ## Run Update Script
 
@@ -51,13 +46,10 @@ Run update script (as user which will run akrr, **don't use root** for that):
 ```shell script
 akrr -vv update --akrr-home=<New AKRR Home, default is ~/akrr> --old-akrr-home=<Old AKRR Home>
 ```
-
-The new AKRR home should be different from the old one. The old home can be renamed, for example if it was in the default location:
-
-```shell script
-mv ~/akrr ~/akrr_old
-akrr -vv update --akrr-home=~/akrr --old-akrr-home=~/akrr_old
-```
+> * The new AKRR home should be different from the old one
+>
+> * If you ran many appkernels in past it can take some time, extra verbose arguments ```-vv``` will help to 
+understand what it is doing. 
 
 During update .bashrc could be modified to include new non-standard location of ARKK_HOME or akrr executable.
 In this case to continue in same terminal session reload .bashrc:
@@ -74,5 +66,13 @@ akrr resource deploy --overwrite -r <resource>
 ```
 
 This will install new app kernel utilities. But be careful it will overwrites inputs, so keep a copy if you modified some.
- 
-Now you can update the `xdmod-appkernels` module for Open XDMoD.
+
+The proper update of appkernels can be verified with running verificantion and test run command:
+
+ ```bash
+akrr app validate -r <resource> -a <appkernel> -n <number of nodes>
+```
+
+Now you can update the [xdmod-appkernels](https://appkernels.xdmod.org/) module for Open XDMoD.
+Most likely it was already done during xdmod update, as yum would not allow for xdmod update without simultaneous 
+update of xdmod-appkernels.

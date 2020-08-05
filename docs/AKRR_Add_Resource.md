@@ -1,12 +1,15 @@
-This section describes how to add traditional HPC resource to AKRR. On 
-addition of OpenStack check 
-[Adding OpenStack Resource and Application Kernels Deployment](AKRR_Add_OpenStack_Resource_and_AppKernels.md.md)
+This section describes how to add traditional HPC resource to AKRR. AKRR also support
+execution on systems without queueing system and [OpenStack](AKRR_Add_OpenStack_Resource_and_AppKernels.md.md) (limited support at this point).  
+
 
 # Adding a New HPC Resource
 
-Addition of new HPC resource to AKRR consists of two steps: configuration of
-new resource and deployment of AKRR's HPC resource-side scripts and application 
-inputs. The last step also performs installation validation.
+HPC resource is added in two steps:
+
+1) Configuration of new resource
+2) Deployment of AKRR's HPC resource-side scripts and application inputs.
+
+The last step also performs installation validation.
 
 From the AKRR point of view, an HPC resource is a distinct and **homogeneous 
 set** of computational nodes. The resource name should reflect such a set. For 
@@ -72,10 +75,10 @@ XDMoD name._
 
 > **Tips and Tricks**
 >
-> If resource headnode do not reply on pinging use __--no-ping__ do disable that check.
+> If resource headnode do not reply on pinging use __--no-ping__ argument do disable that check.
 >
 > If your system is fairly non-standard (for example non-default port for ssh, 
-> usage of globus-ssh for access and similar) you can use __--minimalistic__ option.
+> usage of globus-ssh for access and similar) you can use __--minimalistic__ argument.
 > This option sets a minimalistic interactive session and the generated 
 > configuration file must be manually edited.
 
@@ -182,12 +185,11 @@ and check to make sure that only the key(s) you wanted were added.
     and move to resource validation and deployment step.
     i.e. execute:
         akrr resource deploy -r ub-hpc
-        
 ```
 
 > **Tips and Tricks**
 >
-> reducing number of ssh connection
+> **Reducing number of ssh connection**:
 > AKRR would generate a large number of ssh connections. If you don't want to 
 > stress you headnode in this manner you can set ssh to reuse the connections. Add 
 > following to ~/.ssh/config :
@@ -287,20 +289,8 @@ batchJobHeaderTemplate template variable
 will become "#SBATCH --nodes=2" in batch job script if application kernel should 
 run on two nodes.
 
-In order to enter shell curly brackets they should be enter as double curly 
-brackets. All double curly brackets will be replaced with single curly bracket 
-during batch job script generation.
-
-> Example:
->
-> "awk "{{for (i=0;i<$_TASKS_PER_NODE;++i)print}}"
-> 
-> in  template variable will become:
->
-> "awk "{for (i=0;i<$_TASKS_PER_NODE;++i)print}"
->
-> in  batch job script.
->
+In order to enter curly brackets itself they should be enter as double curly 
+brackets (i.e. ${{ENV_VAR}} in template will be ${ENV_VAR} in resulting script).
 
 The commented parameters will assume default values. Below is the description of 
 the parameters and their default values:
@@ -324,16 +314,18 @@ the parameters and their default values:
 | **Batch job script settings**                                                                                                                                                                                                                                      |
 | batch_scheduler                       | N        | Scheduler type: slurm or pbs. sge might work as well but was not tested                                                                                                                         | Must be set   |
 | batch_job_header_template             | N        | Header for batch job script. Describe the resources requests and set AKRR_NODELIST environment variable containing list of all nodes.See below for more detailed information.                   | Must be set   |
+| max_number_of_active_tasks            | Y        | Maximal number of active tasks, default is -1, that is no limits                                                                                                                                | -1            |
 
-
-## How to set _batch_job_header_template_
 
 _batch_job_header_template _is a template used in the generation of batch job 
 scripts. It specifies the resources (e.g. number of nodes) and other parameters 
 used by scheduler.
 
 The following are instructions on how to convert batch job script header to _batch_job_header_template_. 
+
+<!---
 For more details see [Batch Job Script Generation](AKRR_Batch_Job_Script_Generation.md). 
+--->
 
 Below is a batch script which execute NAMD application on resorch which use Slurm:
 
@@ -401,9 +393,11 @@ below:
 
 Now, we can generate test application kernel batch job script and visually 
 inspect it for mistake presence. Run:
+
 ```bash
 akrr task new --dry-run --gen-batch-job-only -r <resource_name> -a test -n 2
 ```
+
 This command will generate batch job script and output it to standard output. 
 Below is example of the output
 
