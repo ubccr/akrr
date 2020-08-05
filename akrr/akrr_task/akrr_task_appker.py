@@ -193,10 +193,12 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 batch_vars['node_list_setter_template'] = batch_vars['node_list_setter'][batch_vars['batch_scheduler']]
 
             # process templates
-            batch_vars['akrrCommonCommands'] = akrr.util.format_recursively(
+            # unroll akrr_common_commands_template template here prior appkernel_requests_two_nodes_for_one
+            # take effect
+            batch_vars['akrr_common_commands_template'] = akrr.util.format_recursively(
                 batch_vars['akrr_common_commands_template'], batch_vars, keep_double_brackets=True)
 
-            batch_vars['akrrCommonCleanup'] = akrr.util.format_recursively(
+            batch_vars['akrr_common_cleanup_template'] = akrr.util.format_recursively(
                 batch_vars['akrr_common_cleanup_template'], batch_vars, keep_double_brackets=True)
 
             # specially for IOR request two nodes for single node benchmark, one for read and one for write

@@ -1,5 +1,7 @@
 from typing import Union, List, Sequence
 
+from akrr.akrrerror import AkrrException
+
 
 def which(program: str) -> Union[str, None]:
     """
@@ -95,11 +97,15 @@ def format_recursively(s: str, d: dict, keep_double_brackets: bool = False) -> s
     s = s.replace('{{', 'LeFtyCurlyBrackets')
     s = s.replace('}}', 'RiGhTyCurlyBrackets')
     s0 = s.format(**d)
+    count = 1
     while s0 != s:
         s = s0
         s = s.replace('{{', 'LeFtyCurlyBrackets')
         s = s.replace('}}', 'RiGhTyCurlyBrackets')
         s0 = s.format(**d)
+        count += 1
+        if count > 100:
+            raise AkrrException("Template ERROR too many nesting templates")
     if keep_double_brackets:
         s0 = s0.replace('LeFtyCurlyBrackets', '{{')
         s0 = s0.replace('RiGhTyCurlyBrackets', '}}')

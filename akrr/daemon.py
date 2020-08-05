@@ -916,7 +916,7 @@ class AkrrDaemon:
             log.info("Last %d Completed Tasks with Errors (by %s) :\n%s" %
                      (len(tasks), str(datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")), str(table)))
         else:
-            log.info("\nThere were no tasks completed with errors.")
+            log.info("There were no tasks completed with errors.")
 
     def reprocess_completed_tasks(self, resource, appkernel, time_start, time_end, verbose=False):
         """

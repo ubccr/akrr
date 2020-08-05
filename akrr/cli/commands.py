@@ -509,7 +509,7 @@ def cli_task_delete(parent_parser):
     """
     Remove task from schedule
     """
-    parser = parent_parser.add_parser('delete', description=cli_task_list.__doc__)
+    parser = parent_parser.add_parser('delete', description=cli_task_delete.__doc__)
 
     parser.add_argument(
         '-t', '--task-id', type=int,
@@ -544,7 +544,7 @@ def cli_task_active_delete(parent_parser):
     """
     Remove active tasks (ones which already running)
     """
-    parser = parent_parser.add_parser('delete_active', description=cli_task_list.__doc__)
+    parser = parent_parser.add_parser('delete_active', description=cli_task_active_delete.__doc__)
 
     parser.add_argument(
         '-t', '--task-id', type=int,
