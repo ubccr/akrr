@@ -47,5 +47,11 @@ toc:
         url: /AKRR_Walltimelimit_Setting.html
   - title: Details
     subfolderitems:
+      - page: How It Works
+        url: /AKRR_HowItWorks.html
       - page: Batch Job Script Generation
         url: /AKRR_Batch_Job_Script_Generation.html
+  - title: Next
+    subfolderitems:
+      - page: xdmod-appkernels
+        url: https://appkernels.xdmod.org/

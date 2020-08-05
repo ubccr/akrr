@@ -50,6 +50,7 @@ jobs, this will help to ensure that `xdmod-appkernels` is working properly.
   * [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md)
   * [Setting Walltime Limit](AKRR_Walltimelimit_Setting.md)
 * Details
+  * [How AKRR Operates](AKRR_HowItWorks.md)
   * [How Batch Job Script are Generated](AKRR_Batch_Job_Script_Generation.md)
 
 <!---
