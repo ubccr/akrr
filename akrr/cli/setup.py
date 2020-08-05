@@ -787,8 +787,11 @@ class AKRRSetup:
         else:
             log.dry_run("For removing old AKRR should update crontab to:\n" + "".join(crontab_content))
 
-    def update_bashrc(self):
-        """Add AKRR enviroment variables to .bashrc"""
+    def update_bashrc(self) -> bool:
+        """
+        Add AKRR enviroment variables to .bashrc
+        Return True if bashrc was updated
+        """
         log.info("Updating .bashrc")
 
         akrr_header = '#AKRR Server Environment Variables'
@@ -834,8 +837,10 @@ class AKRRSetup:
                 log.info("Appended AKRR records to $HOME/.bashrc")
             else:
                 log.debug("New .bashrc should be like:\n" + "".join(bash_content_new))
+            return True
         else:
             log.info("AKRR is in standard location, no updates to $HOME/.bashrc")
+            return False
 
     def run(self,
             akrr_db: str = None,
@@ -978,7 +983,7 @@ class AKRRSetup:
             log.info("AKRR DB Generated")
             return
 
-        self.update_bashrc()
+        bashrc_updated = self.update_bashrc()
 
         self.start_daemon()
         self.check_daemon()
@@ -990,3 +995,9 @@ class AKRRSetup:
             log.warning("Below are instructions to finish conversion " +
                         "(shell commands, execute them manually one by one ensure correct run):\n" +
                         hints_to_finish_update)
+
+        if bashrc_updated:
+            if self.update:
+                log.warning(".bashrc were modified source .bashrc prior to continue:\nunset AKRR_HOME\nsource .bashrc")
+            else:
+                log.warning(".bashrc were modified source .bashrc prior to continue:\nsource .bashrc")

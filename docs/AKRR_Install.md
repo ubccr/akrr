@@ -1,7 +1,9 @@
 # AKRR Installation
 
-AKRR support two installation ways: 
-1) Global installation from RPM (on CentOS system) and 
+AKRR support two installation ways:
+
+1) Global installation from RPM (on CentOS system) 
+
 2) In-source installation from source code, for development purposes.
 
 ## Prerequisites
@@ -15,10 +17,11 @@ the dependencies are from EPEL repository. If it was not done yet add it to repo
 
 ```bash
 # Install EPEL if needed
-yum -y install epel-release
+sudo yum -y install epel-release
 ```
 
 If AKRR will use MariaDB/MySQL on the local machine install it:
+
 ```bash 
 yum -y install mariadb-server mariadb
 ```
@@ -27,7 +30,7 @@ The following dependencies are needed to be installed for in-source installation
  
 ```bash
 # Install dependencies
-yum -y install python36 python36-libs python36-bottle python36-requests \
+sudo yum -y install python36 python36-libs python36-bottle python36-requests \
     python36-mysql python36-typing openssl openssh-clients crontabs
 ```
 
@@ -36,6 +39,7 @@ yum -y install python36 python36-libs python36-bottle python36-requests \
 
 Download in install AKRR RPM
 ```bash
+wget https://github.com/ubccr/akrr/releases/download/v{{ page.sw_version }}/akrr-{{ page.sw_version }}-1.noarch.rpm
 sudo yum install akrr-{{ page.sw_version }}-1.noarch.rpm
 ```
 
@@ -43,7 +47,15 @@ sudo yum install akrr-{{ page.sw_version }}-1.noarch.rpm
 
 Download tar.gz archive and uncompress it in desired installation location:
 ```bash
-tar zxvf akrr-{{ page.sw_version }}.tar.gz
+wget https://github.com/ubccr/akrr/archive/v{{ page.sw_version }}.tar.gz
+tar zxvf v{{ page.sw_version }}.tar.gz
+``` 
+
+Alternatively with git
+```bash
+git clone https://github.com/ubccr/akrr.git
+cd akrr
+git checkout v{{ page.sw_version }}
 ``` 
 
 You can add bin directory from AKRR to you PATH environment variable or 
@@ -65,78 +77,111 @@ when prompted
 ```bash
 akrr setup
 ```
-
+> **Tips and Tricks**
+>
+> **Don't run AKRR as root**, use a regular user.
+>
+> Running akrr in verbose mode can help identify issues:
+> ```bash
+> akrr -v setup
+> ```
+> 
 
 Example of output from `akrr setup` execution:
 
 ```text
-[INFO] AKRR configuration will be in /home/akrruser/akrr/etc/akrr.conf
+[INFO] Creating directories structure.
 [INFO] Before Installation continues we need to setup the database.
-[INPUT]: Please specify a database user to access mod_akrr database (Used by AKRR)(This user will be created if it does not already exist):
-[akrruser] 
-[INPUT]: Please specify a password:
+[INPUT] Please specify a database user to access mod_akrr database (Used by AKRR)(This user will be created if it does not already exist):
+[akrruser]: 
+[INPUT] Please specify a password:
 Password: 
-[INPUT]: Please reenter the password:
-Password: 
-
-[INPUT]: Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
-Username: root
-[INPUT]: Please provide the password for the the user which you previously entered:
+[INPUT] Please reenter the password:
 Password: 
 
-[INPUT]: Please specify a database user to access mod_appkernel database (Used by XDMoD appkernel module, AKRR creates and syncronize resource and appkernel description)(This user will be created if it does not already exist):
-[akrruser] 
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
+
+[INPUT] Please specify a database user to access mod_appkernel database (Used by XDMoD appkernel module, AKRR creates and syncronize resource and appkernel description)(This user will be created if it does not already exist):
+[akrruser]: 
 [INFO] Password already entered.
 
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
 
-[INPUT]: Please specify the user that will be connecting to the XDMoD database (modw):
-[akrruser] 
+[INPUT] Please specify the user that will be connecting to the XDMoD database (modw):
+[akrruser]: 
 [INFO] Password already entered.
 
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
 
-no crontab for akrruser
-[INPUT]: Please enter the e-mail where cron will send messages (leave empty to opt out):
-nikolays@buffalo.edu
+no crontab for centos
+[INPUT] Please enter the e-mail where cron will send messages (leave empty to opt out):
+
 [INFO] Creating mod_akrr and user to access it
 [INFO] Creating mod_appkernel and user to access it
 [INFO] Setting user to access modw
-[INFO] Creating directories structure.
 [INFO] Generating self-signed certificate for REST-API
 [INFO]     new self-signed certificate have been generated
 [INFO] Generating configuration file ...
-[INFO] Configuration is written to: /home/akrruser/akrr/etc/akrr.conf
+[INFO] Configuration is written to: /home/centos/akrr/etc/akrr.conf
 [INFO] Removing access for group members and everybody for all files.
 [INFO] Checking access to DBs.
 [INFO] All Databases / User privileges check out!
 [INFO] Creating tables and populating them with initial values.
+[INFO] Updating .bashrc
+[INFO] AKRR is in standard location, no updates to $HOME/.bashrc
 [INFO] Starting AKRR daemon
-[2019-03-12 15:04:46,393 - INFO] Directory /home/akrruser/akrr/log/data/srv does not exist, creating it.
-[2019-03-12 15:04:46,393 - INFO] Writing logs to:
-        /home/akrruser/akrr/log/data/srv/2019.03.12_15.04.393317.log
-[2019-03-12 15:04:46,644 - INFO] following log: /home/akrruser/akrr/log/data/srv/2019.03.12_15.04.393317.log
-[2019-03-12 15:04:46,511 - INFO] Starting Application Remote Runner
- [2019-03-12 15:04:46,527 - INFO] AKRR Scheduler PID is 261.
- [2019-03-12 15:04:46,538 - INFO] Starting REST-API Service
- [2019-03-12 15:04:46,540 - INFO] ####################################################################################################
- [2019-03-12 15:04:46,541 - INFO] Got into the running loop on 2019-03-12 15:04:46
- [2019-03-12 15:04:46,541 - INFO] ####################################################################################################
- 
- Starting REST-API Service
- Bottle v0.12.13 server starting up (using SSLWSGIRefServer())...
- Listening on http://localhost:8091/
-[2019-03-12 15:04:46,646 - INFO] 
+[2020-08-01 02:33:49,656 - INFO] Directory /home/centos/akrr/log/data/srv does not exist, creating it.
+[2020-08-01 02:33:49,657 - INFO] Writing logs to:
+        /home/centos/akrr/log/data/srv/2020.08.01_02.33.657178.log
+[2020-08-01 02:33:49,910 - INFO] following log: /home/centos/akrr/log/data/srv/2020.08.01_02.33.657178.log
+[2020-08-01 02:33:49,724 - INFO] Starting Application Remote Runner
+ [2020-08-01 02:33:49,772 - INFO] AKRR Scheduler PID is 12989.
+ [2020-08-01 02:33:49,808 - INFO] Starting REST-API Service
+ [2020-08-01 02:33:49,814 - INFO] ####################################################################################################
+ [2020-08-01 02:33:49,816 - INFO] Got into the running loop on 2020-08-01 02:33:49
+[2020-08-01 02:33:50,138 - INFO] 
 AKRR Server successfully reached the loop.
  [INFO] Checking that AKRR daemon is running
 [INFO] Beginning check of the AKRR Rest API...
 [INFO] REST API is up and running!
 [INFO] Installing cron entries
-no crontab for akrruser
+no crontab for centos
 [INFO] Crontab does not have user's crontab yet
-[INFO] Cron Scripts Processed!
+[INFO] Crontab updated.
 [INFO] AKRR is set up and is running.
 ```
 
-At this point AKRR should be installed and running. Now new resources can be added.
+At this point AKRR should be installed and running. During installation 
+.bashrc could be modified to include non-standard location of ARKK_HOME or akrr executable.
+In this case to continue in same terminal session reload .bashrc:
+
+```bash
+source .bashrc prior to continue!
+```
+
+The AKRR daemon status can be checked with:
+```bash
+akrr daemon status
+```
+
+```
+[INFO] AKRR Server is up and it's PID is 15292
+[INFO] There is no scheduled tasks
+[INFO] There is no active tasks
+[INFO] There is no complete tasks
+[INFO] There were no tasks completed with errors.
+```
+
+Now [new resources can be added]](AKRR_Add_Resource.md).
 
 ## Tips and Tricks
 
@@ -180,5 +225,6 @@ mysql -u akrruser -p -h <MYSQL_SERVER> mod_akrr
 ```
 
 You might need also to add akrruser@'localhost' and add AKRR_HOSTNAME by it IP address.
+
 
 Next: [Usage](AKRR_Usage.md)

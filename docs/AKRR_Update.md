@@ -3,7 +3,7 @@
 There are significant differences between the new and old versions.
 The update script will update the database, config files and move logs/outputs from appkernel runs. 
 
-> Developmental version in-between AKRR-1.0 to AKRR-2.0 should be able to update with these instructions. 
+> Most of developmental version in-between AKRR-1.0 to AKRR-2.0 should be able to update with these instructions. 
 
 
 ## Create Back-Up of MySQL Databases
@@ -46,7 +46,7 @@ sudo yum install akrr-2.1.0-1.noarch.rpm
 
 ## Run Update Script
 
-Run update script (as user which will run akrr, don't use root for that):
+Run update script (as user which will run akrr, **don't use root** for that):
 
 ```shell script
 akrr -vv update --akrr-home=<New AKRR Home, default is ~/akrr> --old-akrr-home=<Old AKRR Home>
@@ -57,6 +57,14 @@ The new AKRR home should be different from the old one. The old home can be rena
 ```shell script
 mv ~/akrr ~/akrr_old
 akrr -vv update --akrr-home=~/akrr --old-akrr-home=~/akrr_old
+```
+
+During update .bashrc could be modified to include new non-standard location of ARKK_HOME or akrr executable.
+In this case to continue in same terminal session reload .bashrc:
+
+```bash
+unset AKRR_HOME
+source .bashrc
 ```
 
 At the end it will print recommended commands to run to finish update. The most important is to run:
