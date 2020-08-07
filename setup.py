@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='akrr',
-    version='2.1.0',
+    version='2.1.1',
     description='Application Kernels Remote Runner',
     long_description='Periodical execution of application kernels'
                      '(applications with input parameters) on HPC resources for performance monitoring',

@@ -711,7 +711,7 @@ class AKRRSetup:
         if self.cron_email == "":
             self.cron_email = None
 
-    def install_cron_scripts(self):
+    def install_cron_scripts(self, update_email = True):
         """
         Install cron scripts.
         """
@@ -740,28 +740,29 @@ class AKRRSetup:
         check_and_restart_there = False
         archive_there = False
 
-        for i in range(len(crontab_content)):
-            tmpstr = crontab_content[i]
-            if len(tmpstr.strip()) > 1 and tmpstr.strip()[0] != "#":
-                m = re.match(r'^MAILTO\s*=\s*(.*)', tmpstr.strip())
-                if m:
-                    cron_email = m.group(1)
-                    cron_email = cron_email.replace('"', '')
-                    mail_there = True
-                    if self.cron_email != cron_email:
-                        if mail:
-                            crontab_content[i] = mail
-                        else:
-                            crontab_content[i] = "#" + crontab_content[i]
-                        mail_updated = True
-                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("restart") > 0:
-                    restart_there = True
-                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("checknrestart") > 0:
-                    check_and_restart_there = True
-                if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("archive") > 0:
-                    archive_there = True
-        if mail_updated:
-            log.info("Cron's MAILTO was updated")
+        if update_email:
+            for i in range(len(crontab_content)):
+                tmpstr = crontab_content[i]
+                if len(tmpstr.strip()) > 1 and tmpstr.strip()[0] != "#":
+                    m = re.match(r'^MAILTO\s*=\s*(.*)', tmpstr.strip())
+                    if m:
+                        cron_email = m.group(1)
+                        cron_email = cron_email.replace('"', '')
+                        mail_there = True
+                        if self.cron_email != cron_email:
+                            if mail:
+                                crontab_content[i] = mail
+                            else:
+                                crontab_content[i] = "#" + crontab_content[i]
+                            mail_updated = True
+                    if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("restart") > 0:
+                        restart_there = True
+                    if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("checknrestart") > 0:
+                        check_and_restart_there = True
+                    if tmpstr.count("akrr") and tmpstr.count("daemon") and tmpstr.count("archive") > 0:
+                        archive_there = True
+            if mail_updated:
+                log.info("Cron's MAILTO was updated")
         if ((self.cron_email is not None and mail_there) or (
                 self.cron_email is None and mail_there is False)) and restart_there and check_and_restart_there \
                 and mail_updated is False:
@@ -988,7 +989,7 @@ class AKRRSetup:
         self.start_daemon()
         self.check_daemon()
         if self.install_cron_scripts_flag:
-            self.install_cron_scripts()
+            self.install_cron_scripts(update_email=True if not self.update else False)
 
         log.info("AKRR is set up and is running.")
         if self.update:
