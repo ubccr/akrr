@@ -30,8 +30,10 @@ The following dependencies are needed to be installed for in-source installation
  
 ```bash
 # Install dependencies
-sudo yum -y install python36 python36-libs python36-bottle python36-requests \
-    python36-mysql python36-typing openssl openssh-clients crontabs
+sudo yum -y install python36 python36-libs python36-bottle \
+    python36-requests python36-mysql python36-typing \
+    python36-psutil python36-dateutil python36-prettytable \
+    python36-PyYAML openssl openssh-clients crontabs
 ```
 
 ## Installation on Same Host as XDMoD

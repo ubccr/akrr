@@ -13,6 +13,7 @@ To be on safe side make a back-up of the AKRR databases:
 ```shell script
 mysqldump --extended-insert=FALSE -u <user> -p mod_akrr| gzip -c > mod_akrr_1.0.gz
 mysqldump --extended-insert=FALSE -u <user> -p mod_appkernel| gzip -c > mod_appkernel_1.0.gz
+
 ```
 
 ## Rename Old AKRR Home directory
