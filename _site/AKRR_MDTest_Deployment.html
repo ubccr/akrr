@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding MDTest</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding MDTest</h1> 
+        <h1 id="akrr-deployment-of-mdtest-applications-kernels-on-a-resource">AKRR: Deployment of MDTest Applications Kernels on a Resource</h1>
+
+<p>MDTest benchmark measures the performance of parallel file-systems on meta data operations.</p>
+
+<p>For simplicity lets define APPKER and RESOURCE environment variable which will contain the HPC 
+resource name and application kernel name:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">RESOURCE</span><span class="o">=</span>&lt;resource_name&gt;
+<span class="nb">export </span><span class="nv">APPKER</span><span class="o">=</span>mdtest
+</code></pre></div></div>
+
+<h2 id="installing-mdtest">Installing MDTest</h2>
+
+<p>MDTest is now part of IOR benchmark, so If you already install IOR it should be there already. 
+Otherwise see <a href="/AKRR_IOR_Deployment.html">IOR Deployment</a>.</p>
+
+<h1 id="generate-initiate-configuration-file">Generate Initiate Configuration File</h1>
+
+<p>Generate Initiate Configuration File:</p>
+
+<p><strong>On AKRR server</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$RESOURCE</span>
+</code></pre></div></div>
+<p>Sample output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Generating application kernel configuration for mdtest on ub-hpc
+[INFO] Application kernel configuration for mdtest on ub-hpc is in: 
+        /home/akrruser/akrr/etc/resources/ub-hpc/mdtest.app.conf
+</code></pre></div></div>
+
+<h1 id="edit-configuration-file">Edit Configuration File</h1>
+
+<p>Below is a listing of configuration file located at 
+~/akrr/etc/resources/$RESOURCE/mdtest.app.conf for SLURM:</p>
+
+<p><strong>initial ~/akrr/etc/resources/$RESOURCE/mdtest.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">appKernelRunEnvironmentTemplate</span> <span class="o">=</span> <span class="s">"""
+# Load application enviroment
+module load intel intel-mpi
+module list
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+
+# set executable location
+EXE=$AKRR_APPKER_DIR/execs/ior/src/mdtest
+
+# set how to run app kernel
+RUNMPI="srun"
+"""</span>
+</code></pre></div></div>
+
+<p>In first section we set proper environment mdtest to work, we also place mdtest executable location to EXE 
+variable (binary in $EXE will be used to generate application signature).</p>
+
+<p>I_MPI_PMI_LIBRARY variable allows srun to function properly.</p>
+
+<p>RUNMPI specify which command to use to start MPI processes.</p>
+
+<h1 id="generate-batch-job-script-and-execute-it-manually-optional">Generate Batch Job Script and Execute it Manually (Optional) </h1>
+
+<p>The purpose of this step is to ensure that the configuration lead to correct workable batch job 
+script. Here first batch job script is generated with ‘akrr_ctl.sh batch_job’. Then this script is 
+executed in interactive session (this improves the turn-around in case of errors). If script fails 
+to execute, the issues can be fixed first in that script itself and then merged to configuration 
+file.</p>
+
+<p>This step is somewhat optional because it is very similar to next step. However the opportunity to 
+work in interactive session improve turn-around time because there is no need to stay in queue for 
+each iteration.</p>
+
+<p>First generate the script to standard output and examine it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+
+<p><strong>Sample output of akrr task new –dry-run –gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>INFO] Generating application kernel configuration <span class="k">for </span>mdtest on ub-hpc
+<span class="o">[</span>INFO] Application kernel configuration <span class="k">for </span>mdtest on ub-hpc is <span class="k">in</span>: 
+        /home/akrruser/akrr/etc/resources/ub-hpc/mdtest.app.conf
+<span class="o">[</span>akrruser@xdmod ~]<span class="nv">$ </span>vi /home/akrruser/akrr/etc/resources/ub-hpc/mdtest.app.conf
+<span class="o">[</span>akrruser@xdmod ~]<span class="nv">$ </span>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+DryRun: Should submit following to REST API <span class="o">(</span>POST to scheduled_tasks<span class="o">)</span> <span class="o">{</span><span class="s1">'time_to_start'</span>: None, <span class="s1">'resource_param'</span>: <span class="s2">"{'nnodes':2}"</span>, <span class="s1">'resource'</span>: <span class="s1">'ub-hpc'</span>, <span class="s1">'app'</span>: <span class="s1">'mdtest'</span>, <span class="s1">'repeat_in'</span>: None<span class="o">}</span>
+<span class="o">[</span>INFO] Directory /home/akrruser/akrr/log/data/ub-hpc/mdtest does not exist, creating it.
+<span class="o">[</span>INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc/mdtest does not exist, creating it.
+<span class="o">[</span>INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.23.08.369371
+<span class="o">[</span>INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.23.08.369371/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.23.08.369371/proc
+<span class="o">[</span>INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+<span class="o">[</span>INFO] There are only 0 previous run, need at least 5 <span class="k">for </span>walltime limit autoset
+<span class="o">[</span>INFO] Below is content of generated batch job script:
+<span class="c">#!/bin/bash</span>
+<span class="c">#SBATCH --partition=general-compute </span>
+<span class="c">#SBATCH --qos=general-compute</span>
+<span class="c">#SBATCH --nodes=2</span>
+<span class="c">#SBATCH --ntasks-per-node=8</span>
+<span class="c">#SBATCH --time=00:30:00</span>
+<span class="c">#SBATCH --output=/projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.23.08.369371/stdout</span>
+<span class="c">#SBATCH --error=/projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.23.08.369371/stderr</span>
+<span class="c">#SBATCH --constraint="CPU-L5520"</span>
+<span class="c">#SBATCH --exclusive</span>
+
+
+<span class="c">#Common commands</span>
+<span class="nb">export </span><span class="nv">AKRR_NODES</span><span class="o">=</span>2
+<span class="nb">export </span><span class="nv">AKRR_CORES</span><span class="o">=</span>16
+<span class="nb">export </span><span class="nv">AKRR_CORES_PER_NODE</span><span class="o">=</span>8
+<span class="nb">export </span><span class="nv">AKRR_NETWORK_SCRATCH</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/tmp"</span>
+<span class="nb">export </span><span class="nv">AKRR_LOCAL_SCRATCH</span><span class="o">=</span><span class="s2">"/tmp"</span>
+<span class="nb">export </span><span class="nv">AKRR_TASK_WORKDIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.23.08.369371"</span>
+<span class="nb">export </span><span class="nv">AKRR_APPKER_DIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker"</span>
+<span class="nb">export </span><span class="nv">AKRR_AKRR_DIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/akrr_data"</span>
+
+<span class="nb">export </span><span class="nv">AKRR_APPKER_NAME</span><span class="o">=</span><span class="s2">"mdtest"</span>
+<span class="nb">export </span><span class="nv">AKRR_RESOURCE_NAME</span><span class="o">=</span><span class="s2">"ub-hpc"</span>
+<span class="nb">export </span><span class="nv">AKRR_TIMESTAMP</span><span class="o">=</span><span class="s2">"2019.05.01.19.23.08.369371"</span>
+<span class="nb">export </span><span class="nv">AKRR_APP_STDOUT_FILE</span><span class="o">=</span><span class="s2">"</span><span class="nv">$AKRR_TASK_WORKDIR</span><span class="s2">/appstdout"</span>
+
+<span class="nb">export </span><span class="nv">AKRR_APPKERNEL_INPUT</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker/inputs"</span>
+<span class="nb">export </span><span class="nv">AKRR_APPKERNEL_EXECUTABLE</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker/execs"</span>
+
+<span class="nb">source</span> <span class="s2">"</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/bin/akrr_util.bash"</span>
+
+<span class="c">#Populate list of nodes per MPI process</span>
+<span class="nb">export </span><span class="nv">AKRR_NODELIST</span><span class="o">=</span><span class="sb">`</span>srun <span class="nt">-l</span> <span class="nt">--ntasks-per-node</span><span class="o">=</span><span class="nv">$AKRR_CORES_PER_NODE</span> <span class="nt">-n</span> <span class="nv">$AKRR_CORES</span> <span class="nb">hostname</span> <span class="nt">-s</span>|sort <span class="nt">-n</span>| <span class="nb">awk</span> <span class="s1">'{printf "%s ",$2}'</span> <span class="sb">`</span>
+
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+
+<span class="nb">cd</span> <span class="s2">"</span><span class="nv">$AKRR_TASK_WORKDIR</span><span class="s2">"</span>
+
+<span class="c">#run common tests</span>
+akrr_perform_common_tests
+
+<span class="c">#Write some info to gen.info, JSON-Like file</span>
+akrr_write_to_gen_info <span class="s2">"start_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+akrr_write_to_gen_info <span class="s2">"node_list"</span> <span class="s2">"</span><span class="nv">$AKRR_NODELIST</span><span class="s2">"</span>
+
+
+<span class="c">#create working dir</span>
+<span class="nb">export </span><span class="nv">AKRR_TMP_WORKDIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">mktemp</span> <span class="nt">-d</span> /projects/ccrstaff/general/nikolays/huey/tmp/namd.XXXXXXXXX<span class="sb">`</span>
+<span class="nb">echo</span> <span class="s2">"Temporary working directory: </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">"</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+
+<span class="k">case</span> <span class="nv">$AKRR_NODES</span> <span class="k">in
+</span>1<span class="p">)</span>
+    <span class="nv">ITER</span><span class="o">=</span>20
+    <span class="p">;;</span>
+2<span class="p">)</span>
+    <span class="nv">ITER</span><span class="o">=</span>10
+    <span class="p">;;</span>
+4<span class="p">)</span>
+    <span class="nv">ITER</span><span class="o">=</span>5
+    <span class="p">;;</span>
+8<span class="p">)</span>
+    <span class="nv">ITER</span><span class="o">=</span>2
+    <span class="p">;;</span>
+<span class="k">*</span><span class="p">)</span>
+    <span class="nv">ITER</span><span class="o">=</span>1
+    <span class="p">;;</span>
+<span class="k">esac</span>
+
+
+
+
+<span class="c"># Load application enviroment</span>
+module load intel/18.3 intel-mpi/18.3
+module list
+
+<span class="nb">export </span><span class="nv">I_MPI_PMI_LIBRARY</span><span class="o">=</span>/usr/lib64/libpmi.so
+<span class="nb">export </span><span class="nv">I_MPI_FABRICS_LIST</span><span class="o">=</span><span class="s2">"tcp"</span>
+
+<span class="c"># set executable location</span>
+<span class="nv">EXE</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/ior/src/mdtest
+
+<span class="c"># set how to run app kernel</span>
+<span class="nv">RUNMPI</span><span class="o">=</span><span class="s2">"srun"</span>
+
+
+<span class="c">#Generate AppKer signature</span>
+appsigcheck.sh <span class="nv">$EXE</span> <span class="nv">$AKRR_TASK_WORKDIR</span>/.. <span class="o">&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span>
+
+
+<span class="c"># Execute AppKer</span>
+akrr_write_to_gen_info <span class="s2">"appkernel_start_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+<span class="nb">echo</span> <span class="s2">"#Testing single directory"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="nv">$RUNMPI</span> <span class="nv">$EXE</span> <span class="nt">-v</span> <span class="nt">-I</span> 32 <span class="nt">-z</span> 0 <span class="nt">-b</span> 0 <span class="nt">-i</span> <span class="nv">$ITER</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+
+<span class="nb">echo</span> <span class="s2">"#Testing single directory per process"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="nv">$RUNMPI</span> <span class="nv">$EXE</span> <span class="nt">-v</span> <span class="nt">-I</span> 32 <span class="nt">-z</span> 0 <span class="nt">-b</span> 0 <span class="nt">-i</span> <span class="nv">$ITER</span> <span class="nt">-u</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+
+<span class="nb">echo</span> <span class="s2">"#Testing single tree directory"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="nv">$RUNMPI</span> <span class="nv">$EXE</span> <span class="nt">-v</span> <span class="nt">-I</span> 4 <span class="nt">-z</span> 4 <span class="nt">-b</span> 2 <span class="nt">-i</span> <span class="nv">$ITER</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+ 
+<span class="nb">echo</span> <span class="s2">"#Testing single tree directory per process"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="nv">$RUNMPI</span> <span class="nv">$EXE</span> <span class="nt">-v</span> <span class="nt">-I</span> 4 <span class="nt">-z</span> 4 <span class="nt">-b</span> 2 <span class="nt">-i</span> <span class="nv">$ITER</span> <span class="nt">-u</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+
+akrr_write_to_gen_info <span class="s2">"appkernel_end_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+
+
+
+
+<span class="c"># clean-up</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_TASK_WORKDIR</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="k">${</span><span class="nv">AKRR_DEBUG</span><span class="p">=no</span><span class="k">}</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"no"</span> <span class="o">]</span>
+<span class="k">then
+        </span><span class="nb">echo</span> <span class="s2">"Deleting temporary files"</span>
+        <span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+<span class="k">else
+        </span><span class="nb">echo</span> <span class="s2">"Copying temporary files"</span>
+        <span class="nb">cp</span> <span class="nt">-r</span> <span class="nv">$AKRR_TMP_WORKDIR</span> workdir
+        <span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+<span class="k">fi
+
+
+
+</span>akrr_write_to_gen_info <span class="s2">"end_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+<span class="o">[</span>INFO] Removing generated files from file-system as only batch job script printing was requested
+</code></pre></div></div>
+
+<p>Next generate the script on resource:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.24.29.308629
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.24.29.308629/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.24.29.308629/proc
+[INFO] Creating batch job script and submitting it to remote machine
+[INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest does not exists, will try to create it
+[INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.24.29.308629 does not exists, will try to create it
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[INFO] There are only 0 previous run, need at least 5 for walltime limit autoset
+[INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc/mdtest/2019.05.01.19.24.29.308629/jobfiles/mdtest.job
+
+[INFO] Application kernel working directory on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.24.29.308629
+[INFO] Batch job script location on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.24.29.308629/mdtest.job
+</code></pre></div></div>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#get to working directory</span>
+<span class="nb">cd</span> /projects/ccrstaff/general/nikolays/huey/akrr_data/mdtest/2019.05.01.19.24.29.308629
+<span class="c">#manually start batch job script</span>
+sbatch mdtest.job
+</code></pre></div></div>
+
+<p>Examine appstdout file, which contains application kernel output (<a href="/AKRR_MDTest_appsout_sample.html">appstdout sample</a>).</p>
+
+<p>If it looks ok you can move to the next step</p>
+
+<h1 id="perform-validation-run">Perform Validation Run</h1>
+
+<p>On this step appkernel_validation.py utility is used to validate application kernel installation on 
+the resource. It executes the application kernel and analyses its results. If it fails the problems 
+need to be fixed and another round of validation (as detailed above) should be performed.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+</code></pre></div></div>
+
+<p>See <a href="/AKRR_MDTest_appkernel_validation_sample.html">IOR validation output sample</a></p>
+
+<p>DONE, you can move to next step!</p>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel.</h1>
+
+<p>Now this application kernel can be submitted for regular execution:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Perform a test run on all nodes count</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8
+
+<span class="c">#Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">-t0</span> <span class="s2">"01:00"</span> <span class="nt">-t1</span> <span class="s2">"05:00"</span> <span class="nt">-p</span> 1
+
+<span class="c"># Run on all nodes count 20 times (default number of runs to establish baseline)</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">--n-runs</span> 20
+</code></pre></div></div>
+
+<p>see <a href="/AKRR_Tasks_Scheduling.html">Scheduling and Rescheduling Application Kernels</a> and 
+<a href="/AKRR_Walltimelimit_Setting.html">Setup Walltime Limit</a> for more details.</p>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+
+<h2 id="during-linking-stage-of-compilation-got-undefined-reference-to-gpfs_fcntl">During linking stage of compilation got: “undefined reference to `gpfs_fcntl’”</h2>
+
+<p>The linker does not by default link the necessary GPFS library, you can instead do this step manually, for example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>src
+mpiicc  <span class="nt">-g</span> <span class="nt">-O2</span>   <span class="nt">-o</span> ior <span class="nt">-lgpfs</span> ior.o utilities.o parse_options.o aiori-POSIX.o aiori-MPIIO.o
+</code></pre></div></div>
+
+<p>Or rerun configuration with corrected LIBS (correct configure option for your needs), for example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure <span class="nt">--with-hdf5</span><span class="o">=</span>no <span class="nt">--with-ncmpi</span><span class="o">=</span>no  <span class="nv">LIBS</span><span class="o">=</span><span class="s2">"-lgpsf"</span>
+</code></pre></div></div>
+
+<p>Up: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Deployment of Application Kernels on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

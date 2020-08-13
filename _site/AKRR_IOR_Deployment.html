@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding IOR</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding IOR</h1> 
+        <h1 id="akrr-deployment-of-ior-applications-kernels-on-a-resource">AKRR: Deployment of IOR Applications Kernels on a Resource</h1>
+
+<p>IOR benchmark measures the performance of parallel file-systems. It can use differen IO APIs and 
+can perform write and read in different modes like all processes writes to single 
+file (N to 1 mode) or all processes writes to their own file (N to N mode).</p>
+
+<p>Besides POSIX and MPIIO APIs for file system input-output, IOR can also test parallel HDF5 and NetCDF
+libraries. You can choose which APIs to use, based on the API utilization in your center. HDF5 is a 
+popular format and many scientific HPC application use it. NetCDF is arguably a bit 
+less popular and the take longer time. So if you know (or strongly suspect) that nobody 
+uses NetCDF on your system you might want to skip it.</p>
+
+<p>If only the performance of parallel file-systems is of interest one can limit benchmarking to only POSIX 
+and possible MPIIO API. This would save substantial amount of cycles.</p>
+
+<p>For simplicity lets define APPKER and RESOURCE environment variable which will contain the HPC 
+resource name and application kernel name:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">RESOURCE</span><span class="o">=</span>&lt;resource_name&gt;
+<span class="nb">export </span><span class="nv">APPKER</span><span class="o">=</span>ior
+</code></pre></div></div>
+
+<h2 id="installing-ior">Installing IOR</h2>
+
+<p>In this section the IOR installation process will be described, see also IOR benchmark documentation 
+for installation details ( 
+<a href="https://github.com/hpc/ior">https://github.com/hpc/ior</a> ).</p>
+
+<h3 id="installing-hdf5-optional">Installing HDF5 (optional)</h3>
+
+<p>It is preferred to use a system-wide installed parallel HDF5 library. This way 
+<em>IOR</em> will also test the workability and performance of this particular library installation. 
+HDF5 is a popular format and are often deployed system-wide. Ensure that it was compiled with parallel 
+support (for example by checking presence of h5pcc in $HDF5_HOME/bin). If there is no system-wide 
+installed parallel HDF5 library than you might want to skip it.</p>
+
+<p>Below are brief notes on parallel hdf5 installation,  
+<a href="http://www.hdfgroup.org/HDF5/">http://www.hdfgroup.org/HDF5/</a> for HDF5 installation details.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> ior-3.2.0 does not work with hdf5-1.10.*, so use hdf5-1.8.* for that version or use development version of ior (3.3-dev).</p>
+</blockquote>
+
+<p><strong>On target resource:</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#get to application kernel executable directory</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+
+<span class="c">#create lib directory if needed and temporary directory for compilation</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> lib
+<span class="nb">mkdir</span> <span class="nt">-p</span> lib<span class="se">\t</span>mp
+<span class="nb">cd </span>lib<span class="se">\t</span>mp
+
+<span class="c"># obtain parallel-netcdf source code</span>
+wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.gz
+<span class="nb">tar </span>xvzf hdf5-1.10.6.tar.gz
+<span class="nb">cd </span>hdf5-1.10.6
+
+<span class="c">#configure hdf5</span>
+./configure <span class="nt">--prefix</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/lib/hdf5-1.10.6 <span class="nt">--enable-parallel</span> <span class="nv">CC</span><span class="o">=</span><span class="sb">`</span>which mpiicc<span class="sb">`</span> <span class="nv">CXX</span><span class="o">=</span><span class="sb">`</span>which mpiicpc<span class="sb">`</span>
+make <span class="nt">-j</span> 4
+
+<span class="c">#install</span>
+make <span class="nb">install
+cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+
+<span class="c">#optionally clean-up</span>
+<span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs/lib/tmp/hdf5-1.10.6
+</code></pre></div></div>
+
+<h3 id="installing-parallel-netcdf-optional">Installing Parallel NetCDF (optional)</h3>
+
+<p>IOR can also use parallel NetCDF format to test file system IO. Parallel NetCDF tends to be slower 
+than other APIs and therefore significantly increases the application kernel execution time. 
+Therefore, if you know that parallel NetCDF is used on your system and you want to monitor its 
+performance then go ahead and add it. If you use system-wide installed library, check that it is 
+parallel. Regular  serial NetCDF will not work (IOR needs the parallel version). Below is brief 
+note on parallel-netcdf installation, refer to 
+<a href="https://parallel-netcdf.github.io/">https://parallel-netcdf.github.io/</a> 
+for more details - note that currently IOR needs the linked version of parallel NetCDF, not the 
+(unfortunately incompatible) NetCDF-4 parallel API.</p>
+
+<p>Similar to HDF5, if there is no system-wide installation and no use on the system than skip it as it
+would be not that much useful.</p>
+
+<p>Below are brief notes on parallel NetCDF installation,  </p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#get to application kernel executable directory</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+
+<span class="c">#create lib directory if needed and temporary directory for compilation</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> lib
+<span class="nb">mkdir</span> <span class="nt">-p</span> lib/tmp
+<span class="nb">cd </span>lib/tmp
+
+<span class="c">#obtain parallel-netcdf source code</span>
+wget https://parallel-netcdf.github.io/Release/pnetcdf-1.12.1.tar.gz
+<span class="nb">tar </span>xvzf pnetcdf-1.12.1.tar.gz
+<span class="nb">cd </span>pnetcdf-1.12.1
+
+
+<span class="c">#configure parallel-netcdf, specify installation location and which mpi compiler to use</span>
+./configure <span class="nt">--prefix</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/lib/pnetcdf-1.12.1
+
+<span class="c">#compile (do not use parallel compilation i.e. -j option)</span>
+make
+
+<span class="c">#install</span>
+make <span class="nb">install
+cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+
+<span class="c">#optionally clean-up</span>
+<span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs/lib/tmp/pnetcdf-1.12.1
+</code></pre></div></div>
+
+<h2 id="installing-ior-1">Installing IOR</h2>
+
+<p>Now we need to install IOR. Below is a sample listing of commands for IOR installation. Refer to 
+IOR benchmark documentation for more installation details ( 
+<a href="https://github.com/hpc/ior">https://github.com/hpc/ior</a> ).</p>
+
+<p>Following is done on HPC resource.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># cd to application kernel executable directory</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+<span class="c">#remove older version of ior</span>
+<span class="nb">rm</span> <span class="nt">-rf</span> ior
+
+
+<span class="c"># Obtain latest version of IOR from our repository</span>
+<span class="c"># Option 1 use latest stable release (it have troubles with newer version of HDF5)</span>
+wget https://github.com/hpc/ior/releases/download/3.2.1/ior-3.2.1.tar.gz
+<span class="nb">tar</span> <span class="nt">-xzf</span> ior-3.2.1.tar.gz
+<span class="nb">ln</span> <span class="nt">-s</span> ior-3.2.1 ior
+<span class="nb">cd </span>ior-3.2.1
+
+<span class="c"># Option 2 using github</span>
+git clone https://github.com/hpc/ior.git
+<span class="nb">cd </span>ior
+git checkout 3.3.0rc1
+./bootstrap
+<span class="c"># load proper compilers and libs</span>
+<span class="c"># phdf5 and pnetcdf are optional only if you need to test hdf5 paralel library and </span>
+<span class="c"># parallel netcdf  </span>
+module intel intel-mpi phdf5 pnetcdf
+</code></pre></div></div>
+
+<p>Configuration run for POSIX and MPIIO (i.e. without HDF5 and NetCDF):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure <span class="nv">MPICC</span><span class="o">=</span>mpiicc
+</code></pre></div></div>
+<blockquote>
+  <p>Optionally, IOR configuration with POSIX, MPIIO HDF5 and NetCDF:</p>
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set netcdf and hdf5 enviroment</span>
+module load hdf5
+<span class="c">#configure IOR, note the specification of netcdf and hdf include and lib directories</span>
+./configure <span class="nt">--with-hdf5</span><span class="o">=</span><span class="nb">yes</span> <span class="nt">--with-ncmpi</span><span class="o">=</span><span class="nb">yes</span> <span class="se">\</span>
+    <span class="nv">CPPFLAGS</span><span class="o">=</span><span class="s2">"-I</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/lib/pnetcdf-1.12.1/include -I</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/lib/hdf5-1.10.6/include"</span> <span class="se">\</span>
+    <span class="nv">LDFLAGS</span><span class="o">=</span><span class="s2">"-L</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/lib/pnetcdf-1.12.1/lib -L</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/lib/hdf5-1.10.6/lib "</span> <span class="se">\</span>
+    <span class="nv">MPICC</span><span class="o">=</span>mpiicc
+</code></pre></div>  </div>
+</blockquote>
+
+<p>Compilation:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Compile</span>
+make
+</code></pre></div></div>
+
+<p>Post installation</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># The binary should be src/ior</span>
+<span class="nb">ls</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs/ior/src/ior
+</code></pre></div></div>
+
+<h1 id="generate-initiate-configuration-file">Generate Initiate Configuration File</h1>
+
+<p>Generate Initiate Configuration File:</p>
+
+<p><strong>On AKRR server</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$RESOURCE</span>
+</code></pre></div></div>
+<p>Sample output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Generating application kernel configuration for ior on ub-hpc
+[INFO] Application kernel configuration for ior on ub-hpc is in: 
+        /home/akrruser/akrr/etc/resources/ub-hpc/ior.app.conf
+</code></pre></div></div>
+<h1 id="edit-configuration-file">Edit Configuration File</h1>
+
+<p>Configuring IOR is more complex than the NAMD based application kernel. The main issue with IOR is 
+to try and bypass memory caching on compute and storage nodes (which will inflate the performance 
+numbers, as it is doing i/o to memory rather than the actual storage system).</p>
+
+<p>To avoid caching on multi-node tests (two nodes and larger) we use MPI processes reordering, for 
+example if the file was written from node A and node B, after that node A will read what node B 
+wrote and node B will read what node A wrote.</p>
+
+<p>For singe node runs, the test is actually performed on 2 nodes where one node writes and another 
+node reads. This way we (hopefully) obtain single node performance metrics without hitting local 
+caches.</p>
+
+<p>We have little influence on the storage node configuration/caches so the strategy here is to do all 
+writes first (for all tests) and then do reads, the hope is that writing large files will overwrite 
+the cache on storage node and the following reads will be done with minimal influence from storage 
+nodes cache.</p>
+
+<p>Configuring the IOR application kernel is essentially setting up the IOR execution in a way 
+reflecting the above strategy for bypassing cache.</p>
+
+<p>The most effective strategy to properly setup <code class="language-plaintext highlighter-rouge">ior</code> is to use an interactive 
+session to test and define configurable parameters.</p>
+
+<h2 id="configuring-parameters-which-defines-how-ior-will-be-executed">Configuring parameters which defines how IOR will be executed</h2>
+
+<p>First, lets configure parameters which generally do not require an interactive debug session.</p>
+
+<p>Below is a listing of the generated default configuration file located at 
+~/akrr/etc/resources/$RESOURCE/ior.app.conf</p>
+
+<p><strong>~/akrr/etc/resources/$RESOURCE/ior.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># which IO API/formats to check
+</span><span class="n">testPOSIX</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">testMPIIO</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">testHDF5</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">testNetCDF</span> <span class="o">=</span> <span class="bp">False</span>
+
+<span class="c1"># will do write test first and after that read, that minimize the caching impact from storage nodes
+# require large temporary storage easily 100s GiB
+</span><span class="n">doAllWritesFirst</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">appkernel_run_env_template</span> <span class="o">=</span> <span class="s">"""
+# load application environment
+# module load hdf5
+module list
+
+# set executable location
+EXE=$AKRR_APPKER_DIR/execs/ior/src/ior
+
+# set how to run mpirun on all nodes
+for node in $AKRR_NODELIST; do echo $node&gt;&gt;all_nodes; done
+RUNMPI="mpiexec -n $AKRR_CORES -f all_nodes"
+
+# set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+sed -n "$(($AKRR_CORES_PER_NODE+1)),$(($AKRR_CORES))p" all_nodes &gt; all_nodes_offset
+sed -n "1,$(($AKRR_CORES_PER_NODE))p" all_nodes &gt;&gt; all_nodes_offset
+RUNMPI_OFFSET="mpiexec -n $AKRR_CORES -f all_nodes_offset"
+"""</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">The first several lines specify which IO APIs to test:</code></p>
+
+<p><strong>Fragment of ~/akrr/etc/resources/$RESOURCE/ior.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#which IO API/formats to check
+</span><span class="n">testPOSIX</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="n">testMPIIO</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">testHDF5</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">testNetCDF</span> <span class="o">=</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<p>Set to True API you want to test, for HDF5 and NetCDF IOR should be compiled with its support.</p>
+
+<p>Next several lines instruct IOR application kernel to do all writes first and then do all reads:</p>
+
+<p><strong>Fragment of ~/akrr/etc/resources/$RESOURCE/ior.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#will do write test first and after that read, that minimize the caching impact from storage nodes
+#require large temporary storage easily 100s GiB 
+</span><span class="n">doAllWritesFirst</span><span class="o">=</span><span class="bp">True</span>
+</code></pre></div></div>
+
+<p>The only reason not to do writes first is if you have limited storage size, as the size of all 
+generated output files are quite substantial (after testing is done all generated files are removed, 
+but you mush have sufficient space to hold the interim results). For example on 8 nodes of machine 
+with 12 cores per node and all tests done the total size of writes will be 10 tests * 200 MB per 
+core  * 12 cores per node * 8 node =192 GB.</p>
+
+<h2 id="setting-up-appkernel_run_env_template">Setting up <em>appkernel_run_env_template</em></h2>
+
+<p>Now we need to set <em>appkernel_run_env_template</em> template variable.</p>
+
+<p>We will do it section by section and will use interactive session on resource to test the entries.</p>
+
+<p>First lets generate <em>test</em> application kernel batch job script (<strong>not IOR script</strong>, we will use 
+this test job script to set AKRR predifined environment variable to use during entries validation):</p>
+
+<p><strong>On AKRR Server</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nb">test</span>
+</code></pre></div></div>
+
+<pre><code class="language-test">[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/proc
+[INFO] Creating batch job script and submitting it to remote machine
+[INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495 does not exists, will try to create it
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[WARNING] One of last 5 runs have failed. Would not use autoset.
+[INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/jobfiles/test.job
+
+[INFO] Application kernel working directory on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495
+[INFO] Batch job script location on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495/test.job
+</code></pre>
+
+<p>The output contains the working directory for this task on remote resource. On remote resource get 
+to that directory and start interactive session (request same number of nodes, in example above the 
+script was generated for 2 nodes).</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#get to working directory</span>
+<span class="nb">cd</span> /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495
+<span class="c">#check that test.job is there</span>
+<span class="nb">ls</span>
+<span class="c">#start interactive session</span>
+salloc <span class="nt">--partition</span><span class="o">=</span>general-compute <span class="nt">--nodes</span><span class="o">=</span>2 <span class="nt">--ntasks-per-node</span><span class="o">=</span>8 <span class="nt">--time</span><span class="o">=</span>01:00:00 <span class="nt">--exclusive</span> <span class="nt">--constraint</span><span class="o">=</span><span class="s2">"CPU-L5520"</span>
+<span class="c">#wait till you get access to interactive session</span>
+
+<span class="c">#get to working directory again if not already there</span>
+<span class="nb">cd</span> /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495
+<span class="c">#load everything from test.job</span>
+<span class="nb">source </span>test.job 
+<span class="c">#check AKRR predifined environment variable are loaded</span>
+<span class="nb">echo</span> <span class="nv">$AKRR_NODES</span>
+<span class="c">#output should be 2</span>
+
+<span class="nb">echo</span> <span class="nv">$AKRR_NODELIST</span>
+<span class="c">#output should be space separated list of hosts </span>
+</code></pre></div></div>
+
+<p>Now we ready to configure _appkernel_run_env_template (in ~/akrr/etc/resources/$RESOURCE/ior.app.conf).</p>
+
+<h3 id="setting-up-environment">Setting up environment</h3>
+
+<p>In first section we set proper environment for IOR to work, we also place IOR executable location to EXE variable 
+(binary in $EXE will be used to generate application signature):</p>
+
+<p><strong>appkernel_run_env_template fragment of ior.app.conf</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># load application environment</span>
+<span class="c"># module load hdf5</span>
+module load intel-mpi intel
+module list
+
+<span class="c">#set executable location</span>
+<span class="nv">EXE</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/ior/src/ior
+</code></pre></div></div>
+
+<p>Make the appropriate changes for your system in 
+~/akrr/etc/resources/$RESOURCE/ior.app.conf and execute in interactive session, 
+note addition of ‘module load intel-mpi intel’.</p>
+
+<p>check that IOR is working:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># load application environment</span>
+<span class="c"># module load hdf5</span>
+module load intel-mpi intel
+module list
+
+<span class="c">#set executable location</span>
+<span class="nv">EXE</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/ior/src/ior
+
+
+<span class="c">#let check is it working:</span>
+mpirun <span class="nv">$EXE</span>
+</code></pre></div></div>
+
+<p>The default file sizes for ior are quite small, so running ior with no arguments as above should 
+return very quickly - unless something is wrong.</p>
+
+<p>If it is not working modify the environment appropriately in 
+~/akrr/etc/resources/$RESOURCE/ior.app.conf.</p>
+
+<h3 id="setting-up-how-to-run-mpi-application-on-all-nodes">Setting up How to run MPI application on All Nodes</h3>
+
+<p>Next, we setup how to run mpirun/mpiexec on all nodes:</p>
+
+<p><strong>appkernel_run_env_template fragment of ior.app.conf</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set how to run mpirun on all nodes</span>
+<span class="k">for </span>node <span class="k">in</span> <span class="nv">$AKRR_NODELIST</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$node</span><span class="o">&gt;&gt;</span>all_nodes<span class="p">;</span> <span class="k">done
+</span><span class="nv">RUNMPI</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes"</span>
+</code></pre></div></div>
+
+<p>Nearly all mpi implementations accept a plain list of hosts(nodes) as a machines file on which to 
+run the MPI tasks, although the options to use that list may vary. In this script we generate a list 
+of all nodes (one per MPI process) and place in the $RUNMPI environment variable how to execute 
+mpirun (or whatever MPI task launcher is preferred on your platform).</p>
+
+<p>Adjust this section in ~/akrr/etc/resources/$RESOURCE/ior.app.conf and again 
+execute in an interactive session, to check that IOR is working:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set how to run mpirun on all nodes</span>
+<span class="k">for </span>node <span class="k">in</span> <span class="nv">$AKRR_NODELIST</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$node</span><span class="o">&gt;&gt;</span>all_nodes<span class="p">;</span> <span class="k">done
+</span><span class="nv">RUNMPI</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes"</span>
+</code></pre></div></div>
+
+<p>Note that you <strong>must</strong> supply number of processes to your mpi launcher, some test do not use all 
+processes. Therefore, without explicit specification of processes numbers the tests will be 
+incorrect (for single node metrics).</p>
+
+<p>Single-node performance is obtain from two node run where one will do writes and another reads.</p>
+
+<p>Check that IOR is working:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#let check is it working:</span>
+<span class="nv">$RUNMPI</span> <span class="nv">$EXE</span> <span class="nt">-vv</span>
+</code></pre></div></div>
+
+<p>“-vv” option will make IOR more verbose and shows the processes assignment to nodes:</p>
+
+<p><strong>Sample of $RUNMPI $EXE -vv output</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Using /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G for test....
+File System To Test: nfs ifs-x410.cbls.ccr.buffalo.edu:/ifs/projects /projects
+# Starting Test: -a POSIX
+executing: mpiexec -n 16 -f all_nodes /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv  -Z -b 200m -t 20m -a POSIX  -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+IOR-3.2.0: MPI Coordinated Test of Parallel I/O
+Began               : Wed May  8 14:30:14 2019
+Command line        : /projects/ccrstaff/general/nikolays/huey/appker/execs/ior/src/ior -vv -Z -b 200m -t 20m -a POSIX -w -k -o /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+Machine             : Linux cpn-d13-06.int.ccr.buffalo.edu
+Start time skew across all tasks: 0.00 sec
+TestID              : 0
+StartTime           : Wed May  8 14:30:14 2019
+Path                : /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G
+FS                  : 1704.7 TiB   Used FS: 49.3%   Inodes: 2635486.5 Mi   Used Inodes: 36.0%
+Participating tasks: 16
+
+Options:
+api                 : POSIX
+apiVersion          :
+test filename       : /projects/ccrstaff/general/nikolays/huey/tmp/ior.OtHKBus6G/ior_test_file__a_POSIX
+access              : single-shared-file
+type                : independent
+segments            : 1
+ordering in a file  : sequential
+ordering inter file : random task offset
+task offset         : 1
+reorder random seed : 0
+tasks               : 16
+clients per node    : 8
+repetitions         : 1
+xfersize            : 20 MiB
+blocksize           : 200 MiB
+aggregate filesize  : 3.12 GiB
+
+Results:
+
+access    bw(MiB/s)  block(KiB) xfer(KiB)  open(s)    wr/rd(s)   close(s)   total(s)   iter
+------    ---------  ---------- ---------  --------   --------   --------   --------   ----
+Commencing write performance test: Wed May  8 14:30:14 2019
+write     104.26     204800     20480      0.309660   1.37       30.57      30.69      0
+Max Write: 104.26 MiB/sec (109.33 MB/sec)
+
+Summary of all tests:
+Operation   Max(MiB)   Min(MiB)  Mean(MiB)     StdDev   Max(OPs)   Min(OPs)  Mean(OPs)     StdDev    Mean(s) Test# #Tasks tPN reps fPP reord reordoff reordrand seed segcnt   blksiz    xsize aggs(MiB)   API RefNum
+write         104.26     104.26     104.26       0.00       5.21       5.21       5.21       0.00   30.69206     0     16   8    1   0     0        1         1    0      1 209715200 20971520    3200.0 POSIX      0
+Finished            : Wed May  8 14:30:45 2019
+</code></pre></div></div>
+
+<p>If it is not working modify the executed commands and copy the good ones to 
+~/akrr/etc/resources/$RESOURCE/ior.app.conf.</p>
+
+<h3 id="setting-up-how-to-run-mpi-application-on-all-nodes-with-nodes-offset">Setting up How to run MPI application on All Nodes with Nodes Offset</h3>
+
+<p>Next, we setup how to run mpirun/mpiexec on all nodes with one node offset:</p>
+
+<p><strong>appkernel_run_env_template fragment of ior.app.conf</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1</span>
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="o">+</span><span class="m">1</span><span class="k">))</span><span class="s2">,</span><span class="k">$((</span><span class="nv">$AKRR_CORES</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;</span> all_nodes_offset
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"1,</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;&gt;</span> all_nodes_offset
+<span class="nv">RUNMPI_OFFSET</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes_offset"</span>
+</code></pre></div></div>
+
+<p>Nearly all mpi flavours accept plain list of hosts(nodes) as a machines file, some of them uses 
+different option to load that list. In this script we generate a list of all nodes (one per MPI 
+process) and place to RUNMPI variable how to execute mpirun (or whatever luncher is used on your 
+platform).</p>
+
+<p>Adjust this section in ~/akrr/etc/resources/$RESOURCE/ior.app.conf and execute 
+in interactive session, check that IOR is working:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1</span>
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="o">+</span><span class="m">1</span><span class="k">))</span><span class="s2">,</span><span class="k">$((</span><span class="nv">$AKRR_CORES</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;</span> all_nodes_offset
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"1,</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;&gt;</span> all_nodes_offset
+<span class="nb">echo</span> <span class="s2">"all_nodes_offset:"</span>
+<span class="nb">cat </span>all_nodes_offset
+<span class="nv">RUNMPI_OFFSET</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes_offset"</span>
+</code></pre></div></div>
+
+<p>Check that IOR is working:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#let check is it working:</span>
+<span class="nv">$RUNMPI_OFFSET</span> <span class="nv">$EXE</span> <span class="nt">-vv</span>
+</code></pre></div></div>
+
+<p>If it is not working modify the executed commands and copy the good ones to 
+~/akrr/etc/resources/$RESOURCE/ior.app.conf.</p>
+
+<h3 id="setting-up-luster-file-striping-optional">Setting up Luster file striping (Optional) </h3>
+
+<p>If you use Lustre you might want to use file striping for better parallel performance. The variables 
+RESOURCE_SPECIFIC_OPTION, RESOURCE_SPECIFIC_OPTION_N_to_1 and RESOURCE_SPECIFIC_OPTION_N_to_N and  
+will be passed to IOR as command line options.</p>
+
+<p>RESOURCE_SPECIFIC_OPTION will be passed to all IOR execution.</p>
+
+<p>RESOURCE_SPECIFIC_OPTION_N_to_1 will be passed to IOR for tests there all processes writes to a 
+single file and RESOURCE_SPECIFIC_OPTION_N_to_N will be passed to IOR for tests there all processes 
+writes to their own independent files.</p>
+
+<p>Below is a fragment example from ior.app.conf which will instruct IOR to use 
+striping equal to the number of nodes when all processes write to a single file.</p>
+
+<p><strong>appkernel_run_env_template fragment of ior.app.conf</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set striping for lustre file system</span>
+<span class="nv">RESOURCE_SPECIFIC_OPTION_N_to_1</span><span class="o">=</span><span class="s2">"-O lustreStripeCount=</span><span class="nv">$AKRR_NODES</span><span class="s2">"</span>
+<span class="nv">RESOURCE_SPECIFIC_OPTION_N_to_N</span><span class="o">=</span><span class="s2">""</span>
+<span class="c">#other resource specific options</span>
+<span class="nv">RESOURCE_SPECIFIC_OPTION</span><span class="o">=</span><span class="s2">""</span>
+</code></pre></div></div>
+
+<h1 id="generate-batch-job-script-and-execute-it-manually-optional">Generate Batch Job Script and Execute it Manually (Optional) </h1>
+
+<p>The purpose of this step is to ensure that the configuration lead to correct workable batch job 
+script. Here first batch job script is generated with ‘akrr_ctl.sh batch_job’. Then this script is 
+executed in interactive session (this improves the turn-around in case of errors). If script fails 
+to execute, the issues can be fixed first in that script itself and then merged to configuration 
+file.</p>
+
+<p>This step is somewhat optional because it is very similar to next step. However the opportunity to 
+work in interactive session improve turn-around time because there is no need to stay in queue for 
+each iteration.</p>
+
+<p>First generate the script to standard output and examine it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+
+<p><strong>Sample output of akrr task new –dry-run –gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495
+<span class="o">[</span>INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/proc
+<span class="o">[</span>INFO] Creating batch job script and submitting it to remote machine
+<span class="o">[</span>INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495 does not exists, will try to create it
+<span class="o">[</span>INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+<span class="o">[</span>WARNING] One of last 5 runs have failed. Would not use autoset.
+<span class="o">[</span>INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.22.15.36.10.391495/jobfiles/test.job
+
+<span class="o">[</span>INFO] Application kernel working directory on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495
+<span class="o">[</span>INFO] Batch job script location on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/test/2019.03.22.15.36.10.391495/test.job
+<span class="o">[</span>akrruser@xdmod ~]<span class="nv">$ </span>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+DryRun: Should submit following to REST API <span class="o">(</span>POST to scheduled_tasks<span class="o">)</span> <span class="o">{</span><span class="s1">'time_to_start'</span>: None, <span class="s1">'resource_param'</span>: <span class="s2">"{'nnodes':2}"</span>, <span class="s1">'app'</span>: <span class="s1">'ior'</span>, <span class="s1">'repeat_in'</span>: None, <span class="s1">'resource'</span>: <span class="s1">'ub-hpc'</span><span class="o">}</span>                                                    
+<span class="o">[</span>INFO] Directory /home/akrruser/akrr/log/data/ub-hpc/ior does not exist, creating it.                                
+<span class="o">[</span>INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc/ior does not exist, creating it.                           
+<span class="o">[</span>INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.36.35.793858                   
+<span class="o">[</span>INFO] Creating task directories:                                                                                    
+        /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.36.35.793858/jobfiles                                  
+        /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.36.35.793858/proc                                      
+<span class="o">[</span>INFO] auto_walltime_limit is on, trying to estimate walltime limit...                                               
+<span class="o">[</span>INFO] There are only 0 previous run, need at least 5 <span class="k">for </span>walltime limit autoset                                     
+<span class="o">[</span>INFO] Below is content of generated batch job script:                                                               
+<span class="c">#!/bin/bash                                                                                                          </span>
+<span class="c">#SBATCH --partition=general-compute                                                                                  </span>
+<span class="c">#SBATCH --qos=general-compute                                                                                        </span>
+<span class="c">#SBATCH --nodes=2</span>
+<span class="c">#SBATCH --ntasks-per-node=8</span>
+<span class="c">#SBATCH --time=03:00:00</span>
+<span class="c">#SBATCH --output=/projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.36.35.793858/stdout</span>
+<span class="c">#SBATCH --error=/projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.36.35.793858/stderr</span>
+<span class="c">#SBATCH --constraint="CPU-L5520"</span>
+<span class="c">#SBATCH --exclusive</span>
+
+
+<span class="c">#Common commands</span>
+<span class="nb">export </span><span class="nv">AKRR_NODES</span><span class="o">=</span>2
+<span class="nb">export </span><span class="nv">AKRR_CORES</span><span class="o">=</span>16
+<span class="nb">export </span><span class="nv">AKRR_CORES_PER_NODE</span><span class="o">=</span>8
+<span class="nb">export </span><span class="nv">AKRR_NETWORK_SCRATCH</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/tmp"</span>
+<span class="nb">export </span><span class="nv">AKRR_LOCAL_SCRATCH</span><span class="o">=</span><span class="s2">"/tmp"</span>
+<span class="nb">export </span><span class="nv">AKRR_TASK_WORKDIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.36.35.793858"</span>
+<span class="nb">export </span><span class="nv">AKRR_APPKER_DIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker"</span>
+<span class="nb">export </span><span class="nv">AKRR_AKRR_DIR</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/akrr_data"</span>
+
+<span class="nb">export </span><span class="nv">AKRR_APPKER_NAME</span><span class="o">=</span><span class="s2">"ior"</span>
+<span class="nb">export </span><span class="nv">AKRR_RESOURCE_NAME</span><span class="o">=</span><span class="s2">"ub-hpc"</span>
+<span class="nb">export </span><span class="nv">AKRR_TIMESTAMP</span><span class="o">=</span><span class="s2">"2019.03.22.16.36.35.793858"</span>
+<span class="nb">export </span><span class="nv">AKRR_APP_STDOUT_FILE</span><span class="o">=</span><span class="s2">"</span><span class="nv">$AKRR_TASK_WORKDIR</span><span class="s2">/appstdout"</span>
+
+<span class="nb">export </span><span class="nv">AKRR_APPKERNEL_INPUT</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker/inputs"</span>
+<span class="nb">export </span><span class="nv">AKRR_APPKERNEL_EXECUTABLE</span><span class="o">=</span><span class="s2">"/projects/ccrstaff/general/nikolays/huey/appker/execs/ior"</span>
+
+<span class="nb">source</span> <span class="s2">"</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/bin/akrr_util.bash"</span>
+
+<span class="c">#Populate list of nodes per MPI process</span>
+<span class="nb">export </span><span class="nv">AKRR_NODELIST</span><span class="o">=</span><span class="sb">`</span>srun <span class="nt">-l</span> <span class="nt">--ntasks-per-node</span><span class="o">=</span><span class="nv">$AKRR_CORES_PER_NODE</span> <span class="nt">-n</span> <span class="nv">$AKRR_CORES</span> <span class="nb">hostname</span> <span class="nt">-s</span>|sort <span class="nt">-n</span>| <span class="nb">awk</span> <span class="s1">'{printf "%s ",$2}'</span> <span class="sb">`</span>
+
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+
+<span class="nb">cd</span> <span class="s2">"</span><span class="nv">$AKRR_TASK_WORKDIR</span><span class="s2">"</span>
+
+<span class="c">#run common tests</span>
+akrr_perform_common_tests
+
+<span class="c">#Write some info to gen.info, JSON-Like file</span>
+akrr_write_to_gen_info <span class="s2">"start_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+akrr_write_to_gen_info <span class="s2">"node_list"</span> <span class="s2">"</span><span class="nv">$AKRR_NODELIST</span><span class="s2">"</span>
+
+
+
+<span class="c"># MPI IO hints (optional)</span>
+<span class="c"># MPI IO hints are environment variables in the following format:</span>
+<span class="c">#</span>
+<span class="c"># 'IOR_HINT__&lt;layer&gt;__&lt;hint&gt;=&lt;value&gt;', where &lt;layer&gt; is either 'MPI'</span>
+<span class="c"># or 'GPFS', &lt;hint&gt; is the full name of the hint to be set, and &lt;value&gt;</span>
+<span class="c"># is the hint value.  E.g., 'export IOR_HINT__MPI__IBM_largeblock_io=true'</span>
+<span class="c"># 'export IOR_HINT__GPFS__hint=value' in mpi_io_hints</span>
+
+
+<span class="c">#create working dir</span>
+<span class="nb">export </span><span class="nv">AKRR_TMP_WORKDIR</span><span class="o">=</span><span class="sb">`</span><span class="nb">mktemp</span> <span class="nt">-d</span> /projects/ccrstaff/general/nikolays/huey/tmp/ior.XXXXXXXXX<span class="sb">`</span>
+<span class="nb">echo</span> <span class="s2">"Temporary working directory: </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">"</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+
+
+
+<span class="c">#load application environment</span>
+<span class="c">#odule load hdf5</span>
+module list
+
+<span class="c">#set executable location</span>
+<span class="nv">EXE</span><span class="o">=</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/ior/src/ior
+
+<span class="c">#set how to run mpirun on all nodes</span>
+<span class="k">for </span>node <span class="k">in</span> <span class="nv">$AKRR_NODELIST</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo</span> <span class="nv">$node</span><span class="o">&gt;&gt;</span>all_nodes<span class="p">;</span> <span class="k">done
+</span><span class="nv">RUNMPI</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes"</span>
+
+<span class="c">#set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1</span>
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="o">+</span><span class="m">1</span><span class="k">))</span><span class="s2">,</span><span class="k">$((</span><span class="nv">$AKRR_CORES</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;</span> all_nodes_offset
+<span class="nb">sed</span> <span class="nt">-n</span> <span class="s2">"1,</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="k">))</span><span class="s2">p"</span> all_nodes <span class="o">&gt;&gt;</span> all_nodes_offset
+<span class="nv">RUNMPI_OFFSET</span><span class="o">=</span><span class="s2">"mpiexec -n </span><span class="nv">$AKRR_CORES</span><span class="s2"> -f all_nodes_offset"</span>
+
+
+<span class="c">#Generate AppKer signature</span>
+appsigcheck.sh <span class="nv">$EXE</span> <span class="nv">$AKRR_TASK_WORKDIR</span>/.. <span class="o">&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span>
+
+
+
+<span class="c">#blockSize and transferSize</span>
+<span class="nv">COMMON_TEST_PARAM</span><span class="o">=</span><span class="s2">"-b 200m -t 20m"</span>
+<span class="c">#2 level of verbosity, don't clear memory</span>
+<span class="nv">COMMON_OPTIONS</span><span class="o">=</span><span class="s2">"-vv"</span>
+<span class="nv">CACHING_BYPASS</span><span class="o">=</span><span class="s2">"-Z"</span>
+
+<span class="c">#list of test to perform</span>
+<span class="nv">TESTS_LIST</span><span class="o">=(</span><span class="s2">"-a POSIX </span><span class="nv">$RESOURCE_SPECIFIC_OPTION_N_to_1</span><span class="s2">"</span>
+<span class="s2">"-a POSIX -F </span><span class="nv">$RESOURCE_SPECIFIC_OPTION_N_to_N</span><span class="s2">"</span><span class="o">)</span>
+
+<span class="c">#combine common parameters</span>
+<span class="nv">COMMON_PARAM</span><span class="o">=</span><span class="s2">"</span><span class="nv">$COMMON_OPTIONS</span><span class="s2"> </span><span class="nv">$RESOURCE_SPECIFIC_OPTION</span><span class="s2"> </span><span class="nv">$CACHING_BYPASS</span><span class="s2"> </span><span class="nv">$COMMON_TEST_PARAM</span><span class="s2">"</span>
+
+
+<span class="nb">echo</span> <span class="s2">"Using </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2"> for test...."</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+
+<span class="c">#determine filesystem for file</span>
+<span class="nv">canonicalFilename</span><span class="o">=</span><span class="sb">`</span><span class="nb">readlink</span> <span class="nt">-f</span> <span class="nv">$AKRR_TMP_WORKDIR</span><span class="sb">`</span>
+<span class="nv">filesystem</span><span class="o">=</span><span class="sb">`</span><span class="nb">awk</span> <span class="nt">-v</span> <span class="nv">canonical_path</span><span class="o">=</span><span class="s2">"</span><span class="nv">$canonicalFilename</span><span class="s2">"</span> <span class="s1">'{if ($2!="/" &amp;&amp; 1==index(canonical_path, $2)) print $3 " " $1 " " $2;}'</span> /proc/self/mounts<span class="sb">`</span>
+<span class="nb">echo</span> <span class="s2">"File System To Test: </span><span class="nv">$filesystem</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+akrr_write_to_gen_info <span class="s2">"file_system"</span> <span class="s2">"</span><span class="nv">$filesystem</span><span class="s2">"</span>
+
+<span class="c">#start the tests</span>
+akrr_write_to_gen_info <span class="s2">"appkernel_start_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+<span class="c">#do write first</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="nv">TESTS_LIST</span><span class="p">[@]</span><span class="k">}</span><span class="s2">"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+    
+    <span class="c">#run the test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -w -k -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="c">#do read last</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"</span><span class="k">${</span><span class="nv">TESTS_LIST</span><span class="p">[@]</span><span class="k">}</span><span class="s2">"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+    
+    <span class="c">#run the test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI_OFFSET</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -r -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done
+
+</span>akrr_write_to_gen_info <span class="s2">"appkernel_end_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+
+
+
+
+
+<span class="c">#clean-up</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_TASK_WORKDIR</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="k">${</span><span class="nv">AKRR_DEBUG</span><span class="p">=no</span><span class="k">}</span><span class="s2">"</span> <span class="o">=</span> <span class="s2">"no"</span> <span class="o">]</span>
+<span class="k">then
+        </span><span class="nb">echo</span> <span class="s2">"Deleting temporary files"</span>
+        <span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+<span class="k">else
+        </span><span class="nb">echo</span> <span class="s2">"Copying temporary files"</span>
+        <span class="nb">cp</span> <span class="nt">-r</span> <span class="nv">$AKRR_TMP_WORKDIR</span> workdir
+        <span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$AKRR_TMP_WORKDIR</span>
+<span class="k">fi
+
+
+
+</span>akrr_write_to_gen_info <span class="s2">"end_time"</span> <span class="s2">"</span><span class="sb">`</span><span class="nb">date</span><span class="sb">`</span><span class="s2">"</span>
+
+<span class="o">[</span>INFO] Removing generated files from file-system as only batch job script printing was requested
+</code></pre></div></div>
+
+<p>Next generate the script on resource:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.38.24.166085
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.38.24.166085/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.38.24.166085/proc
+[INFO] Creating batch job script and submitting it to remote machine
+[INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/ior does not exists, will try to create it
+[INFO] Directory huey:/projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.38.24.166085 does not exists, will try to create it
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[INFO] There are only 0 previous run, need at least 5 for walltime limit autoset
+[INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc/ior/2019.03.22.16.38.24.166085/jobfiles/ior.job
+
+[INFO] Application kernel working directory on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.38.24.166085
+[INFO] Batch job script location on ub-hpc is /projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.38.24.166085/ior.job```
+The output contains the working directory for this task on remote resource. On remote resource get to that directory and start interactive session (request same number of nodes, in example above the script was generated for 2 nodes).
+</code></pre></div></div>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#get to working directory</span>
+<span class="nb">cd</span> /projects/ccrstaff/general/nikolays/huey/akrr_data/ior/2019.03.22.16.38.24.166085
+<span class="c">#manually start batch job script</span>
+sbatch ior.job
+</code></pre></div></div>
+
+<p>Examine appstdout file, which contains application kernel output (<a href="/AKRR_IOR_appsout_sample.html">appstdout sample</a>).</p>
+
+<p>If it looks ok you can move to the next step</p>
+
+<h1 id="perform-validation-run">Perform Validation Run</h1>
+
+<p>On this step appkernel_validation.py utility is used to validate application kernel installation on 
+the resource. It executes the application kernel and analyses its results. If it fails the problems 
+need to be fixed and another round of validation (as detailed above) should be performed.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+</code></pre></div></div>
+
+<p>See <a href="/AKRR_IOR_appkernel_validation_sample.html">IOR validation output sample</a></p>
+
+<p>DONE, you can move to next step!</p>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel.</h1>
+
+<p>Now this application kernel can be submitted for regular execution:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Perform a test run on all nodes count</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8
+
+<span class="c">#Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">-t0</span> <span class="s2">"01:00"</span> <span class="nt">-t1</span> <span class="s2">"05:00"</span> <span class="nt">-p</span> 1
+
+<span class="c"># Run on all nodes count 20 times (default number of runs to establish baseline)</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">--n-runs</span> 20
+</code></pre></div></div>
+
+<p>see <a href="/AKRR_Tasks_Scheduling.html">Scheduling and Rescheduling Application Kernels</a> and 
+<a href="/AKRR_Walltimelimit_Setting.html">Setup Walltime Limit</a> for more details.</p>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+
+<h2 id="during-linking-stage-of-compilation-got-undefined-reference-to-gpfs_fcntl">During linking stage of compilation got: “undefined reference to `gpfs_fcntl’”</h2>
+
+<p>The linker does not by default link the necessary GPFS library, you can instead do this step manually, for example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>src
+mpiicc  <span class="nt">-g</span> <span class="nt">-O2</span>   <span class="nt">-o</span> ior <span class="nt">-lgpfs</span> ior.o utilities.o parse_options.o aiori-POSIX.o aiori-MPIIO.o
+</code></pre></div></div>
+
+<p>Or rerun configuration with corrected LIBS (correct configure option for your needs), for example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>./configure <span class="nt">--with-hdf5</span><span class="o">=</span>no <span class="nt">--with-ncmpi</span><span class="o">=</span>no  <span class="nv">LIBS</span><span class="o">=</span><span class="s2">"-lgpsf"</span>
+</code></pre></div></div>
+
+<p>Up: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Deployment of Application Kernels on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

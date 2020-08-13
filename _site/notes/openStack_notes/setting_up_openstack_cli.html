@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="how-to-set-up-command-line-interface-with-openstack">How to set up Command Line Interface with Openstack</h2>
+
+<p>Initial setup on your machine (or wherever you want the cli set up):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># get pip3 first</span>
+<span class="nb">sudo </span>yum <span class="nb">install </span>python36-setuptools
+<span class="nb">sudo </span>easy_install-3.6 pip
+
+<span class="c"># then install the openstack stuff</span>
+<span class="nb">sudo </span>pip3 <span class="nb">install </span>python-cinderclient<span class="o">==</span>3.6.1
+<span class="nb">sudo </span>pip3 <span class="nb">install </span>python-openstackclient
+<span class="nb">sudo </span>pip3 <span class="nb">install </span>git+https://github.com/ubccr/v3oidcmokeyapikey.git
+
+<span class="c"># for me sudo wasn't recognizing pip so I did this:</span>
+<span class="nb">sudo </span>python3 <span class="nt">-m</span> pip <span class="nb">install </span>python-cinderclient<span class="o">==</span>3.6.1
+<span class="nb">sudo </span>python3 <span class="nt">-m</span> pip <span class="nb">install </span>python-openstackclient
+<span class="nb">sudo </span>python3 <span class="nt">-m</span> pip <span class="nb">install </span>git+https://github.com/ubccr/v3oidcmokeyapikey.git
+</code></pre></div></div>
+
+<p>Then you go to the OpenStack portal: https://lakeeffect.ccr.buffalo.edu</p>
+
+<p>Go to the project you want to connect to.</p>
+
+<p>At the top left click Project -&gt; API Access</p>
+
+<p>Then on the far right of the API Access page, click Download OpenStack RC File -&gt; OpenStack RC File (Identity API v3)</p>
+
+<p>(Name of RC file is different for everyone, depends on project. In my case it was called lakeeffect-benchmarks-openrc.sh)</p>
+
+<p>The inside of this script looks like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/usr/bin/env bash</span>
+<span class="nb">unset </span>OS_TOKEN
+<span class="nb">unset </span>OS_AUTH_TYPE
+<span class="nb">echo</span> <span class="s2">"Please enter your CCR API Key: "</span>
+<span class="nb">read</span> <span class="nt">-sr</span> OS_API_KEY_INPUT
+<span class="nb">export </span><span class="nv">OS_API_KEY</span><span class="o">=</span><span class="nv">$OS_API_KEY_INPUT</span>
+<span class="nb">export </span><span class="nv">OS_AUTH_URL</span><span class="o">=</span>https://lakeeffect.ccr.buffalo.edu:8770/v3
+<span class="nb">export </span><span class="nv">OS_IDENTITY_API_VERSION</span><span class="o">=</span>3
+<span class="nb">export </span><span class="nv">OS_PROJECT_NAME</span><span class="o">=</span><span class="s2">"lakeeffect-benchmarks"</span>
+<span class="nb">export </span><span class="nv">OS_USERNAME</span><span class="o">=</span><span class="s2">"hoffmaps"</span>
+<span class="nb">export </span><span class="nv">OS_PROJECT_DOMAIN_NAME</span><span class="o">=</span><span class="s2">"lakeeffect"</span>
+<span class="nb">export </span><span class="nv">OS_INTERFACE</span><span class="o">=</span>public
+<span class="nb">export </span><span class="nv">OS_REGION_NAME</span><span class="o">=</span><span class="s2">"buffalo"</span>
+<span class="nb">export </span><span class="nv">OS_TOKEN</span><span class="o">=</span><span class="sb">`</span>openstack <span class="nt">--os-auth-type</span> v3oidcmokeyapikey <span class="nt">--os-identity-provider</span> ccr <span class="nt">--os-protocol</span> openid <span class="nt">--os-discovery-endpoint</span> https://sso.ccr.buffalo.edu/.well-known/openid-configuration <span class="nt">--os-client-id</span> ccr-os-api <span class="nt">--os-redirect-uri</span> https://localhost/ccrauth token issue <span class="nt">-f</span> value <span class="nt">-c</span> <span class="nb">id</span><span class="sb">`</span>
+<span class="nb">export </span><span class="nv">OS_AUTH_TYPE</span><span class="o">=</span>v3token
+</code></pre></div></div>
+<p>And what it does is it gets you a token that is used to work with OpenStack from your command line.</p>
+
+<p>It sets up all the variables needed to work with that project.</p>
+
+<h3 id="getting-your-ccr-api-key">Getting your CCR API Key</h3>
+<p>What you do need is the CCR API Key, which is unique to each CCR User.
+To get it, go to the Identiy Management Portal, which is the link found here: https://ubccr.freshdesk.com/support/solutions/articles/13000025034-identity-management-portal</p>
+
+<ul>
+  <li>Click CCR Identity Management Portal</li>
+  <li>Log into your account.</li>
+  <li>Go to Api Keys and click “Create Api Key” for Access to CCR Openstack CLI.
+Then a text box will show up with a string of letters, symbols, and numbers. 
+This is the key to use when it prompts for the API Key. Save it somewhere, then click “Done”.
+Now the ccr-os-api key thing should say “Active” next to it.</li>
+</ul>
+
+<h3 id="finishing-setup">Finishing setup</h3>
+<p>You can either put in the api key every time you want to do things with OpenStack, or what you can do is go into the RC script and just paste the api key you got by commenting out the “asking for input” part, so that section would change to look something like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># old</span>
+<span class="nb">echo</span> <span class="s2">"Please enter your CCR API Key: "</span>
+<span class="nb">read</span> <span class="nt">-sr</span> OS_API_KEY_INPUT
+<span class="nb">export </span><span class="nv">OS_API_KEY</span><span class="o">=</span><span class="nv">$OS_API_KEY_INPUT</span>
+
+<span class="c"># new</span>
+<span class="c">#echo "Please enter your CCR API Key: "</span>
+<span class="c">#read -sr OS_API_KEY_INPUT</span>
+<span class="nb">export </span><span class="nv">OS_API_KEY</span><span class="o">=</span><span class="s2">"my_key"</span>
+<span class="c"># (replace my_key with your api key)</span>
+</code></pre></div></div>
+<p>Then you source it and check the available resources to see if it worked properly</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># source your own script, this is just the script I was using</span>
+<span class="nb">source </span>lakeeffect-benchmarks-openrc.sh
+openstack flavor list
+openstack image list
+
+</code></pre></div></div>
+<p>Example output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[hoffmaps@dhcp-128-205-70-4 open-lakeeffect-stack]$ openstack flavor list
++--------+---------+-------+------+-----------+-------+-----------+
+| ID     | Name    |   RAM | Disk | Ephemeral | VCPUs | Is Public |
++--------+---------+-------+------+-----------+-------+-----------+
+| 101001 | c1.m1   |  1024 |   20 |         0 |     1 | True      |
+| 101004 | c1.m4   |  4096 |   20 |         0 |     1 | True      |
+| 102004 | c2.m4   |  4096 |   20 |         0 |     2 | True      |
+| 102008 | c2.m8   |  8192 |   20 |         0 |     2 | True      |
+| 104008 | c4.m8   |  8192 |   20 |         0 |     4 | True      |
+| 104016 | c4.m16  | 16384 |   20 |         0 |     4 | True      |
+| 108016 | c8.m16  | 16384 |   20 |         0 |     8 | True      |
+| 108032 | c8.m32  | 32768 |   20 |         0 |     8 | True      |
+| 116032 | c16.m32 | 32768 |   20 |         0 |    16 | True      |
+| 116064 | c16.m64 | 65536 |   20 |         0 |    16 | True      |
++--------+---------+-------+------+-----------+-------+-----------+
+[hoffmaps@dhcp-128-205-70-4 open-lakeeffect-stack]$ openstack image list
++--------------------------------------+----------------------------------+--------+
+| ID                                   | Name                             | Status |
++--------------------------------------+----------------------------------+--------+
+| eb259c93-82f1-4d9e-8318-b3546e5d02e6 | centos-7.6.1810-20190604         | active |
+| 8b54ca90-c537-4e53-b2af-fe11f27f4938 | centos6-ccr-20181127-1           | active |
+| 2df9cfcc-5ce1-413f-82f8-97c508ce5cf2 | centos7-ccr-20181127-1           | active |
+| 6dc36647-89e7-4960-9127-36e705f2cd19 | initial_test_with_hpcc_benchmark | active |
+| 3eec2848-d87a-4a74-bc75-b502776c97d7 | rhel7-20190618                   | active |
+| fb903bbd-662e-462e-88f3-ef5c1209e894 | testing_with_docker_images_on_it | active |
+| 17a8bcac-374c-4be0-b04c-005a847b2d10 | ubuntu1404-ccr-20181129-1        | active |
+| 0847e343-cf30-4c24-a5c7-a01fb76735ee | ubuntu1604-ccr-20181127-1        | active |
+| 0232b73a-1c16-4c33-96d9-3295b898ca4f | ubuntu1804-ccr-20181127-1        | active |
++--------------------------------------+----------------------------------+--------+
+</code></pre></div></div>
+<p>You can check these against the flavors and volumes you find in the web interface.
+Remember, now the openstack commands work for that specific project you got the script from. If you want to look at a different project, you need to source a different script (same API key though).</p>
+
+<p>As far as what commands you can use, refer to the Reference Docs, found here: https://docs.openstack.org/mitaka/cli-reference/</p>
+
+<p>That should make everything all set to use everything through the cli, but lets create a volume, start up an instance, and ssh into it to confirm that it’s all working.
+Also, creating volumes and spinning up instances are pretty important in OpenStack so this is good practice.</p>
+
+<h3 id="initial-openstack-cli-practice">Initial OpenStack CLI practice</h3>
+
+<p>Create a volume:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+openstack volume create <span class="nt">--image</span> centos7-ccr-20181127-1 <span class="nt">--size</span> 20 <span class="nt">--description</span> <span class="s2">"test volume"</span> testing_volume
+<span class="c"># explanation:</span>
+<span class="c"># --image &lt;image_name&gt; = it uses this image as a basis (the os to use)</span>
+<span class="c"># --size &lt;ssd size&gt; = how big the volume is, aka how much storage it will have, in GiB</span>
+<span class="c"># --description "descrip" = not needed, but used to tell some info about the volume, perhaps what its used for</span>
+<span class="c"># There are other options too, but this is a good start for now, you can look at the reference for other options</span>
+<span class="c"># The very last phrase (testing_volume) is the name of the volume, this is what we will use when we create instances.</span>
+</code></pre></div></div>
+<p>Sample Output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[hoffmaps@dhcp-128-205-70-4 open-lakeeffect-stack]$ openstack volume create --image centos7-ccr-20181127-1 --size 20 --description "test volume" testing_volume
++---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| attachments         | []                                   |
+| availability_zone   | cbls                                 |
+| bootable            | false                                |
+| consistencygroup_id | None                                 |
+| created_at          | 2019-08-02T15:26:51.000000           |
+| description         | test volume                          |
+| encrypted           | False                                |
+| id                  | e6141ea7-b88d-464b-a3fa-92f5f2a869e8 |
+| multiattach         | False                                |
+| name                | testing_volume                       |
+| properties          |                                      |
+| replication_status  | None                                 |
+| size                | 20                                   |
+| snapshot_id         | None                                 |
+| source_volid        | None                                 |
+| status              | creating                             |
+| type                | rbd                                  |
+| updated_at          | None                                 |
+| user_id             | cacbdcada640409480ea65cc804b3f32     |
++---------------------+--------------------------------------+
+</code></pre></div></div>
+
+<p>Now lets try to spin off an instance</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+openstack server create <span class="nt">--flavor</span> c8.m16 <span class="se">\ </span>
+  <span class="nt">--volume</span> testing_volume <span class="se">\ </span>
+  <span class="nt">--network</span> lakeeffect-199.109.195 <span class="se">\ </span>
+  <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="se">\ </span>
+  <span class="nt">--key-name</span> openstack-testing testing_instance
+
+<span class="c"># Explanation</span>
+openstack server create <span class="nt">--flavor</span> c8.m16 <span class="se">\ </span><span class="c"># specify flavor (from flavor list)</span>
+  <span class="nt">--volume</span> testing_volume <span class="se">\ </span><span class="c"># specify the volume we just made</span>
+  <span class="nt">--network</span> lakeeffect-199.109.195 <span class="se">\ </span><span class="c"># network to use</span>
+  <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="se">\ </span><span class="c"># configure security</span>
+  <span class="nt">--key-name</span> openstack-testing testing_instance <span class="c"># what key to use for ssh access, then the name</span>
+</code></pre></div></div>
+<p>These options are also on the web interface, so if you’re unsure what to put, try creating an instance through the web interface and see what the possible options are there.</p>
+
+<p>Sample output:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hoffmaps@dhcp-128-205-70-4 open-lakeeffect-stack]<span class="nv">$ </span>openstack server create <span class="nt">--flavor</span> c8.m16 <span class="nt">--volume</span> testing_volume  <span class="nt">--network</span> lakeeffect-199.109.195 <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="nt">--key-name</span> openstack-testing testing_instance
++-----------------------------+---------------------------------------------+
+| Field                       | Value                                       |
++-----------------------------+---------------------------------------------+
+| OS-DCF:diskConfig           | MANUAL                                      |
+| OS-EXT-AZ:availability_zone | cbls                                        |
+| OS-EXT-STS:power_state      | NOSTATE                                     |
+| OS-EXT-STS:task_state       | scheduling                                  |
+| OS-EXT-STS:vm_state         | building                                    |
+| OS-SRV-USG:launched_at      | None                                        |
+| OS-SRV-USG:terminated_at    | None                                        |
+| accessIPv4                  |                                             |
+| accessIPv6                  |                                             |
+| addresses                   |                                             |
+| adminPass                   | UP5MhpdwaBDT                                |
+| config_drive                |                                             |
+| created                     | 2019-08-02T15:37:05Z                        |
+| flavor                      | c8.m16 <span class="o">(</span>108016<span class="o">)</span>                             |
+| hostId                      |                                             |
+| <span class="nb">id</span>                          | 10e5ec38-ef6a-4fa0-8891-614d1e4e8fc7        |
+| image                       |                                             |
+| key_name                    | openstack-testing                           |
+| name                        | testing_instance                            |
+| progress                    | 0                                           |
+| project_id                  | ef13fb8fc7aa4e9c9ecf62b08bed097a            |
+| properties                  |                                             |
+| security_groups             | <span class="nv">name</span><span class="o">=</span><span class="s1">'a40ecec6-29fb-4734-84bf-c45cbfa495e5'</span> |
+|                             | <span class="nv">name</span><span class="o">=</span><span class="s1">'b8b98905-b40d-4a44-82fa-dac23a1491ec'</span> |
+| status                      | BUILD                                       |
+| updated                     | 2019-08-02T15:37:05Z                        |
+| user_id                     | cacbdcada640409480ea65cc804b3f32            |
+| volumes_attached            |                                             |
++-----------------------------+---------------------------------------------+
+
+</code></pre></div></div>
+<p>Check that its running</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server list <span class="nt">--name</span> testing_instance
+</code></pre></div></div>
+
+<p>Sample output:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hoffmaps@dhcp-128-205-70-4 open-lakeeffect-stack]<span class="nv">$ </span>openstack server list <span class="nt">--name</span> testing_instance
++--------------------------------------+------------------+--------+---------------------------------------+-------+--------+
+| ID                                   | Name             | Status | Networks                              | Image | Flavor |
++--------------------------------------+------------------+--------+---------------------------------------+-------+--------+
+| 10e5ec38-ef6a-4fa0-8891-614d1e4e8fc7 | testing_instance | ACTIVE | lakeeffect-199.109.195<span class="o">=</span>199.109.192.28 |       | c8.m16 |
++--------------------------------------+------------------+--------+---------------------------------------+-------+--------+
+
+</code></pre></div></div>
+<p>Then try to ssh into the instance
+(note: centos@<ip address="">, the ip address is given up above under networks)</ip></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-i</span> openstack-testing.key centos@199.109.192.28
+<span class="c"># the user may be different depending on the image you are using</span>
+<span class="c"># (openstack-testing.key is the full path to the private key)</span>
+</code></pre></div></div>
+
+<p>The key should be the private key corresponding to the public key name that you used to create the instance. 
+To create key pairs to use, go to the Key Pairs tab under Compute in your project. 
+You can either create a new key pair or import one.
+If you click “Create Key Pair” you can automatically download the private key that you can then use for the ssh command above after the -i.</p>
+
+<p>Once you can ssh into the instance, you can use it as normal, any files or directories you create will be saved between instances. Being able to use ssh means you can also use the sftp command to get or put files onto the instance, and its as simple as:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sftp <span class="nt">-i</span> openstak-testing.key centos@199.109.192.28
+
+</code></pre></div></div>
+
+<h3 id="possible-errors">Possible errors</h3>
+<p>If you go away for a while not using the OpenStack command, and then you try and do some openstack command, you may run into an error like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Failed to validate token <span class="o">(</span>HTTP 404<span class="o">)</span> <span class="o">(</span>Request-ID: req-5b026efc-f9f4-4eaf-93fb-04f80538d785<span class="o">)</span>
+</code></pre></div></div>
+<p>That just means that the token that you got from sourcing the rc file has expired, you can just source that file again to get a new token and it should be fine to work again.</p>
+
+<p>If you source the file too often in a short amount of time, you could get an HTTP 429 error, which means you’re requesting a token too much, and the simplest fix for this is to just wait a bit before requesting a token again.</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

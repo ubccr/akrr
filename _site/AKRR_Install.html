@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Install &rarr; Install</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li class="active"><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Install &rarr; Install</h1> 
+        <h1 id="akrr-installation">AKRR Installation</h1>
+
+<p>AKRR support two installation ways:</p>
+
+<p>1) Global installation from RPM (on CentOS system)</p>
+
+<p>2) In-source installation from source code, for development purposes.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<p>Prior installing AKRR, XDMoD already should be installed. The simplest way is to 
+install AKRR on same host where XDMoD was installed. AKRR needs access to XDMoD 
+databases and XDMoD need access to AKRR database for results ingestion.</p>
+
+<p>In case of RPM installation the dependencies would be installed automatically. Some of
+the dependencies are from EPEL repository. If it was not done yet add it to repo list:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install EPEL if needed</span>
+<span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>epel-release
+</code></pre></div></div>
+
+<p>If AKRR will use MariaDB/MySQL on the local machine install it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum <span class="nt">-y</span> <span class="nb">install </span>mariadb-server mariadb
+</code></pre></div></div>
+
+<p>The following dependencies are needed to be installed for in-source installation on CentOS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install dependencies</span>
+<span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>python36 python36-libs python36-bottle <span class="se">\</span>
+    python36-requests python36-mysql python36-typing <span class="se">\</span>
+    python36-psutil python36-dateutil python36-prettytable <span class="se">\</span>
+    python36-PyYAML openssl openssh-clients crontabs
+</code></pre></div></div>
+
+<h2 id="installation-on-same-host-as-xdmod">Installation on Same Host as XDMoD</h2>
+<h3 id="rpm-installation">RPM Installation</h3>
+
+<p>Download in install AKRR RPM</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/ubccr/akrr/releases/download/v2.1.1/akrr-2.1.1-1.noarch.rpm
+<span class="nb">sudo </span>yum <span class="nb">install </span>akrr-2.1.1-1.noarch.rpm
+</code></pre></div></div>
+
+<h3 id="in-source-installation">In Source Installation</h3>
+
+<p>Download tar.gz archive and uncompress it in desired installation location:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/ubccr/akrr/archive/v2.1.1.tar.gz
+<span class="nb">tar </span>zxvf v2.1.1.tar.gz
+</code></pre></div></div>
+
+<p>Alternatively with git</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/ubccr/akrr.git
+<span class="nb">cd </span>akrr
+git checkout v2.1.1
+</code></pre></div></div>
+
+<p>You can add bin directory from AKRR to you PATH environment variable or 
+call AKRR commands with full pathname.</p>
+
+<h2 id="configuration">Configuration</h2>
+<p>During this step AKRR will be configured and AKRR daemon will be started. 
+In more details the setup script creates AKRR databases, sets new user for 
+accessing these databases, creates self-signed SSL certificate for AKRR 
+REST API (AKRR REST API used only internally for communication between AKRR 
+and Open XDMoD), creates and populates AKRR database tables, followed by 
+first start of AKRR daemon and creation of cronjobs for periodic log rotation 
+and AKRR daemon status check.</p>
+
+<p>Execute the akrr CLI with setup command. Provide the required information 
+when prompted 
+(the database user names / passwords):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr setup
+</code></pre></div></div>
+<blockquote>
+  <p><strong>Tips and Tricks</strong></p>
+
+  <p><strong>Don’t run AKRR as root</strong>, use a regular user.</p>
+
+  <p>Running akrr in verbose mode can help identify issues:</p>
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr <span class="nt">-v</span> setup
+</code></pre></div>  </div>
+
+</blockquote>
+
+<p>Example of output from <code class="language-plaintext highlighter-rouge">akrr setup</code> execution:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Creating directories structure.
+[INFO] Before Installation continues we need to setup the database.
+[INPUT] Please specify a database user to access mod_akrr database (Used by AKRR)(This user will be created if it does not already exist):
+[akrruser]: 
+[INPUT] Please specify a password:
+Password: 
+[INPUT] Please reenter the password:
+Password: 
+
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
+
+[INPUT] Please specify a database user to access mod_appkernel database (Used by XDMoD appkernel module, AKRR creates and syncronize resource and appkernel description)(This user will be created if it does not already exist):
+[akrruser]: 
+[INFO] Password already entered.
+
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
+
+[INPUT] Please specify the user that will be connecting to the XDMoD database (modw):
+[akrruser]: 
+[INFO] Password already entered.
+
+[INPUT] Please provide an administrative database user (for localhost:3306) under which the installation sql script should run (This user must have privileges to create users and databases).
+[root]: 
+[INPUT] Please provide the password for the the user which you previously entered:
+Password: 
+
+no crontab for centos
+[INPUT] Please enter the e-mail where cron will send messages (leave empty to opt out):
+
+[INFO] Creating mod_akrr and user to access it
+[INFO] Creating mod_appkernel and user to access it
+[INFO] Setting user to access modw
+[INFO] Generating self-signed certificate for REST-API
+[INFO]     new self-signed certificate have been generated
+[INFO] Generating configuration file ...
+[INFO] Configuration is written to: /home/centos/akrr/etc/akrr.conf
+[INFO] Removing access for group members and everybody for all files.
+[INFO] Checking access to DBs.
+[INFO] All Databases / User privileges check out!
+[INFO] Creating tables and populating them with initial values.
+[INFO] Updating .bashrc
+[INFO] AKRR is in standard location, no updates to $HOME/.bashrc
+[INFO] Starting AKRR daemon
+[2020-08-01 02:33:49,656 - INFO] Directory /home/centos/akrr/log/data/srv does not exist, creating it.
+[2020-08-01 02:33:49,657 - INFO] Writing logs to:
+        /home/centos/akrr/log/data/srv/2020.08.01_02.33.657178.log
+[2020-08-01 02:33:49,910 - INFO] following log: /home/centos/akrr/log/data/srv/2020.08.01_02.33.657178.log
+[2020-08-01 02:33:49,724 - INFO] Starting Application Remote Runner
+ [2020-08-01 02:33:49,772 - INFO] AKRR Scheduler PID is 12989.
+ [2020-08-01 02:33:49,808 - INFO] Starting REST-API Service
+ [2020-08-01 02:33:49,814 - INFO] ####################################################################################################
+ [2020-08-01 02:33:49,816 - INFO] Got into the running loop on 2020-08-01 02:33:49
+[2020-08-01 02:33:50,138 - INFO] 
+AKRR Server successfully reached the loop.
+ [INFO] Checking that AKRR daemon is running
+[INFO] Beginning check of the AKRR Rest API...
+[INFO] REST API is up and running!
+[INFO] Installing cron entries
+no crontab for centos
+[INFO] Crontab does not have user's crontab yet
+[INFO] Crontab updated.
+[INFO] AKRR is set up and is running.
+</code></pre></div></div>
+
+<p>At this point AKRR should be installed and running. During installation 
+.bashrc could be modified to include non-standard location of ARKK_HOME or akrr executable.
+In this case to continue in same terminal session reload .bashrc:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> .bashrc prior to <span class="k">continue</span><span class="o">!</span>
+</code></pre></div></div>
+
+<p>The AKRR daemon status can be checked with:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr daemon status
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] AKRR Server is up and it's PID is 15292
+[INFO] There is no scheduled tasks
+[INFO] There is no active tasks
+[INFO] There is no complete tasks
+[INFO] There were no tasks completed with errors.
+</code></pre></div></div>
+
+<p>Now [new resources can be added]](/AKRR_Add_Resource.html).</p>
+
+<h2 id="tips-and-tricks">Tips and Tricks</h2>
+
+<h3 id="mysql-server-on-a-different-host">MySQL Server on a Different Host</h3>
+
+<p>In case if MySQL is located at different host following options to <code class="language-plaintext highlighter-rouge">akrr setup</code> command allows 
+to specify MySQL server host name.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  --akrr-db AKRR_DB  mod_akrr2 database location in
+                     [user[:password]@]host[:port] format, missing values will
+                     be asked. Default: localhost:3306
+  --ak-db AK_DB      mod_appkernel database location. Usually same host as
+                     XDMoD's databases host. Default: same as akrr
+  --xd-db XD_DB      XDMoD modw database location. It is XDMoD's databases
+                     host. Default: same as akr
+</code></pre></div></div>
+
+<h3 id="no-administrative-rights-on-mysql-server">No Administrative Rights on MySQL Server</h3>
+
+<p>If there is no access with administrative rights to MySQL server from AKRR host, or a different
+person administer database, ask user with administrative rights execute following:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE DATABASE IF NOT EXISTS mod_akrr CHARACTER SET utf8;
+CREATE DATABASE IF NOT EXISTS mod_appkernel CHARACTER SET utf8;
+
+CREATE USER akrruser@'AKRR_HOSTNAME' IDENTIFIED BY 'password'
+
+GRANT ALL ON mod_akrr.* TO akrruser@'AKRR_HOSTNAME';
+GRANT ALL ON mod_appkernel.* TO akrruser@'AKRR_HOSTNAME';
+GRANT SELECT ON modw.* TO akrruser@'AKRR_HOSTNAME';
+</code></pre></div></div>
+
+<p>Prior to running <code class="language-plaintext highlighter-rouge">akrr setup</code> ensure that the created user has access to DB from AKRR host.
+For example by trying access mod_akrr with mysql client:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql <span class="nt">-u</span> akrruser <span class="nt">-p</span> <span class="nt">-h</span> &lt;MYSQL_SERVER&gt; mod_akrr
+</code></pre></div></div>
+
+<p>You might need also to add akrruser@’localhost’ and add AKRR_HOSTNAME by it IP address.</p>
+
+<p>Next: <a href="/AKRR_Usage.html">Usage</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

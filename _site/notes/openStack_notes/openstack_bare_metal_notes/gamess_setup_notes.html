@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="setting-up-gamess-bare-metal">Setting up gamess bare metal</h2>
+
+<p>Start up an openstack instance with the volume you want to use</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> c8.m16 <span class="nt">--volume</span> dockervolume-data <span class="nt">--network</span> lakeeffect-199.109.195 <span class="nt">--key-name</span> openstack-testing <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH akrrtest
+
+</code></pre></div></div>
+
+<p>Then sftp to it with something like</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sftp <span class="nt">-i</span> &lt;ssh key&gt; centos@&lt;ip address&gt;
+
+</code></pre></div></div>
+
+<p>Then you want to put the gamess executable folder thingy
+Then you want to link the gamess folder to be just gamess (it usually starts as something like gamess_11Nov2017R3 or something)
+Just make sure to link it (does require ssh into instance</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">ln</span> <span class="nt">-s</span> gamess_11Nov2017R3/ gamess
+
+</code></pre></div></div>
+<p>Since rungms uses csh instead of bash, you need to install it, which can be done on the instance pretty easily with</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yum <span class="nt">-y</span> <span class="nb">install </span>tcsh
+
+
+</code></pre></div></div>
+<p>So I used the gamess script I developed, which uses a variable GAMES_EXE_DIR so I had to set that before running the script
+Also have to add the mpi location to the path so that rungms can find mpirun and such
+So in the end the resulting config file looks like:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+# Load application enviroment
+#module load gamess
+#module list
+
+# set executable location
+VERNO=01
+
+# so it can find where gamess is
+export GAMESS_EXE_DIR=</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/gamess
+EXE=</span><span class="nv">$GAMESS_EXE_DIR</span><span class="s2">/gamess.</span><span class="nv">$VERNO</span><span class="s2">.x
+
+# so it can find mpirun stuff
+export PATH=</span><span class="nv">$PATH</span><span class="s2">:/opt/intel/impi/2018.3.222/bin64
+
+# order of cores per node and nodes switched bc rungms works like that
+# set how to run app kernel
+RUN_APPKERNEL="</span><span class="nv">$AKRR_APPKER_DIR</span>/execs/gamess/rungms <span class="nv">$INPUT</span> <span class="nv">$VERNO</span> <span class="nv">$AKRR_CORES_PER_NODE</span> <span class="nv">$AKRR_NODES</span><span class="s2">"
+"""</span>
+
+</code></pre></div></div>
+
+<p>Then just validate</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-n</span> 1 <span class="nt">-r</span> openstack-no-docker <span class="nt">-a</span> gamess
+</code></pre></div></div>
+
+<p>You also want to probably check on openstack to make sure it’s running in parallel properly</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

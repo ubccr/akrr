@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h3 id="notes-on-originally-messing-around-and-seeing-how-it-works">Notes on originally messing around and seeing how it works</h3>
+
+<p>Singularity documentation: https://www.sylabs.io/docs/</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># shows all nodes on dev clusters</span>
+sinfo <span class="nt">-M</span> all
+
+<span class="c">#request interactive job</span>
+salloc <span class="nt">--nodes</span><span class="o">=</span>1
+
+<span class="c"># see status of jobs</span>
+squeue <span class="nt">-u</span> hoffmaps
+
+<span class="c"># main directory I'll be using</span>
+/gpfs/scratch/hoffmaps/akrr_project
+
+</code></pre></div></div>
+
+<p>Okay so I’m trying to be able to access huey by sshing right from my local machine.
+https://ubccr.freshdesk.com/support/solutions/articles/13000025490-using-ssh-keys-in-linux-macos
+^ Followed these directions to be able to ssh into vortex without using a password
+Then I found this stackoverflow to see if I can’t connect all the way to huey
+https://serverfault.com/questions/337274/ssh-from-a-through-b-to-c-using-private-key-on-b
+UPDATE: that thing above didn’t work, but after adding in the key so that I could ssh into vortex without a password, I just made the ssh config the same as what nikolay sent and now when I do ssh huey it works</p>
+<ul>
+  <li>well it works but only with the one tab… so idk how that even works then</li>
+  <li>But at least if I run akrr in that tab then it seems to be able to connect and such
+    <ul>
+      <li>So don’t lose that tab</li>
+    </ul>
+  </li>
+</ul>
+
+<p>so what am I entering for setting up the huey resource</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>hoffmaps@dhcp-128-205-70-4 .ssh]<span class="nv">$ </span>akrr resource add <span class="nt">--no-ping</span>
+<span class="o">[</span>INFO] Beginning Initiation of New Resource...
+<span class="o">[</span>INFO] Retrieving Resources from XDMoD Database...
+<span class="o">[</span>INFO] Found following resources from XDMoD Database:
+    resource_id  name
+
+
+<span class="o">[</span>INPUT]: Enter AKRR resource name:
+test_huey
+
+<span class="o">[</span>INPUT]: Enter queuing system on resource <span class="o">(</span>slurm, pbs or openstack<span class="o">)</span>: 
+slurm
+
+<span class="o">[</span>INPUT]: Enter Resource <span class="nb">head </span>node <span class="o">(</span>access node<span class="o">)</span> full name <span class="o">(</span>e.g. headnode.somewhere.org<span class="o">)</span>:
+<span class="o">[</span>test_huey] huey
+<span class="o">[</span>WARNING] Can not ping huey, but asked to ignore it.
+<span class="o">[</span>INPUT]: Enter username <span class="k">for </span>resource access:
+<span class="o">[</span>hoffmaps] 
+<span class="o">[</span>INFO] Checking <span class="k">for </span>password-less access
+<span class="o">[</span>INFO] Can access resource without password
+
+<span class="o">[</span>INFO] Connecting to test_huey
+<span class="o">[</span>INFO]               Done
+
+<span class="o">[</span>INPUT]: Enter processors <span class="o">(</span>cores<span class="o">)</span> per node count:
+8
+<span class="o">[</span>INPUT]: Enter location of <span class="nb">local </span>scratch <span class="o">(</span>visible only to single node<span class="o">)</span>:
+<span class="o">[</span>/tmp]
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+
+<span class="o">[</span>INPUT]: Enter location of network scratch <span class="o">(</span>visible only to all nodes<span class="o">)</span>,used <span class="k">for </span>temporary storage of app kernel input/output:
+/gpfs/scratch/hoffmaps/network_scratch
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+
+<span class="o">[</span>INPUT]: Enter future location of app kernels input and executable files:
+<span class="o">[</span>/user/hoffmaps/appker/test_huey]/gpfs/scratch/hoffmaps/akrr_project
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+
+<span class="o">[</span>INPUT]: Enter future locations <span class="k">for </span>app kernels working directories <span class="o">(</span>can or even should be on scratch space<span class="o">)</span>:
+<span class="o">[</span>/gpfs/scratch/hoffmaps/network_scratch/akrr_data/test_huey]
+<span class="o">[</span>INFO] Directory huey:/gpfs/scratch/hoffmaps/network_scratch/akrr_data/test_huey does not exists, will try to create it
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+
+<span class="o">[</span>INFO] Initiating test_huey at AKRR
+<span class="o">[</span>INFO] Resource configuration is <span class="k">in</span> /home/hoffmaps/projects/akrr/etc/resources/test_huey/resource.conf
+<span class="o">[</span>INFO] Initiation of new resource is completed.
+    Edit batch_job_header_template variable <span class="k">in</span> /home/hoffmaps/projects/akrr/etc/resources/test_huey/resource.conf
+    and move to resource validation and deployment step.
+    i.e. execute:
+        akrr resource deploy <span class="nt">-r</span> test_huey
+
+</code></pre></div></div>
+<p>Then I edited the batch job header to now be</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#SBATCH --partition=general-compute</span>
+<span class="c">#SBATCH --nodes={akrr_num_of_nodes}</span>
+<span class="c">#SBATCH --ntasks-per-node={akrr_ppn}</span>
+<span class="c">#SBATCH --time={akrr_walltime_limit}</span>
+<span class="c">#SBATCH --output={akrr_task_work_dir}/stdout</span>
+<span class="c">#SBATCH --error={akrr_task_work_dir}/stderr</span>
+<span class="c">#SBATCH --exclusive</span>
+<span class="c">#SBATCH --constraint=CPU-L5520</span>
+</code></pre></div></div>
+<p>Added the constraint and set partition to be general compute</p>
+
+<p>Okay I had a lot of problems with the whole ssh access thing, came back today and restarted my computer and everything. I set the ssh config to what Nikolay sent and I deleted my public key from the authorized keys on huey, then I added it back after logging out and then logging back in, so now I can ssh huey fine. WHY DID THIS NOT WORK LAST FRIDAY AARRGH</p>
+
+<p>Note: when trying to deploy, make sure the akrr daemon is running
+Also make sure mysql daemon is running</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>service mariadb start
+akrr daemon start
+</code></pre></div></div>
+<p>Sample output from deployment</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>akrr resource deploy <span class="nt">-r</span> test_huey
+
+<span class="o">[</span>INFO] Validating test_huey parameters from /home/hoffmaps/projects/akrr/etc/resources/test_huey/resource.conf
+<span class="o">[</span>INFO] Syntax of /home/hoffmaps/projects/akrr/etc/resources/test_huey/resource.conf is correct and all necessary parameters are present.
+
+<span class="o">[</span>INFO] Validating resource accessibility. Connecting to test_huey.
+<span class="o">[</span>INFO] Successfully connected to test_huey
+
+
+<span class="o">[</span>INFO] Checking <span class="k">if </span>shell is BASH
+
+<span class="o">[</span>INFO] Shell is BASH
+
+<span class="o">[</span>INFO] Checking directory locations
+
+<span class="o">[</span>INFO] Checking: huey:/gpfs/scratch/hoffmaps/network_scratch/akrr_data/test_huey
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+<span class="o">[</span>INFO] Checking: huey:/gpfs/scratch/hoffmaps/akrr_project
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+<span class="o">[</span>INFO] Checking: huey:/gpfs/scratch/hoffmaps/network_scratch
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+<span class="o">[</span>INFO] Checking: huey:/tmp
+<span class="o">[</span>INFO] Directory exist and accessible <span class="k">for </span><span class="nb">read</span>/write
+
+<span class="o">[</span>INFO] Preparing to copy application signature calculator,
+    app. kernel input files and 
+    HPCC, IMB, IOR and Graph500 <span class="nb">source </span>code to remote resource
+
+<span class="o">[</span>WARNING] WARNING 1: App. kernel inputs directory /gpfs/scratch/hoffmaps/akrr_project/inputs is present, assume they are correct.
+
+<span class="o">[</span>WARNING] WARNING 2: App. kernel executables directory /gpfs/scratch/hoffmaps/akrr_project/execs is present, assume they are correct.
+<span class="o">[</span>WARNING] It should contain HPCC,IMB,IOR and Graph500 <span class="nb">source </span>code and app.signature calculator
+
+<span class="o">[</span>INFO] Testing app.signature calculator on headnode
+
+<span class="o">[</span>INFO] App.signature calculator is working on headnode
+
+<span class="o">[</span>INFO] Will send <span class="nb">test </span>job to queue, <span class="nb">wait </span>till it executed and will analyze the output
+<span class="o">[</span>INFO] 
+Submitted <span class="nb">test </span>job to AKRR, task_id is 3144590
+
+
+
+Test status:
+Task is <span class="k">in </span>scheduled_tasks queue.
+It schedule to be started on 2019-06-17T09:54:22
+
+<span class="nb">time</span>: 2019-06-17 09:54:22 
+
+Test status:
+Task is <span class="k">in </span>active_tasks queue.
+Status: None
+Status info:
+None
+
+<span class="nb">time</span>: 2019-06-17 09:54:32 
+
+Test status:
+Task is <span class="k">in </span>active_tasks queue.
+Status: Created batch job script and have submitted it to remote queue.
+Status info:
+Remote job ID is 12429
+
+<span class="nb">time</span>: 2019-06-17 09:54:41 
+
+Test status:
+Task is <span class="k">in </span>active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+<span class="nb">time</span>: 2019-06-17 09:54:47 
+
+Test status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+<span class="nb">time</span>: 2019-06-17 09:54:52 
+
+
+<span class="o">[</span>INFO] Test job is completed analyzing output
+
+<span class="o">[</span>INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory <span class="k">for </span>this task: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560
+Location of some important generated files:
+        Batch job script: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/jobfiles/test.job
+        Application kernel output: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/jobfiles/appstdout
+        Batch job standard output: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/jobfiles/stdout
+        Batch job standard error output: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/jobfiles/stderr
+        XML processing results: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/result.xml
+        Task execution logs: /home/hoffmaps/projects/akrr/log/comptasks/test_huey/test/2019.06.17.09.54.23.257560/proc/log
+
+<span class="o">[</span>INFO] 
+The output looks good.
+
+<span class="o">[</span>INFO] 
+Adding AKRR enviroment variables to resource<span class="s1">'s .bashrc!
+
+[INFO] Enabled test_huey in mod_appkernel.resource for tasks execution and made it visible to XDMoD UI.
+[INFO] Successfully enabled test_huey
+
+[INFO] Result:
+[WARNING] There are 2 warnings.
+if warnings have sense you can move to next step!
+
+</span></code></pre></div></div>
+<p>Note: may have to set up the directories on the resource manually, should examine them to make sure they’re all good</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

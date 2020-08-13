@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="initial-testing-notes">Initial testing notes</h2>
+<h3 id="getting-familiar-with-openstack">getting familiar with openStack</h3>
+
+<ul>
+  <li>
+    <p>Update: It’s been a journey. I created a new directory for all the openstack testing stuff, in the projects directory in my home directory. In it there are key pairs and custom scripts</p>
+  </li>
+  <li>
+    <p>Custom scripts: these are run when the instance is loading up, so it’s used to set passwords and such, as well as do ssh stuff (I assume, will work on that)</p>
+  </li>
+  <li>
+    <p>The script I used that was able to get me into the console online was:</p>
+  </li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#cloud-config</span>
+
+password: root
+chpasswd: <span class="o">{</span> expire: False <span class="o">}</span>
+ssh_pwauth: True
+</code></pre></div></div>
+<p>This changed the default password of the user <em>centos</em> to root, and I was able to log in on the console online.</p>
+
+<ul>
+  <li>Update: to be able to ssh into it, you just need to have this in the cloud-config file that you attach to the instance when you create it</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#cloud-config</span>
+ssh_pwauth: True
+<span class="c"># I believe this allows anyone with the proper key to get in</span>
+</code></pre></div></div>
+
+<p>Then you just type the following to ssh into the instance (centos is default user for centos7 image)
+(note you have to either be in the directory with the private key or you have to give the path. This assumes you set up the instance with the proper key pair</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-i</span> <span class="o">[</span>private_key] centos@[IP Address]
+</code></pre></div></div>
+
+<p>Update 05/30/19: we’re back on openstack and now we’ll try to get hpcc to work on here</p>
+
+<p>First Step: install Docker on the instance (I think i did this previously)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># From https://docs.docker.com/install/linux/docker-ce/centos/</span>
+
+<span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> yum-utils device-mapper-persistent-data lvm2
+<span class="nb">sudo </span>yum-config-manager <span class="nt">--add-repo</span> https://download.docker.com/linux/centos/docker-ce.repo
+<span class="nb">sudo </span>yum <span class="nb">install </span>docker-ce docker-ce-cli containerd.io
+<span class="c"># definitely want to add the user to the group so can just use docker by itself</span>
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="si">$(</span><span class="nb">whoami</span><span class="si">)</span> <span class="c"># adds current user to docker group</span>
+<span class="c">#sudo systemctl enable docker.service</span>
+
+<span class="nb">sudo </span>systemctl start docker
+
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Was able to get the docker image up to docker hub with</span>
+docker push pshoff/hpcc_benchmark:v02
+
+<span class="c"># and then get it to the instance with</span>
+docker pull pshoff/hpcc_benchmark:v02
+<span class="c">#seems to be running fine, though number of cores is just one, not sure about behavior</span>
+
+</code></pre></div></div>
+
+<p>Trying to create new instances on openstack, keeps giving me error messages - Failed to allocate networks somehow</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># error message:</span>
+Error: Failed to perform requested operation on instance <span class="s2">"test_8cpu"</span>, the instance has an error status: Please try again later <span class="o">[</span>Error: Build of instance 2a09851c-6aaa-47ea-84f2-bf9c2e5d10a8 aborted: Failed to allocate the network<span class="o">(</span>s<span class="o">)</span> with error No fixed IP addresses available <span class="k">for </span>network: 7479b0e0-2d53-413d-8eaa-53cf1b2d9e30, not rescheduling.]. 
+
+</code></pre></div></div>
+
+<p>There seems to be a really weird bug where after doing the whole mpirun with hpcc anything that I cat only goes 150-160 lines before just stopping and I DON’T KNOW WHY. But the mpirun thing is the cause, bc I checked everywhere before, and everywhere after anything you cat just doesn’t get to the end</p>
+
+<p>Dr. Simakov took a look at it, he didn’t know exactly either, so we’re trying some things
+1) try with counting the processors instead of the cores
+2) try also just running hpcc on base, without docker</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># copying over a directory into openstack using the key stuff</span>
+scp <span class="nt">-i</span> <span class="o">[</span>path/to/key] <span class="nt">-r</span> execs/ centos@[IP Address]:/home/centos/execs_files
+</code></pre></div></div>
+
+<p>Note:</p>
+<ul>
+  <li>It appears that everything comes out fine with the cat if we dont do -it on docker run or -i flag on the script</li>
+  <li>If we have both, the cat doesnt work</li>
+  <li>Trying just -it on docker run: Doesn’t cat it all properly, doesn’t start interactive session</li>
+  <li>
+    <p>Trying just -i on script: Does cat properly, doesn’t start interactive session</p>
+  </li>
+  <li>
+    <p>Doing a bunch of runs through docker, hpcg isn’t really consistent, varying in GFLOPS/s</p>
+  </li>
+  <li>Looking at CPU Affinity</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ps <span class="nt">-aF</span>
+<span class="c"># this displays some statistics about the running processes</span>
+<span class="c"># PSR column shows what processor things are running on</span>
+</code></pre></div></div>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

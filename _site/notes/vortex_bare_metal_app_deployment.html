@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="only-for-additional-notes">Only for additional notes</h2>
+<p>in case anything in the docs is weird or confusing.</p>
+
+<h3 id="hpcc">hpcc</h3>
+
+<p>Nothing weird happened</p>
+
+<h3 id="hpcg">hpcg</h3>
+
+<p>Using xhpcg_skx
+Nothing weird happened</p>
+
+<h3 id="namd">namd</h3>
+
+<p>Using namd/2.12b1-multicore to line up with singularity
+Gave me a weird error first time round</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Running <span class="nb">command</span>: nodelist /util/academic/namd/2.12b1/NAMD_2.12b1_Linux-x86_64-multicore/namd2 ./input.namd +p8 ++nodelist
+
+/util/academic/namd/2.12b1/NAMD_2.12b1_Linux-x86_64-multicore/charmrun: line 32: <span class="nb">exec</span>: nodelist: not found
+</code></pre></div></div>
+<p>I believe it was an error with the fact that it is the multicore build, meaning nodelist doesn’t really make sense for it.
+So I changed the RUN_APPKERNEL to line up with what I had in my docker</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">RUN_APPKERNEL</span><span class="o">=</span><span class="s2">"</span><span class="nv">$charmrun_bin</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> +p</span><span class="nv">$AKRR_CORES</span><span class="s2"> ./input.namd"</span>
+</code></pre></div></div>
+<p>That then makes it work, so it looks like multicore doesn’t use nodelist.
+It discusses this a little bit here: https://www.ks.uiuc.edu/Research/namd/2.12/notes.html</p>
+
+<h3 id="gamess">gamess</h3>
+
+<p>Using gamess/11Nov2017R3 to match up with docker
+Set EXE=/util/academic/gamess/11Nov2017R3/impi/gamess/gamess.$VERNO.x
+in gamess.app.conf
+NOTE: it appears if you want to run it in parallel, you switch AKRR_NODES and AKRR_CORESE_PER_NODE
+So the RUN_APPKERNEL should look like</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">RUN_APPKERNEL</span><span class="o">=</span><span class="s2">"</span><span class="nv">$AKRR_APPKER_DIR</span><span class="s2">/execs/gamess/rungms </span><span class="nv">$INPUT</span><span class="s2"> </span><span class="nv">$VERNO</span><span class="s2"> </span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="s2"> </span><span class="nv">$AKRR_NODES</span><span class="s2">"</span>
+</code></pre></div></div>
+<p>That appears to make it run fine.</p>
+
+<h3 id="nwchem">nwchem</h3>
+<p>When I created the app, RUN_APPKERNEL looked different from what was in nwchem_deployment</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">RUN_APPKERNEL</span><span class="o">=</span><span class="s2">"srun --mpi=pmi2 </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$INPUT</span><span class="s2">"</span>
+</code></pre></div></div>
+<p>I didn’t touch it, and it appears to have worked fine, there were no errors that came up</p>
+
+<h3 id="ior">ior</h3>
+<p>Didn’t find the HDF5 so skipped installing of HDF5, went right to installing ior
+I just ran the validation thing without really changing much in the config, other than adding the module load intel and intel-mpi
+And it says that it worked when I did the validation, but I’m not exactly sure if it worked correctly bc I don’t know how correctly looks.</p>
+
+<h3 id="mdtest">mdtest</h3>
+<p>Just did what was said with deployment, and it said that things worked fine</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

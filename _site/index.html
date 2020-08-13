@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) About &rarr; Overview</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li class="active"><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>About &rarr; Overview</h1> 
+        <p>Application Kernel Performance Monitoring Module of XDMoD tool is designed to 
+measure quality of service (QoS) as well as preemptively identify underperforming 
+hardware and software by deploying customized, computationally lightweight 
+“application kernels” that are run on a regular basis (daily to several times per week) 
+to continuously monitor HPC system performance and reliability from the 
+application users’ point of view. The term “computationally-lightweight” is used 
+to indicate that the application kernel requires relatively modest resources for 
+a given run frequency. Accordingly, through XDMoD, system managers have the 
+ability to proactively monitor system performance as opposed to having to rely 
+on users to report failures or underperforming hardware and software.</p>
+
+<p><img src="/assets/images/Performance-degradation-is-detected-by-XDMoD_W640.jpg" alt="Performance degradation is detected by XDMoD" /></p>
+
+<p>The XDMoD’s application kernel performance monitoring consists of two parts: 
+application kernel remote runner (AKRR) and XDMoD appkernel module (<code class="language-plaintext highlighter-rouge">xdmod-appkernels</code>).</p>
+
+<p>Application kernel remote runner (AKRR) executes the scheduled jobs, 
+monitors their execution, processes the output, extracts performance metrics 
+and exports the results to the database.</p>
+
+<p>XDMoD appkernel module analyse the results of application kernels runs, provides 
+visualization tools and web-base interface to control AKRR. Among analysis tools it 
+has automatic anomaly detector, that analyzes the performance of all application kernels 
+executed on a resource and automatically recognizes poorly performing systems.</p>
+
+<p><a href="https://open.xdmod.org/">XDMoD</a> should be install first, then <a href="https://akrr.xdmod.org/">AKRR</a> and 
+then <a href="https://appkernels.xdmod.org/">xdmod-appkernels</a>. In addition before 
+installing <code class="language-plaintext highlighter-rouge">xdmod-appkernels</code> module, add your HPC resource to AKRR and run few appkernels 
+jobs, this will help to ensure that <code class="language-plaintext highlighter-rouge">xdmod-appkernels</code> is working properly.</p>
+
+<h1 id="akrr-documentation-and-notes">AKRR Documentation and Notes</h1>
+
+<ul>
+  <li><a href="/">Overview</a></li>
+  <li><a href="/AKRR_Download.html">Download</a></li>
+  <li><a href="/AKRR_Install.html">Installation</a></li>
+  <li><a href="/AKRR_Update.html">Update</a></li>
+  <li><a href="/AKRR_Usage.html">Usage</a>
+    <ul>
+      <li><a href="/AKRR_Add_Resource.html">Adding HPC Resource</a></li>
+      <li><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Deployment of Application Kernels on Resource</a>
+        <ul>
+          <li><a href="/AKRR_NAMD_Deployment.html">NAMD Deployment</a></li>
+          <li><a href="/AKRR_IMB_Deployment.html">IMB Deployment</a></li>
+          <li><a href="/AKRR_IOR_Deployment.html">IOR Deployment</a></li>
+          <li><a href="/AKRR_MDTest_Deployment.html">MDTest Deployment</a></li>
+          <li><a href="/AKRR_HPCC_Deployment.html">HPCC Deployment</a></li>
+          <li><a href="/AKRR_HPCG_Deployment.html">HPCG Deployment</a></li>
+          <li><a href="/AKRR_NWChem_Deployment.html">NWChem Deployment</a></li>
+          <li><a href="/AKRR_GAMESS_Deployment.html">GAMESS Deployment</a></li>
+          <li><a href="/AKRR_ENZO_Deployment.html">ENZO Deployment</a></li>
+          <li><a href="AKRR_Creating_New_Application_Kernel.md">Creating New Application Kernel</a></li>
+        </ul>
+      </li>
+      <li><a href="/AKRR_Tasks_Scheduling.html">Scheduling and Rescheduling Application Kernels</a></li>
+      <li><a href="/AKRR_Walltimelimit_Setting.html">Setting Walltime Limit</a></li>
+    </ul>
+  </li>
+  <li>Details
+    <ul>
+      <li><a href="/AKRR_HowItWorks.html">How AKRR Operates</a></li>
+      <li><a href="/AKRR_Batch_Job_Script_Generation.html">How Batch Job Script are Generated</a></li>
+    </ul>
+  </li>
+</ul>
+
+<!---
+  * [Adding OpenStack Resource and Application Kernels Deployment on it](/AKRR_Add_OpenStack_Resource_and_AppKernels.html)
+-->
+
+<h2 id="xdmod-application-kernel-performance-monitoring-publications">XDMoD Application Kernel Performance Monitoring Publications</h2>
+
+<ul>
+  <li>
+    <p>Simakov, N. A., White, J. P., DeLeon, R. L., Ghadersohi, A., Furlani, T. R., Jones, M. D., Gallo, S. M., and Patra, A. K. (2015).
+“Application kernels: HPC resources performance monitoring and variance analysis.”
+<em>Concurrency Computat.: Pract. Exper.</em>, 27: 5238– 5260. doi: <a href="https://doi.org/10.1002/cpe.3564">10.1002/cpe.3564</a>.</p>
+  </li>
+  <li>
+    <p>Nikolay A. Simakov, Robert L. DeLeon, Joseph P. White, Thomas R. Furlani, Martins Innus, Steven M. Gallo, Matthew D. Jones, Abani Patra, Benjamin D. Plessinger, Jeanette Sperhac, Thomas Yearke, Ryan Rathsam, and Jeffrey T. Palmer. 2016.
+“A Quantitative Analysis of Node Sharing on HPC Clusters Using XDMoD Application Kernels.”
+<em>In Proceedings of the XSEDE16 Conference on Diversity, Big Data, and Science at Scale (XSEDE16). Association for Computing Machinery</em>, New York, NY, USA, Article 32, 1–8. 
+DOI: <a href="https://doi.org/10.1145/2949550.2949553">10.1145/2949550.2949553</a></p>
+  </li>
+  <li>
+    <p>Nikolay Simakov and Martins D. Innus and Matthew D. Jones and Joseph P. White and Steven M. Gallo and Robert L. DeLeon and Thomas R. Furlani (2018).
+“Effect of Meltdown and Spectre Patches on the Performance of HPC Applications”
+<em>HPC Systems Professionals Workshop (HPCSYSPROS18) at SC18</em>.
+<a href="https://arxiv.org/abs/1801.04329">ArXiv: abs/1801.04329</a></p>
+  </li>
+</ul>
+
+<p>Next: <a href="/AKRR_Download.html">AKRR Download</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

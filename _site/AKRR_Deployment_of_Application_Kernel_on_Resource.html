@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding Appkernel to Resource</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding Appkernel to Resource</h1> 
+        <h1 id="deployment-of-applications-kernels-on-a-resource">Deployment of Applications Kernels on a Resource</h1>
+
+<p>HPC resources differ significantly in terms of the software stack. For example, 
+different resources (and applications running on those resources) can utilize 
+different compilers (gcc or icc) and MPI libraries (OpenMPI, MVAPICH, or a 
+commercial variant). Furthermore, the same application can be compiled in a 
+number of ways which can greatly vary in how they are executed. Therefore beside 
+general application kernel configuration, each application kernel needs to be 
+separately configured for each resource.</p>
+
+<p>The overall strategy for deploying an application kernel to a resource is 
+following:</p>
+
+<ol>
+  <li>Install application or identify where it is already installed.</li>
+  <li>Generate initial configuration file.</li>
+  <li>Edit configuration file.</li>
+  <li>(Optional) Generate batch job script and execute it manually, update 
+configuration file as needed.</li>
+  <li>Perform validation run, update configuration file as needed.</li>
+  <li>Schedule regular execution of application kernel.</li>
+</ol>
+
+<p>First, each step will be described in general as it applies to all application 
+kernels and the details on example individual application kernels deployment 
+will follow.</p>
+
+<h2 id="install-application-or-identify-where-it-is-installed">Install Application or Identify where it is Installed</h2>
+
+<p>AKRR comes with two flavors of application kernels.  One is based on real-world 
+applications and another is based on benchmarks. Real-world applications are 
+often already installed system-wide on a resource for the use of regular users, 
+here one of the purposes of application kernels is to monitor the performance of 
+a standard often-used application on that resource. Benchmarks, however, are 
+rarely installed system-wide and thus they need to be installed first.</p>
+
+<h2 id="generate-initiate-configuration-file">Generate Initiate Configuration File</h2>
+
+<p>The initial configuration file is generated.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt;
+</code></pre></div></div>
+<p>It will generate an initial 
+configuration file and place it to _$AKRR_HOME/etc/resource/<resource_name>/<appkernel_name>.conf_.</appkernel_name></resource_name></p>
+
+<h1 id="edit-configuration-file">Edit Configuration File</h1>
+
+<p>The generated configuration file is fairly generic. Here you need to specify 
+proper execution environment and specify how to execute this particular 
+application kernel on this particular machine/resource.  </p>
+
+<h1 id="generate-batch-job-script-and-execute-it-manually-optional">Generate Batch Job Script and Execute it Manually (Optional)</h1>
+
+<p>The purpose of this step is to ensure that the configuration lead to a correct 
+(and workable) batch job script. First the batch job script is generated as:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># only print batch job script</span>
+akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> &lt;number_of_nodes&gt;
+<span class="c"># generate batch job script and copy it to resource (without running it)</span>
+akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> &lt;number_of_nodes&gt;
+</code></pre></div></div>
+
+<p>Then this script is submitted manually ot executed in an interactive session 
+(this improves the turn-around in case of errors). If the script fails 
+to execute, the issues can be fixed first in that script itself followed by respective updates in configuration file.</p>
+
+<p>This step is somewhat optional because it is very similar to the next step. 
+However the opportunity to work in an interactive session will often improve the 
+turn-around time because there is no need to stay in queue for each iteration.</p>
+
+<h1 id="perform-validation-run">Perform Validation Run</h1>
+
+<p>This step validates application kernel installation on the resource.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> &lt;number_of_nodes&gt;
+</code></pre></div></div>
+
+<p>It execute the application kernel and analyses its results. If it fails the problems need to be 
+fixed and another round of validation should be performed</p>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel</h1>
+
+<p>Finally, if validation was successful the application kernel can be submited for 
+regular execution on that resource.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> &lt;list of nodes counts&gt; <span class="nt">-p</span> &lt;periodicity&gt; <span class="se">\</span>
+    <span class="nt">-s</span> &lt;first submit date-time&gt;
+</code></pre></div></div>
+
+<h1 id="details-on-the-individual-application-kernels-deployment">Details on the Individual Application Kernels Deployment</h1>
+
+<ul>
+  <li><a href="/AKRR_NAMD_Deployment.html">NAMD Deployment</a></li>
+  <li><a href="/AKRR_HPCC_Deployment.html">HPCC Deployment</a></li>
+  <li><a href="/AKRR_HPCG_Deployment.html">HPCG Deployment</a></li>
+  <li><a href="/AKRR_IMB_Deployment.html">IMB Deployment</a></li>
+  <li><a href="/AKRR_IOR_Deployment.html">IOR Deployment</a></li>
+  <li><a href="/AKRR_MDTest_Deployment.html">MDTest Deployment</a></li>
+  <li><a href="/AKRR_NWChem_Deployment.html">NWChem Deployment</a></li>
+  <li><a href="/AKRR_GAMESS_Deployment.html">GAMESS Deployment</a></li>
+  <li><a href="AKRR_Enzo_Deployment.md">Enzo Deployment</a></li>
+  <li><a href="AKRR_Creating_New_Application_Kernel.md">Creating New Application Kernel</a></li>
+</ul>
+
+<p>Next: <a href="/AKRR_NAMD_Deployment.html">NAMD Deployment</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

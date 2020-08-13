@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Scheduling Appkernels</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Scheduling Appkernels</h1> 
+        <h1 id="start-appkernels-right-a-way">Start Appkernels Right-a-way</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Run appkernels on 1,2,4 and 8 nodes</span>
+akrr task new <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> 1,2,4,8
+
+<span class="c"># Run appkernels on all configured nodes</span>
+akrr task new <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> &lt;appkernel_name&gt; <span class="nt">-n</span> all
+
+<span class="c"># Run all configure appkernels on all configured nodes</span>
+akrr task new <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> all <span class="nt">-n</span> all
+
+<span class="c"># Run all configure appkernels on all configured nodes</span>
+<span class="c"># and run each of them 10 times</span>
+akrr task new <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> all <span class="nt">-n</span> all <span class="nt">--n-runs</span> 10
+</code></pre></div></div>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel.</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">-t0</span> <span class="s2">"01:00"</span> <span class="nt">-t1</span> <span class="s2">"05:00"</span> <span class="nt">-p</span> 1
+</code></pre></div></div>
+
+<p>The periodicity supports multiple formats</p>
+
+<ul>
+  <li>years-months-days hours:minutes:seconds
+    <ul>
+      <li>“0-00-001 00:00:00” repeat every 1 day</li>
+      <li>“0-00-000 06:00:00” repeat every 6 hours</li>
+    </ul>
+  </li>
+  <li>days
+    <ul>
+      <li>“3” repeat every 3 day</li>
+    </ul>
+  </li>
+  <li>hours:minutes
+    <ul>
+      <li>“12:00” repeat every 12 hours</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="list-tasks">List Tasks</h1>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task list
+</code></pre></div></div>
+
+<h1 id="delete-tasks">Delete Tasks</h1>
+
+<p>Delete tasks scheduled for execution in the future.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task delete <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-t</span> TASK_ID] <span class="o">[</span><span class="nt">-r</span> RESOURCE] <span class="o">[</span><span class="nt">-a</span> APPKERNEL]
+                      <span class="o">[</span><span class="nt">-n</span> NODES] <span class="o">[</span><span class="nt">--group-id</span> GROUP_ID]
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>optional arguments:
+  -h, --help            show this help message and exit
+  -t TASK_ID, --task-id TASK_ID
+                        delete task from scheduled and active tasks (not
+                        compatible with other options)
+  -r RESOURCE, --resource RESOURCE
+                        delete all tasks from resource. Can be combined with
+                        --appkernel, --nodes and --group-id.
+  -a APPKERNEL, --appkernel APPKERNEL
+                        delete appkernel from scheduled tasks. Multiple
+                        appkernels separated by comma. Can be combined with
+                        --resource, --nodes and --group-id.
+  -n NODES, --nodes NODES
+                        delete tasks which specified nodes count. Multiple
+                        nodes separated by comma. Can be combined with
+                        --resource, --appkernel and --group-id.
+  --group-id GROUP_ID   delete all tasks with same group-id.Can be combined
+                        with --resource, --appkernel and --nodes.
+</code></pre></div></div>
+
+<h1 id="delete-active-tasks">Delete Active Tasks</h1>
+
+<p>Delete active tasks, that is the one which is already running.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task delete_active <span class="o">[</span><span class="nt">-h</span><span class="o">]</span> <span class="o">[</span><span class="nt">-t</span> TASK_ID] <span class="o">[</span><span class="nt">-r</span> RESOURCE] <span class="o">[</span><span class="nt">-a</span> APPKERNEL]
+                        <span class="o">[</span><span class="nt">-n</span> NODES] <span class="o">[</span><span class="nt">--group-id</span> GROUP_ID]
+</code></pre></div></div>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h1 id="gamess-us-installation-notes">GAMESS-US Installation Notes</h1>
+
+<p>Brief notes on compilation of GAMESS-US (2018 R3 version) on UB-HPC.</p>
+
+<p>Obtain code from https://www.msg.chem.iastate.edu/GAMESS/download/register/ and place it to
+$AKRR_APPKER_DIR/execs</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs/
+
+module load intel/19.3 intel-mpi/2019.3 mkl/2019.3
+<span class="nb">source</span> /util/academic/intel/19.3/compilers_and_libraries_2019.3.199/linux/mpi/intel64/bin/mpivars.sh
+<span class="nb">source</span> <span class="nv">$MKL</span>/bin/mklvars.sh intel64
+
+<span class="nb">tar</span> <span class="nt">-xzf</span> gamess-current.tar.gz
+
+<span class="c"># configure</span>
+./config
+<span class="c"># used config</span>
+<span class="nb">cat</span> /projects/ccrstaff/general/nikolays/huey/appker/execs/gamess/install.info
+</code></pre></div></div>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/csh</span>
+<span class="c">#   compilation configuration for GAMESS</span>
+<span class="c">#   generated on cpn-d13-16.int.ccr.buffalo.edu</span>
+<span class="c">#   generated at Tue Apr 30 10:30:37 EDT 2019</span>
+setenv GMS_PATH            /projects/ccrstaff/general/nikolays/huey/appker/execs/gamess
+setenv GMS_BUILD_DIR       /projects/ccrstaff/general/nikolays/huey/appker/execs/gamess
+<span class="c">#         machine type</span>
+setenv GMS_TARGET          linux64
+<span class="c">#         FORTRAN compiler setup</span>
+setenv GMS_FORTRAN         ifort
+setenv GMS_IFORT_VERNO     19
+<span class="c">#         mathematical library setup</span>
+setenv GMS_MATHLIB         mkl
+setenv GMS_MATHLIB_PATH    /util/academic/intel/19.3/compilers_and_libraries_2019.3.199/linux/mkl/lib/intel64
+setenv GMS_MKL_VERNO       12
+<span class="c">#         parallel message passing model setup</span>
+setenv GMS_DDI_COMM        mpi
+setenv GMS_MPI_LIB         impi
+setenv GMS_MPI_PATH        /util/academic/intel/19.3/compilers_and_libraries_2019.3.199/linux/mpi
+<span class="c">#         Michigan State University Coupled Cluster Build Option</span>
+setenv GMS_MSUCC           <span class="nb">false</span>
+<span class="c"># Please match any manual changes to the GMS_MSUCC</span>
+<span class="c"># flag in /projects/ccrstaff/general/nikolays/huey/appker/execs/gamess/Makefile</span>
+<span class="c"># before running make</span>
+<span class="c">#         LIBCCHEM CPU/GPU code interface</span>
+setenv GMS_LIBCCHEM        <span class="nb">false</span>
+<span class="c">#         Intel Xeon Phi build: none/knc/knl</span>
+setenv GMS_PHI             none
+<span class="c">#         Shared memory type: sysv/posix</span>
+setenv GMS_SHMTYPE         sysv
+<span class="c">#         SC17 SCF OpenMP support: true/false</span>
+setenv GMS_OPENMP          <span class="nb">false</span>
+<span class="c"># Please match any manual changes to the GMS_OPENMP</span>
+<span class="c"># flag in /projects/ccrstaff/general/nikolays/huey/appker/execs/gamess/Makefile</span>
+<span class="c"># before running make</span>
+</code></pre></div></div>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>chdir ddi
+./compddi <span class="o">&gt;</span>&amp; compddi.log
+<span class="c"># might require some editing for mpi.h location in compddi as well as MAXCPUS and MAXNODES</span>
+<span class="c"># dikick.x is not created from mpi runs</span>
+<span class="c"># mv ddikick.x ..</span>
+
+<span class="nb">cd</span> ..
+./compall <span class="o">&gt;</span>&amp; compall.log
+
+<span class="c"># in lked if it can not find mpilibs</span>
+<span class="c"># case impi:</span>
+<span class="c">#   set MPILIBS="-L$GMS_MPI_PATH/lib64"</span>
+<span class="c">#   set MPILIBS="$MPILIBS -lmpi -lmpigf -lmpigi -lrt"</span>
+<span class="c"># to</span>
+<span class="c"># case impi:</span>
+<span class="c">#   set MPILIBS="-L$GMS_MPI_PATH/lib -L$GMS_MPI_PATH/lib/release"</span>
+<span class="c">#   set MPILIBS="$MPILIBS -lmpi -lmpigf -lmpigi -lrt"</span>
+./lked <span class="o">&gt;</span>&amp; lked.log
+</code></pre></div></div>
+
+<p>Edit rungms</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># partion of rungms</span>
+<span class="nb">set </span><span class="nv">TARGET</span><span class="o">=</span>mpi
+<span class="nb">set </span><span class="nv">SCR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+<span class="nb">set </span><span class="nv">USERSCR</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+<span class="nb">set </span><span class="nv">GMSPATH</span><span class="o">=</span>/projects/ccrstaff/general/nikolays/huey/appker/execs/gamess
+<span class="c">#</span>
+</code></pre></div></div>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

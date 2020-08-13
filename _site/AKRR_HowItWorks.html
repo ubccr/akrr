@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Details &rarr; How It Works</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li class="active"><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Details &rarr; How It Works</h1> 
+        <p>AKRR executes application kernels on HPC resources using the same mechanism as a regular user.
+For example it uses ssh to access the system and submits job scripts through the system scheduler.
+This allows for not only monitoring the performance of the application kernels themselves but 
+also testing the whole workflow that regular users employ in order to carry out their work.</p>
+
+<p>AKRR was designed to execute a large number of jobs on a number of HPC resources in 24/7 mode. 
+To achieve high reliability, a multi-process design was chosen where the master process dispatches a 
+small self-contained subtask to the children processes. 
+This allows the master process code to be relatively simple and moves the more complicated code to the children processes. 
+This way a severe error on one of the child processes does not cause the whole system to collapse.</p>
+
+<p><strong>Table 1.</strong> Subtasks of the Application Kernel Jobs.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Subtask/step Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Create a job script</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Copy it to HPC resource and submit to queue.  Reschedule to repeat until success or allowed number of attempts is exceeded</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Check job status on HPC resource.  Reschedule to repeat until job complete or allowed in-queue time is exceeded</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Collect the job output if it is present</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Process the output if it was collected</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Load results to database.  Reschedule to repeat until successs or allowed number of attempts is exceeded</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Although application kernels are computationally lightweight and their pure execution time lies between minutes to half an hour, 
+the total time from job script creation to loading the results to the database can easily takes several days, 
+due to potentially long queue wait times.
+In order to manage a large number of jobs and to be able to recover from critical failures, 
+the entire application kernel execution task is split into small
+self-contained subtasks (see Table 1 for the subtasks). 
+Each subtask is executed by a child process and should take only a few seconds. 
+At the end of each subtask, the current job state is dumped to the file system. 
+This allows us to recover to the last known state of AKRR in the case of a critical failure.</p>
+
+<p><img src="/assets/images/master_process_main_loop_small.png" alt="master process main loop" /></p>
+
+<p><strong>Figure 1.</strong>  Illustration of the AKRR (Application Kernel Remote Runner) master process main loop with example scheduled and active task queue
+content.</p>
+
+<p>The AKRR master process utilizes two queues for job tracking: the first one is named “scheduled tasks” and contains the jobs scheduled for
+execution in the future; the second one is named “active tasks” and contains jobs which are currently executed (Figure 1). When the scheduled
+time occurs, the job is moved from the scheduled tasks queue to the active tasks queue with the current due time. When a job in the active tasks
+queue is due, the master process dispatches a subtask of this job to a child process. The child process executes the subtask; and in the case of a
+successful execution, it requests the master process to schedule the next subtask for execution, otherwise the same subtask is rescheduled for
+future execution. When all subtasks are completed or the allowed number of rescheduling attempts is exceeded the job is moved out of the active
+tasks queue.</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

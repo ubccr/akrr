@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h1 id="setting-up-akrr-to-work-with-singularity-images-on-an-hpc-resource">Setting up AKRR to work with Singularity images on an HPC Resource</h1>
+
+<p>During my (Phillip Hoffmann) internship at CCR during the Summer 2019, I worked a bit with running appkernels using singularity on the HPCC resource.</p>
+
+<p>Essentially what we’re doing is setting up a regular slurm resource, but then running singularity images instead of the raw binaries.</p>
+
+<p>So all you need to do to set up AKRR is to set up a normal slurm resource, then you just have to modify the config files to use singularity instead of the actual binary.</p>
+
+<p>However, before running any singularity images, you need to get the images onto the resource. Since you will likely have multiple singularity images that you’re working with, I recommend having a designated place for them and not using your $HOME as the cache space.</p>
+
+<p>So on the resource:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># directory where you want your singularity things to be (I put mine as an example)</span>
+<span class="nv">SINGULARITY_DIR</span><span class="o">=</span>/gpfs/scratch/hoffmaps/singularity_images 
+
+<span class="c"># these are variables actually used by singularity</span>
+<span class="nb">export </span><span class="nv">SINGULARITY_LOCALCACHEDIR</span><span class="o">=</span><span class="nv">$SINGULARITY_DIR</span>
+<span class="nb">export </span><span class="nv">SINGULARITY_CACHEDIR</span><span class="o">=</span><span class="nv">$SINGULARITY_DIR</span>
+<span class="nb">export </span><span class="nv">SINGULARITY_TMPDIR</span><span class="o">=</span><span class="nv">$SINGULARITY_DIR</span>
+
+<span class="c"># go to the directory and pull down the image</span>
+<span class="nb">cd</span> <span class="nv">$SINGULARITY_DIR</span>
+
+<span class="c"># example pull</span>
+singularity pull <span class="nt">--docker-login</span> docker://pshoff/akrr_benchmarks:hpcc
+</code></pre></div></div>
+<p>In the above example, I’m pulling from the Docker hub my hpcc benchmark image. The resulting image file should then be in $SINGULARITY_DIR as akrr_benchmarks_hpcc.sif. If you’re pulling from a private repo you need the Docker login to be able to access it.</p>
+
+<p>You can read more about using docker with singularity here: https://www.sylabs.io/guides/3.2/user-guide/singularity_and_docker.html</p>
+
+<p>Note that Docker images might not work flawlessly, because of how Singularity mounts some things automatically, more info here: https://sylabs.io/guides/3.3/user-guide/bind_paths_and_mounts.html?highlight=home</p>
+
+<p>So, once you have the singularity image pulled, you can add the app to akrr the usual way, with akrr app add.</p>
+
+<p>Then you just need to edit the config files. For things to work properly with singularity, you do need to set some things up first. (Note also that the below configs are using my Docker images and runningon one node only):</p>
+
+<h3 id="hpcc">HPCC:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+# wherever the singularity images are saved on the resource
+export SINGULARITY_IMAGEDIR="</span>/gpfs/scratch/hoffmaps/singularity_images<span class="s2">"
+
+# this allows mpirun to work properly inside the container
+# so that it doesn't try and use srun (I believe)
+export I_MPI_HYDRA_BOOTSTRAP="</span>ssh<span class="s2">" 
+
+# so it can find the mpi libs inside the container
+export LD_LIBRARY_PATH=</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">:/opt/appker/lib:/opt/intel/impi/2018.3.222/lib64
+# this may or may not be needed, but it can't hurt
+
+# unset this b/c when slurm runs it it has a tmpdir that's not visible to singularity
+unset TMPDIR
+
+# set how to run app kernel
+# since you may be running on nodes where it won't be as easy to detect the cpu count that you have, its best just to specify it using the -ppn flag for my Docker images.
+RUN_APPKERNEL="</span><span class="nv">$SINGULARITY_IMAGEDIR</span>/akrr_benchmarks_hpcc.sif <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="hpcg">HPCG</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"""
+Resource specific HPCG configuration
+"""</span>
+
+appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+# location of the images (can be whatever name you choose)
+export SINGULARITY_IMAGEDIR="</span>/gpfs/scratch/hoffmaps/singularity_images<span class="s2">"
+
+# some of the apps give problems, since otherwise they would use srun since its a slurm system
+export I_MPI_HYDRA_BOOTSTRAP="</span>ssh<span class="s2">"
+
+# usually TMPDIR when its set by slurm isn't in the singularity, so this helps singularity find its own temp directory.
+unset TMPDIR
+
+#set how to run app kernel
+RUN_APPKERNEL="</span><span class="nv">$SINGULARITY_IMAGEDIR</span>/akrr_benchmarks_hpcg.sif <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="namd">NAMD</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+# location of the images (can be whatever name you choose)
+export SINGULARITY_IMAGEDIR="</span>/gpfs/scratch/hoffmaps/singularity_images<span class="s2">"
+
+# some of the apps give problems, since otherwise they would use srun since its a slurm system
+export I_MPI_HYDRA_BOOTSTRAP="</span>ssh<span class="s2">"
+
+# usually TMPDIR when its set by slurm isn't in the singularity, so this helps singularity find its own temp directory.
+unset TMPDIR
+
+# set how to run app kernel
+RUN_APPKERNEL="</span><span class="nv">$SINGULARITY_IMAGEDIR</span>/akrr_benchmarks_namd.sif <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="nwchem">NWChem</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+# location of the images (can be whatever name you choose)
+export SINGULARITY_IMAGEDIR="</span>/gpfs/scratch/hoffmaps/singularity_images<span class="s2">"
+#
+# # some of the apps give problems, since otherwise they would use srun since its a slurm system
+export I_MPI_HYDRA_BOOTSTRAP="</span>ssh<span class="s2">"
+#
+# # usually TMPDIR when its set by slurm isn't in the singularity, so this helps singularity find its own temp directory.
+unset TMPDIR
+#
+# may need this to use the proper libs, unsure if needed
+export LD_LIBRARY_PATH=</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">:/etc/libibverbs.d
+
+# # set how to run app kernel ( the ppn 8 is temporary, perhaps to change to be general)
+RUN_APPKERNEL="</span><span class="nv">$SINGULARITY_IMAGEDIR</span>/akrr_benchmarks_nwchem.sif <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="gamess">GAMESS</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+# location of the images (can be whatever name you choose)
+export SINGULARITY_IMAGEDIR="</span>/gpfs/scratch/hoffmaps/singularity_images<span class="s2">"
+
+#some of the apps give problems, since otherwise they would use srun since its a slurm system
+export I_MPI_HYDRA_BOOTSTRAP="</span>ssh<span class="s2">"
+
+#usually TMPDIR when its set by slurm isn't in the singularity, so this helps singularity find its own temp directory.
+unset TMPDIR
+
+# if you're working with the gamess singularity, you may need to add the following, or some variation
+unset SLURM_JOB_ID
+# since how the rungms script works
+
+# set how to run app kernel 
+RUN_APPKERNEL="</span><span class="nv">$SINGULARITY_IMAGEDIR</span>/akrr_benchmarks_gamess.sif <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<p>IOR and MDTest are a bit different</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

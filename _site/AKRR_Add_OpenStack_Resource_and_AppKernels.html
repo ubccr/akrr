@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h1 id="adding-openstack-resource">Adding OpenStack Resource</h1>
+
+<p>Unlike with tradition HPC resource OpenStack provides only basic operation system and for running
+appkernels we need to make volume for instances with required software.</p>
+
+<p>For cloud instances we chose to use Docker to run appkernels and limit parallel execution by one instance, 
+thus where gonna be no extra steps for installing each particular application.</p>
+
+<p>In order to add OpenStack to AKRR we need:</p>
+
+<ul>
+  <li>On AKRR host install OpenStack client and authentication script.</li>
+  <li>Create OpenStack Volume for appkernel execution and installing necessary software on it.</li>
+  <li>Add OpenStack to AKRR as new resource.</li>
+  <li>Validate appkernels execution.</li>
+</ul>
+
+<h2 id="installing-openstack-client-and-authentication-script">Installing OpenStack Client and Authentication Script</h2>
+
+<p>Install OpenStack command line client and authorization</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Get pip if it is not yet installed</span>
+<span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> python36-pip 
+
+<span class="c"># python36-devel, gcc and openssl-devel for python-openstackclient</span>
+<span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> python36-devel gcc openssl-devel
+
+<span class="c"># Install OpenStack command line client</span>
+<span class="nb">sudo </span>pip3.6 <span class="nb">install </span>python-cinderclient<span class="o">==</span>3.6.1
+<span class="nb">sudo </span>pip3.6 <span class="nb">install </span>python-openstackclient
+
+<span class="c"># Install OpenStack authorization, consult you OpenStack provider </span>
+<span class="c"># for that, in CCR UB it is:</span>
+<span class="nb">sudo </span>pip3.6 <span class="nb">install </span>git+https://github.com/ubccr/v3oidcmokeyapikey.git
+
+<span class="c"># Prior installation</span>
+<span class="c"># you might need to remove distribution provided pyYaml (pip want to install different version):</span>
+<span class="c"># sudo yum remove python36-PyYAML</span>
+</code></pre></div></div>
+
+<p>Get environment setup script from OpenStack portal (https://lakeeffect.ccr.buffalo.edu in case of CCR UB):</p>
+
+<p>In the web portal, on top left Project-&gt;API Access, then download OpenStack RC File (Identity API v3), it is
+available in “Download OpenStack RC File” dropdown botton on right. Save it somewhere.</p>
+
+<p>Update the OpenStack RC script so that it didn’t ask API key as user input but place it right in the script,
+similar to following:</p>
+
+<p>```bash eval=F
+#!/usr/bin/env bash
+unset OS_TOKEN
+unset OS_AUTH_TYPE
+#echo “Please enter your CCR API Key: “
+#read -sr OS_API_KEY_INPUT
+export OS_API_KEY=”<here should="" be="" the="" key="">"
+export OS_AUTH_URL=https://lakeeffect.ccr.buffalo.edu:8770/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_PROJECT_NAME="lakeeffect-benchmarks"
+export OS_USERNAME="nikolays"
+export OS_PROJECT_DOMAIN_NAME="lakeeffect"
+export OS_INTERFACE=public
+export OS_REGION_NAME="buffalo"
+export OS_TOKEN=`openstack --os-auth-type v3oidcmokeyapikey --os-identity-provider ccr --os-protocol openid --os-discovery-endpoint https://sso.ccr.buffalo.edu/.well-known/openid-configuration --os-client-id ccr-os-api --os-redirect-uri https://localhost/ccrauth token issue -f value -c id`
+export OS_AUTH_TYPE=v3token</here></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Check your provide on how to get the API key. AKRR will use OpenStack command line tools to access cloud like 
+a regular user. It will source this RC script prior the operation.
+
+Source it and check available resources
+```bash eval=F
+source lakeeffect-xdmod-openrc.sh
+openstack flavor list
+openstack image list
+</code></pre></div></div>
+
+<p>Output example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+--------+------------------+-------+------+-----------+-------+-----------+
+| ID     | Name             |   RAM | Disk | Ephemeral | VCPUs | Is Public |
++--------+------------------+-------+------+-----------+-------+-----------+
+| 101001 | c1.m1            |  1024 |   20 |         0 |     1 | True      |
+| 101004 | c1.m4            |  4096 |   20 |         0 |     1 | True      |
+| 102004 | c2.m4            |  4096 |   20 |         0 |     2 | True      |
+| 102008 | c2.m8            |  8192 |   20 |         0 |     2 | True      |
+| 104008 | c4.m8            |  8192 |   20 |         0 |     4 | True      |
+| 104016 | c4.m16           | 16384 |   20 |         0 |     4 | True      |
+| 108016 | c8.m16           | 16384 |   20 |         0 |     8 | True      |
+| 108032 | c8.m32           | 32768 |   20 |         0 |     8 | True      |
+| 116032 | c16.m32          | 32768 |   20 |         0 |    16 | True      |
+| 116064 | c16.m64          | 65536 |   20 |         0 |    16 | True      |
++--------+------------------+-------+------+-----------+-------+-----------+
++--------------------------------------+----------------------------------+--------+
+| ID                                   | Name                             | Status |
++--------------------------------------+----------------------------------+--------+
+| eb259c93-82f1-4d9e-8318-b3546e5d02e6 | centos-7.6.1810-20190604         | active |
+| 0847e343-cf30-4c24-a5c7-a01fb76735ee | ubuntu1604-ccr-20181127-1        | active |
+| 0232b73a-1c16-4c33-96d9-3295b898ca4f | ubuntu1804-ccr-20181127-1        | active |
++--------------------------------------+----------------------------------+--------+
+</code></pre></div></div>
+<h2 id="creating-volume-for-application-kernels-execution">Creating Volume for Application Kernels Execution</h2>
+
+<p>Create a volume which will be used to run application kernels:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--description</span> <span class="s2">"volume for appkernels execution"</span> <span class="se">\</span>
+    <span class="nt">--image</span> centos-7.6.1810-20190604 <span class="nt">--size</span><span class="o">=</span>100 appkernels_volume
+</code></pre></div></div>
+
+<p>Output example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+---------------------+--------------------------------------+
+| Field               | Value                                |
++---------------------+--------------------------------------+
+| attachments         | []                                   |
+| availability_zone   | cbls                                 |
+| bootable            | false                                |
+| consistencygroup_id | None                                 |
+| created_at          | 2019-08-28T14:34:31.000000           |
+| description         | volume for appkernels execution      |
+| encrypted           | False                                |
+| id                  | SomeFancyHash123                     |
+| multiattach         | False                                |
+| name                | appkernels_volume                    |
+| properties          |                                      |
+| replication_status  | None                                 |
+| size                | 100                                  |
+| snapshot_id         | None                                 |
+| source_volid        | None                                 |
+| status              | creating                             |
+| type                | rbd                                  |
+| updated_at          | None                                 |
+| user_id             | SomeFancyHash123                     |
++---------------------+--------------------------------------+
+</code></pre></div></div>
+
+<p>Spin-off instance (check that ssh key is both in OpenStack and in local ~/.ssh)</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> c8.m16 <span class="se">\</span>
+  <span class="nt">--volume</span> appkernels_volume <span class="se">\</span>
+  <span class="nt">--network</span> lakeeffect-199.109.112 <span class="se">\</span>
+  <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="se">\</span>
+  <span class="nt">--key-name</span> nikolays aktest
+</code></pre></div></div>
+
+<p>Output example:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+-----------------------------+---------------------------------------------+
+| Field                       | Value                                       |
++-----------------------------+---------------------------------------------+
+| OS-DCF:diskConfig           | MANUAL                                      |
+| OS-EXT-AZ:availability_zone | cbls                                        |
+| OS-EXT-STS:power_state      | NOSTATE                                     |
+| OS-EXT-STS:task_state       | scheduling                                  |
+| OS-EXT-STS:vm_state         | building                                    |
+| OS-SRV-USG:launched_at      | None                                        |
+| OS-SRV-USG:terminated_at    | None                                        |
+| accessIPv4                  |                                             |
+| accessIPv6                  |                                             |
+| addresses                   |                                             |
+| adminPass                   | RandomPassword                              |
+| config_drive                |                                             |
+| created                     | 2019-08-28T14:54:28Z                        |
+| flavor                      | c8.m16 (216122)                             |
+| hostId                      |                                             |
+| id                          | SomeFancyHash123                            |
+| image                       |                                             |
+| key_name                    | nikolays                                    |
+| name                        | aktest                                      |
+| progress                    | 0                                           |
+| project_id                  | SomeFancyHash123                            |
+| properties                  |                                             |
+| security_groups             | name='SomeFancyHash123'                     |
+|                             | name='SomeFancyHash123'                     |
+| status                      | BUILD                                       |
+| updated                     | 2019-08-28T14:54:28Z                        |
+| user_id                     | SomeFancyHash123                            |
+| volumes_attached            |                                             |
++-----------------------------+---------------------------------------------+
+</code></pre></div></div>
+
+<p>Check its ip and try to ssh</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server list <span class="nt">--name</span> aktest
+</code></pre></div></div>
+
+<p>Output example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+--------------------------------------+--------+--------+--------------------------------------+-------+--------+
+| ID                                   | Name   | Status | Networks                             | Image | Flavor |
++--------------------------------------+--------+--------+--------------------------------------+-------+--------+
+| SomeFancyHash123                     | aktest | ACTIVE | lakeeffect-199.109.112=199.109.112.7 |       | c8.m16 |
++--------------------------------------+--------+--------+--------------------------------------+-------+--------+
+</code></pre></div></div>
+
+<p>Log in to instance</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-i</span> &lt;ssh identiry <span class="k">for </span>cloud&gt; centos@199.109.112.7
+</code></pre></div></div>
+
+<p>Now on instance install docker (see https://docs.docker.com/install/linux/docker-ce/centos/ for more details):</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Install dependencies</span>
+<span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> yum-utils <span class="se">\</span>
+  device-mapper-persistent-data <span class="se">\</span>
+  lvm2
+
+<span class="c"># Add Docker Repo</span>
+<span class="nb">sudo </span>yum-config-manager <span class="se">\</span>
+    <span class="nt">--add-repo</span> https://download.docker.com/linux/centos/docker-ce.repo
+
+<span class="c"># Install Docker</span>
+<span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> docker-ce docker-ce-cli containerd.io
+
+<span class="c"># Start Docker</span>
+<span class="nb">sudo </span>systemctl start docker
+
+<span class="c"># Set it to start on boot</span>
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>docker
+
+<span class="c"># Verify that docker is working</span>
+<span class="nb">sudo </span>docker run hello-world
+
+<span class="c"># add centos user to docker group</span>
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker centos
+
+<span class="c"># exit and re-loging for new group to work</span>
+<span class="nb">exit</span>
+</code></pre></div></div>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-i</span> &lt;ssh identiry <span class="k">for </span>cloud&gt; centos@199.109.112.7
+
+<span class="c"># test that docker can be executed as centos user</span>
+docker run hello-world
+</code></pre></div></div>
+
+<p>If everything fine now we can terminate instance</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server stop aktest
+<span class="c"># ensure that it shut off</span>
+openstack server list <span class="nt">--name</span> aktest
+openstack server delete aktest
+</code></pre></div></div>
+
+<p>You can start an instance again to ensure that docker start up on boot</p>
+
+<h2 id="openstack-resource-setup-in-akrr">OpenStack Resource Setup in AKRR</h2>
+
+<p>```bash eval=F
+akrr resource add</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>```text
+[INFO] Beginning Initiation of New Resource...
+[INFO] Retrieving Resources from XDMoD Database...
+[INFO] Found following resources from XDMoD Database:
+    resource_id  name
+              1  UBHPC                                   
+              2  lakeeffect                                 
+
+[INPUT]: Enter resource_id for import (enter 0 for no match):
+2
+
+[INPUT]: Enter AKRR resource name, hit enter to use same name as in XDMoD Database [ub-hpc]:
+lakeeffect
+
+[INPUT]: Enter queuing system on resource (slurm, pbs or openstack): 
+openstack
+
+[INFO] Initiating lakeeffect at AKRR
+[INFO] Resource configuration is in /home/akrruser/akrr_src2/etc/resources/lakeeffect/resource.conf
+[INFO] Initiation of new resource is completed.
+    Edit batch_job_header_template variable in /home/akrruser/akrr_src2/etc/resources/lakeeffect/resource.conf
+    and move to resource validation and deployment step.
+    i.e. execute:
+        akrr resource deploy -r lakeeffect
+</code></pre></div></div>
+
+<p>Copy environment setter to akrr resource config directory:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp</span> &lt;somewhere&gt;/lakeeffect-xdmod-openrc.sh <span class="si">$(</span>AKRR_HOME:-~/akrr<span class="si">)</span>/etc/resources/lakefffect
+</code></pre></div></div>
+
+<p>Edit resource config</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Resource parameters
+</span>
+<span class="c1"># Processors (cores) per node
+</span><span class="n">ppn</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="c1"># head node for remote access
+</span><span class="n">remote_access_node</span> <span class="o">=</span> <span class="s">"headnode.somewhere.org"</span>
+<span class="c1"># Remote access method to the resource (default ssh)
+</span><span class="n">remote_access_method</span> <span class="o">=</span> <span class="s">"ssh"</span>
+<span class="c1"># Remote copy method to the resource (default scp)
+</span><span class="n">remote_copy_method</span> <span class="o">=</span> <span class="s">"scp"</span>
+
+<span class="c1"># Access authentication
+</span><span class="n">ssh_username</span> <span class="o">=</span> <span class="s">"centos"</span>
+<span class="n">ssh_password</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">ssh_private_key_file</span> <span class="o">=</span> <span class="s">"/home/xdtas/.ssh/keyname"</span>
+<span class="n">ssh_private_key_password</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c1"># Scratch visible across all nodes (absolute path or/and shell environment variable)
+</span><span class="n">network_scratch</span> <span class="o">=</span> <span class="s">"/home/centos/appkernel/network_scratch"</span>
+<span class="c1"># Local scratch only locally visible (absolute path or/and shell environment variable)
+</span><span class="n">local_scratch</span> <span class="o">=</span> <span class="s">"/home/centos/appkernel/network_scratch"</span>
+<span class="c1"># Locations for app. kernels working directories (can or even should be on scratch space)
+</span><span class="n">akrr_data</span> <span class="o">=</span> <span class="s">"/home/centos/appkernel/akrr_data"</span>
+<span class="c1"># Location of executables and input for app. kernels
+</span><span class="n">appkernel_dir</span> <span class="o">=</span> <span class="s">"/home/centos/appkernel/resource"</span>
+
+<span class="c1"># batch options
+</span><span class="n">batch_scheduler</span> <span class="o">=</span> <span class="s">"openstack"</span>
+
+<span class="c1"># job script header
+</span><span class="n">batch_job_header_template</span> <span class="o">=</span> <span class="s">"""#!/bin/bash
+"""</span>
+
+<span class="n">openstack_env_set_script</span> <span class="o">=</span> <span class="s">"lakeeffect-xdmod-openrc.sh"</span>
+<span class="n">openstack_flavor</span> <span class="o">=</span> <span class="s">"c8.m16"</span>
+<span class="n">openstack_volume</span> <span class="o">=</span> <span class="s">"aktestvolume"</span>
+<span class="n">openstack_network</span> <span class="o">=</span> <span class="s">"lakeeffect-149.102.15"</span>
+<span class="n">openstack_security_group</span> <span class="o">=</span> <span class="p">[</span><span class="s">"default"</span><span class="p">,</span> <span class="s">"SSH"</span><span class="p">]</span>
+<span class="n">openstack_key_name</span> <span class="o">=</span> <span class="s">"keyname"</span>
+<span class="n">openstack_server_name</span> <span class="o">=</span> <span class="s">"aktest"</span>
+<span class="n">openstack_floating_ip_attach</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># due to current implementation (only one volume)
+# the limit is 1 active task
+</span><span class="n">max_number_of_active_tasks</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Deploy
+```bash eval=F
+akrr resource deploy -r lakeeffect</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+# Add Appkernels
+
+```bash
+akrr app add -r lakeeffect -a hpcc --execution-method docker
+akrr app validate -r lakeeffect -a hpcc -n 1
+</code></pre></div></div>
+
+<p>Next: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">AKRR: Deployment of Application Kernel on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

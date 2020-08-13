@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="notes-on-setting-up-akrr-to-work-with-openstack">Notes on setting up Akrr to work with OpenStack</h2>
+
+<p>(This assumes you’ve already set up the OpenStack CLI and set up Docker on OpenStack, as well as get AKRR working normally of course)</p>
+
+<p>You want to add the resource in a minimalistic fasion (so you can make sure the config variables are correct)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr resource add <span class="nt">--minimalistic</span>
+</code></pre></div></div>
+<p>Once you do that, go to the directory where it made the resource config and take a look at it.
+It should look something like this (I added notes about what each thing should be)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># This was my config when I (Phillip Hoffmann, CCR 2019 Intern) was working with OpenStack)</span>
+<span class="c"># Resource parameters</span>
+
+<span class="c"># Processors (cores) per node</span>
+ppn <span class="o">=</span> 8
+<span class="c"># Dependent on the flavor you're using for your instance</span>
+
+
+<span class="c"># head node for remote access</span>
+remote_access_node <span class="o">=</span> <span class="s2">"headnode.somewhere.org"</span> <span class="c"># was None earlier, I believe it didn't work</span>
+<span class="c"># Don't worry too much about this, Akrr figures out how to connect </span>
+
+<span class="c"># Remote access method to the resource (default ssh)</span>
+remote_access_method <span class="o">=</span> <span class="s2">"ssh"</span>
+<span class="c"># Remote copy method to the resource (default scp)</span>
+remote_copy_method <span class="o">=</span> <span class="s2">"scp"</span>
+
+<span class="c"># Access authentication</span>
+<span class="c"># username on the instance (often its just the os you're using)</span>
+ssh_username <span class="o">=</span> <span class="s2">"centos"</span>
+
+<span class="c"># assuming you're using ssh key to get into the instance, bc that's how the cli works</span>
+ssh_password <span class="o">=</span> None
+
+<span class="c"># path to the private key that corresponds with the openstack_key_name specified below</span>
+ssh_private_key_file <span class="o">=</span> <span class="s2">"/home/hoffmaps/projects/openstack/keypairs/openstack-testing.key"</span>
+ssh_private_key_password <span class="o">=</span> None
+
+<span class="c"># these are all dependent on the volume and how you want the volume to be set up</span>
+<span class="c"># these will be used during the deploy step</span>
+<span class="c"># Scratch visible across all nodes (absolute path or/and shell environment variable)</span>
+network_scratch <span class="o">=</span> <span class="s2">"/home/centos/appker/network_scratch"</span>
+<span class="c"># Local scratch only locally visible (absolute path or/and shell environment variable)</span>
+local_scratch <span class="o">=</span> <span class="s2">"/home/centos/appker/network_scratch"</span>
+<span class="c"># Locations for app. kernels working directories (can or even should be on scratch space)</span>
+akrr_data <span class="o">=</span> <span class="s2">"/home/centos/appker/akrr_data"</span>
+<span class="c"># Location of executables and input for app. kernels</span>
+appkernel_dir <span class="o">=</span> <span class="s2">"/home/centos/appker/resource"</span>
+
+<span class="c"># batch options</span>
+batch_scheduler <span class="o">=</span> <span class="s2">"openstack"</span>
+
+<span class="c"># job script header</span>
+batch_job_header_template <span class="o">=</span> <span class="s2">"""#!/bin/bash
+"""</span>
+
+<span class="c"># path to the openstack rc file you got with api access (check out setting_up_openstack_cli.md)</span>
+openstack_env_set_script <span class="o">=</span> <span class="s2">"lakeeffect-benchmarks-openrc.sh"</span>
+
+openstack_flavor <span class="o">=</span> <span class="s2">"c8.m16"</span>
+
+<span class="c"># volume that has docker installed on it</span>
+openstack_volume <span class="o">=</span> <span class="s2">"dockervolume"</span>
+
+<span class="c"># check out the Network tab in web interface for options with this potentially</span>
+openstack_network <span class="o">=</span> <span class="s2">"lakeeffect-199.109.195"</span>
+openstack_security_group <span class="o">=</span> <span class="o">[</span><span class="s2">"default"</span>, <span class="s2">"SSH"</span><span class="o">]</span>
+
+<span class="c"># name of the key-pair that should already exist in openstack setup (you should have private key above)</span>
+openstack_key_name <span class="o">=</span> <span class="s2">"openstack-testing"</span>
+
+<span class="c"># just the name for the instance when it spins up</span>
+openstack_server_name <span class="o">=</span> <span class="s2">"akrrtemp"</span>
+openstack_floating_ip_attach <span class="o">=</span> None
+
+<span class="c"># due to current implementation (only one volume)</span>
+<span class="c"># the limit is 1 active task</span>
+max_number_of_active_tasks <span class="o">=</span> 1
+<span class="c"># if you have more than 1 you risk akrr trying to use the same volume twice which doesn't work</span>
+</code></pre></div></div>
+<p>After you change your configuration to suit your setup, try deploying it.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr resource deploy <span class="nt">-r</span> &lt;openstack resource&gt;
+
+</code></pre></div></div>
+<p>If you get a timeout error, it probably means you still have the rc script asking for input. You need to put in your API Key and have it not ask for your input. Check out setting_up_openstack_cli.md</p>
+
+<p>You may get another connection refused error, in which case you might have to delete some entries in your ~/.ssh/known_hosts file, since it could be that the host generated has the same address as something in there, so it needs to recognize that it’s a new one. So you should delete the hosts that have the same first 3 parts of the ip address (at least from my experience).</p>
+
+<p>You may get an error that the test job didn’t run correctly. It’s possible that when unpacking the execs and inputs tars from github, something went wrong. I noticed that there were a couple times where akrr unpacked the tars and the files were all there, but they were all blank for some reason. Going into the volume and manually unpacking the tars seems to have fixed the issue. If you find something went wrong with the test job, especially that a function wasn’t being found, it’s likely because the files from the tar are blank. Creating a new instance with the volume and unpacking it manually allows you to make sure the files aren’t blank.</p>
+
+<p>If you are trying to deploy or run akrr on openstack too often, you may get an error like the following:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Traceback <span class="o">(</span>most recent call last<span class="o">)</span>:
+  File <span class="s2">"/home/hoffmaps/projects/akrr/bin/akrr"</span>, line 65, <span class="k">in</span> &lt;module&gt;
+    akrr.cli.CLI<span class="o">()</span>.run<span class="o">()</span>
+  File <span class="s2">"/home/hoffmaps/projects/akrr/akrr/cli/__init__.py"</span>, line 154, <span class="k">in </span>run
+    <span class="k">return </span>cli_args.func<span class="o">(</span>cli_args<span class="o">)</span>
+  File <span class="s2">"/home/hoffmaps/projects/akrr/akrr/cli/commands.py"</span>, line 293, <span class="k">in </span>resource_deploy_handler
+    <span class="k">return </span>resource_deploy<span class="o">(</span>args<span class="o">)</span>
+  File <span class="s2">"/home/hoffmaps/projects/akrr/akrr/cli/resource_deploy.py"</span>, line 779, <span class="k">in </span>resource_deploy
+    openstack_server.create<span class="o">()</span>
+  File <span class="s2">"/home/hoffmaps/projects/akrr/akrr/util/openstack.py"</span>, line 137, <span class="k">in </span>create
+    <span class="k">if </span>self.is_server_running<span class="o">()</span>:
+  File <span class="s2">"/home/hoffmaps/projects/akrr/akrr/util/openstack.py"</span>, line 114, <span class="k">in </span>is_server_running
+    out <span class="o">=</span> json.loads<span class="o">(</span>out.strip<span class="o">())</span>
+  File <span class="s2">"/usr/lib64/python3.6/json/__init__.py"</span>, line 354, <span class="k">in </span>loads
+    <span class="k">return </span>_default_decoder.decode<span class="o">(</span>s<span class="o">)</span>
+  File <span class="s2">"/usr/lib64/python3.6/json/decoder.py"</span>, line 339, <span class="k">in </span>decode
+    obj, end <span class="o">=</span> self.raw_decode<span class="o">(</span>s, <span class="nv">idx</span><span class="o">=</span>_w<span class="o">(</span>s, 0<span class="o">)</span>.end<span class="o">())</span>
+  File <span class="s2">"/usr/lib64/python3.6/json/decoder.py"</span>, line 357, <span class="k">in </span>raw_decode
+    raise JSONDecodeError<span class="o">(</span><span class="s2">"Expecting value"</span>, s, err.value<span class="o">)</span> from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 <span class="o">(</span>char 0<span class="o">)</span>
+</code></pre></div></div>
+<p>What this usually means is that you’re sending too many requests (HTTP 429 error). The way it works is by requesting access with a token, and if you ask for too many tokens in a short period of time, it denies you access. Akrr doesn’t realize this until it tries to get something from the server, which it can’t access since it doesn’t have the token, and so there is no value where it expects it.</p>
+
+<p>The easiest fix to this is just to wait a bit and try again. A potential solution is somehow saving the token somewhere and then re-using it for future runs, but when I was the intern, it didn’t have that capability (at least as far as I was aware).</p>
+
+<p>Note that the above error could occur when trying to validate or run appkernels too, its not just with resource deployment.</p>
+
+<p>After akrr is all set up and the test job runs successfully, you can move on to deploying various appkernels on openstack.</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

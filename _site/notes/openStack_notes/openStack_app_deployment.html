@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h1 id="deploying-various-application-kernels-on-openstack">Deploying various application kernels on OpenStack</h1>
+
+<p>This assumes that you have already set up OpenStack with the Docker volume, as well as set up AKRR with OpenStack.</p>
+
+<p>Most setups are pretty straightforward, since you just start docker, pull the docker image, and run it.</p>
+
+<p>Usually you can just run the Docker image normally, since it should identify how many cpus you have, but there are flags that allow you to specify how many processes mpirun starts.</p>
+
+<p>For each of these you do the regular command to add an appkernel.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$OPENSTACK_RESOURCE</span>
+</code></pre></div></div>
+
+<p>Then you just have to modify the config file that gets created.</p>
+
+<p>Note that I pull from pshoff/akrr_benchmarks (my repo on docker hub) but you need to specify the appropriate Docker repo for you.</p>
+
+<p>I put example config files for the corresponding Appkernels below:</p>
+
+<h3 id="hpcc">HPCC:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:hpcc
+RUN_APPKERNEL="</span>docker run <span class="nt">--rm</span> pshoff/akrr_benchmarks:hpcc<span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="hpcg">HPCG:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:hpcg
+RUN_APPKERNEL="</span>docker run <span class="nt">--rm</span> pshoff/akrr_benchmarks:hpcg<span class="s2">"
+"""</span>
+
+</code></pre></div></div>
+
+<h3 id="namd">NAMD:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:namd
+RUN_APPKERNEL="</span>docker run <span class="nt">--rm</span> pshoff/akrr_benchmarks:namd<span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="nwchem">NWChem:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+sudo systemctl start docker
+docker pull pshoff/akrr_benchmarks:nwchem
+
+# adding the shm-size 
+# the cap-add to not print all the errors that are being given
+RUN_APPKERNEL="</span>docker run <span class="nt">--rm</span> <span class="nt">--shm-size</span> 8g <span class="nt">--cap-add</span><span class="o">=</span>SYS_PTRACE pshoff/akrr_benchmarks:nwchem<span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="gamess">GAMESS:</h3>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+# start docker daemon
+sudo systemctl start docker
+
+# get the updated images (can be skipped if you already have the image on the volume)
+docker pull pshoff/akrr_benchmarks:gamess
+
+# runs the docker image 
+RUN_APPKERNEL="</span>docker run <span class="nt">--rm</span> pshoff/akrr_benchmarks:gamess<span class="s2">"
+"""</span>
+</code></pre></div></div>
+
+<h3 id="ior">IOR:</h3>
+<p>It’s a bit more complicated for IOR since we want to clear caches in between runs, so you set things up slightly differently:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c"># which IO API/formats to check                                                                       </span>
+testPOSIX <span class="o">=</span> True                                                                                      
+testMPIIO <span class="o">=</span> False                                                                                     
+testHDF5 <span class="o">=</span> True                                                                                       
+testNetCDF <span class="o">=</span> True                                                                                     
+                                                                                                      
+<span class="c"># setting false up here so we can just run on one node                                                </span>
+appkernel_requests_two_nodes_for_one <span class="o">=</span> False                                                          
+                                                                                                      
+<span class="c"># will do write test first and after that read, that minimize the caching impact from storage nodes   </span>
+<span class="c"># require large temporary storage easily 100s GiB                                                     </span>
+doAllWritesFirst <span class="o">=</span> True                                                                               
+                                                                                                      
+appkernel_run_env_template <span class="o">=</span> <span class="s2">"""                                                                      
+set -x                                                                                                
+sudo systemctl start docker                                                                           
+                                                                                                      
+export DOCKER_IMAGE=pshoff/akrr_benchmarks:ior_mdtest                                                 
+docker pull </span><span class="nv">$DOCKER_IMAGE</span><span class="s2">                                                                             
+EXE="</span>docker run <span class="nt">-v</span> <span class="nv">$AKRR_TMP_WORKDIR</span>:<span class="nv">$AKRR_TMP_WORKDIR</span> <span class="nt">--rm</span> <span class="nv">$DOCKER_IMAGE</span> <span class="nt">--run-ior</span> <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span><span class="s2">" 
+                                                                                                      
+free -h                                                                                               
+# to get appsig                                                                                       
+docker run --rm </span><span class="nv">$DOCKER_IMAGE</span><span class="s2"> --ior-appsig &gt;&gt; </span><span class="nv">$AKRR_APP_STDOUT_FILE</span><span class="s2"> 2&gt;&amp;1                              
+                                                                                                      
+echo "</span><span class="nb">sync</span><span class="p">;</span> <span class="nb">echo </span>3 <span class="o">&gt;</span> /proc/sys/vm/drop_caches<span class="s2">" &gt; drop_caches.sh                                       
+export SCRIPT_DIR=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span><span class="s2">                                                                               
+
+# set how to run mpirun on all nodes
+for node in </span><span class="nv">$AKRR_NODELIST</span><span class="s2">; do echo </span><span class="nv">$node</span><span class="s2">&gt;&gt;all_nodes; done
+# putting nothing here bc further down we don't want to use it really
+RUNMPI=""
+
+# set how to run mpirun on all nodes with offset, first print all nodes after node 1 and then node 1
+sed -n "</span><span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="o">+</span><span class="m">1</span><span class="k">))</span>,<span class="k">$((</span><span class="nv">$AKRR_CORES</span><span class="k">))</span>p<span class="s2">" all_nodes &gt; all_nodes_offset
+sed -n "</span>1,<span class="k">$((</span><span class="nv">$AKRR_CORES_PER_NODE</span><span class="k">))</span>p<span class="s2">" all_nodes &gt;&gt; all_nodes_offset
+# same for this run
+RUNMPI_OFFSET=""
+"""</span>
+
+
+<span class="c"># new variable so you can clear caches</span>
+runIORTestsWriteReadCyclic <span class="o">=</span> <span class="s2">"""
+for TEST_PARAM in "$"
+do
+    echo "</span><span class="c"># Starting Test: $TEST_PARAM" &gt;&gt; $AKRR_APP_STDOUT_FILE 2&gt;&amp;1</span>
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c">#run the test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+    
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="k">done</span>
+<span class="s2">"""
+
+runIORTestsAllWritesFirst = """</span>
+<span class="c">#do write first</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"$"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c">#run the test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -w -k -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+    
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="c">#do read last</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"$"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c"># run test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI_OFFSET</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -r -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+    
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="s2">"""
+
+
+runIORTestsWriteReadCyclicOneNode = """</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"$"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c">#run the test</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -w -k -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI_OFFSET</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -r -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="s2">"""
+
+runIORTestsAllWritesFirstOneNode = """</span>
+<span class="c">#do write first</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"$"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c">#run the tests</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -w -k -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+
+    <span class="c">#clearing cache</span>
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="c">#do read last</span>
+<span class="k">for </span>TEST_PARAM <span class="k">in</span> <span class="s2">"$"</span>
+<span class="k">do
+    </span><span class="nb">echo</span> <span class="s2">"# Starting Test: </span><span class="nv">$TEST_PARAM</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">fileName</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo </span>ior_test_file_<span class="nv">$TEST_PARAM</span> |tr  <span class="s1">'-'</span> <span class="s1">'_'</span>|tr  <span class="s1">' '</span> <span class="s1">'_'</span>|tr  <span class="s1">'='</span> <span class="s1">'_'</span><span class="sb">`</span>
+
+    <span class="c">#run the tests</span>
+    <span class="nv">command_to_run</span><span class="o">=</span><span class="s2">"</span><span class="nv">$RUNMPI_OFFSET</span><span class="s2"> </span><span class="nv">$EXE</span><span class="s2"> </span><span class="nv">$COMMON_PARAM</span><span class="s2"> </span><span class="nv">$TEST_PARAM</span><span class="s2"> -r -o </span><span class="nv">$AKRR_TMP_WORKDIR</span><span class="s2">/</span><span class="nv">$fileName</span><span class="s2">"</span>
+    
+    <span class="c"># clearing cache</span>
+    <span class="nb">echo</span> <span class="s2">"Before cache clear:"</span>
+    free <span class="nt">-h</span>
+    <span class="nb">sudo </span>bash <span class="nv">$SCRIPT_DIR</span>/drop_caches.sh
+    <span class="nb">echo</span> <span class="s2">"After cache clear:"</span>
+    free <span class="nt">-h</span>
+
+
+    <span class="nb">echo</span> <span class="s2">"executing: </span><span class="nv">$command_to_run</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+    <span class="nv">$command_to_run</span> <span class="o">&gt;&gt;</span> <span class="nv">$AKRR_APP_STDOUT_FILE</span> 2&gt;&amp;1
+<span class="k">done</span>
+<span class="s2">"""
+</span></code></pre></div></div>
+<p>Notice how it’s calling drop_caches.sh (see the ior docker directory scripts for what it might look like)</p>
+
+<h3 id="mdtest">MDTest:</h3>
+<p>Also slightly different since it’s using the ior_mdtest docker</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>appkernel_run_env_template <span class="o">=</span> <span class="s2">"""
+
+export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
+
+# setting up docker
+sudo systemctl start docker
+export DOCKER_IMAGE=pshoff/akrr_benchmarks:ior_mdtest
+docker pull </span><span class="nv">$DOCKER_IMAGE</span><span class="s2">
+# set executable location
+EXE="</span>docker run <span class="nt">--rm</span> <span class="nv">$DOCKER_IMAGE</span> <span class="nt">-ppn</span> <span class="nv">$AKRR_CORES</span> <span class="nt">--run-mdtest</span><span class="s2">"
+
+# to get app signature
+docker run --rm </span><span class="nv">$DOCKER_IMAGE</span><span class="s2">--mdtest-appsig &gt;&gt; </span><span class="nv">$AKRR_APP_STDOUT_FILE</span><span class="s2"> 2&gt;&amp;1
+
+# set how to run app kernel - not using this bc using mpirun inside docker
+RUNMPI=""
+"""</span>
+
+
+</code></pre></div></div>
+
+<p>Then you can do the validation.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$OPENSTACK_RESOURCE</span>
+</code></pre></div></div>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

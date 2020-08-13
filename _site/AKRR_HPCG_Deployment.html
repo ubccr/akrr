@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding HPCG</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding HPCG</h1> 
+        <h1 id="akrr-deployment-of-hpcg-applications-kernels-on-a-resource">AKRR: Deployment of HPCG Applications Kernels on a Resource</h1>
+
+<p>The High Performance Conjugate Gradients (HPCG) benchmark solves 3D elliptic partial differential equation (PDE) using a preconditioned conjugate gradient 
+algorithm with Gauss-Seidel preconditioner to measure the resource performance. Thus the measured performance
+is more relative, in general, to performance of over PDE solvers and methods with sparse matrices than High Performance 
+LINPACK (HPL) benchmark (part of HPCC). This way monitoring performance of HPCG would help to identify the performance
+degradation events affecting PDE solvers.</p>
+
+<p>For simplicity lets define APPKER and RESOURCE environment variables which will contain the HPC 
+resource name:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">RESOURCE</span><span class="o">=</span>&lt;resource_name&gt;
+<span class="nb">export </span><span class="nv">APPKER</span><span class="o">=</span>hpcg
+</code></pre></div></div>
+
+<h1 id="installing-hpcg">Installing HPCG</h1>
+
+<p>Currently, there are two versions of HPCG: 
+the <a href="https://www.hpcg-benchmark.org">original</a> from Sandia National Laboratories
+and <a href="https://software.intel.com/en-us/mkl-linux-developer-guide-intel-optimized-high-performance-conjugate-gradient-benchmark">Intel Optimized HPCG Benchmark</a>.</p>
+
+<p>There are some differences between original and Intel version.</p>
+
+<p>The original version need to be compiled from source code.</p>
+
+<p>The Intel version comes precompiled with MKL library.</p>
+
+<h2 id="locating-intel-hpcg-binary-in-intel-mkl-library">Locating Intel HPCG Binary in Intel MKL Library</h2>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># load mkl enviroment</span>
+module load intel/18.3
+module load intel-mpi/2018.3
+module load mkl/2018.3
+
+<span class="c"># the binaries should be in</span>
+<span class="nb">ls</span> <span class="nv">$MKLROOT</span>/benchmarks/hpcg/bin
+<span class="c"># hpcg.dat  xhpcg_avx  xhpcg_avx2  xhpcg_knl  xhpcg_skx</span>
+<span class="c"># </span>
+
+
+</code></pre></div></div>
+
+<p>choose one which match architecture of your HPC resource
+for example $MKLROOT/benchmarks/hpcg/bin/xhpcg_skx</p>
+
+<h2 id="alternatively-compiling-original-version-of-hpcg-from-source-code">(Alternatively) Compiling Original Version of HPCG from Source Code</h2>
+
+<p>Here is notes on HPCG compilation on HPC resource, see also HPCG benchmark 
+documentation for more details .</p>
+
+<p>** on HPC resource**</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Go to Application Kernel executable directory</span>
+<span class="nb">cd</span> <span class="nv">$AKRR_APPKER_DIR</span>/execs
+<span class="c"># Environment variable $AKRR_APPKER_DIR should be setup automatically during initial</span>
+<span class="c"># deployment to HPC resource</span>
+
+<span class="c"># Load modules</span>
+module load intel/18.3
+module load intel-mpi/2018.3
+ 
+<span class="c">#get the code</span>
+wget https://github.com/hpcg-benchmark/hpcg/archive/HPCG-release-3-0-0.tar.gz
+<span class="nb">tar </span>xvzf HPCG-release-3-0-0.tar.gz
+<span class="nb">cd </span>hpcg-HPCG-release-3-0-0
+
+<span class="c"># in setup directory there are number of Make.&lt;arch&gt; which setup parameters for make</span>
+<span class="c"># chose one which fit your need the best, edit it (note that in CXXFLAGS vector instruction set</span>
+<span class="c"># is specified, ensure that it is correct for you system)</span>
+
+<span class="c"># make building directory (note that in-source compiling have some problem)</span>
+<span class="nb">mkdir </span>build
+<span class="nb">cd </span>build/
+<span class="c"># Run configure script like  ../configure &lt;arch&gt;</span>
+<span class="c"># where &lt;arch&gt; is suffix of Make.&lt;arch&gt; edited earlier </span>
+../configure MPI_ICPC
+make
+<span class="c"># xhpcg binary should be in bin directory</span>
+<span class="c"># it path is $AKRR_APPKER_DIR/execs/hpcg-HPCG-release-3-0-0/build/bin/xhpcg</span>
+</code></pre></div></div>
+
+<h1 id="generate-initiate-configuration-file">Generate Initiate Configuration File</h1>
+
+<p>Generate Initiate Configuration File:</p>
+
+<p><strong>On AKRR server</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$RESOURCE</span>
+</code></pre></div></div>
+<p>Sample output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Generating application kernel configuration for hpcg on ub-hpc-skx
+[INFO] Application kernel configuration for hpcg on ub-hpc-skx is in: 
+        /home/akrruser/akrr/etc/resources/ub-hpc-skx/hpcg.app.conf
+</code></pre></div></div>
+
+<h1 id="edit-configuration-file">Edit Configuration File</h1>
+
+<p>Below is a listing of configuration file located at 
+~/akrr/etc/resources/$RESOURCE/hpcg.app.conf for SLURM:</p>
+
+<p><strong>initial ~/akrr/etc/resources/$RESOURCE/hpcg.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Resource specific HPCG configuration
+"""</span>
+
+<span class="n">appkernel_run_env_template</span> <span class="o">=</span> <span class="s">"""
+# Load application environment
+module load intel
+module load intel-mpi
+module load mkl
+module list
+
+# set executable location
+EXE=$MKLROOT/benchmarks/hpcg/bin/xhpcg_avx
+
+# Set how to run app kernel
+export OMP_NUM_THREADS=1
+RUN_APPKERNEL="mpirun $EXE"
+"""</span>
+</code></pre></div></div>
+
+<p>Update loading environment variables and the way how hpcg is executed. In case of <strong>Intel HPCG</strong> 
+final configuration might look like:</p>
+
+<p><strong>~/akrr/etc/resources/$RESOURCE/hpcg.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Resource specific HPCG configuration
+"""</span>
+
+<span class="n">appkernel_run_env_template</span> <span class="o">=</span> <span class="s">"""
+# Load application environment
+module load intel/18.3
+module load intel-mpi/2018.3
+module load mkl/2018.3
+module list
+
+# set executable location
+EXE=$MKLROOT/benchmarks/hpcg/bin/xhpcg_skx
+
+# Set how to run app kernel
+export OMP_NUM_THREADS=1
+RUN_APPKERNEL="mpirun $EXE"
+"""</span>
+</code></pre></div></div>
+
+<p>In case of <strong>original HPCG</strong> final configuration might look like:
+<strong>~/akrr/etc/resources/$RESOURCE/hpcg.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Resource specific HPCG configuration
+"""</span>
+
+<span class="n">appkernel_run_env_template</span> <span class="o">=</span> <span class="s">"""
+# Load application environment
+module load intel/18.3
+module load intel-mpi/2018.3
+module list
+
+# set executable location
+EXE=$AKRR_APPKER_DIR/execs/hpcg-HPCG-release-3-0-0/build/bin/xhpcg
+
+# Set how to run app kernel
+export OMP_NUM_THREADS=1
+RUN_APPKERNEL="mpirun $EXE"
+"""</span>
+</code></pre></div></div>
+
+<h1 id="generate-batch-job-script-and-execute-it-manually-optional">Generate Batch Job Script and Execute it Manually (Optional)</h1>
+
+<p>The purpose of this step is to ensure that the configuration lead to correct workable batch job 
+script. Here first batch job script is generated with ‘akrr_ctl.sh batch_job’. Then this script is 
+executed in interactive session (this improves the turn-around in case of errors). If script fails 
+to execute, the issues can be fixed first in that script itself and then merged to configuration 
+file.</p>
+
+<p>This step is somewhat optional because it is very similar to next step. However the opportunity to 
+work in interactive session improve turn-around time because there is no need to stay in queue for 
+each iteration.</p>
+
+<p>First generate the script to standard output and examine it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+<p><a href="/AKRR_HPCG_generated_batch_script_sample.html">output example</a></p>
+
+<p>Next generate the script on resource:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+
+<p><strong>Output of “<em>akrr task new –gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER</em>“</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206/proc
+[INFO] Creating batch job script and submitting it to remote machine
+[INFO] Directory vortex:/projects/ccrstaff/general/nikolays/huey_slx/tmp/akrr_data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206 does not exists, will try to create it
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[INFO] There are only 0 previous run, need at least 5 for walltime limit autoset
+[INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206/jobfiles/hpcg.job
+
+[INFO] Application kernel working directory on ub-hpc-skx is /projects/ccrstaff/general/nikolays/huey_slx/tmp/akrr_data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206
+[INFO] Batch job script location on ub-hpc-skx is /projects/ccrstaff/general/nikolays/huey_slx/tmp/akrr_data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206/hpcg.job
+</code></pre></div></div>
+
+<p>The output contains the working directory for this task on remote resource. On remote resource get 
+to that directory and start interactive session (request same number of nodes, in example above the 
+script was generated for 2 nodes).</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># get to working directory </span>
+<span class="c"># (See output from running "akrr task new --gen-batch-job-only -n 2 -r $RESOURCE -a $APPKER")</span>
+<span class="nb">cd</span> /projects/ccrstaff/general/nikolays/huey_slx/tmp/akrr_data/ub-hpc-skx/hpcg/2019.03.29.13.35.43.449206
+<span class="c"># check hpcg.job is there</span>
+<span class="nb">ls</span>
+<span class="c"># start interactive session</span>
+salloc <span class="nt">--nodes</span><span class="o">=</span>2 <span class="nt">--ntasks-per-node</span><span class="o">=</span>32 <span class="nt">--time</span><span class="o">=</span>01:00:00
+<span class="c"># wait till you get access to interactive session</span>
+<span class="c"># run ior application kernel</span>
+bash hpcg.job
+
+<span class="c"># or submit as normal batch script</span>
+sbatch hpcg.job
+
+</code></pre></div></div>
+
+<p>Examine appstdout file, which contains application kernel output (<a href="/AKRR_HPCG_appsout_sample.html">appstdout sample</a>). 
+If it looks ok you can move to the next step</p>
+
+<h1 id="perform-validation-run">Perform Validation Run</h1>
+
+<p>On this step application kernel installation on 
+the resource is validated. It executes the application kernel and analyses its results. If it fails the problems 
+need to be fixed and another round of validation (as detailed above) should be performed.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+</code></pre></div></div>
+
+<p>See <a href="/AKRR_HPCG_appkernel_validation_sample.html">HPCG validation output sample</a></p>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel.</h1>
+
+<p>Now this application kernel can be submitted for regular execution:</p>
+
+<h1 id="perform-a-test-run-on-all-nodes-count">Perform a test run on all nodes count</h1>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Perform a test run on all nodes count</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8
+
+<span class="c">#Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">-t0</span> <span class="s2">"01:00"</span> <span class="nt">-t1</span> <span class="s2">"05:00"</span> <span class="nt">-p</span> 1
+
+<span class="c"># Run on all nodes count 20 times (default number of runs to establish baseline)</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">--n-runs</span> 20
+</code></pre></div></div>
+
+<p>see <a href="/AKRR_Tasks_Scheduling.html">Scheduling and Rescheduling Application Kernels</a> and 
+<a href="/AKRR_Walltimelimit_Setting.html">Setup Walltime Limit</a> for more details.</p>
+
+<p>Up: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Deployment of Application Kernels on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

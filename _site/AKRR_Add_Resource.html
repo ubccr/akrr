@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding New Resource</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding New Resource</h1> 
+        <p>This section describes how to add traditional HPC resource to AKRR. AKRR also support
+execution on systems without queueing system and <a href="AKRR_Add_OpenStack_Resource_and_AppKernels.md.md">OpenStack</a> (limited support at this point).</p>
+
+<h1 id="adding-a-new-hpc-resource">Adding a New HPC Resource</h1>
+
+<p>HPC resource is added in two steps:</p>
+
+<p>1) Configuration of new resource
+2) Deployment of AKRR’s HPC resource-side scripts and application inputs.</p>
+
+<p>The last step also performs installation validation.</p>
+
+<p>From the AKRR point of view, an HPC resource is a distinct and <strong>homogeneous 
+set</strong> of computational nodes. The resource name should reflect such a set. For 
+example,  if cluster “A” in addition to typical general purpose nodes has 
+specialized nodes ( large memory, GPU or MIC accelerated nodes), it will be 
+convenient to treat them as a separate resources and to name them as “A”,  
+“A_largemem”, ”A_GPU” and “A_MIC” for general purpose nodes, for large memory 
+nodes, GPU or MIC accelerated nodes respectively. The name of the resource is 
+separated from access node  (head node), the later is specified in configuration 
+file.</p>
+
+<p>AKRR uses the user-account under which its is running to access HPC resources. 
+For the access, it will use ssh and scp commands.</p>
+
+<h1 id="required-information-about-resource">Required Information about Resource</h1>
+
+<ul>
+  <li>Access credential to head node from machine where AKRR daemon is running 
+(username and password or username, private key location on file system and 
+pass-phrase)</li>
+  <li>Queuing system type (SLURM, PBS)</li>
+  <li>Batch job script header with resource request specifications</li>
+  <li>HPC resource specification
+    <ul>
+      <li>processes per node count</li>
+    </ul>
+  </li>
+  <li>HPC resource file-system layout
+    <ul>
+      <li>local scratch location</li>
+      <li>network scratch location</li>
+      <li>future location for application kernel input and auxiliary files (should 
+be in persistent location (i.e. not scratch))</li>
+      <li>future location for application kernel run-time files (can be on 
+scratch)</li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="prerequerements">Prerequerements</h1>
+
+<h2 id="setting-hpc-resource-default-shell-to-bash">Setting HPC Resource Default Shell to BASH</h2>
+
+<p>AKRR accesses and uses HPC resource as a regular user and as a regular user it 
+has its’ preference to shell flavor. It is intended to be used with bash. Consult your system 
+user guide or consultants on how to do that, please note that in the majority of 
+large HPC sites the UNIX <em>chsh</em> command is not the preferred way.</p>
+
+<h1 id="adding-new-resource">Adding New Resource</h1>
+
+<p>To add new resource run AKRR CLI with <em>resource add</em> options:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr resource add
+</code></pre></div></div>
+
+<p>This script will:</p>
+
+<ul>
+  <li>ask to choose a resource from OpenXDMoD resources list</li>
+  <li>prompt for AKRR resource name</li>
+  <li>ask for a queuing system</li>
+  <li>ask for resource access credential</li>
+  <li>ask for locations of AKRR working directories on resource</li>
+  <li>finally it initiate resource configuration file and populate most of the 
+parameters in it </li>
+</ul>
+
+<p>If the resource is not present in OpenXDMoD resources list enter 0 when prompt 
+for resoure id. When prompt for resource name enter human friendly name as 
+discussed earlier, for example <em>fatboy_gpu, the name can be different from 
+XDMoD name.</em></p>
+
+<blockquote>
+  <p><strong>Tips and Tricks</strong></p>
+
+  <p>If resource headnode do not reply on pinging use <strong>–no-ping</strong> argument do disable that check.</p>
+
+  <p>If your system is fairly non-standard (for example non-default port for ssh, 
+usage of globus-ssh for access and similar) you can use <strong>–minimalistic</strong> argument.
+This option sets a minimalistic interactive session and the generated 
+configuration file must be manually edited.</p>
+</blockquote>
+
+<p>Below is sample output:</p>
+
+<p><strong>‘akrr resource add’ Sample Output</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Beginning Initiation of New Resource...
+[INFO] Retrieving Resources from XDMoD Database...
+[INFO] Found following resources from XDMoD Database:
+    resource_id  name
+              1  ub-hpc                                  
+
+[INPUT]: Enter resource_id for import (enter 0 for no match):
+1
+
+[INPUT]: Enter AKRR resource name, hit enter to use same name as in XDMoD Database [ub-hpc]:
+
+
+[INPUT]: Enter queuing system on resource (slurm or pbs): 
+slurm
+
+[INPUT]: Enter Resource head node (access node) full name (e.g. headnode.somewhere.org):
+[ub-hpc] huey
+[INPUT]: Enter username for resource access:
+[akrruser] nikolays
+[INFO] Can not access resource without password
+
+[INFO] Select authentication method:
+  0  The private and public keys was generated manually, right now. Try again.
+  1  Generate new private and public key.
+  2  Use password directly.
+[INPUT]: Select option from list above:
+[1] 
+
+[INPUT]: Enter password for nikolays@vortex (will be used only during this session):
+
+[INPUT]: Enter private key name:
+[id_rsa_ub-hpc]
+[INPUT]: Enter passphrase for new key (leave empty for passwordless access):
+
+Generating public/private rsa key pair.
+Your identification has been saved in /root/.ssh/id_rsa_ub-hpc.
+Your public key has been saved in /home/akrruser/.ssh/id_rsa_ub-hpc.pub.
+The key fingerprint is:
+SHA256:imFr7yAbg56+ebMHDKkfjSSSBzA4MasEGMV3H+DaTHQ nikolays@huey
+The key's randomart image is:
++---[RSA 2048]----+
+|o  o= o.E        |
+|*  +-....        |
+|+= o .o. .       |
+|o.   =  .        |
+|*o.   o S        |
+|o+.+ + .         |
+|.o+.= .          |
+|oO.o.o           |
+|Bo .+o+.         |
++----[SHA256]-----+
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/akrruser/.ssh/id_rsa_ub-hpc.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+UPDATED: March 6, 2015
+
+You are accessing a University at Buffalo (UB) - Center for Computational Research (CCR)
+computer system that is provided for CCR-authorized users only.
+
+Password: 
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   "ssh 'nikolays@huey'"
+and check to make sure that only the key(s) you wanted were added.
+
+[INFO] Checking for password-less access
+[INFO] Can access resource without password
+
+[INFO] Connecting to ub-hpc
+[INFO]               Done
+
+[INPUT]: Enter processors (cores) per node count:
+8 
+[INPUT]: Enter location of local scratch (visible only to single node):
+[/tmp]
+[INFO] Directory exist and accessible for read/write
+
+[INPUT]: Enter location of network scratch (visible only to all nodes),used for temporary storage of app kernel input/output:
+/user/nikolays/tmp
+[INFO] Directory exist and accessible for read/write
+
+[INPUT]: Enter future location of app kernels input and executable files:
+[/user/nikolays/appker/ub-hpc]
+[INFO] Directory huey:/user/nikolays/appker/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+
+[INPUT]: Enter future locations for app kernels working directories (can or even should be on scratch space):
+[/user/nikolays/tmp/akrr_data/ub-hpc]
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Initiating ub-hpc at AKRR
+[INFO] Resource configuration is in /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
+[INFO] Initiation of new resource is completed.
+    Edit batch_job_header_template variable in /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
+    and move to resource validation and deployment step.
+    i.e. execute:
+        akrr resource deploy -r ub-hpc
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Tips and Tricks</strong></p>
+
+  <p><strong>Reducing number of ssh connection</strong>:
+AKRR would generate a large number of ssh connections. If you don’t want to 
+stress you headnode in this manner you can set ssh to reuse the connections. Add 
+following to ~/.ssh/config :</p>
+
+  <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Host &lt;your heanode name&gt;  
+&lt;TAB&gt;ControlMaster auto  
+&lt;TAB&gt;ControlPath ~/.ssh/sockets/%l-%r@%h-%p  
+&lt;TAB&gt;ControlPersist 3600
+</code></pre></div>  </div>
+
+  <p>Replace &lt;TAB&gt; with tab symbol. See ssh documentation for more details</p>
+
+</blockquote>
+
+<h2 id="edit-resource-configuration-file">Edit Resource Configuration File</h2>
+
+<p>Edit resource parameter file $HOME/akrr/etc/resources/&lt;RESOURCE&gt;/resource.conf 
+. In most cases the only parameter which should be 
+adjusted is <em>batch_job_header_template</em> at the end of the file.</p>
+
+<p>Below is example of the resource configuration file:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Resource parameters
+</span>
+<span class="c1"># Processors (cores) per node
+</span><span class="n">ppn</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="c1"># head node for remote access
+</span><span class="n">remote_access_node</span> <span class="o">=</span> <span class="s">"huey"</span>
+<span class="c1"># Remote access method to the resource (default ssh)
+</span><span class="n">remote_access_method</span> <span class="o">=</span> <span class="s">"ssh"</span>
+<span class="c1"># Remote copy method to the resource (default scp)
+</span><span class="n">remote_copy_method</span> <span class="o">=</span> <span class="s">"scp"</span>
+
+<span class="c1"># Access authentication
+</span><span class="n">ssh_username</span> <span class="o">=</span> <span class="s">"nikolays"</span>
+<span class="n">ssh_password</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">ssh_private_key_file</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="n">ssh_private_key_password</span> <span class="o">=</span> <span class="bp">None</span>
+
+<span class="c1"># Scratch visible across all nodes (absolute path or/and shell environment variable)
+</span><span class="n">network_scratch</span> <span class="o">=</span> <span class="s">"/user/nikolays/tmp"</span>
+<span class="c1"># Local scratch only locally visible (absolute path or/and shell environment variable)
+</span><span class="n">local_scratch</span> <span class="o">=</span> <span class="s">"/tmp"</span>
+<span class="c1"># Locations for app. kernels working directories (can or even should be on scratch space)
+</span><span class="n">akrr_data</span> <span class="o">=</span> <span class="s">"/user/nikolays/tmp/akrr_data/ub-hpc"</span>
+<span class="c1"># Location of executables and input for app. kernels
+</span><span class="n">appkernel_dir</span> <span class="o">=</span> <span class="s">"/user/nikolays/appker/ub-hpc"</span>
+
+<span class="c1"># batch options
+</span><span class="n">batch_scheduler</span> <span class="o">=</span> <span class="s">"slurm"</span>
+
+<span class="c1"># job script header
+</span><span class="n">batch_job_header_template</span> <span class="o">=</span> <span class="s">"""#!/bin/bash
+#SBATCH --partition=normal
+#SBATCH --qos=normal
+#SBATCH --nodes={akrr_num_of_nodes}
+#SBATCH --ntasks-per-node={akrr_ppn}
+#SBATCH --time={akrr_walltime_limit}
+#SBATCH --output={akrr_task_work_dir}/stdout
+#SBATCH --error={akrr_task_work_dir}/stderr
+#SBATCH --exclusive
+"""</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Configuration File Format</strong></p>
+
+  <p>All AKRR configuration files utilize python syntax. Below is a short example on the syntax:</p>
+
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># pound sign for comments
+</span>
+<span class="c1"># value assignment to variable
+</span><span class="n">db_host</span> <span class="o">=</span> <span class="s">"127.0.0.1"</span>
+<span class="n">export_db_host</span> <span class="o">=</span> <span class="n">db_host</span>
+
+<span class="c1"># triple quotes for long multi-line strings
+</span><span class="n">batch_job_header_template</span> <span class="o">=</span> <span class="s">"""#!/bin/bash
+#SBATCH --partition=normal
+#SBATCH --nodes={akrr_num_of_nodes}
+#SBATCH --ntasks-per-node={akrr_ppn}
+#SBATCH --time={akrr_walltime_limit}
+#SBATCH --output={akrr_task_work_dir}/stdout
+#SBATCH --error={akrr_task_work_dir}/stderr
+#SBATCH --exclusive
+"""</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<p>Batch job script files which is submited to HPC resource for execution is 
+generated using the template. Variables 
+in curly brackets are replaced by their values.</p>
+
+<p>For example line “#SBATCH –nodes={akrrNNodes}” listed above in 
+batchJobHeaderTemplate template variable</p>
+
+<p>will become “#SBATCH –nodes=2” in batch job script if application kernel should 
+run on two nodes.</p>
+
+<p>In order to enter curly brackets itself they should be enter as double curly 
+brackets (i.e. $ in template will be ${ENV_VAR} in resulting script).</p>
+
+<p>The commented parameters will assume default values. Below is the description of 
+the parameters and their default values:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Optional</th>
+      <th>Description</th>
+      <th>Default Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ppn</td>
+      <td>N</td>
+      <td>Processors (cores) per node</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>remote_access_node</td>
+      <td>N</td>
+      <td>head node name for remote access</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>remote_access_method</td>
+      <td>Y</td>
+      <td>Remote access method to the resource. Default is ssh, gsissh can be used.Here command line options to ssh can be specified as well (e.g. “ssh -p 23”)</td>
+      <td>‘ssh’</td>
+    </tr>
+    <tr>
+      <td>remote_copy_method</td>
+      <td>Y</td>
+      <td>Remote copy method to the resource. Default is scp, gsiscp can be used.Here command line options to ssh can be specified as well.</td>
+      <td>‘scp’</td>
+    </tr>
+    <tr>
+      <td><strong>Access authentication</strong></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>ssh_username</td>
+      <td>N</td>
+      <td>username for remote access</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>ssh_password</td>
+      <td>Y</td>
+      <td>password</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>ssh_private_key_file</td>
+      <td>Y</td>
+      <td>location of private key, full name must be used</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>ssh_private_key_password</td>
+      <td>Y</td>
+      <td>private key pass-phrase</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td><strong>File-system locations on HPC resource</strong></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>network_scratch</td>
+      <td>N</td>
+      <td>Scratch visible across all computational nodes(absolute path or/and shell environment variable)</td>
+      <td>‘$SCRATCH’</td>
+    </tr>
+    <tr>
+      <td>local_scratch</td>
+      <td>N</td>
+      <td>Local scratch only visible locally to a computational node(absolute path or/and shell environment variable)</td>
+      <td>‘/tmp’</td>
+    </tr>
+    <tr>
+      <td>akrr_data</td>
+      <td>N</td>
+      <td>Top directory for app. kernels working directories. The last has a lifespan of taskexecution and can or even should be on scratch space. This directory will beautomatically created if needed.</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>appkernel_dir</td>
+      <td>N</td>
+      <td>Location of executables and input for app. kernels. The content of this directorywill be filled during next step (validation and deployment)</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td><strong>Batch job script settings</strong></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>batch_scheduler</td>
+      <td>N</td>
+      <td>Scheduler type: slurm or pbs. sge might work as well but was not tested</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>batch_job_header_template</td>
+      <td>N</td>
+      <td>Header for batch job script. Describe the resources requests and set AKRR_NODELIST environment variable containing list of all nodes.See below for more detailed information.</td>
+      <td>Must be set</td>
+    </tr>
+    <tr>
+      <td>max_number_of_active_tasks</td>
+      <td>Y</td>
+      <td>Maximal number of active tasks, default is -1, that is no limits</td>
+      <td>-1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>_batch_job_header_template _is a template used in the generation of batch job 
+scripts. It specifies the resources (e.g. number of nodes) and other parameters 
+used by scheduler.</p>
+
+<p>The following are instructions on how to convert batch job script header to <em>batch_job_header_template</em>.</p>
+
+<!---
+For more details see [Batch Job Script Generation](/AKRR_Batch_Job_Script_Generation.html). 
+--->
+
+<p>Below is a batch script which execute NAMD application on resorch which use Slurm:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="c">#SBATCH --partition=general-compute </span>
+<span class="c">#SBATCH --qos=general-compute</span>
+<span class="c">#SBATCH --nodes=2</span>
+<span class="c">#SBATCH --ntasks-per-node=8</span>
+<span class="c">#SBATCH --time=01:00:00</span>
+<span class="c">#SBATCH --output=output.stdout</span>
+<span class="c">#SBATCH --error=output.stderr</span>
+<span class="c">#SBATCH --constraint="CPU-L5520"</span>
+<span class="c">#SBATCH --exclusive</span>
+
+module load namd
+
+srun <span class="nv">$NAMDHOME</span>/namd2 ./input.namd <span class="o">&gt;</span>&amp; output.log 
+</code></pre></div></div>
+
+<p>We need to cut the top part of it, use it to replace the top section in the 
+_batch_job_header_template _variable, and replace the requested resources with 
+suitable template variables:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">batch_job_header_template</span> <span class="o">=</span> <span class="s">"""#!/bin/bash
+#SBATCH --partition=general-compute 
+#SBATCH --qos=general-compute
+#SBATCH --nodes={akrr_num_of_nodes}
+#SBATCH --ntasks-per-node={akrr_ppn}
+#SBATCH --time={akrr_walltime_limit}
+#SBATCH --output={akrr_task_work_dir}/stdout
+#SBATCH --error={akrr_task_work_dir}/stderr
+#SBATCH --constraint="CPU-L5520"
+#SBATCH --exclusive
+"""</span>
+</code></pre></div></div>
+
+<p>Number of nodes became <em>{akrr_num_of_nodes}</em>, processors per node became 
+<em>{akrr_ppn}</em>, walltime becomes <em>{akrr_walltime_limit} and standard output and error 
+became _{akrr_task_work_dir}/stdout</em> and <em>{akrr_task_work_dir}/stderr</em> respectively. 
+These template variables 
+will be substituted by the desired values during generation of batch job script 
+for a particular task. The name of the files to where the standard output and 
+error are redirected <strong>always</strong> should be stdout and stderr respectively.</p>
+
+<p>Some template variable often used in batchJobHeaderTemplate is shown in table 
+below:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Variable Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{akrr_num_of_nodes}</td>
+      <td>Number of requested nodes</td>
+    </tr>
+    <tr>
+      <td>{akrr_ppn}</td>
+      <td>Processors per node count, that means a total count of cores on a single node</td>
+    </tr>
+    <tr>
+      <td>{akrr_num_of_cores}</td>
+      <td>Number of requested cores</td>
+    </tr>
+    <tr>
+      <td>{akrr_walltime_limit}</td>
+      <td>Requested walltime, this field will be properly formatted</td>
+    </tr>
+    <tr>
+      <td>{akrr_task_work_dir}</td>
+      <td>Location of working directory where the application kernel will be executed.</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>It is often used to redirect standard error and output to proper location, e.g.:</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>#SBATCH –output={akrr_task_work_dir}/stdout</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>#SBATCH –error={akrr_task_work_dir}/stderr</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>Although such explicit definition of standard error and output redirected files are rarely used.</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>Some batch systems have been known to default to placing such output files in the user $HOME directory rather than the job submission directory.</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>So use full name to be on a safe side</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="visual-inspection-of-generated-batch-job-script">Visual Inspection of Generated Batch Job Script</h2>
+
+<p>Now, we can generate test application kernel batch job script and visually 
+inspect it for mistake presence. Run:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> <span class="nb">test</span> <span class="nt">-n</span> 2
+</code></pre></div></div>
+
+<p>This command will generate batch job script and output it to standard output. 
+Below is example of the output</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DryRun: Should submit following to REST API (POST to scheduled_tasks) {'repeat_in': None, 'resource_param': "{'nnodes':2}", 'time_to_start': None, 'app': 'test', 'resource': 'ub-hpc'}
+[INFO] Directory /home/akrruser/akrr/log/data/ub-hpc does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/data/ub-hpc/test does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc/test does not exist, creating it.
+[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/test/2019.03.13.17.28.28.816451/proc
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[WARNING] There are only %d previous run, need at least 5 for walltime limit autoset
+[INFO] Below is content of generated batch job script:
+#!/bin/bash
+#SBATCH --partition=general-compute 
+#SBATCH --qos=general-compute
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:02:00
+#SBATCH --output=/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451/stdout
+#SBATCH --error=/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451/stderr
+#SBATCH --constraint="CPU-L5520"
+#SBATCH --exclusive
+
+
+#Common commands
+export AKRR_NODES=2
+export AKRR_CORES=16
+export AKRR_CORES_PER_NODE=8
+export AKRR_NETWORK_SCRATCH="/user/nikolays/tmp"
+export AKRR_LOCAL_SCRATCH="/tmp"
+export AKRR_TASK_WORKDIR="/user/nikolays/tmp/akrr_data/ub-hpc/test/2019.03.13.17.28.28.816451"
+export AKRR_APPKER_DIR="/user/nikolays/appker/ub-hpc"
+export AKRR_AKRR_DIR="/user/nikolays/tmp/akrr_data/ub-hpc"
+
+export AKRR_APPKER_NAME="test"
+export AKRR_RESOURCE_NAME="ub-hpc"
+export AKRR_TIMESTAMP="2019.03.13.17.28.28.816451"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/user/nikolays/appker/ub-hpc/inputs"
+export AKRR_APPKERNEL_EXECUTABLE="/user/nikolays/appker/ub-hpc/execs"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrr_perform_common_tests
+
+#Write some info to gen.info, JSON-Like file
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
+
+
+
+#normally in run_script_pre_run
+#create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d /user/nikolays/tmp/test.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+#Generate AppKer signature
+appsigcheck.sh `which md5sum` &gt; $AKRR_APP_STDOUT_FILE
+
+echo "Checking that the shell is BASH"
+echo $BASH 
+
+
+#normally in run_script_post_run
+#clean-up
+cd $AKRR_TASK_WORKDIR
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+
+
+akrr_write_to_gen_info "end_time" "`date`"
+
+[INFO] Removing generated files from file-system as only batch job script printing was requested
+</code></pre></div></div>
+
+<p><em>Test</em> application kernel is specialized application kernel which inspects the 
+resource deployment. Here mainly inspect the very top of the generated script 
+and check is the resources request is generated properly. Modify 
+<em>batch_job_header_template</em> in configuration file if needed.</p>
+
+<h1 id="resource-parameters-validation-and-application-kernel-input-parameters-deployment">Resource Parameters Validation and Application Kernel Input Parameters Deployment</h1>
+
+<p>The following command will validate resource parameters and deploy application 
+kernel input parameters</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr resource deploy <span class="nt">-r</span> &lt;resource_name&gt;
+</code></pre></div></div>
+
+<p>This script will perform following operations:</p>
+
+<ul>
+  <li>Check configuration file syntax, parameters type and presence of non 
+optional parameters</li>
+  <li>Test the connectivity to the head-node</li>
+  <li>Deploy application kernel input parameters and application signature 
+calculator</li>
+  <li>Run a test job on the resource</li>
+</ul>
+
+<p>The script will exit in case of failure. The error must be addressed and script 
+must be rerun until successful execution. Below is example of successful 
+execution:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Validating ub-hpc parameters from /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
+[INFO] Syntax of /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf is correct and all necessary parameters are present.
+
+[INFO] Validating resource accessibility. Connecting to ub-hpc.
+[INFO] Successfully connected to ub-hpc
+
+
+[INFO] Checking if shell is BASH
+
+[INFO] Shell is BASH
+
+[INFO] Checking directory locations
+
+[INFO] Checking: huey:/user/nikolays/tmp/akrr_data/ub-hpc
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/user/nikolays/appker/ub-hpc
+[INFO] Directory huey:/user/nikolays/appker/ub-hpc does not exists, will try to create it
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/user/nikolays/tmp
+[INFO] Directory exist and accessible for read/write
+[INFO] Checking: huey:/tmp
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Preparing to copy application signature calculator,
+    app. kernel input files and 
+    HPCC, IMB, IOR and Graph500 source code to remote resource
+
+[INFO] Copying app. kernel input tarball to /user/nikolays/appker/ub-hpc
+UPDATED: March 6, 2015
+
+inputs.tar.gz                                 100% 5715KB  40.7MB/s   00:00    
+[INFO] Unpacking app. kernel input files to /user/nikolays/appker/ub-hpc/inputs
+[INFO] App. kernel input files are in /user/nikolays/appker/ub-hpc/inputs
+
+[INFO] Copying app. kernel execs tarball to /user/nikolays/appker/ub-hpc
+It contains HPCC,IMB,IOR and Graph500 source code and app.signature calculator
+UPDATED: March 6, 2015
+
+execs.tar.gz                                  100% 4362   684.0KB/s   00:00    
+[INFO] Unpacking HPCC,IMB,IOR and Graph500 source code and app.signature calculator files to /user/nikolays/appker/ub-hpc/execs
+[INFO] HPCC,IMB,IOR and Graph500 source code and app.signature calculator are in /user/nikolays/appker/ub-hpc/execs
+
+[INFO] Testing app.signature calculator on headnode
+
+[INFO] App.signature calculator is working on headnode
+
+[INFO] Will send test job to queue, wait till it executed and will analyze the output
+[INFO] 
+Submitted test job to AKRR, task_id is 3144529
+
+
+
+Test status:
+Task is in scheduled_tasks queue.
+It schedule to be started on2019-03-20T15:21:22
+
+time: 2019-03-20 15:21:22 
+
+Test status:
+Task is in active_tasks queue.
+Status: None
+Status info:
+None
+
+time: 2019-03-20 15:21:32 
+
+Test status:
+Task is in active_tasks queue.
+Status: Created batch job script and have submitted it to remote queue.
+Status info:
+Remote job ID is 10833
+
+time: 2019-03-20 15:21:39 
+
+Test status:
+Task is in active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+time: 2019-03-20 15:21:46 
+
+Test status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+time: 2019-03-20 15:21:51
+
+[INFO] Test job is completed analyzing output
+
+[INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory for this task: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006
+Location of some important generated files:
+        Batch job script: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/test.job
+        Application kernel output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/appstdout
+        Batch job standard output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/stdout
+        Batch job standard error output: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/jobfiles/stderr
+        XML processing results: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/result.xml
+        Task execution logs: /home/akrruser/akrr/log/comptasks/ub-hpc/test/2019.03.20.15.21.23.207006/proc/log
+
+[INFO] 
+The output looks good.
+
+[INFO] 
+Adding AKRR enviroment variables to resource's .bashrc!
+
+[INFO] Enabled ub-hpc in mod_appkernel.resource for tasks execution and made it visible to XDMoD UI.
+[INFO] Successfully enabled ub-hpc
+
+[INFO] Result:
+[INFO] 
+DONE, you can move to next step!
+</code></pre></div></div>
+
+<p>Now AKRR can submit jobs to that resource</p>
+
+<p>Next: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">AKRR: Deployment of Application Kernel on Resource</a></p>
+
+<h1 id="troubleshooting">Troubleshooting</h1>
+
+<h2 id="incorrect-akrr_nodelist-environment-variable">Incorrect $AKRR_NODELIST Environment variable</h2>
+
+<p>If you got following error messages:</p>
+
+<ul>
+  <li>“Nodes are not detected, check batch_job_header_template and setup of AKRR_NODELIST 
+variable”</li>
+  <li>“Can not ping compute nodes from head node”</li>
+  <li>“Number of requested processes (processes per node * nodes) do not match actual 
+processes executed”</li>
+</ul>
+
+<p>Then there is a high chances that AKRR_NODELIST was not set properly from 
+default templates.</p>
+
+<p>AKRR_NODELIST is a list of nodes per each MPI process, i.e. same node name is 
+repeated multiple times. For example for 2 node run on 4 cores per node machine 
+it looks like “node3 node3 node3 node3 node7node7node7node7”.</p>
+
+<p>By default AKRR uses templates specific to queuing system (defined in 
+$AKRR_HOME/src/default.resource.inp.py):</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Node list setter
+</span><span class="n">node_list_setter</span><span class="o">=</span><span class="p">{</span>
+    <span class="s">'pbs'</span><span class="p">:</span><span class="s">"""export AKRR_NODELIST=\`cat $PBS_NODEFILE\`"""</span><span class="p">,</span>
+    <span class="s">'slurm'</span><span class="p">:</span><span class="s">"""export AKRR_NODELIST=\`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '' \`"""</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>To modify the behavior node_list_setter_template can be define in specific resource 
+configuration file ($AKRR_HOME/cfg/resources/$RESOURCE/resource.inp.py):</p>
+
+<p><strong>portion of $AKRR_HOME/cfg/resources/$RESOURCE/resource.inp.py</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Node list setter
+</span><span class="n">node_list_setter_template</span><span class="o">=</span><span class="s">"""export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '' `"""</span>
+</code></pre></div></div>
+
+<p>For SLURM alternative to srun can be:</p>
+
+<p><strong>portion of $AKRR_HOME/cfg/resources/$RESOURCE/resource.inp.py</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Node list setter
+</span><span class="n">node_list_setter_template</span><span class="o">=</span><span class="s">"""_TASKS_PER_NODE=`echo $SLURM_TASKS_PER_NODE|sed "s/(x[0-9]*)//g"`
+export AKRR_NODELIST=`scontrol show hostname $SLURM_NODELIST| awk ""
+"""</span>
+</code></pre></div></div>
+
+<h1 id="advanced-debugging">Advanced Debugging</h1>
+
+<p>Although resource_validation_and_deployment.py detects many problems with 
+resource deployments, sometimes its output can be cryptic. The following 
+strategy can be employed to find the problem.</p>
+
+<ol>
+  <li>Generate batch job script</li>
+  <li>Run it on resource</li>
+  <li>Analyze output</li>
+  <li>Fix the issues in batch job script</li>
+  <li>Go to 2 until executed successfully</li>
+  <li>merge changes in batch job script to respective template in configuration 
+file</li>
+</ol>
+
+<p>Batch job script can be generated by running following command:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-r</span> &lt;resource_name&gt; <span class="nt">-a</span> <span class="nb">test</span> <span class="nt">-n</span> 2
+</code></pre></div></div>
+
+<p>This command generate batch job script and copy it to proper location on remote 
+resource. This location will be showed in output:</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO]: Local copy of batch job script is 
+/home/mikola/wsp/test/akrr/data/rush/test/2014.12.11.08.58.57.412410/jobfiles/
+test.job
+
+[INFO]: Application kernel working directory on rush is 
+/panasas/scratch/nikolays/akrrdata/rush/test/2014.12.11.08.58.57.412410
+[INFO]: Batch job script location on rush is 
+/panasas/scratch/nikolays/akrrdata/rush/test/2014.12.11.08.58.57.412410/test.job
+</code></pre></div></div>
+
+<p>Now log into resource, go to the task working directory and manually submit to 
+queue, check the output and determine the problem.</p>
+
+<p>Next: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">AKRR: Deployment of Application Kernel on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

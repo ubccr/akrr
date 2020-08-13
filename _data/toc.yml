@@ -1,0 +1,57 @@
+toc:
+  - title: About
+    subfolderitems:
+      - page: Overview
+        url: /
+  - title: Download
+    subfolderitems:
+      - page: Download
+        url: /AKRR_Download.html
+  - title: Install
+    subfolderitems:
+      - page: Install
+        url: /AKRR_Install.html
+      - page: Update
+        url: /AKRR_Update.html
+  - title: Using
+    subfolderitems:
+      - page: Using
+        url: /AKRR_Usage.html
+      - page: Adding New Resource
+        url: /AKRR_Add_Resource.html
+      - page: Adding Appkernel to Resource
+        url: /AKRR_Deployment_of_Application_Kernel_on_Resource.html
+      - page: Adding NAMD
+        url: /AKRR_NAMD_Deployment.html
+      - page: Adding HPCC
+        url: /AKRR_HPCC_Deployment.html
+      - page: Adding HPCG
+        url: /AKRR_HPCG_Deployment.html
+      - page: Adding IMB
+        url: /AKRR_IMB_Deployment.html
+      - page: Adding IOR
+        url: /AKRR_IOR_Deployment.html
+      - page: Adding MDTest
+        url: /AKRR_MDTest_Deployment.html
+      - page: Adding NWChem
+        url: /AKRR_NWChem_Deployment.html
+      - page: Adding GAMESS
+        url: /AKRR_GAMESS_Deployment.html
+      - page: Adding ENZO
+        url: /AKRR_ENZO_Deployment.html
+#      - page: New Application Kernel
+#        url: /AKRR_Creating_New_Application_Kernel.html
+      - page: Scheduling Appkernels
+        url: /AKRR_Tasks_Scheduling.html
+      - page: Setting AK Walltime
+        url: /AKRR_Walltimelimit_Setting.html
+  - title: Details
+    subfolderitems:
+      - page: How It Works
+        url: /AKRR_HowItWorks.html
+      - page: Batch Job Script Generation
+        url: /AKRR_Batch_Job_Script_Generation.html
+  - title: Next
+    subfolderitems:
+      - page: xdmod-appkernels
+        url: https://appkernels.xdmod.org/

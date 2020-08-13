@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) </title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1></h1> 
+        <h2 id="setting-up-docker-on-openstack-volume">Setting up Docker on OpenStack volume</h2>
+
+<p>(You should be able to do this without the command line interface using the command line on the web interface but I found it easier to do it with the cli)</p>
+
+<p>First create the volume you want to have Docker on (I called it testing_volume)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack volume create <span class="nt">--image</span> centos7-ccr-20181127-1 <span class="nt">--size</span> 20 <span class="nt">--description</span> <span class="s2">"test volume"</span> testing_volume
+</code></pre></div></div>
+<p>Spin up an instance that uses the volume:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> c8.m16 <span class="nt">--volume</span> testing_volume <span class="nt">--network</span> lakeeffect-199.109.195 <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="nt">--key-name</span> openstack-testing temp_docker_test
+</code></pre></div></div>
+
+<p>Then log into the instance:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-i</span> openstack-testing.key centos@199.109.192.21
+</code></pre></div></div>
+
+<p>Once you’re in the instance, you can install docker. Following the instructions here: https://docs.docker.com/install/linux/docker-ce/centos/</p>
+
+<p>(Note: this is for installing docker on centos, things may be slightly different if you use other operating systems)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>yum <span class="nb">install</span> <span class="nt">-y</span> yum-utils <span class="se">\</span>
+  device-mapper-persistent-data <span class="se">\</span>
+  lvm2
+
+<span class="nb">sudo </span>yum-config-manager <span class="se">\</span>
+    <span class="nt">--add-repo</span> <span class="se">\</span>
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+<span class="nb">sudo </span>yum <span class="nb">install </span>docker-ce docker-ce-cli containerd.io
+<span class="c"># say yes to installing everything</span>
+
+<span class="c"># testing to see if it starts up properly</span>
+<span class="nb">sudo </span>systemctl start docker
+<span class="c"># no errors is good</span>
+
+<span class="c"># we want to make it so anyone can use docker (specifically the centos user)</span>
+
+<span class="c"># stop docker daemon</span>
+<span class="nb">sudo </span>systemctl stop docker
+
+<span class="nb">sudo </span>groupadd docker
+<span class="nb">sudo </span>usermod <span class="nt">-aG</span> docker <span class="nv">$USER</span>
+<span class="c"># so the centos user should be fine now to use docker normally</span>
+<span class="c"># you do need to log out and log back in for the change to take effect</span>
+</code></pre></div></div>
+<p>So now that that is set up, stop and delete the instance (either web interface or server delete command).</p>
+
+<p>Then start one up again and run docker commands:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>openstack server create <span class="nt">--flavor</span> c8.m16 <span class="nt">--volume</span> testing_volume <span class="nt">--network</span> lakeeffect-199.109.195 <span class="nt">--security-group</span> default <span class="nt">--security-group</span> SSH <span class="nt">--key-name</span> openstack-testing test_docker
+
+<span class="c"># ssh into the server</span>
+ssh <span class="nt">-i</span> openstack-testing.key centos@199.109.192.28 
+<span class="c"># (note ip address might be different)</span>
+
+<span class="c"># then we just start the daemon and run the docker test image</span>
+<span class="nb">sudo </span>systemctl start docker
+docker run hello-world
+
+</code></pre></div></div>
+<p>Sample output:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>centos@test-docker ~]<span class="nv">$ </span>docker run hello-world
+Unable to find image <span class="s1">'hello-world:latest'</span> locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull <span class="nb">complete 
+</span>Digest: sha256:6540fc08ee6e6b7b63468dc3317e3303aae178cb8a45ed3123180328bcc1d20f
+Status: Downloaded newer image <span class="k">for </span>hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the <span class="s2">"hello-world"</span> image from the Docker Hub.
+    <span class="o">(</span>amd64<span class="o">)</span>
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ <span class="nv">$ </span>docker run <span class="nt">-it</span> ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+</code></pre></div></div>
+<p>If this completes without error, you should be fine using docker normally with that volume on OpenStack! You can do all the regular docker pull, docker push, etc commands.
+Just remember every time you start up the instance you have to start the docker daemon to use docker commands.</p>
+
+<p>If you want to pull from private docker repositories, you also need to set up a login/user to use every time you pull. On the instance with the volume you can do:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker login
+</code></pre></div></div>
+<p>Then follow the prompts. 
+After you do that the volume will be set up with that user so you can pull from any private repositories that the user has access to without needing to worry about interactively putting in username and password.</p>
+
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>

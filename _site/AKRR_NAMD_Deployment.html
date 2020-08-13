@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <title>Application Kernel Remote Runner (AKRR) Using &rarr; Adding NAMD</title>
+  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-44300156-3');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body>
+  <div id="page-container">
+    <div id="page-header">
+      <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" /></a>
+      <span class="maintitle">Application Kernel Remote Runner (AKRR) Module 2.1.1</span>
+    </div>
+    
+    <div id="page-body">
+      <div class="clear"></div>
+      <div id="page-menu">
+          <div class="page-menu-toc">
+        
+            
+                <h2>About</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/">Overview</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Download</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Download.html">Download</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Install</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Install.html">Install</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Update.html">Update</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Using</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_Usage.html">Using</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Add_Resource.html">Adding New Resource</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Adding Appkernel to Resource</a></li>
+                            
+                    
+                            
+                            <li class="active"><a href="/AKRR_NAMD_Deployment.html">Adding NAMD</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCC_Deployment.html">Adding HPCC</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_HPCG_Deployment.html">Adding HPCG</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IMB_Deployment.html">Adding IMB</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_IOR_Deployment.html">Adding IOR</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_MDTest_Deployment.html">Adding MDTest</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_NWChem_Deployment.html">Adding NWChem</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_GAMESS_Deployment.html">Adding GAMESS</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_ENZO_Deployment.html">Adding ENZO</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Tasks_Scheduling.html">Scheduling Appkernels</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Walltimelimit_Setting.html">Setting AK Walltime</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Details</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="/AKRR_HowItWorks.html">How It Works</a></li>
+                            
+                    
+                            
+                            <li ><a href="/AKRR_Batch_Job_Script_Generation.html">Batch Job Script Generation</a></li>
+                            
+                    
+                    </ul>
+                
+            
+                <h2>Next</h2>
+                
+                    <ul>
+                    
+                            
+                            <li ><a href="https://appkernels.xdmod.org/">xdmod-appkernels</a></li>
+                            
+                    
+                    </ul>
+                
+            
+        
+    </div>
+          
+        
+      </div>
+      <div id="page-content">
+         <h1>Using &rarr; Adding NAMD</h1> 
+        <h1 id="deployment-of-namd-applications-kernels-on-a-resource">Deployment of NAMD Applications Kernels on a Resource</h1>
+
+<p>NAMD is biomolecules simulation software which one of the mostly used application in academic clusters. 
+Here the deployment of namd application kernel is described.</p>
+
+<p>For simplicity lets define APPKER and RESOURCE enviroment varible which will contain the HPC 
+resource name:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">RESOURCE</span><span class="o">=</span>&lt;resource_name&gt;
+<span class="nb">export </span><span class="nv">APPKER</span><span class="o">=</span>namd
+</code></pre></div></div>
+
+<h2 id="install-application-or-identify-where-it-is-installed">Install Application or Identify where it is Installed</h2>
+
+<p>NAMD is very often installed system-wide. One of the purposes of application kernels is to monitor 
+the performance of application which is used by regular users. If NAMD is not installed then you 
+need to install it or choose not to use it.</p>
+
+<p>Majority of HPC resources utilize some kind of module system. Execute it and see is NAMD already 
+installed</p>
+
+<p><strong>On resource</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; module avail namd
+
+-------------------------------- /util/academic/modulefiles/Core --------------------------------
+   namd/2.8-MPI-CUDA             namd/2.10-ibverbs          (D)    namd/2.12b1-multicore
+   namd/2.9b2-IBVERBS            namd/2.10-multicore-CUDA          namd/2.12-ibverbs-smp-CUDA
+   namd/2.9-IBVERBS-SRC          namd/2.10-multicore-MIC           namd/2.12-ibverbs-smp
+   namd/2.9-IBVERBS              namd/2.10-multicore               namd/2.12-ibverbs
+   namd/2.9-MPI-CUDA             namd/2.11-ibverbs-smp-CUDA        namd/2.12-multicore-CUDA
+   namd/2.9-MPI                  namd/2.11-MPI                     namd/2.12-multicore
+   namd/2.10-ibverbs-smp-CUDA    namd/2.11-multicore-CUDA
+   namd/2.10-ibverbs-smp         namd/2.12b1-ibverbs
+...
+</code></pre></div></div>
+
+<p>write down the name of module you want to use.</p>
+
+<h2 id="generate-initiate-configuration-file">Generate Initiate Configuration File</h2>
+
+<p>Generate Initiate Configuration File:</p>
+
+<p><strong>On AKRR server</strong></p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app add <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-r</span> <span class="nv">$RESOURCE</span>
+</code></pre></div></div>
+<p>Sample output:</p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Generating application kernel configuration for namd on ub-hpc
+[INFO] Application kernel configuration for namd on ub-hpc is in: 
+        /home/akrruser/akrr/etc/resources/ub-hpc/namd.app.conf
+</code></pre></div></div>
+
+<h2 id="edit-configuration-file">Edit Configuration File</h2>
+
+<p>Below is listing of generated configuration file located at ~/akrr/etc/resources/$RESOURCE/namd.app.conf</p>
+
+<p><strong>~/akrr/etc/resources/$RESOURCE/namd.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">appkernel_run_env_template</span> <span class="o">=</span> <span class="s">"""
+#Load application environment
+module load namd
+export CONV_RSH=ssh
+
+#set executable location
+EXE=`which namd2`
+charmrun_bin=`which charmrun`
+
+#prepare nodelist for charmmrun
+for n in $AKRR_NODELIST; do echo host $n&gt;&gt;nodelist; done
+
+#set how to run app kernel
+RUN_APPKERNEL="$charmrun_bin  +p$AKRR_CORES ++nodelist nodelist $EXE ./input.namd"
+"""</span>
+</code></pre></div></div>
+
+<p>It contain only one parameter <em>appkernel_run_env_template</em> which need to be edited:</p>
+
+<p>1) First part is “Load application environment”, here you need to set proper environment. For example:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#Load application environment</span>
+module load namd/2.12-ibverbs
+<span class="nb">export </span><span class="nv">CONV_RSH</span><span class="o">=</span>ssh
+</code></pre></div></div>
+
+<p>The last line above specify to use ssh for application launching.</p>
+
+<p>2) Second part is “set executable location”, it set the location of executables absolute path to 
+namd2 should be placed to EXE variable (application signature will be calculated for that 
+executable). For example:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set executable location</span>
+<span class="nv">EXE</span><span class="o">=</span><span class="sb">`</span>which namd2<span class="sb">`</span>
+<span class="nv">charmrun_bin</span><span class="o">=</span><span class="sb">`</span>which namd2<span class="sb">`</span>
+</code></pre></div></div>
+
+<p>3)Third part is “prepare nodelist for charmmrun”, it setup nodelist file which later will be used by 
+charmm run</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#prepare nodelist for charmmrun </span>
+<span class="k">for </span>n <span class="k">in</span> <span class="nv">$AKRR_NODELIST</span><span class="p">;</span> <span class="k">do </span><span class="nb">echo </span>host <span class="nv">$n</span><span class="o">&gt;&gt;</span>nodelist<span class="p">;</span> <span class="k">done</span>
+</code></pre></div></div>
+
+<p>4)Fourth part is “set how to run app kernel”, it set RUN_APPKERNEL, which specify how to execute 
+namd:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#set how to run app kernel</span>
+<span class="nv">RUN_APPKERNEL</span><span class="o">=</span><span class="s2">"</span><span class="nv">$charmrun_bin</span><span class="s2"> +p</span><span class="nv">$AKRR_CORES</span><span class="s2"> ++nodelist nodelist </span><span class="nv">$EXE</span><span class="s2"> ./input.namd"</span>
+</code></pre></div></div>
+
+<p>If MPI version of namd is used the ~/akrr/etc/resources/$RESOURCE/namd.app.conf can look 
+like:</p>
+
+<p><strong>~/akrr/etc/resources/$RESOURCE/namd.app.conf</strong></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">appkernel_run_env_template</span><span class="o">=</span><span class="s">"""
+#Load application environment
+module load namd/2.11-MPI
+module list
+
+#set executable location
+EXE=`which namd2`
+
+#set how to run app kernel
+RUN_APPKERNEL="mpirun -n $AKRR_CORES -hostfile $PBS_NODEFILE $EXE ./input.namd"
+"""</span>
+</code></pre></div></div>
+
+<h2 id="generate-batch-job-script-and-execute-it-manually-optional">Generate Batch Job Script and Execute it Manually (Optional) </h2>
+
+<p>The purpose of this step is to ensure that the configuration lead to correct workable batch job 
+script. Here first batch job script is generated with ‘akrr task new –gen-batch-job-only’
+command. This allows interactive execution to improve turn-around in case of errors. If script fails 
+to execute, the issues can be fixed first in that script itself and then merged to configuration 
+file.</p>
+
+<p>This step is somewhat optional because it is very similar to next step. However the opportunity to 
+work in interactive session improve turn-around time because there is no need to stay in queue for 
+each iteration.</p>
+
+<p>First generate the script to standard output and examine it:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--dry-run</span> <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span>
+</code></pre></div></div>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>DryRun: Should submit following to REST API (POST to scheduled_tasks) {'resource_param': "{'nnodes':2}", 'time_to_start': None, 'repeat_in': None, 'app': 'namd', 'resource': 'ub-hpc'}
+[INFO] Directory /home/akrruser/akrr/log/data/ub-hpc/namd does not exist, creating it.
+[INFO] Directory /home/akrruser/akrr/log/comptasks/ub-hpc/namd does not exist, creating it.
+[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.41.07.389241
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.41.07.389241/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.41.07.389241/proc
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[WARNING] There are only %d previous run, need at least 5 for walltime limit autoset
+[INFO] Below is content of generated batch job script:
+#!/bin/bash
+#SBATCH --partition=general-compute 
+#SBATCH --qos=general-compute
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=8
+#SBATCH --time=00:13:00
+#SBATCH --output=/user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.41.07.389241/stdout
+#SBATCH --error=/user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.41.07.389241/stderr
+#SBATCH --constraint="CPU-L5520"
+#SBATCH --exclusive
+
+
+#Common commands
+export AKRR_NODES=2
+export AKRR_CORES=16
+export AKRR_CORES_PER_NODE=8
+export AKRR_NETWORK_SCRATCH="/user/nikolays/tmp"
+export AKRR_LOCAL_SCRATCH="/tmp"
+export AKRR_TASK_WORKDIR="/user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.41.07.389241"
+export AKRR_APPKER_DIR="/user/nikolays/appker/ub-hpc"
+export AKRR_AKRR_DIR="/user/nikolays/tmp/akrr_data/ub-hpc"
+
+export AKRR_APPKER_NAME="namd"
+export AKRR_RESOURCE_NAME="ub-hpc"
+export AKRR_TIMESTAMP="2019.03.20.19.41.07.389241"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/user/nikolays/appker/ub-hpc/inputs/namd/apoa1_nve"
+export AKRR_APPKERNEL_EXECUTABLE="/user/nikolays/appker/ub-hpc/execs"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrr_perform_common_tests
+
+#Write some info to gen.info, JSON-Like file
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
+
+
+#create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d /user/nikolays/tmp/namd.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+#Copy inputs
+cp /user/nikolays/appker/ub-hpc/inputs/namd/apoa1_nve/* ./
+
+
+
+#Load application environment
+module load namd/2.12-ibverbs
+export CONV_RSH=ssh
+
+#set executable location
+EXE=`which namd2`
+charmrun_bin=`which charmrun`
+
+#prepare nodelist for charmmrun
+for n in $AKRR_NODELIST; do echo host $n&gt;&gt;nodelist; done
+
+#set how to run app kernel
+RUN_APPKERNEL="$charmrun_bin  +p$AKRR_CORES ++nodelist nodelist $EXE ./input.namd"
+
+
+#Generate AppKer signature
+appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. &gt; $AKRR_APP_STDOUT_FILE
+
+
+#Execute AppKer
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
+$RUN_APPKERNEL &gt;&gt; $AKRR_APP_STDOUT_FILE 2&gt;&amp;1
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
+
+
+
+
+
+#clean-up
+cd $AKRR_TASK_WORKDIR
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+
+
+
+akrr_write_to_gen_info "end_time" "`date`"
+
+[INFO] Removing generated files from file-system as only batch job script printing was requested
+</code></pre></div></div>
+
+<p>Next generate the script on resource:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr task new <span class="nt">--gen-batch-job-only</span> <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+</code></pre></div></div>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Creating task directory: /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.42.33.945872
+[INFO] Creating task directories: 
+        /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.42.33.945872/jobfiles
+        /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.42.33.945872/proc
+[INFO] Creating batch job script and submitting it to remote machine
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc/namd does not exists, will try to create it
+[INFO] Directory huey:/user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.42.33.945872 does not exists, will try to create it
+[INFO] auto_walltime_limit is on, trying to estimate walltime limit...
+[WARNING] There are only 0 previous run, need at least 5 for walltime limit autoset
+[INFO] Local copy of batch job script is /home/akrruser/akrr/log/data/ub-hpc/namd/2019.03.20.19.42.33.945872/jobfiles/namd.job
+
+[INFO] Application kernel working directory on ub-hpc is /user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.42.33.945872
+[INFO] Batch job script location on ub-hpc is /user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.42.33.945872/namd.job
+</code></pre></div></div>
+
+<p>The output contains the working directory for this task on remote resource. On remote resource get 
+to that directory and start interactive session (request same number of nodes, in example above the 
+script was generated for 2 nodes).</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; cd /user/nikolays/tmp/akrr_data/ub-hpc/namd/2019.03.20.19.42.33.945872
+&gt; ls
+namd.job
+&gt; salloc --partition=debug --nodes=2 --ntasks-per-node=8 --time=01:00:00 --exclusive --constraint="CPU-L5520"
+salloc: Granted job allocation 10835
+&gt; bash namd.job 
+Temporary working directory: /user/nikolays/tmp/namd.3EaG6beEQ
+Deleting temporary files
+</code></pre></div></div>
+
+<p>Examine appstdout file, which contains application kernel output:</p>
+
+<p><strong>On remote resource</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; cat appstdout
+ ===ExeBinSignature=== MD5: 45f97315d9290c3c631d78e3defad52f /util/academic/namd/NAMD_2.12_Linux-x86_64-ibverbs/namd2
+===ExeBinSignature=== MD5: a67349ee487ece290224fbca93b5811b /lib64/libibverbs.so.1
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: b06038960f153e36545ed9ea947f80f6 /lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
+===ExeBinSignature=== MD5: 07711242213230dc1139fc71f31754cf /lib64/libnl-route-3.so.200
+===ExeBinSignature=== MD5: 43d5e221199ce5536fa5f86b12c40a58 /lib64/libnl-3.so.200
+Charmrun&gt; scalable start enabled. 
+Charmrun&gt; IBVERBS version of charmrun
+Charmrun&gt; started all node programs in 2.783 seconds.
+Converse/Charm++ Commit ID: v6.7.1-0-gbdf6a1b-namd-charm-6.7.1-build-2016-Nov-07-136676
+Warning&gt; Randomization of stack pointer is turned on in kernel, thread migration may not work! Run 'echo 0 &gt; /proc/sys/kernel/randomize_va_space' as root to disable it, or try run with '+isomalloc_sync'.  
+Charm++&gt; scheduler running in netpoll mode.
+CharmLB&gt; Load balancer assumes all CPUs are same.
+Charm++&gt; Running on 2 unique compute nodes (8-way SMP).
+Charm++&gt; cpu topology info is gathered in 0.012 seconds.
+Info: NAMD 2.12 for Linux-x86_64-ibverbs
+Info: 
+Info: Please visit http://www.ks.uiuc.edu/Research/namd/
+Info: for updates, documentation, and support information.
+Info: 
+Info: Please cite Phillips et al., J. Comp. Chem. 26:1781-1802 (2005)
+Info: in all publications reporting results obtained with NAMD.
+Info: 
+Info: Based on Charm++/Converse 60701 for net-linux-x86_64-ibverbs-iccstatic
+Info: Built Wed Dec 21 11:35:18 CST 2016 by jim on harare.ks.uiuc.edu
+Info: 1 NAMD  2.12  Linux-x86_64-ibverbs  16    cpn-d13-16.int.ccr.buffalo.edu  nikolays
+Info: Running on 16 processors, 16 nodes, 2 physical nodes.
+Info: CPU topology information available.
+Info: Charm++/Converse parallel runtime startup completed at 0.025507 s
+Info: 131.637 MB of memory in use based on /proc/self/stat
+Info: Configuration file is ./input.namd
+Info: Changed directory to .
+TCL: Suspending until startup complete.
+Info: SIMULATION PARAMETERS:
+Info: TIMESTEP               2
+Info: NUMBER OF STEPS        1200
+Info: STEPS PER CYCLE        20
+
+...
+&lt;more NAMD output&gt;
+...
+
+Info: useSync: 0 useProxySync: 0
+LDB: =============== DONE WITH MIGRATION ================ 72.7068
+Info: Benchmark time: 16 CPUs 0.0951892 s/step 0.550864 days/ns 308.785 MB memory
+Info: Benchmark time: 16 CPUs 0.0955705 s/step 0.55307 days/ns 308.785 MB memory
+TIMING: 500  CPU: 48.7655, 0.0967451/step  Wall: 48.8295, 0.0968651/step, 0.0188349 hours remaining, 308.785156 MB of memory in use.
+ENERGY:     500      2119.3682     10836.2433      5712.6289       177.9260        -300554.0570     16944.7914         0.0000         0.0000     33421.0085        -231342.0906       171.6328   -264763.0991   -231171.7215       168.3237          -1980.8393     -1951.1466    921491.4634     -1734.6994     -1734.6442
+
+Info: Benchmark time: 16 CPUs 0.0948333 s/step 0.548804 days/ns 308.785 MB memory
+Info: Benchmark time: 16 CPUs 0.0960609 s/step 0.555908 days/ns 308.785 MB memory
+Info: Benchmark time: 16 CPUs 0.0942993 s/step 0.545713 days/ns 308.785 MB memory
+Info: Benchmark time: 16 CPUs 0.095285 s/step 0.551418 days/ns 308.785 MB memory
+TIMING: 1000  CPU: 96.0494, 0.0945676/step  Wall: 96.4553, 0.0952516/step, 0.00529176 hours remaining, 308.785156 MB of memory in use.
+ENERGY:    1000      2029.9736     10858.2028      5703.0889       180.3306        -302100.8892     17982.1676         0.0000         0.0000     33997.1245        -231350.0014       174.5915   -265347.1258   -231170.4272       173.3323          -1695.3973     -1666.3302    921491.4634     -1819.9177     -1819.8952
+
+WRITING EXTENDED SYSTEM TO OUTPUT FILE AT STEP 1200
+WRITING COORDINATES TO OUTPUT FILE AT STEP 1200
+The last position output (seq=-2) takes 0.025 seconds, 320.508 MB of memory in use
+WRITING VELOCITIES TO OUTPUT FILE AT STEP 1200
+The last velocity output (seq=-2) takes 0.025 seconds, 320.508 MB of memory in use
+====================================================
+
+WallClock: 149.040894  CPUTime: 148.148071  Memory: 320.507812 MB
+</code></pre></div></div>
+
+<p>If it looks ok you can move to the next step</p>
+
+<h2 id="perform-validation-run">Perform Validation Run</h2>
+
+<p>On this step <em>akrr app validate</em> command is used to validate application kernel installation on 
+particular resource. It execute application kernel and analyses its’ results. If it fails the 
+problems need to be fixed and another round of validation should be performed.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>akrr app validate <span class="nt">-n</span> 2 <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> 
+</code></pre></div></div>
+
+<p><strong>Sample output</strong></p>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[INFO] Validating namd application kernel installation on ub-hpc
+[INFO] ################################################################################
+[INFO] Validating ub-hpc parameters from /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf
+[INFO] Syntax of /home/akrruser/akrr/etc/resources/ub-hpc/resource.conf is correct and all necessary parameters are present.
+[INFO] Syntax of /usr/lib/python3.4/site-packages/akrr/default_conf/namd.app.conf is correct and all necessary parameters are present.
+[INFO] ################################################################################
+[INFO] Validating resource accessibility. Connecting to ub-hpc.
+================================================================================
+[INFO] Successfully connected to ub-hpc
+
+
+[INFO] Checking directory locations
+
+[INFO] Checking: huey:/user/nikolays/tmp/akrr_data/ub-hpc
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: huey:/user/nikolays/appker/ub-hpc
+[INFO] Directory exist and accessible for read/write
+
+[INFO] Checking: huey:/user/nikolays/tmp
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+[INFO] Checking: huey:/tmp
+[INFO] Directory exist and accessible for read/write
+[INFO] 
+[INFO] ################################################################################
+[INFO] Will send test job to queue, wait till it executed and will analyze the output
+Will use AKRR REST API at https://localhost:8091/api/v1
+[INFO] 
+Submitted test job to AKRR, task_id is 3144531
+
+
+
+================================================================================
+Tast status:
+Task is in scheduled_tasks queue.
+It schedule to be started on2019-03-20T19:56:26
+
+time: 2019-03-20 19:56:26 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: None
+Status info:
+None
+
+time: 2019-03-20 19:56:36 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Still in queue. Either waiting or running
+Status info:
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             10836 general-c namd.job nikolays  R       0:05      2 cpn-d13-[18-19]
+
+
+time: 2019-03-20 19:56:43 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Still in queue. Either waiting or running
+Status info:
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+             10836 general-c namd.job nikolays  R       2:30      2 cpn-d13-[18-19]
+
+
+time: 2019-03-20 19:59:14 
+
+================================================================================
+Tast status:
+Task is in active_tasks queue.
+Status: Task was completed successfully.
+Status info:
+Done
+
+time: 2019-03-20 19:59:21 
+
+================================================================================
+Tast status:
+Task is completed!
+        status: 1
+        status_info: Done
+
+time: 2019-03-20 19:59:26 [INFO] Test job is completed analyzing output
+
+[INFO] 
+Test kernel execution summary:
+status: 1
+status_info: Done
+processing message:
+None
+Local working directory for this task: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355
+Location of some important generated files:
+        Batch job script: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/jobfiles/namd.job
+        Application kernel output: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/jobfiles/appstdout
+        Batch job standard output: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/jobfiles/stdout
+        Batch job standard error output: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/jobfiles/stderr
+        XML processing results: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/result.xml
+        Task execution logs: /home/akrruser/akrr/log/comptasks/ub-hpc/namd/2019.03.20.19.56.26.518355/proc/log
+
+
+[INFO] 
+Enabling namd on ub-hpc for execution
+
+[INFO] Successfully enabled namd on ub-hpc
+[INFO] 
+DONE, you can move to next step!
+</code></pre></div></div>
+
+<h1 id="schedule-regular-execution-of-application-kernel">Schedule regular execution of application kernel.</h1>
+
+<p>Now this application kernel can be submitted for regular execution:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Perform a test run on all nodes count</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8
+
+<span class="c">#Start daily execution from today on nodes 1,2,4,8 and distribute execution time between 1:00 and 5:00</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> 1,2,4,8 <span class="nt">-t0</span> <span class="s2">"01:00"</span> <span class="nt">-t1</span> <span class="s2">"05:00"</span> <span class="nt">-p</span> 1
+
+<span class="c"># Run on all nodes count 20 times (default number of runs to establish baseline)</span>
+akrr task new <span class="nt">-r</span> <span class="nv">$RESOURCE</span> <span class="nt">-a</span> <span class="nv">$APPKER</span> <span class="nt">-n</span> all <span class="nt">--n-runs</span> 20
+</code></pre></div></div>
+
+<p>see <a href="/AKRR_Tasks_Scheduling.html">Scheduling and Rescheduling Application Kernels</a> and 
+<a href="/AKRR_Walltimelimit_Setting.html">Setup Walltime Limit</a> for more details.</p>
+
+<p>Up: <a href="/AKRR_Deployment_of_Application_Kernel_on_Resource.html">Deployment of Application Kernels on Resource</a></p>
+
+      </div>
+      <div class="clear"></div>
+    </div>
+    <div id="page-footer">
+      <a href="https://www.buffalo.edu/ccr" target="_blank"><img src="/xdmod-jekyll-theme/assets/images/ccr_logo.png" alt="Center for Computational Research"/></a>
+    </div>
+  </div>
+</body>
+</html>
