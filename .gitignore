@@ -39,3 +39,4 @@
 /docker/hpcc/bin
 /docker/namd/bin
 /singularity
+/docker/spack/license.lic

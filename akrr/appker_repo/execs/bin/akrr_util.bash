@@ -75,7 +75,7 @@ akrr_get_arch () {
         echo "avx2"
     elif [ "$(grep flags /proc/cpuinfo|head -n 1|grep avx|wc -l)" -eq "1" ]
     then
-        echo "sse2"
+        echo "avx"
     elif [ "$(grep flags /proc/cpuinfo|head -n 1|grep sse2|wc -l)" -eq "1" ]
     then
         echo "sse2"

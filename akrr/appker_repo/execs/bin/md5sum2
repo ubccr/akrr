@@ -1,6 +1,6 @@
 #!/bin/bash
 
-die() { echo "$*" 1>&2 ; exit 1; }
+die() { echo "$*" 1>&2 ; exit 0; }
 
 if [ $# -lt 2 ]
 then
@@ -10,7 +10,7 @@ fi
 file_in=$2
 tmp=`mktemp`
 
-[ -f $file_in -a -x $file_in ] || die "$file_in is not an executable binary file"
+#[ -f $file_in -a -x $file_in ] || die "$file_in is not an executable binary file"
 
 
 objcopy -j .text -O binary $file_in $tmp
