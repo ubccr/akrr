@@ -29,26 +29,24 @@ copy_input()
 run_appker()
 {
     # running hpcc with mpirun, where -np is number of cores for the machine
-    if [[ "${run_appker}" == "true" ]]; then
-      echo "Running hpcc with command:"
-      if [[ "$ppn" == "1" ]] && [[ "$nodes" == "1" ]]
-      then
+    echo "Running hpcc with command:"
+    if [[ "$ppn" == "1" ]] && [[ "$nodes" == "1" ]]
+    then
         echo "${EXE_FULL_PATH}"
         "${EXE_FULL_PATH}"
-      else
+    else
         echo "${MPIRUN} -np ${ppn} ${EXE_FULL_PATH}"
         export I_MPI_DEBUG
         export I_MPI_PIN
         # Set I_MPI_HYDRA_BOOTSTRAP to ssh otherwise it will use different method on HPC system
         export I_MPI_HYDRA_BOOTSTRAP="ssh"
         "${MPIRUN}" -np "${ppn}" "${EXE_FULL_PATH}"
-      fi
-
-      wait
-      echo "Complete! hpccoutf.txt is in ${work_dir}"
-      echo "catting output to standard out:"
-      cat hpccoutf.txt
     fi
+
+    wait
+    echo "Complete! hpccoutf.txt is in ${work_dir}"
+    echo "catting output to standard out:"
+    cat hpccoutf.txt
 }
 
 source "${CONT_AKRR_APPKER_DIR}/execs/bin/akrr_docker_run_appker.sh"
