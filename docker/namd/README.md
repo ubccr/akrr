@@ -286,9 +286,12 @@ tar xzf NAMD_2.13_Linux-x86_64-multicore-CUDA.tar.gz
 ## Building Docker Container
 
 ```bash
-docker build -t nsimakov/containers:namd -f docker/namd/Dockerfile .
-docker run --rm nsimakov/containers:namd
-docker push nsimakov/containers:namd
-rm singularity/namd.sif
-sudo singularity build singularity/namd.sif docker/namd/Singularity
+docker build -f ./docker/namd/spack_builder.dockerfile -t spack-ubuntu-builder:namd .
+docker build -f ./docker/namd/spack_installer.dockerfile -t containers:namd .
+
+docker run -it --rm  --shm-size=4g containers:namd
+docker run -it --rm  --shm-size=4g containers:namd -c gcc_openmpi_openblas
+docker run -it --rm  --shm-size=4g containers:namd -v hpcc_icc_mkl_impi_x86_64
+
+sudo singularity build namd.simg docker-daemon://containers:namd
 ```
