@@ -118,11 +118,22 @@ scp $USER@hpcresource:$AKRR_APPKER_DIR/execs/hpcc/hpcc* ./
 
 ```bash
 docker build -f ./docker/hpcc/spack_builder.dockerfile -t spack-ubuntu-builder:hpcc .
-docker build -f ./docker/hpcc/spack_installer.dockerfile -t containers:hpcc .
+docker build -f ./docker/hpcc/spack_installer.dockerfile -t nsimakov/appker:hpcc .
 
-docker run -it --rm  --shm-size=4g containers:hpcc
-docker run -it --rm  --shm-size=4g containers:hpcc -c gcc_openmpi_openblas
-docker run -it --rm  --shm-size=4g containers:hpcc -v hpcc_icc_mkl_impi_x86_64
+docker run -it --rm  --shm-size=4g nsimakov/appker:hpcc
+docker run -it --rm  --shm-size=4g nsimakov/appker:hpcc -c gcc_openmpi_openblas
+docker run -it --rm  --shm-size=4g nsimakov/appker:hpcc -v hpcc_icc_mkl_impi_x86_64
 
-sudo singularity build hpcc.simg docker-daemon://containers:hpcc
+sudo singularity build ../hpcc.simg docker-daemon://nsimakov/appker:hpcc
+
+docker push nsimakov/appker:hpcc
+
+../hpcc.simg
+../hpcc.simg -c gcc_openmpi_openblas
+../hpcc.simg -v hpcc_icc_mkl_impi_x86_64
+
+
 ```
+
+TODO
+* Check -qopt-zmm-usage=high  option for SKX
