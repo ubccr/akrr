@@ -1,5 +1,0 @@
-Bootstrap: docker
-From: nsimakov/containers:namd
-
-%post
-    chmod -R a+rX /opt/appker

@@ -40,3 +40,6 @@
 /docker/namd/bin
 /singularity
 /docker/spack/license.lic
+/docker/namd/NAMD_2.14_Linux-x86_64-multicore.tar.gz
+/docker/namd/NAMD_2.14_Source.tar.gz
+/docker/namd/NAMD_Git-*_Source.tar.gz
