@@ -16,14 +16,19 @@ docker run --shm-size 8g --cap-add=SYS_PTRACE <nwchem docker>
 ```
 The other docker directory has the nwchem version used on ubhpc.
 
-## Building
 
-In AKRR source code root
+## Building Docker Container
 
 ```bash
-docker build -t nsimakov/nwchem:latest -f docker/nwchem/Dockerfile .
-docker run --rm nsimakov/nwchem:latest
-docker push nsimakov/hpcc:latest
+docker build -f ./docker/nwchem/spack_builder.dockerfile -t spack-ubuntu-builder:nwchem .
+docker run -it --rm  --shm-size=4g spack-ubuntu-builder:nwchem
+
+docker build -f ./docker/nwchem/spack_installer.dockerfile -t nsimakov/appker:nwchem .
+
+docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem
+docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem -c gcc_openblas_openmpi
+docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem -c icc_mkl_impi
+docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem -view nwchem_icc_mkl_impi_x86_64
+
+sudo singularity build ../nwchem.simg docker-daemon://nsimakov/appker:nwchem
 ```
-
-
