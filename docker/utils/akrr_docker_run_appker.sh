@@ -24,7 +24,7 @@ Options:
                         suitable)
   -lc | --list-configurations
                         list available configurations
-  -v | --view           Select view to run
+  -view | --view        Select view to run
   -lv | --list-views
                         list available views
   --norun               Set if you don't want to immediately run hpcc
@@ -35,11 +35,18 @@ Options:
                         Specify nymber of processes/cores per node
                         (if not specified, number of cpu cores is used,
                         as found in /proc/cpuinfo)"
+  -tpp TREADS_PER_PROC | --threads_per_process TREADS_PER_PROC
+                        Threads per process.
   --pin                 Turn on process pinning for mpi (I_MPI_PIN)
   -d DEBUG_LEVEL | --debug DEBUG_LEVEL
                         Set the mpi debug level to the given value
                         (0-5+, default 0)
 END
+
+if [ -n "$(LC_ALL=C type -t usage_extra)" ] && [ "$(LC_ALL=C type -t usage_extra)" = function ]
+then
+    usage_extra
+fi
 }
 
 source "${CONT_AKRR_APPKER_DIR}/execs/bin/akrr_util.bash"
@@ -61,11 +68,13 @@ set_defaults()
 	export TMPDIR=${tmp_work_dir}
 	nodes=1
 	ppn=${cpu_cores:-1}
+	tpp=1
 	verbose=false
 	interactive=false
 	run_appker=true
 	I_MPI_PIN=0
 	I_MPI_DEBUG=0
+	PIN_CPU=0
 }
 
 #echo "Starting run script for running hpcc in this docker container"
@@ -103,9 +112,15 @@ while [[ "${1}" != "" ]]; do
 			shift
 			ppn=${1}
 			;;
+		-tpp | --threads_per_process)
+			echo "Threads Per Process, default 1 "
+			shift
+			tpp=${1}
+			;;
 		--pin)
 			echo "Pin arg detected, setting I_MPI_PIN to 1"
 			I_MPI_PIN=1
+			PIN_CPU=1
 			;;
 		-d | --debug)
 			echo "Debug arg detected, setting I_MPI_DEBUG to value after it"
@@ -121,7 +136,7 @@ while [[ "${1}" != "" ]]; do
 			cat /opt/spack-environment/${APPKER}.configurations
 			exit 1
 			;;
-		-v | --view)
+		-view | --view)
 			shift
 			SPACK_VIEW=${1}
 			;;
@@ -130,6 +145,13 @@ while [[ "${1}" != "" ]]; do
 			cd /opt/spack-environment
 			ls -d ${APPKER}_*
 			exit 1
+			;;
+		-e)
+		    shift
+		    ENV_VARIABLE=${1}
+		    shift
+			ENV_VALUE=${1}
+		    export $ENV_VARIABLE=$ENV_VALUE
 			;;
 		*)
 			echo "Error: unrecognized argument"
@@ -144,13 +166,21 @@ if [[ "${verbose}" == "true" ]]; then
 	set -x
 fi
 
+if [ -n "$(LC_ALL=C type -t post_arg_parse_call)" ] && [ "$(LC_ALL=C type -t post_arg_parse_call)" = function ]
+then
+    post_arg_parse_call
+fi
+
 echo "Number of processes set: ${cpu_cores}"
 echo "CPU vectorization highest instructions: ${arch}, target: ${target}"
 
+PACKAGE_NAME=${PACKAGE_NAME:-${APPKER}}
+
 # set optimal executable
 CONFIGURATION=${CONFIGURATION:-${DEFAULT_CONFIGURATION}}
-SPACK_VIEW=${SPACK_VIEW:-${APPKER}_${DEFAULT_CONFIGURATION}_${target}}
+SPACK_VIEW=${SPACK_VIEW:-${PACKAGE_NAME}_${DEFAULT_CONFIGURATION}_${target}}
 source /opt/spack-environment/${SPACK_VIEW}/env.sh
+
 EXE_FULL_PATH=${EXE_FULL_PATH:-$(which ${EXE_FILENAME})}
 MPIRUN=`which mpirun`
 echo "Executable to run: ${EXE_FULL_PATH}"
@@ -159,6 +189,7 @@ echo "Mpirun: ${MPIRUN}"
 # echo "Validating variables to make sure they are numbers"
 validate_number "${nodes}" nodes
 validate_number "${ppn}" ppn
+validate_number "${tpp}" tpp
 validate_number "${I_MPI_DEBUG}" I_MPI_DEBUG
 
 copy_input
@@ -167,12 +198,16 @@ copy_input
 echo "Changing work directory to ${tmp_work_dir}"
 cd "${tmp_work_dir}"
 
-echo "Running appsigcheck on HPCC binary..."
+echo "Running appsigcheck on ${EXE_FILENAME} binary..."
 
 "${EXECS_DIR}/bin/appsigcheck.sh" "${EXE_FULL_PATH}"
 wait
 
-run_appker
+export OMP_NUM_THREADS=${tpp}
+
+if [[ "${run_appker}" == "true" ]]; then
+    run_appker
+fi
 
 cd ${WORK_DIR}
 
