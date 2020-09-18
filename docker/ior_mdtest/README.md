@@ -62,4 +62,27 @@ For running ior/mdtest with singularity, since we want to try and run it on 2 no
 - scripts - the run scripts used in the different docker files
 
 
+## Building Docker Container
+
+```bash
+docker build -f ./docker/ior_mdtest/spack_builder.dockerfile -t spack-ubuntu-builder:ior_mdtest .
+docker run -it --rm  --privileged --shm-size=4g spack-ubuntu-builder:ior_mdtest
+
+docker build -f ./docker/ior_mdtest/spack_installer.dockerfile -t nsimakov/appker:ior_mdtest .
+
+docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest
+docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -c gcc_openmpi
+docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -c icc_impi
+docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -view ior_gcc_openmpi_x86_64
+docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -c gcc_openmpi -e APPKER mdtest
+
+sudo singularity build ../ior_mdtest.simg docker-daemon://nsimakov/appker:ior_mdtest
+
+../ior_mdtest.simg
+../ior_mdtest.simg -c gcc_openmpi
+../ior_mdtest.simg -c icc_impi
+../ior_mdtest.simg -view ior_gcc_openmpi_x86_64
+../ior_mdtest.simg -c gcc_openmpi -e APPKER mdtest
+```
+
 
