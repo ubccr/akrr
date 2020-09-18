@@ -40,6 +40,7 @@ RUN cd /opt/spack-environment && \
     echo ${configuration} >> /opt/spack-environment/${APPKER}.configurations
 
 RUN SRCBINDIR=/opt/intel/compilers_and_libraries_2020/linux/mkl/benchmarks/hpcg/bin && \
+    configuration=intelver_icc_imkl_impi && \
     VIEWDIR=/opt/spack-environment/hpcg_intelver_icc_imkl_impi_sandybridge && \
     mkdir $VIEWDIR  && cp $SRCBINDIR/xhpcg_avx $VIEWDIR/xhpcg && \
     echo "export PATH=$VIEWDIR:\$PATH" >> $VIEWDIR/env.sh && \
@@ -62,7 +63,8 @@ RUN SRCBINDIR=/opt/intel/compilers_and_libraries_2020/linux/mkl/benchmarks/hpcg/
     echo 'export MPI_DIR=/opt/intel/compilers_and_libraries_2020.2.254/linux/mpi/intel64' >> $VIEWDIR/env.sh && \
     echo 'source "${MPI_DIR}/bin/mpivars.sh"' >> /opt/spack-environment/$view/env.sh \ >> $VIEWDIR/env.sh && \
     echo 'export LD_LIBRARY_PATH="/opt/intel/compilers_and_libraries_2020.2.254/linux/mkl/lib/intel64_lin:${LD_LIBRARY_PATH}}"' >> $VIEWDIR/env.sh && \
-    echo 'export LD_LIBRARY_PATH="/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64_lin:${LD_LIBRARY_PATH}}"' >> $VIEWDIR/env.sh
+    echo 'export LD_LIBRARY_PATH="/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64_lin:${LD_LIBRARY_PATH}}"' >> $VIEWDIR/env.sh && \
+    echo ${configuration} >> /opt/spack-environment/${APPKER}.configurations
 
 
 RUN sudo chmod a+rx /opt/appker/execs/bin/* && sudo chmod -R a+rX /opt/appker
