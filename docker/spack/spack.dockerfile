@@ -10,7 +10,8 @@ ENV DOCKERFILE_BASE=ubuntu            \
     container=docker                  \
     LANGUAGE=en_US.UTF-8              \
     LANG=en_US.UTF-8                  \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8                \
+    ALL_TARGETS='x86_64 sandybridge haswell skylake_avx512'
 
 RUN apt-get -yqq update \
  && apt-get -yqq install --no-install-recommends \
@@ -38,7 +39,7 @@ RUN apt-get -yqq update \
         cpio \
         vim \
         ssh \
-        autoconf automake \
+        autoconf automake cmake \
  && locale-gen en_US.UTF-8 \
  && pip3 install boto3 \
  && rm -rf /var/lib/apt/lists/* \
@@ -100,6 +101,11 @@ RUN spack compiler add && \
     echo "    - spec: \"gmake@4.2.1 arch=linux-ubuntu20.04-x86_64\"" && \
     echo "      prefix: /usr" && \
     echo "    buildable: False" && \
+    echo "  cmake:" && \
+    echo "    externals:" && \
+    echo "    - spec: \"cmake@3.16.3 arch=linux-ubuntu20.04-x86_64\"" && \
+    echo "      prefix: /usr" && \
+    echo "    buildable: False" && \
     echo "  autoconf:" && \
     echo "    externals:" && \
     echo "    - spec: \"autoconf@2.69 arch=linux-ubuntu20.04-x86_64\"" && \
@@ -155,10 +161,10 @@ RUN spack compiler add && \
     mkdir /home/ubuntu/spack_mirror && \
     spack mirror add local_filesystem /home/ubuntu/spack_mirror
 
-RUN for target in x86_64 sandybridge haswell skylake_avx512; do spack install openmpi target=$target; done
-RUN for target in x86_64 sandybridge haswell skylake_avx512; do spack install openblas target=$target; done
-RUN for target in x86_64 sandybridge haswell skylake_avx512; do spack install fftw@2.1.5 target=$target ^openmpi; done
-RUN for target in x86_64 sandybridge haswell skylake_avx512; do spack install fftw target=$target ^openmpi; done
+RUN for target in ${ALL_TARGETS}; do spack install openmpi target=$target; done
+RUN for target in ${ALL_TARGETS}; do spack install openblas target=$target; done
+RUN for target in ${ALL_TARGETS}; do spack install fftw@2.1.5 target=$target ^openmpi; done
+RUN for target in ${ALL_TARGETS}; do spack install fftw target=$target ^openmpi; done
 
 # pack shared libraries
 # RUN cd /opt/intel/compilers_and_libraries_2020.2.254/linux/mkl/lib/intel64 && \
