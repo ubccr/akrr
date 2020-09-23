@@ -12,4 +12,6 @@ docker run -it --rm spack-ubuntu:20.04
 docker run -it --rm spack-runner-ubuntu:20.04
 
 docker push nsimakov/appker:base
+
+docker build -f ./docker/spack/spack_runner.dockerfile -t nsimakov/appker:base .
 ```
