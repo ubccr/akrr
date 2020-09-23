@@ -1,6 +1,6 @@
 # Application Kernels Remote Runner (AKRR ) Change Log
 
-## 2020-08-10 v2.1.0
+## 2020-08-14 v2.1.1
 
 - new CLI interface. Single entry to all routines: ```akrr [-v] <command> [arguments]```.
 - Converted to python3.
