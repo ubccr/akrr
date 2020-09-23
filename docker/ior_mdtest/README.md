@@ -77,6 +77,7 @@ docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -view 
 docker run -it --rm --privileged --shm-size=4g nsimakov/appker:ior_mdtest -c gcc_openmpi -e APPKER mdtest
 
 sudo singularity build ../ior_mdtest.simg docker-daemon://nsimakov/appker:ior_mdtest
+docker push nsimakov/appker:ior_mdtest
 
 ../ior_mdtest.simg
 ../ior_mdtest.simg -c gcc_openmpi

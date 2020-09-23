@@ -31,4 +31,5 @@ docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem -c icc_mkl_impi
 docker run -it --rm  --shm-size=4g nsimakov/appker:nwchem -view nwchem_icc_mkl_impi_x86_64
 
 sudo singularity build ../nwchem.simg docker-daemon://nsimakov/appker:nwchem
+docker push nsimakov/appker:nwchem
 ```

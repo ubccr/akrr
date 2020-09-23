@@ -17,6 +17,7 @@ docker run -it --rm  --shm-size=4g cnsimakov/appker:hpcg -view hpcg_intelver_icc
 
 # Convert to singularity container
 sudo singularity build hpcg.simg docker-daemon://nsimakov/appker:hpcg
+docker push nsimakov/appker:hpcg
 
 # run tests
 ../hpcg.simg
