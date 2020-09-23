@@ -11,7 +11,7 @@ copy_input()
     echo "Copying over input file to working directory"
     if [[ -d "${input_full_path}" ]]; then
         cp "${input_full_path}"/* ${tmp_work_dir}
-        echo "${input_full_path} copied over to $(tmp_work_dir)"
+        echo "${input_full_path} copied over to ${tmp_work_dir}"
     else
         echo "Error: ${input_full_path} does not exist"
         if [[ "${interactive}" != "true" ]]; then
