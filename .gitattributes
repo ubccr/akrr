@@ -4,4 +4,5 @@ docs/* linguist-documentation
 *.conf linguist-language=python
 *.html linguist-generated
 *.nb.html linguist-generated
+akrr/appker_repo/inputs/* linguist-vendored
 
