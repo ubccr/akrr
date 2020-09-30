@@ -166,6 +166,13 @@ if [[ "${verbose}" == "true" ]]; then
 	set -x
 fi
 
+# if user sets interactive flag, starts up bash at end
+if [[ "${interactive}" == "true"  && "${run_appker}" == "false" ]]; then
+	echo "Launching /bin/bash"
+	/bin/bash
+	exit 0
+fi
+
 if [ -n "$(LC_ALL=C type -t post_arg_parse_call)" ] && [ "$(LC_ALL=C type -t post_arg_parse_call)" = function ]
 then
     post_arg_parse_call

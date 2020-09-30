@@ -35,7 +35,7 @@ run_appker()
     "${MPIRUN}" -np "${ppn}" $ring_bin pv ParticlePositions ParticleVelocities
     wait
     "${MPIRUN}" -np "${ppn}" "${EXE_FULL_PATH}" input.enzo
-    echos performance.out
+    echo performance.out
     cat performance.out
 	wait
 }
