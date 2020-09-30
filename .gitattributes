@@ -2,4 +2,6 @@ docs/* linguist-documentation
 *.md linguist-documentation
 *.MD linguist-documentation
 *.conf linguist-language=python
+*.html linguist-generated
+*.nb.html linguist-generated
 
