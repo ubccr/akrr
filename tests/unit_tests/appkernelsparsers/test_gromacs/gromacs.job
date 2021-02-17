@@ -1,0 +1,90 @@
+#!/bin/bash
+#SBATCH --partition=normal
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --time=00:10:00
+#SBATCH --output=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189/stdout
+#SBATCH --error=/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189/stderr
+#SBATCH --exclusive
+
+
+#Common commands
+export AKRR_NODES=1
+export AKRR_CORES=2
+export AKRR_CORES_PER_NODE=2
+export AKRR_NETWORK_SCRATCH="/tmp"
+export AKRR_LOCAL_SCRATCH="/tmp"
+export AKRR_TASK_WORKDIR="/tmp/akrr_data/localhost/xdmod.app.md.gromacs.micro/2018.12.20.20.16.32.769189"
+export AKRR_APPKER_DIR="/tmp/appker/localhost"
+export AKRR_AKRR_DIR="/tmp/akrr_data/localhost"
+
+export AKRR_APPKER_NAME="xdmod.app.md.gromacs.micro"
+export AKRR_RESOURCE_NAME="localhost"
+export AKRR_TIMESTAMP="2018.12.20.20.16.32.769189"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/tmp/appker/localhost/inputs/gromacs/micro"
+export AKRR_APPKERNEL_EXECUTABLE="/tmp/appker/localhost/execs"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l --ntasks-per-node=$AKRR_CORES_PER_NODE -n $AKRR_CORES hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrr_perform_common_tests
+
+#Write some info to gen.info, JSON-Like file
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
+
+
+#create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d /tmp/gromacs.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+#Copy inputs
+cp /tmp/appker/localhost/inputs/gromacs/micro/* ./
+
+
+
+EXE=`which gmx`
+RUN_APPKERNEL="$EXE  mdrun -deffnm md_0_2"
+
+# make tpr
+$EXE grompp -f md2.mdp -c md_0_1.gro -t md_0_1.cpt -p topol.top -o md_0_2.tpr
+
+
+#Generate AppKer signature
+appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. > $AKRR_APP_STDOUT_FILE
+
+
+#Execute AppKer
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
+$RUN_APPKERNEL >> $AKRR_APP_STDOUT_FILE 2>&1
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
+
+
+
+
+
+#clean-up
+cd $AKRR_TASK_WORKDIR
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+
+
+
+akrr_write_to_gen_info "end_time" "`date`"

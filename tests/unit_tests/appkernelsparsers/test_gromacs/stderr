@@ -1,0 +1,54 @@
+                      :-) GROMACS - gmx grompp, 2018.4 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar    Aldert van Buuren   Rudi van Drunen     Anton Feenstra  
+  Gerrit Groenhof    Aleksei Iupinov   Christoph Junghans   Anca Hamuraru   
+ Vincent Hindriksen Dimitrios Karkoulis    Peter Kasson        Jiri Kraus    
+  Carsten Kutzner      Per Larsson      Justin A. Lemkul    Viveca Lindahl  
+  Magnus Lundborg   Pieter Meulenhoff    Erik Marklund      Teemu Murtola   
+    Szilard Pall       Sander Pronk      Roland Schulz     Alexey Shvetsov  
+   Michael Shirts     Alfons Sijbers     Peter Tieleman    Teemu Virolainen 
+ Christian Wennberg    Maarten Wolf   
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2017, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx grompp, version 2018.4
+Executable:   /usr/bin/gmx
+Data prefix:  /usr
+Working dir:  /tmp/gromacs.DZTRA3S0V
+Command line:
+  gmx grompp -f md2.mdp -c md_0_1.gro -t md_0_1.cpt -p topol.top -o md_0_2.tpr
+
+Ignoring obsolete mdp entry 'title'
+Setting the LD random seed to -320591688
+Generated 330891 of the 330891 non-bonded parameter combinations
+Generating 1-4 interactions: fudge = 0.5
+Generated 330891 of the 330891 1-4 parameter combinations
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+Excluding 2 bonded neighbours molecule type 'SOL'
+Excluding 2 bonded neighbours molecule type 'SOL'
+Excluding 1 bonded neighbours molecule type 'CL'
+Removing all charge groups because cutoff-scheme=Verlet
+Number of degrees of freedom in T-Coupling group Protein is 3895.85
+Number of degrees of freedom in T-Coupling group non-Protein is 72837.15
+Reading Coordinates, Velocities and Box size from old trajectory
+Will read whole trajectory
+Last frame         -1 time 1000.000   
+Using frame at t = 1000 ps
+Starting time for run is 0 ps
+Estimate for the relative computational load of the PME mesh part: 0.15
+
+GROMACS reminds you: "What If None Of Your Dreams Come True ?" (E. Costello)
+

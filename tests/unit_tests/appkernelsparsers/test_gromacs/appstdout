@@ -1,0 +1,187 @@
+===ExeBinSignature=== MD5: f2008fa6b47789ae8541b2bbad6bdd93 /usr/bin/gmx
+===ExeBinSignature=== MD5: 928df3ba0df731b00b34bdd7afd16223 /lib64/libgromacs.so.3
+===ExeBinSignature=== MD5: b06038960f153e36545ed9ea947f80f6 /lib64/libstdc++.so.6
+===ExeBinSignature=== MD5: 2705d15430ebce01274ef94967122bcb /lib64/libm.so.6
+===ExeBinSignature=== MD5: faac9271545933f26968b58e52eb83fd /lib64/libgomp.so.1
+===ExeBinSignature=== MD5: c8f2c137eee1a4581bc0be7b63d2c603 /lib64/libgcc_s.so.1
+===ExeBinSignature=== MD5: 23902bbccc0e350c1fdf09d070f3cd48 /lib64/libpthread.so.0
+===ExeBinSignature=== MD5: a2737e5fc2c2059bd357ef6015c99262 /lib64/libc.so.6
+===ExeBinSignature=== MD5: 9043088f6c4dbab5008afd1f15cb85ce /lib64/libtng_io.so.1
+===ExeBinSignature=== MD5: 4b9b9a24ce583b660daf211a352cf65d /lib64/libhwloc.so.5
+===ExeBinSignature=== MD5: bbb4814755042554781fce1b1da6fdb1 /lib64/libdl.so.2
+===ExeBinSignature=== MD5: 5928d7f9554dde0b45bc87ac09598ad0 /lib64/librt.so.1
+===ExeBinSignature=== MD5: 1ae7b47db6db40a689eabde926d14dcf /lib64/libfftw3f.so.3
+===ExeBinSignature=== MD5: ed95c3b5f93d435548df54a0d0117e0e /lib64/libopenblas.so.0
+===ExeBinSignature=== MD5: e33b22795e9b536ac132f0deb780f8bf /lib64/libOpenCL.so.1
+===ExeBinSignature=== MD5: eabf1e325b472d872d5f8e6444f7a5af /lib64/liblmfit.so.6
+===ExeBinSignature=== MD5: 4ef6c623f4537579f2f40215476cee06 /lib64/libz.so.1
+===ExeBinSignature=== MD5: cf43693b9f2d42b19614900cc334a7f2 /lib64/libnuma.so.1
+===ExeBinSignature=== MD5: 70092cff2a31ccf39d7df1e451153b74 /lib64/libltdl.so.7
+===ExeBinSignature=== MD5: f853559b85021584a50d8658dc574a99 /lib64/libgfortran.so.3
+===ExeBinSignature=== MD5: 1f981a97e5bbfb76059cbb640bb24573 /lib64/libquadmath.so.0
+                      :-) GROMACS - gmx mdrun, 2020.4 (-:
+
+                            GROMACS is written by:
+     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
+    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd
+ Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray
+  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang
+  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
+    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson
+  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund
+    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall
+    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov
+   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen
+ Christian Wennberg    Maarten Wolf      Artem Zhmurov
+                           and the project leaders:
+        Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
+
+Copyright (c) 1991-2000, University of Groningen, The Netherlands.
+Copyright (c) 2001-2019, The GROMACS development team at
+Uppsala University, Stockholm University and
+the Royal Institute of Technology, Sweden.
+check out http://www.gromacs.org for more information.
+
+GROMACS is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License
+as published by the Free Software Foundation; either version 2.1
+of the License, or (at your option) any later version.
+
+GROMACS:      gmx mdrun, version 2020.4
+Executable:   /usr/local/gromacs-2020-4/bin/gmx_mpi
+Data prefix:  /usr/local/gromacs-2020-4
+Working dir:  /home/nikolays/tmp
+Command line:
+  gmx_mpi mdrun -v -nsteps 10000
+
+NOTE: Detection of GPUs failed. The API reported:
+            GROMACS cannot run tasks on a GPU.
+Compiled SIMD: SSE2, but for this host/run AVX2_256 might be better (see log).
+
+The current CPU can measure timings more accurately than the code in
+gmx mdrun was configured to use. This might affect your simulation
+speed as accurate timings are needed for load-balancing.
+Please consider rebuilding gmx mdrun with the GMX_USE_RDTSCP=ON CMake option.
+Reading file md_0_2.tpr, VERSION 2018.4 (single precision)
+Changing nstlist from 10 to 40, rlist from 1 to 1.096
+
+
+Using 8 MPI processes
+Using 2 OpenMP threads per MPI process
+
+starting mdrun 'LYSOZYME in water'
+100 steps,      0.2 ps.
+
+Writing final coordinates.
+
+Dynamic load balancing report:
+ DLB was turned on during the run due to measured imbalance.
+ Average load imbalance: 2.3%.
+ The balanceable part of the MD step is 80%, load imbalance is computed from this.
+ Part of the total run time spent waiting due to load imbalance: 1.9%.
+ Steps where the load balancing was limited by -rdd, -rcon and/or -dds: X 0 %
+
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     6977.538      436.098     1600.0
+                 (ns/day)    (hour/ns)
+Performance:        3.963        6.056
+
+
+GROMACS reminds you: "Performance and power are great targets for tuning, but really you want to tune for money!" (Erik Lindahl)
+
+        M E G A - F L O P S   A C C O U N T I N G
+
+ NB=Group-cutoff nonbonded kernels    NxN=N-by-N cluster Verlet kernels
+ RF=Reaction-Field  VdW=Van der Waals  QSTab=quadratic-spline table
+ W3=SPC/TIP3p  W4=TIP4p (single or pairs)
+ V&F=Potential and force  V=Potential only  F=Force only
+
+ Computing:                               M-Number         M-Flops  % Flops
+-----------------------------------------------------------------------------
+ Pair Search distance check            4303.606512       38732.459     0.1
+ NxN Ewald Elec. + LJ [F]            230427.561200    15208219.039    51.3
+ NxN Ewald Elec. + LJ [V&F]            2350.899776      251546.276     0.8
+ NxN LJ [F]                           22235.418048      733768.796     2.5
+ NxN LJ [V&F]                           226.876992        9755.711     0.0
+ NxN Ewald Elec. [F]                 167274.564848    10203748.456    34.4
+ NxN Ewald Elec. [V&F]                 1706.592352      143353.758     0.5
+ 1,4 nonbonded interactions             231.583156       20842.484     0.1
+ Calc Weights                          2452.535229       88291.268     0.3
+ Spread Q Bspline                     52320.751552      104641.503     0.4
+ Gather F Bspline                     52320.751552      313924.509     1.1
+ 3D-FFT                              287447.801906     2299582.415     7.8
+ Solve PME                               92.169216        5898.830     0.0
+ Reset In Box                            10.217875          30.654     0.0
+ CG-CoM                                  10.381361          31.144     0.0
+ Angles                                 283.638361       47651.245     0.2
+ Propers                                111.121111       25446.734     0.1
+ Impropers                               54.645464       11366.257     0.0
+ RB-Dihedrals                            62.336233       15397.050     0.1
+ Virial                                  82.185103        1479.332     0.0
+ Stop-CM                                  8.337786          83.378     0.0
+ P-Coupling                              81.824743         490.948     0.0
+ Calc-Ekin                              163.649486        4418.536     0.0
+ Lincs                                  301.361102       18081.666     0.1
+ Lincs-Mat                             4580.130132       18320.521     0.1
+ Constraint-V                          1235.388682        9883.109     0.0
+ Constraint-Vir                          93.480224        2243.525     0.0
+ Settle                                 210.929854       68130.343     0.2
+-----------------------------------------------------------------------------
+ Total                                                29645359.945   100.0
+-----------------------------------------------------------------------------
+
+
+    D O M A I N   D E C O M P O S I T I O N   S T A T I S T I C S
+
+ av. #atoms communicated per step for force:  2 x 67038.8
+ av. #atoms communicated per step for LINCS:  2 x 12233.3
+
+
+Dynamic load balancing report:
+ DLB was turned on during the run due to measured imbalance.
+ Average load imbalance: 2.3%.
+ The balanceable part of the MD step is 80%, load imbalance is computed from this.
+ Part of the total run time spent waiting due to load imbalance: 1.9%.
+ Steps where the load balancing was limited by -rdd, -rcon and/or -dds: X 0 %
+
+
+     R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
+
+On 8 MPI ranks, each using 2 OpenMP threads
+
+ Computing:          Num   Num      Call    Wall time         Giga-Cycles
+                     Ranks Threads  Count      (s)         total sum    %
+-----------------------------------------------------------------------------
+ Domain decomp.         8    2        126       0.577         34.978   0.1
+ DD comm. load          8    2        125       0.005          0.320   0.0
+ DD comm. bounds        8    2        124       0.034          2.064   0.0
+ Neighbor search        8    2        126       1.615         97.986   0.4
+ Comm. coord.           8    2       9875       1.602         97.216   0.4
+ Force                  8    2      10001     346.698      21034.607  79.5
+ Wait + Comm. F         8    2      10001       1.488         90.249   0.3
+ PME mesh               8    2      10001      72.718       4411.880  16.7
+ NB X/F buffer ops.     8    2      29751       1.924        116.710   0.4
+ Write traj.            8    2          1       0.015          0.899   0.0
+ Update                 8    2      10001       0.946         57.419   0.2
+ Constraints            8    2      10003       7.685        466.229   1.8
+ Comm. energies         8    2       1001       0.388         23.545   0.1
+ Rest                                           0.404         24.482   0.1
+-----------------------------------------------------------------------------
+ Total                                        436.098      26458.584 100.0
+-----------------------------------------------------------------------------
+ Breakdown of PME mesh computation
+-----------------------------------------------------------------------------
+ PME redist. X/F        8    2      20002      34.509       2093.717   7.9
+ PME spread             8    2      10001      11.936        724.172   2.7
+ PME gather             8    2      10001       6.033        366.006   1.4
+ PME 3D-FFT             8    2      20002       7.233        438.804   1.7
+ PME 3D-FFT Comm.       8    2      20002       9.806        594.948   2.2
+ PME solve Elec         8    2      10001       3.158        191.622   0.7
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     6977.538      436.098     1600.0
+                 (ns/day)    (hour/ns)
+Performance:        3.963        6.056
+Finished mdrun on rank 0 Wed Feb 17 12:08:06 2021
