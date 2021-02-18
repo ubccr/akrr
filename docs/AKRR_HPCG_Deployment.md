@@ -38,12 +38,20 @@ module load mkl/2018.3
 ls $MKLROOT/benchmarks/hpcg/bin
 # hpcg.dat  xhpcg_avx  xhpcg_avx2  xhpcg_knl  xhpcg_skx
 # 
-
-
 ```
 
 choose one which match architecture of your HPC resource
 for example $MKLROOT/benchmarks/hpcg/bin/xhpcg_skx
+
+## Installing Original Version of HPCG with Spack
+
+First install Spack and set it up to reuse system-wide packages, see [Spack Install and Setup](AKRR_Spack_Install_and_Setup.md).
+
+```bash
+# To install
+$AKRR_APPKER_DIR/execs/spack/bin/spack -v install hpcg
+```
+
 
 ## (Alternatively) Compiling Original Version of HPCG from Source Code
 
@@ -104,6 +112,29 @@ Sample output:
 
 Below is a listing of configuration file located at 
 ~/akrr/etc/resources/$RESOURCE/hpcg.app.conf for SLURM:
+
+## For Spack version
+
+
+**initial ~/akrr/etc/resources/$RESOURCE/hpcg.app.conf**
+```python
+"""
+Resource specific HPCG configuration
+"""
+
+appkernel_run_env_template = """
+# Load application environment
+eval `$AKRR_APPKER_DIR/execs/spack/bin/spack load --sh hpcg`
+EXE=$(which xhpcg)
+
+# Set how to run app kernel
+export OMP_NUM_THREADS=1
+RUN_APPKERNEL="mpirun $EXE"
+"""
+```
+
+
+## For manual Build
 
 **initial ~/akrr/etc/resources/$RESOURCE/hpcg.app.conf**
 ```python

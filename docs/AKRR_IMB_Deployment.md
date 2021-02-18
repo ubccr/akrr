@@ -18,6 +18,16 @@ installation details ( 
 [https://software.intel.com/en-us/articles/intel-mpi-benchmarks](https://software.intel.com/en-us/
 articles/intel-mpi-benchmarks) ).
 
+## Installing with Spack
+
+First install Spack and set it up to reuse system-wide packages, see [Spack Install and Setup](AKRR_Spack_Install_and_Setup.md).
+
+```bash
+# To install
+$AKRR_APPKER_DIR/execs/spack/bin/spack -v install intel-mpi-benchmarks
+```
+
+
 ## Building IMB Executables
 
 First we need to install IMB. Below is a sample listing of commands for IMB installation:

@@ -21,15 +21,23 @@ export RESOURCE=<resource_name>
 export APPKER=ior
 ```
 
-## Installing IOR
+# Installing IOR
 
 
 In this section the IOR installation process will be described, see also IOR benchmark documentation 
 for installation details ( 
 [https://github.com/hpc/ior](https://github.com/hpc/ior) ).
 
+## Installing IOR with Spack
 
+First install Spack and set it up to reuse system-wide packages, see [Spack Install and Setup](AKRR_Spack_Install_and_Setup.md).
 
+```bash
+# To install
+$AKRR_APPKER_DIR/execs/spack/bin/spack -v install ior +hdf5 +ncmpi
+```
+
+## Manual Installation
 ### Installing HDF5 (optional)
 
 It is preferred to use a system-wide installed parallel HDF5 library. This way 
@@ -132,10 +140,10 @@ rm -rf ior
 
 # Obtain latest version of IOR from our repository
 # Option 1 use latest stable release (it have troubles with newer version of HDF5)
-wget https://github.com/hpc/ior/releases/download/3.2.1/ior-3.2.1.tar.gz
-tar -xzf ior-3.2.1.tar.gz
-ln -s ior-3.2.1 ior
-cd ior-3.2.1
+wget https://github.com/hpc/ior/releases/download/3.3.0/ior-3.3.0.tar.gz
+tar -xzf ior-3.3.0.tar.gz
+ln -s ior-3.3.0 ior
+cd ior-3.3.0
 
 # Option 2 using github
 git clone https://github.com/hpc/ior.git

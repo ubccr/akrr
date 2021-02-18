@@ -18,6 +18,17 @@ In this section example of HPCC installation on HPC resource will be described
 documentation for more installation details 
 ([http://icl.cs.utk.edu/hpcc/](http://icl.cs.utk.edu/hpcc/)).
 
+## Installation with Spack
+
+First install Spack and set it up to reuse system-wide packages, see [Spack Install and Setup](AKRR_Spack_Install_and_Setup.md).
+
+```bash
+# To install
+$AKRR_APPKER_DIR/execs/spack/bin/spack -v install hpcc@1.5.0 fft=fftw2
+```
+
+## Manual Installation
+
 ** on HPC resource**
 ```bash
 # Go to Application Kernel executable directory
@@ -106,7 +117,7 @@ Sample output:
 # Edit Configuration File
 
 Below is a listing of configuration file located at 
-~/akrr/etc/resources/$RESOURCE/hpcc.app.conf for SLURM:
+~/akrr/etc/resources/$RESOURCE/hpcc.app.conf for SLURM manual installation:
 
 **initial ~/akrr/etc/resources/$RESOURCE/hpcc.app.conf**
 ```python
@@ -122,6 +133,21 @@ export I_MPI_PMI_LIBRARY=/usr/lib64/libpmi.so
 
 # set how to run app kernel
 RUN_APPKERNEL="srun {appkernel_dir}/{executable}"
+"""
+# gflops: 2 for number of units * 2 for FMA * 8 for data width * 1.9 for frequency 
+theoretical_gflops_per_core = None
+```
+
+~/akrr/etc/resources/$RESOURCE/hpcc.app.conf for SLURM **Spack** installation:
+
+```bash
+appkernel_run_env_template = """
+# Load application environment
+eval `$AKRR_APPKER_DIR/execs/spack/bin/spack load --sh hpcc`
+EXE=$(which hpcc)
+
+# set how to run app kernel
+RUN_APPKERNEL="mpirun $EXE"
 """
 # gflops: 2 for number of units * 2 for FMA * 8 for data width * 1.9 for frequency 
 theoretical_gflops_per_core = None
