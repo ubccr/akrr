@@ -823,5 +823,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir = sys.argv[1]
+    results_out = None if len(sys.argv)<=2 else sys.argv[2]
     print("Proccessing Output From", jobdir)
-    process_appker_output(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))
+    result = process_appker_output(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))
+    if results_out:
+        with open(results_out, "wt") as fout:
+            fout.write(str(result))

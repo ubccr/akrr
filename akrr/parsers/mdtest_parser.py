@@ -88,6 +88,13 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     parser.successfulRun = False
     j = 0
     while j < len(lines):
+        m = re.match(r'mdtest.* was launched with ([0-9]*) total task\(s\) on ([0-9]*) node', lines[j])
+        if m:
+            if parser.get_parameter("Nodes") is None:
+                parser.set_parameter("Nodes",m.group(2))
+            if parser.get_parameter("Tasks") is None:
+                parser.set_parameter("Tasks",m.group(1))
+
         m = re.match(r'^#Testing (.+)', lines[j])
         if m:
             testname = " (" + m.group(1).strip() + ")"
@@ -141,5 +148,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 if __name__ == "__main__":
     """stand alone testing"""
     jobdir = sys.argv[1]
+    results_out = None if len(sys.argv)<=2 else sys.argv[2]
     print("Proccessing Output From", jobdir)
-    process_appker_output(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))
+    result = process_appker_output(appstdout=os.path.join(jobdir, "appstdout"), geninfo=os.path.join(jobdir, "gen.info"))
+    if results_out:
+        with open(results_out, "wt") as fout:
+            fout.write(str(result))
