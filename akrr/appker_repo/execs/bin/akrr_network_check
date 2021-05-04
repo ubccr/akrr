@@ -44,7 +44,7 @@ class NetworkCheck:
         rtt_min,rtt_avg,rtt_max,rtt_mdev = m.groups()
         self.ping_results[destination] = {
             "rtt_min":rtt_min,"rtt_avg":rtt_avg,"rtt_max":rtt_max,
-            "rtt_mdev":rtt_mdev}
+            "rtt_mdev":rtt_mdev,"n": count}
 
     def wget(self, url,timeout=600):
         args = ["wget", url]
@@ -86,7 +86,9 @@ class NetworkCheck:
             return
         # print(m.groups())
         # print(out)
-        os.remove(m.group(3))
+        filename = m.group(3)
+        file_size = os.path.getsize(filename)
+        os.remove(filename)
         m_speed = float(m.group(1))
         m_units = m.group(2)
         if m_units == "KB/s":
@@ -102,7 +104,7 @@ class NetworkCheck:
             self.wget_results[url] = None
             return
 
-        self.wget_results[url] = m_speed
+        self.wget_results[url] = {"bandwidth": m_speed, "file_size": file_size}
 
     def scp(self, hostname="local", user=None, identity_file=None,
             destination="/tmp", file_size="2MB",
@@ -287,7 +289,8 @@ class NetworkCheck:
         os.remove(probe_filename)
 
         self.scp_results[hostname] = {'bandwidth_ingress': bandwidth_ingress_scp,
-                                      'bandwidth_egress':bandwidth_egress_scp}
+                                      'bandwidth_egress':bandwidth_egress_scp,
+                                      "file_size":file_size_real}
 
     def run(self):
         if 'ping' in self.param:
