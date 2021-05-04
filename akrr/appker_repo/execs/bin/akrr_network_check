@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+import os
+import re
+import subprocess
+import json
+import pprint
+import time
+from collections import OrderedDict
+
+class NetworkCheck:
+    def __init__(self, input_filename):
+        if not os.path.exists(input_filename):
+            raise FileNotFoundError
+        with open(input_filename,"rt") as fout:
+            text = fout.read()
+        self.param = eval(text)
+        self.ping_results = OrderedDict()
+        self.wget_results = OrderedDict()
+        self.scp_results = OrderedDict()
+
+    def ping(self, destination, count=3):
+        args = ["ping","-c",str(count),destination]
+        print("Pinging %s" % destination)
+
+        # run ping
+        p = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        out = p.stdout.decode("utf-8")
+
+        if p.returncode != 0:
+            print("ERROR: ping to %s failed:" % destination)
+            print(out)
+            self.ping_results[destination] = None
+            return
+
+        #process output
+        # rtt min/avg/max/mdev = 16.967/21.043/30.954/5.154 ms
+        m = re.search("rtt min/avg/max/mdev = ([0-9.]+)/([0-9.]+)/([0-9.]+)/([0-9.]+) ms", out, re.MULTILINE)
+        if m is None:
+            print("ERROR: Can not find match in ping output for stats, destination:" % destination)
+            print(out)
+            self.ping_results[destination] = None
+            return
+
+        rtt_min,rtt_avg,rtt_max,rtt_mdev = m.groups()
+        self.ping_results[destination] = {
+            "rtt_min":rtt_min,"rtt_avg":rtt_avg,"rtt_max":rtt_max,
+            "rtt_mdev":rtt_mdev}
+
+    def wget(self, url,timeout=600):
+        args = ["wget", url]
+        print("wget %s" % url)
+
+        try:
+            # let's say if less than 1MB/s
+            start = time.time()
+            p = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout)
+            end = time.time()
+            dt = float(end - start)
+            out = p.stdout.decode("utf-8")
+        except subprocess.TimeoutExpired as e:
+            if e.output is not None:
+                out = str(e.output, "utf-8")
+            else:
+                out = "None"
+            print("TIMEOUT ERROR: wget:")
+            print(" ".join(args))
+            print(out)
+            return
+
+        if p.returncode != 0:
+            print("ERROR: wget %s failed:" % url)
+            print(out)
+            self.wget_results[url] = None
+            return
+
+        # Saving to: ‘linux-5.12.tar.xz.1’
+        # m_filename = re.search("^Saving to: [‘’']([^`’\n]+)[‘’']$", out, re.MULTILINE)
+        # 2021-04-30 15:07:12 (7.09 MB/s) - ‘linux-5.12.tar.xz.2’ saved [118112412/118112412]
+        m = re.search(
+            r"^[0-9-]+\s+[0-9:]+\s+\(([0-9.]+) (\S+)\) - [‘’']([^`’\n]+)[‘’'] saved \[[0-9]+/[0-9]+\]$",
+            out, re.MULTILINE)
+        if m is None:
+            print("ERROR: Can not find matches in wget %s" % url)
+            print(out)
+            self.wget_results[url] = None
+            return
+        print(m.groups())
+        print(out)
+        m_speed = float(m.group(1))
+        m_units = m.group(2)
+        if m_units == "KB/s":
+            m_speed = m_speed/1000
+            m_units = "MB/s"
+        elif m_units == "GB/s":
+            m_speed = 1000*m_speed
+            m_units = "MB/s"
+
+        if m_units != "MB/s":
+            print("ERROR: Unknown unit format for wget %s" % m_units)
+            print(out)
+            self.wget_results[url] = None
+            return
+
+        self.wget_results[url] = m_speed
+
+    def scp(self, hostname="local", user=None, identity_file=None,
+            destination="/tmp", file_size="2MB",
+            probe_filename = "akrr_probe_file_abc123"):
+        print("scp %s %s %s" % (hostname, destination, file_size))
+        self.scp_results[hostname] = None
+
+        m = re.match("^([0-9]+)([A-Z]*)$",file_size)
+        if not m:
+            raise ValueError("Unknown format for file size: %s (should be MB or GB)" % str(file_size))
+
+        file_size1 = int(m.group(1))
+        file_size2 = m.group(2)
+        if file_size2 == "" or file_size2 == "MB":
+            block_count = file_size1
+            block_size = "1M"
+        elif file_size2 == "" or file_size2 == "GB":
+            block_count = file_size1*1000
+            block_size = "1M"
+        else:
+            raise ValueError("Unknown format for file size: %s (should be MB or GB)" % str(file_size))
+
+        # gen file
+        args = ['dd', 'if=/dev/urandom', 'of='+probe_filename, 'bs='+block_size, 'count=%d' % block_count]
+        p = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        if p.returncode != 0:
+            print("ERROR: failed to generate file")
+            print(" ".join(args))
+            print(p.stdout.decode("utf-8"))
+            return
+        # md5sum it
+        args = ['md5sum', probe_filename]
+        p = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        if p.returncode != 0:
+            print("ERROR: failed to md5sum on generate file")
+            print(" ".join(args))
+            print(p.stdout.decode("utf-8"))
+            return
+        md5sum = p.stdout.decode("utf-8").strip().split()[0]
+        file_size_real = os.path.getsize(probe_filename)
+
+        # copy file outside
+        args = ["scp", "-v"]
+        if identity_file is not None:
+            args += ["-i", os.path.expanduser(identity_file)]
+        args += [probe_filename]
+        if user is not None:
+            args += ["%s@%s:%s/" % (user, hostname, destination)]
+        else:
+            args += ["%s:%s/" % (hostname, destination)]
+
+        try:
+            # let's say if less than 1MB/s
+            timeout = 1.1*file_size_real / 1e6
+            start = time.time()
+            p = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=timeout)
+            end = time.time()
+            dt = float(end - start)
+            out = p.stdout.decode("utf-8")
+        except subprocess.TimeoutExpired as e:
+            if e.output is not None:
+                out = str(e.output, "utf-8")
+            else:
+                out = "None"
+            print("TIMEOUT ERROR: scp:")
+            print(" ".join(args))
+            print(out)
+            return
+
+        if p.returncode != 0:
+            print("ERROR: scp:")
+            print(" ".join(args))
+            print(out)
+            return
+
+        bandwidth_egress = file_size_real / 1e6 / dt
+        m = re.search("^Bytes per second: sent ([0-9.]+), received ([0-9.]+)", out, re.MULTILINE)
+        if m is None:
+            print("ERROR: Can not find Bytes per second output in scp")
+            print(out)
+            return
+        bandwidth_egress_scp = float(m.group(1)) / 1e6
+        # copy file back
+        os.remove(probe_filename)
+        args = ["scp", "-v"]
+        if identity_file is not None:
+            args += ["-i", os.path.expanduser(identity_file)]
+
+        if user is not None:
+            args += [
+                "%s@%s:%s/%s" % (user, hostname, destination, probe_filename)]
+        else:
+            args += [
+                "%s:%s/%s" % (hostname, destination, probe_filename)]
+
+        args += ["./"]
+
+        try:
+            # let's say if less than 1MB/s
+            timeout = 1.1 * file_size_real / 1e6
+            start = time.time()
+            p = subprocess.run(args, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, timeout=timeout)
+            end = time.time()
+            dt = float(end - start)
+            out = p.stdout.decode("utf-8")
+        except subprocess.TimeoutExpired as e:
+            if e.output is not None:
+                out = str(e.output, "utf-8")
+            else:
+                out = "None"
+            print("TIMEOUT ERROR: scp:")
+            print(args)
+            print(out)
+            return
+
+        if p.returncode != 0:
+            print("ERROR: scp:")
+            print(args)
+            print(out)
+            return
+
+        bandwidth_ingress = file_size_real / 1e6 / dt
+        m = re.search("^Bytes per second: sent ([0-9.]+), received ([0-9.]+)",
+                      out, re.MULTILINE)
+        if m is None:
+            print("ERROR: Can not find Bytes per second output in scp")
+            print(out)
+            return
+        bandwidth_ingress_scp = float(m.group(2)) / 1e6
+        # rm remote file
+        args = ["ssh"]
+        if identity_file is not None:
+            args += ["-i", os.path.expanduser(identity_file)]
+
+        if user is not None:
+            args += [
+                "%s@%s" % (user, hostname)]
+        else:
+            args += [hostname]
+
+        args += ["rm", "%s/%s" % (destination, probe_filename)]
+
+        try:
+            # let's say if less than 1MB/s
+            timeout = 1.1 * file_size_real / 1e6
+            start = time.time()
+            p = subprocess.run(args, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT, timeout=timeout)
+            end = time.time()
+            dt = float(end - start)
+            out = p.stdout.decode("utf-8")
+        except subprocess.TimeoutExpired as e:
+            if e.output is not None:
+                out = str(e.output, "utf-8")
+            else:
+                out = "None"
+            print("TIMEOUT ERROR: ssh rm:")
+            print(args)
+            print(out)
+
+        if p.returncode != 0:
+            print("ERROR: ssh rm:")
+            print(args)
+            print(out)
+
+        # check md5sum
+        args = ['md5sum', probe_filename]
+        p = subprocess.run(args, stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)
+        if p.returncode != 0:
+            print("ERROR: failed to md5sum on generate file")
+            print(args)
+            print(p.stdout.decode("utf-8"))
+            return
+        md5sum2 = p.stdout.decode("utf-8").strip().split()[0]
+
+        if md5sum != md5sum2:
+            print("ERROR: scp: md5sums on copied file do not match")
+            print(md5sum,"!=",md5sum2)
+
+        self.scp_results[hostname] = {'bandwidth_ingress': bandwidth_ingress_scp,
+                                      'bandwidth_egress':bandwidth_egress_scp}
+
+    def run(self):
+        if 'ping' in self.param:
+            for v in self.param['ping']:
+                self.ping(**v)
+
+        if 'wget' in self.param:
+            for v in self.param['wget']:
+                self.wget(**v)
+
+        if 'scp' in self.param:
+            for v in self.param['scp']:
+                self.scp(**v)
+
+        print("AKRR Network Check Results:")
+        print(json.dumps({
+            'ping':self.ping_results,
+            'wget': self.wget_results,
+            'scp': self.scp_results
+        }, indent=4))
+        print("Done")
+
+
+if __name__ == '__main__':
+    import sys
+    input_filename = "input.par"
+    if len(sys.argv) > 1:
+        input_filename = sys.argv[1]
+
+    NetworkCheck(input_filename).run()

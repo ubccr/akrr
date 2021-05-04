@@ -1,0 +1,20 @@
+{
+    "ping":[
+        {"destination":"www.google.com"},
+        {"destination":"www.bing.com"},
+        {"destination":"www.amazon.com"},
+        {"destination":"login.expanse.sdsc.edu"},
+        {"destination":"bridges2.psc.edu"}
+    ],
+    "wget":[{
+        "url":"https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.12.tar.xz"
+    }],
+    "scp":[{
+        "file_size": "20MB",
+        "hostname": "login.expanse.sdsc.edu",
+        "user": "xdtas",
+        "identity_file": "~/.ssh/id_rsa_comet",
+        "destination": "/expanse/lustre/scratch/xdtas/temp_project/akrr_data/Expanse",
+        "probe_filename": "akrr_probe_file_from_expanse"
+    }]
+}
