@@ -84,8 +84,9 @@ class NetworkCheck:
             print(out)
             self.wget_results[url] = None
             return
-        print(m.groups())
-        print(out)
+        # print(m.groups())
+        # print(out)
+        os.remove(m.group(3))
         m_speed = float(m.group(1))
         m_units = m.group(2)
         if m_units == "KB/s":
@@ -282,6 +283,8 @@ class NetworkCheck:
         if md5sum != md5sum2:
             print("ERROR: scp: md5sums on copied file do not match")
             print(md5sum,"!=",md5sum2)
+
+        os.remove(probe_filename)
 
         self.scp_results[hostname] = {'bandwidth_ingress': bandwidth_ingress_scp,
                                       'bandwidth_egress':bandwidth_egress_scp}
