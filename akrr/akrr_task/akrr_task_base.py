@@ -81,6 +81,9 @@ class AkrrTaskHandlerBase:
         # just check that resource and app exists
         self.resource = cfg.find_resource_by_name(self.resourceName)
         self.app = cfg.find_app_by_name(self.appName)
+        # some variables to reset from app to resource
+        if 'batch_scheduler' in self.app:
+            self.resource['batch_scheduler'] = self.app['batch_scheduler']
 
         self.resourceDir = None
         self.appDir = None
