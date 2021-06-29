@@ -1,0 +1,70 @@
+objcopy:/work/01482/xdtas/appker/stampede2-skx/execs/bin/akrr_network_check: File format not recognized
+Unable to run objcopy
+===ExeBinSignature=== MD5:
+Pinging www.google.com
+Pinging www.bing.com
+Pinging www.amazon.com
+Pinging bridges2.psc.edu
+Pinging login.expanse.sdsc.edu
+wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.12.tar.xz
+scp bridges2.psc.edu /ocean/projects/ccr120008p/xdtas/scratch/akrr_data/Bridges-2 2GB
+scp login.expanse.sdsc.edu /expanse/lustre/scratch/xdtas/temp_project/akrr_data/Expanse 2GB
+AKRR Network Check Results:
+{
+    "ping": {
+        "www.google.com": {
+            "rtt_min": "8.643",
+            "rtt_avg": "8.664",
+            "rtt_max": "8.704",
+            "rtt_mdev": "0.081",
+            "n": 3
+        },
+        "www.bing.com": {
+            "rtt_min": "32.285",
+            "rtt_avg": "33.104",
+            "rtt_max": "34.228",
+            "rtt_mdev": "0.835",
+            "n": 3
+        },
+        "www.amazon.com": {
+            "rtt_min": "5.613",
+            "rtt_avg": "5.657",
+            "rtt_max": "5.683",
+            "rtt_mdev": "0.092",
+            "n": 3
+        },
+        "bridges2.psc.edu": {
+            "rtt_min": "39.721",
+            "rtt_avg": "39.822",
+            "rtt_max": "39.878",
+            "rtt_mdev": "0.071",
+            "n": 3
+        },
+        "login.expanse.sdsc.edu": {
+            "rtt_min": "40.961",
+            "rtt_avg": "40.984",
+            "rtt_max": "41.017",
+            "rtt_mdev": "0.234",
+            "n": 3
+        }
+    },
+    "wget": {
+        "https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.12.tar.xz": {
+            "bandwidth": 44.2,
+            "file_size": 118112412
+        }
+    },
+    "scp": {
+        "bridges2.psc.edu": {
+            "bandwidth_ingress": 46.0878623,
+            "bandwidth_egress": 32.1119694,
+            "file_size": 2097152000
+        },
+        "login.expanse.sdsc.edu": {
+            "bandwidth_ingress": 49.1839257,
+            "bandwidth_egress": 70.8632049,
+            "file_size": 2097152000
+        }
+    }
+}
+Done
