@@ -37,16 +37,19 @@ First we need to install IMB. Below is a sample listing of commands for IMB inst
 cd $AKRR_APPKER_DIR/execs
 
 # obtain latest version of IMB
-wget https://github.com/intel/mpi-benchmarks/archive/IMB-v2019.2.tar.gz
-tar xvzf IMB-v2019.2.tar.gz
+wget https://github.com/intel/mpi-benchmarks/archive/refs/tags/IMB-v2021.2.tar.gz
+tar xvzf IMB-v2021.2.tar.gz
 # create link 
-ln -s mpi-benchmarks-IMB-v2019.2 imb
+ln -s mpi-benchmarks-IMB-v2021.2 imb
 
 #load MPI compiler
 module load intel-mpi/2018.3 intel/18.3
 
 cd imb
 export CC=mpiicc
+export CXX=mpiicpc
+#export CC=mpiicc
+#export CXX=mpiicpc
 make IMB-MPI1
 make IMB-EXT
 ```

@@ -71,9 +71,9 @@ module load intel/18.3
 module load intel-mpi/2018.3
  
 #get the code
-wget https://github.com/hpcg-benchmark/hpcg/archive/HPCG-release-3-0-0.tar.gz
-tar xvzf HPCG-release-3-0-0.tar.gz
-cd hpcg-HPCG-release-3-0-0
+wget https://github.com/hpcg-benchmark/hpcg/archive/refs/tags/HPCG-release-3-1-0.tar.gz
+tar xvzf HPCG-release-3-1-0.tar.gz
+cd hpcg-HPCG-release-3-1-0
 
 # in setup directory there are number of Make.<arch> which setup parameters for make
 # chose one which fit your need the best, edit it (note that in CXXFLAGS vector instruction set

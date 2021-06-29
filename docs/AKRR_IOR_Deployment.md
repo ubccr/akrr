@@ -139,7 +139,7 @@ rm -rf ior
 
 
 # Obtain latest version of IOR from our repository
-# Option 1 use latest stable release (it have troubles with newer version of HDF5)
+# Option 1 use latest stable release
 wget https://github.com/hpc/ior/releases/download/3.3.0/ior-3.3.0.tar.gz
 tar -xzf ior-3.3.0.tar.gz
 ln -s ior-3.3.0 ior
