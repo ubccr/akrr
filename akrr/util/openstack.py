@@ -15,9 +15,9 @@ class OpenStack:
     """
     Wrapper for OpenStack command line interface
     """
-    def __init__(self, openstack_env_set_script="openstack_env_set.sh"):
-        self._openstack_env_set_script = openstack_env_set_script
-        self._which_openstack_env_set_script = None
+    def __init__(self, env_set_script="openstack_env_set.sh"):
+        self._env_set_script = env_set_script
+        self._which_env_set_script = None
         self._shell = None
         self._token = None
 
@@ -35,30 +35,30 @@ class OpenStack:
 
         self._shell = akrr.pexpect.replwrap.bash()
 
-        self._set_openstack_env()
+        self._set_env()
 
-    def _set_openstack_env(self):
+    def _set_env(self):
         # get location of openstack_env_set_script
-        if self._which_openstack_env_set_script is None:
-            if os.path.isfile(self._openstack_env_set_script):
-                self._which_openstack_env_set_script = self._openstack_env_set_script
+        if self._which_env_set_script is None:
+            if os.path.isfile(self._env_set_script):
+                self._which_env_set_script = self._env_set_script
             else:
-                self._which_openstack_env_set_script = self._shell.run_command("which "+self._openstack_env_set_script)
-                self._which_openstack_env_set_script = self._which_openstack_env_set_script.strip()
+                self._which_env_set_script = self._shell.run_command("which " + self._env_set_script)
+                self._which_env_set_script = self._which_env_set_script.strip()
 
-                if self._which_openstack_env_set_script.endswith(self._openstack_env_set_script):
-                    self._which_openstack_env_set_script = os.path.expanduser(self._which_openstack_env_set_script)
-            log.debug("which_openstack_env_set_script: " + self._which_openstack_env_set_script)
+                if self._which_env_set_script.endswith(self._env_set_script):
+                    self._which_env_set_script = os.path.expanduser(self._which_env_set_script)
+            log.debug("which_openstack_env_set_script: " + self._which_env_set_script)
 
         # check presence of openstack_env_set_script
-        if not os.path.isfile(self._which_openstack_env_set_script):
-            msg = "Can not find openstack environment setup script: " + self._openstack_env_set_script
-            msg += "\n" + self._which_openstack_env_set_script
+        if not os.path.isfile(self._which_env_set_script):
+            msg = "Can not find openstack environment setup script: " + self._env_set_script
+            msg += "\n" + self._which_env_set_script
             log.error(msg)
             raise FileNotFoundError(msg)
 
         # set environment
-        self.run_cmd("source " + self._which_openstack_env_set_script)
+        self.run_cmd("source " + self._which_env_set_script)
         self._token = self.run_cmd("echo $OS_TOKEN").strip()
 
     def run_cmd(self, cmd):
@@ -66,11 +66,11 @@ class OpenStack:
         log.debug(cmd+"\n"+out)
         return out
 
-    def run_open_stack_cmd(self, cmd):
+    def run_cloud_cmd(self, cmd):
         out = self._shell.run_command("openstack "+cmd)
         log.debug(cmd+"\n"+out)
         if out.count("Failed to validate token"):
-            self._set_openstack_env()
+            self._set_env()
             out = self._shell.run_command("openstack "+cmd)
             log.debug(cmd+"\n"+out)
             if out.count("Failed to validate token"):
@@ -79,11 +79,11 @@ class OpenStack:
 
     def token_revoke(self):
         if self._token is not None:
-            self.run_open_stack_cmd("token revoke "+self._token)
+            self.run_cloud_cmd("token revoke " + self._token)
 
 
 class OpenStackServer:
-    def __init__(self, resource=None, openstack=None, name=None,
+    def __init__(self, resource=None, cloud_cli=None, name=None,
                  flavor=None, volume=None, network=None, security_group=None, key_name=None,
                  ssh_username=None, ssh_private_key_file=None,
                  floating_ip_attach=False, floating_ip_network=None,
@@ -91,7 +91,7 @@ class OpenStackServer:
         from akrr.util import get_full_path
         if resource is not None:
             # @todo check that it is not spinning already
-            self.openstack = OpenStack(get_full_path(
+            self.cloud_cli = OpenStack(get_full_path(
                 resource["resource_cfg_directory"], resource["openstack_env_set_script"]))
             self.flavor = resource["openstack_flavor"]
             self.volume = resource["openstack_volume"]
@@ -105,7 +105,7 @@ class OpenStackServer:
             self.floating_ip_network = resource.get("openstack_floating_ip_network", None)
             self.floating_ip_delete_after_use = resource.get("openstack_floating_ip_delete_after_use", False)
         else:
-            self.openstack = openstack
+            self.cloud_cli = cloud_cli
             self.flavor = flavor
             self.volume = volume
             self.network = network
@@ -124,7 +124,7 @@ class OpenStackServer:
     def is_server_running(self, shut_off_is_down: bool = False) -> bool:
         """check if server with same name already up"""
         cmd = "server list -f json --name "+self.name
-        out = self.openstack.run_open_stack_cmd(cmd)
+        out = self.cloud_cli.run_cloud_cmd(cmd)
         try:
             out = json.loads(out.strip())
         except json.JSONDecodeError as e:  # added to hopefully track error better
@@ -148,7 +148,7 @@ class OpenStackServer:
                 return True
 
     def _detect_network(self):
-        out = self.openstack.run_open_stack_cmd("server list -f json --name " + self.name)
+        out = self.cloud_cli.run_cloud_cmd("server list -f json --name " + self.name)
         out = json.loads(out.strip())
         if len(out) == 0:
             raise Exception("Openstack server didn't start!")
@@ -187,9 +187,9 @@ class OpenStackServer:
             args.append(" ".join(["--security-group " + v for v in self.security_group]))
         args.append(self.name)
 
-        self.openstack.run_open_stack_cmd(" ".join(args))
+        self.cloud_cli.run_cloud_cmd(" ".join(args))
 
-        out = self.openstack.run_open_stack_cmd("server list -f json --name " + self.name)
+        out = self.cloud_cli.run_cloud_cmd("server list -f json --name " + self.name)
         out = json.loads(out.strip())
         if len(out) == 0:
             raise Exception("Openstack server didn't start!")
@@ -199,7 +199,7 @@ class OpenStackServer:
         # wait for network
         if self.network is not None:
             while True:
-                out = self.openstack.run_open_stack_cmd("server list -f json --name " + self.name)
+                out = self.cloud_cli.run_cloud_cmd("server list -f json --name " + self.name)
                 out = json.loads(out.strip())
                 if len(out) == 0:
                     raise Exception("Openstack server didn't start!")
@@ -214,30 +214,30 @@ class OpenStackServer:
             log.debug("internal_network_ip:" + self.internal_network_ip)
             self.ip = self.internal_network_ip
 
-            self.openstack.run_cmd("ssh-keygen -R %s" % self.internal_network_ip)
+            self.cloud_cli.run_cmd("ssh-keygen -R %s" % self.internal_network_ip)
 
         # attach floating ip
         if self.floating_ip_attach:
             # get unused ip
             floating_ip_creating_count = 0
             while True:
-                out = self.openstack.run_open_stack_cmd("floating ip list --long --status DOWN -f json")
+                out = self.cloud_cli.run_cloud_cmd("floating ip list --long --status DOWN -f json")
                 out = json.loads(out.strip())
                 if len(out) == 0 and (self.floating_ip_network is None or floating_ip_creating_count > 0):
                     raise Exception("Can not attach floating ip, there is no one available.!")
                 if len(out) == 0 and self.floating_ip_network is not None:
                     # create floating ip, if floating_ip_network provided
-                    self.openstack.run_open_stack_cmd("floating ip create " + self.floating_ip_network)
+                    self.cloud_cli.run_cloud_cmd("floating ip create " + self.floating_ip_network)
                     floating_ip_creating_count += 1
                 if len(out) > 0:
                     break
 
             # attach ip
             ip = out[random.randrange(len(out))]["Floating IP Address"]
-            self.openstack.run_open_stack_cmd("server add floating ip %s %s" % (self.name, ip))
+            self.cloud_cli.run_cloud_cmd("server add floating ip %s %s" % (self.name, ip))
 
             # check
-            out = self.openstack.run_open_stack_cmd("server list -f json --name " + self.name)
+            out = self.cloud_cli.run_cloud_cmd("server list -f json --name " + self.name)
             out = json.loads(out.strip())
             s = out[0]["Networks"]
             all_ips = s[s.find('=') + 1:].replace(',', ' ').split()
@@ -247,7 +247,7 @@ class OpenStackServer:
             self.flexible_ip = ip
             self.ip = ip
 
-            self.openstack.run_cmd("ssh-keygen -R %s" % self.flexible_ip)
+            self.cloud_cli.run_cmd("ssh-keygen -R %s" % self.flexible_ip)
 
         # wait for ssh to get up
         if self.ssh_private_key_file is not None:
@@ -259,12 +259,12 @@ class OpenStackServer:
     def delete(self):
         # release floating ip
         if self.floating_ip_attach and self.flexible_ip:
-            self.openstack.run_cmd("server remove floating %s %s" % (self.name, self.flexible_ip))
+            self.cloud_cli.run_cmd("server remove floating %s %s" % (self.name, self.flexible_ip))
         # stop
         count = 0
         while self.is_server_running(shut_off_is_down=True):
             if count % 30 == 0:
-                self.openstack.run_open_stack_cmd("server stop " + self.name)
+                self.cloud_cli.run_cloud_cmd("server stop " + self.name)
             if count > 0:
                 time.sleep(1)
             count += 1
@@ -274,7 +274,7 @@ class OpenStackServer:
         count = 0
         while self.is_server_running():
             if count % 30 == 0:
-                self.openstack.run_open_stack_cmd("server delete " + self.name)
+                self.cloud_cli.run_cloud_cmd("server delete " + self.name)
             if count > 0:
                 time.sleep(1)
             count += 1
@@ -282,7 +282,7 @@ class OpenStackServer:
                 raise Exception("Can not delete server!")
         # delete floating ip
         if self.floating_ip_delete_after_use and self.flexible_ip:
-            self.openstack.run_cmd("floating ip delete %s" % self.flexible_ip)
+            self.cloud_cli.run_cmd("floating ip delete %s" % self.flexible_ip)
 
 
 if __name__ == "__main__":

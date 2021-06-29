@@ -19,8 +19,8 @@ def test_openstack_expired_token():
     from akrr.util.openstack import OpenStack
     log.set_verbose()
     ostack = OpenStack()
-    out = ostack.run_open_stack_cmd("image list")
+    out = ostack.run_cloud_cmd("image list")
     assert out.count("ID") > 0 and out.count("Name") > 0 and out.count("Status") > 0
     ostack.token_revoke()
-    out = ostack.run_open_stack_cmd("image list")
+    out = ostack.run_cloud_cmd("image list")
     assert out.count("ID") > 0 and out.count("Name") > 0 and out.count("Status") > 0

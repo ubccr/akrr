@@ -310,8 +310,11 @@ def ssh_command_no_return(sh, cmd):
     return msg
 
 
-def ssh_command(sh, cmd):
+def ssh_command(sh, cmd, timeout = None):
     from akrr.pexpect.exceptions import ExceptionPexpect
+
+    if timeout is None:
+        timeout = ssh_timeout
 
     cmd_fin = " echo %s;\\\n%s;\\\necho %s" % (ssh_command_start_echo, cmd, ssh_command_end_echo)
     try:
@@ -321,7 +324,7 @@ def ssh_command(sh, cmd):
         pass
 
     sh.sendline(cmd_fin)
-    sh.expect(shell_prompt, timeout=ssh_timeout)
+    sh.expect(shell_prompt, timeout=timeout)
     msg = sh.before
     msg = msg[(msg.find('\n', msg.rfind(ssh_command_start_echo) + 5) + len("\n") + 0):msg.rfind(ssh_command_end_echo)]
     regex = re.compile(r'\x1b[^m]*m')
