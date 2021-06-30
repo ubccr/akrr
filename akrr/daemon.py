@@ -22,6 +22,7 @@ from akrr import akrr_task
 from akrr.util import make_dirs
 import akrr.akrrrestclient
 import akrr.util.openstack
+import akrr.util.googlecloud
 
 from .akrrerror import AkrrError
 
@@ -1300,6 +1301,9 @@ def delete_task(task_id, remove_from_scheduled_queue=True, remove_from_active_qu
             if 'batch_scheduler' in th.resource and th.resource['batch_scheduler'].lower() == "openstack":
                 openstack_server = akrr.util.openstack.OpenStackServer(resource=th.resource)
                 openstack_server.delete()
+            if 'batch_scheduler' in th.resource and th.resource['batch_scheduler'].lower() == "googlecloud":
+                googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=th.resource)
+                googlecloud_server.delete()
         else:
             raise Exception("Task can NOT be remove safely. Unimplemented status:" + active_task['status'])
 

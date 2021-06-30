@@ -20,6 +20,7 @@ from akrr import akrrrestclient
 from akrr.akrrerror import AkrrError
 import akrr.util.log as log
 import akrr.util.openstack
+import akrr.util.googlecloud
 from akrr.util.ssh import check_dir
 from akrr.akrr_task import get_local_task_dir
 
@@ -553,7 +554,7 @@ def analyse_test_job_results(task_id, resource, app_name="test"):
             "see application output for more hints")
         log.error_count += 1
 
-    if resource['batch_scheduler'].lower() != "openstack":
+    if resource['batch_scheduler'].lower() not in ("openstack", "googlecloud"):
         # test the nodes, log to headnode and ping them
         if parameters['RunEnv:Nodes'] == '':
             log.error("Nodes are not detected, check batch_job_template and setup of AKRR_NODELIST variable")
@@ -767,6 +768,15 @@ def resource_deploy(args):
         resource['openstack_server'] = openstack_server
         openstack_server.create()
         resource['remote_access_node'] = openstack_server.ip
+    if resource['batch_scheduler'].lower() == "googlecloud":
+        # Start instance if it is cloud
+        googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=resource)
+        if googlecloud_server.is_server_running():
+            googlecloud_server.delete()
+        resource['googlecloud_server'] = googlecloud_server
+        googlecloud_server.create()
+        resource['remote_access_node'] = googlecloud_server.ip
+
     rsh = connect_to_resource(resource)
 
     # do tests
@@ -787,6 +797,11 @@ def resource_deploy(args):
         akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
         resource['remote_access_node'] = None
+    if resource['batch_scheduler'].lower() == "googlecloud":
+        # delete instance if it is cloud
+        akrr.util.googlecloud.GoogleCloudServer(resource=resource)
+        resource['googlecloud_server'].delete()
+        resource['remote_access_node'] = None
 
     # run test job to queue
     run_test_job(resource, app_name, nodes)
@@ -797,6 +812,14 @@ def resource_deploy(args):
         resource['openstack_server'] = openstack_server
         openstack_server.create()
         resource['remote_access_node'] = openstack_server.ip
+    if resource['batch_scheduler'].lower() == "googlecloud":
+        # Start instance if it is cloud
+        googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=resource)
+        if googlecloud_server.is_server_running():
+            googlecloud_server.delete()
+        resource['googlecloud_server'] = googlecloud_server
+        googlecloud_server.create()
+        resource['remote_access_node'] = googlecloud_server.ip
 
     if log.error_count == 0:
         append_to_bashrc(resource)
@@ -806,6 +829,11 @@ def resource_deploy(args):
         # delete instance if it is cloud
         akrr.util.openstack.OpenStackServer(resource=resource)
         resource['openstack_server'].delete()
+        resource['remote_access_node'] = None
+    if resource['batch_scheduler'].lower() == "googlecloud":
+        # delete instance if it is cloud
+        akrr.util.googlecloud.GoogleCloudServer(resource=resource)
+        resource['googlecloud_server'].delete()
         resource['remote_access_node'] = None
 
     log.empty_line()

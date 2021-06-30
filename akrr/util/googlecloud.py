@@ -48,11 +48,11 @@ class GoogleCloudCLI:
 
                 if self._which_env_set_script.endswith(self._env_set_script):
                     self._which_env_set_script = os.path.expanduser(self._which_env_set_script)
-            log.debug("which_openstack_env_set_script: " + self._which_env_set_script)
+            log.debug("_which_env_set_script: " + self._which_env_set_script)
 
-        # check presence of openstack_env_set_script
+        # check presence of _which_env_set_script
         if self._which_env_set_script is not None and not os.path.isfile(self._which_env_set_script):
-            msg = "Can not find openstack environment setup script: " + self._env_set_script
+            msg = "Can not find google cloud environment setup script: " + self._env_set_script
             msg += "\n" + self._which_env_set_script
             log.error(msg)
             raise FileNotFoundError(msg)

@@ -75,6 +75,29 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
                 if m:
                     os_terminated = datetime.datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
                                                  int(m.group(4)), int(m.group(5)), int(m.group(6)))
+
+                # googlecloud
+                m = re.search("Starting Google Cloud instance \(([0-9]+)-([0-9]+)-([0-9]+) ([0-9]+):([0-9]+):([0-9]+)\)",
+                              line)
+                if m:
+                    os_start = datetime.datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                                                 int(m.group(4)), int(m.group(5)), int(m.group(6)))
+                m = re.search("Google Cloud Instance should be up and running \(([0-9]+)-([0-9]+)-([0-9]+) ([0-9]+):([0-9]+):([0-9]+)\)",
+                              line)
+                if m:
+                    os_first_login = datetime.datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                                                 int(m.group(4)), int(m.group(5)), int(m.group(6)))
+                m = re.search("Shutting down Google Cloud instance \(([0-9]+)-([0-9]+)-([0-9]+) ([0-9]+):([0-9]+):([0-9]+)\)",
+                              line)
+                if m:
+                    os_start_shutdown = datetime.datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                                                 int(m.group(4)), int(m.group(5)), int(m.group(6)))
+                m = re.search("Google Cloud Instance should be down and terminated \(([0-9]+)-([0-9]+)-([0-9]+) ([0-9]+):([0-9]+):([0-9]+)\)",
+                              line)
+                if m:
+                    os_terminated = datetime.datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                                                 int(m.group(4)), int(m.group(5)), int(m.group(6)))
+
         if os_start is not None and os_first_login is not None:
             parser.set_statistic('Cloud Instance, Start Time to Login', total_seconds(os_first_login-os_start))
         if os_start_shutdown is not None and os_terminated is not None:

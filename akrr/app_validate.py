@@ -16,6 +16,8 @@ import akrr.util.ssh
 from akrr.util import log
 
 from akrr.util.ssh import check_dir
+import akrr.util.openstack
+import akrr.util.googlecloud
 
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -132,6 +134,12 @@ def app_validate(resource, appkernel, nnodes):
             resource['openstack_server'] = openstack_server
             openstack_server.create()
             resource['remote_access_node'] = openstack_server.ip
+        if resource['batch_scheduler'].lower() == "googlecloud":
+            # Start instance if it is cloud
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=resource)
+            resource['googlecloud_server'] = googlecloud_server
+            googlecloud_server.create()
+            resource['remote_access_node'] = googlecloud_server.ip
 
         rsh = akrr.util.ssh.ssh_resource(resource)
 
@@ -196,6 +204,10 @@ def app_validate(resource, appkernel, nnodes):
     if resource['batch_scheduler'].lower() == "openstack":
         # delete instance if it is cloud
         resource['openstack_server'].delete()
+        resource['remote_access_node'] = None
+    if resource['batch_scheduler'].lower() == "googlecloud":
+        # delete instance if it is cloud
+        resource['googlecloud_server'].delete()
         resource['remote_access_node'] = None
 
     ###############################################################################################

@@ -105,7 +105,7 @@ def verify_resource_params(resource: dict, warnings_as_exceptions: bool = False)
     # check that parameters for presents and type
     # format: key,type,can be None,must have parameter
     parameters_types_2 = {
-        'remote_access_node': [str, True if resource['batch_scheduler'].lower() == "openstack" else False, True]
+        'remote_access_node': [str, True if resource['batch_scheduler'].lower() in ("openstack", "googlecloud") else False, True]
     }
 
     for variable, (m_type, nullable, must) in parameters_types_2.items():

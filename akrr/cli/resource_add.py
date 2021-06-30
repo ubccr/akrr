@@ -661,6 +661,29 @@ def _get_openstack_details():
     appkernel_dir = "/home/centos/appkernels"
 
 
+def _get_googlecloud_details():
+    global ssh_username
+    global ssh_password
+    global ssh_password4thisSession
+    global ssh_private_key_file
+    global ssh_private_key_password
+
+    global network_scratch
+    global local_scratch
+    global akrr_data
+    global appkernel_dir
+
+    ssh_username = "centos"
+    ssh_password = None
+    ssh_private_key_file = None
+    ssh_private_key_password = None
+
+    network_scratch = "/tmp"
+    local_scratch = "/tmp"
+    akrr_data = "/tmp/akrr"
+    appkernel_dir = "/home/centos/appkernels"
+
+
 def resource_add(config):
     """add resource, config should have following members
         dry_run - Dry Run No files will actually be created
@@ -727,6 +750,9 @@ def resource_add(config):
     if minimalistic is False:
         if batch_scheduler is QueuingSystemType.openstack.value:
             _get_openstack_details()
+            get_system_characteristics()
+        elif batch_scheduler is QueuingSystemType.googlecloud.value:
+            _get_googlecloud_details()
             get_system_characteristics()
         else:
             get_remote_access_method()

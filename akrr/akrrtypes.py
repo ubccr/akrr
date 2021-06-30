@@ -10,13 +10,13 @@ class QueuingSystemType(Enum):
     pbs = "pbs"
     shell = "shell"
     openstack = "openstack"
+    googlecloud = "googlecloud"
     # synonyms:
     Slurm = "slurm"
     SLURM = "slurm"
     OpenStack = "openstack"
-
+    GoogleCloud = "googlecloud"
+    gcloud = "googlecloud"
     @staticmethod
     def get_names():
         return [str(v.value) for v in QueuingSystemType]
-
-

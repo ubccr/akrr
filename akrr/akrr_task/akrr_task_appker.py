@@ -11,6 +11,7 @@ import akrr.util
 import akrr.util.log
 import akrr.util.ssh as ssh
 import akrr.util.openstack
+import akrr.util.googlecloud
 
 from .. import cfg
 from ..util import log
@@ -40,12 +41,19 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
         self.PushToDBAttemps = 0  # type: Optional[int]
 
         self.openstack_server_ip = None  # type: Optional[str]
+        self.googlecloud_server_ip = None  # type: Optional[str]
 
     def first_step(self):
         if self.resource['batch_scheduler'].lower() == "openstack":
             print("Starting OpenStack instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
             status = self.start_openstack_server()
             print("OpenStack Instance should be up and running (%s)" %
+                     datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+            return status
+        elif self.resource['batch_scheduler'].lower() == "googlecloud":
+            print("Starting Google Cloud instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+            status = self.start_googlecloud_server()
+            print("Google Cloud Instance should be up and running (%s)" %
                      datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
             return status
         else:
@@ -63,6 +71,22 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             "create_batch_job_script_and_submit_it",
             "start_openstack_server ... Done",
             "start_openstack_server ... Done")
+
+        # check first time in 1 minute
+        return datetime.timedelta(days=0, hours=0, minutes=1)
+
+    def start_googlecloud_server(self):
+        if self.resource['batch_scheduler'].lower() == "googlecloud":
+            # Start instance if it is cloud
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            googlecloud_server.create(delete_if_exists=True)
+            self.googlecloud_server_ip = googlecloud_server.ip
+            self.resource['remote_access_node'] = googlecloud_server.ip
+
+        self.set_method_to_run_next(
+            "create_batch_job_script_and_submit_it",
+            "start_googlecloud_server ... Done",
+            "start_googlecloud_server ... Done")
 
         # check first time in 1 minute
         return datetime.timedelta(days=0, hours=0, minutes=1)
@@ -454,6 +478,13 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
                 openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
                 openstack_server.delete()
                 print("OpenStack Instance should be down and terminated (%s)" %
+                      datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
+
+            if self.resource['batch_scheduler'].lower() == "googlecloud":
+                print("Shutting down Google Cloud instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
+                googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+                googlecloud_server.delete()
+                print("Google Cloud Instance should be down and terminated (%s)" %
                       datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
 
             self.set_method_to_run_next(
@@ -1063,6 +1094,10 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         if self.resource['batch_scheduler'].lower() == "openstack":
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.delete()
+        if self.resource['batch_scheduler'].lower() == "googlecloud":
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            googlecloud_server.delete()
+
         return can_be_safely_removed
 
     def remove_task_from_remote_queue(self):

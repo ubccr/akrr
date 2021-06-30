@@ -7,7 +7,7 @@ from prettytable import PrettyTable
 def wrap_str_dict(s, width=20):
     if s is None:
         return "None"
-    if s is "NA":
+    if s == "NA":
         return "NA"
     import textwrap
     return "\n".join(textwrap.wrap(str(eval(s)), width=width))

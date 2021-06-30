@@ -9,6 +9,7 @@ from akrr import cfg
 from akrr.util import log
 from akrr.util import make_dirs
 import akrr.util.openstack
+import akrr.util.googlecloud
 from akrr.akrrerror import AkrrFileNotFoundError, AkrrNotADirectoryError, AkrrPermissionError
 
 active_task_default_attempt_repeat = cfg.active_task_default_attempt_repeat
@@ -20,7 +21,8 @@ submit_commands = {
     'sge': "qsub $scriptPath",
     'shell': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!",
     'slurm': "sbatch $scriptPath",
-    'openstack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
+    'openstack': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!",
+    'googlecloud': "nohup bash $scriptPath > stdout 2> stderr & echo PID of last background process is $$!"
 }
 
 # Regular expression for extracting job id of submitted batch script
@@ -30,7 +32,8 @@ job_id_extract_patterns = {
     'sge': r'job (\d+)',
     'shell': r'^PID of last background process is (\d+)',
     'slurm': r'^Submitted batch job (\d+)',
-    'openstack': r'^PID of last background process is (\d+)'
+    'openstack': r'^PID of last background process is (\d+)',
+    'googlecloud': r'^PID of last background process is (\d+)'
 }
 
 # Command and regular expression to detect that the job is still queued or running
@@ -40,7 +43,8 @@ wait_expressions = {
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
     'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
     'shell': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
-    'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M]
+    'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
+    'googlecloud': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M]
 }
 
 kill_expressions = {
@@ -49,7 +53,8 @@ kill_expressions = {
     'sge': ["qdel $jobId"],
     'slurm': ["scancel $jobId"],
     'shell': ["kill -9  $jobId"],
-    'openstack': ["kill -9  $jobId"]
+    'openstack': ["kill -9  $jobId"],
+    'googlecloud': ["kill -9  $jobId"]
 }
 
 
@@ -248,6 +253,12 @@ class AkrrTaskHandlerBase:
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             if not openstack_server.is_server_running():
                 msg = "OpenStack instance is down"
+                log.info(msg)
+                return
+        if self.resource['batch_scheduler'].lower() == "googlecloud":
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            if not googlecloud_server.is_server_running():
+                msg = "Google Cloud instance is down"
                 log.info(msg)
                 return
         msg = akrr.util.ssh.ssh_resource(self.resource, "rm -rf \"%s\"" % self.remoteTaskDir)
