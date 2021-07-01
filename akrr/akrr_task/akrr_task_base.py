@@ -256,7 +256,7 @@ class AkrrTaskHandlerBase:
                 log.info(msg)
                 return
         if self.resource['batch_scheduler'].lower() == "googlecloud":
-            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource, task_id=self.task_id)
             if not googlecloud_server.is_server_running():
                 msg = "Google Cloud instance is down"
                 log.info(msg)

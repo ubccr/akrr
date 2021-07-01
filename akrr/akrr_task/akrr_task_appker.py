@@ -78,7 +78,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
     def start_googlecloud_server(self):
         if self.resource['batch_scheduler'].lower() == "googlecloud":
             # Start instance if it is cloud
-            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource, task_id=self.task_id)
             googlecloud_server.create(delete_if_exists=True)
             self.googlecloud_server_ip = googlecloud_server.ip
             self.resource['remote_access_node'] = googlecloud_server.ip
@@ -482,7 +482,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             if self.resource['batch_scheduler'].lower() == "googlecloud":
                 print("Shutting down Google Cloud instance (%s)" % datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"))
-                googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+                googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource, task_id=self.task_id)
                 googlecloud_server.delete()
                 print("Google Cloud Instance should be down and terminated (%s)" %
                       datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
@@ -1095,7 +1095,7 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
             openstack_server = akrr.util.openstack.OpenStackServer(resource=self.resource)
             openstack_server.delete()
         if self.resource['batch_scheduler'].lower() == "googlecloud":
-            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource)
+            googlecloud_server = akrr.util.googlecloud.GoogleCloudServer(resource=self.resource, task_id=self.task_id)
             googlecloud_server.delete()
 
         return can_be_safely_removed

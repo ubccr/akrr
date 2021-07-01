@@ -83,7 +83,7 @@ class GoogleCloudServer:
                  image=None, image_project=None,
                  boot_disk_size=None, boot_disk_type=None, boot_disk_device_name=None,
                  ssh_username=None, ssh_private_key_file=None,
-                 docker_username=None, docker_password=None):
+                 docker_username=None, docker_password=None, task_id=None):
         if resource is not None:
             self.cloud_cli = GoogleCloudCLI()
             self.project = resource["googlecloud_project"]
@@ -116,6 +116,10 @@ class GoogleCloudServer:
             self.ssh_private_key_file = ssh_private_key_file
             self.docker_username = docker_username
             self.docker_password = docker_password
+
+        if task_id is not None:
+            self.name += "-" + str(task_id)
+            self.boot_disk_device_name += "-" + str(task_id)
         self.internal_network_ip = None
         self.flexible_ip = None
         self.ip = None
