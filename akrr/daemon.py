@@ -194,7 +194,7 @@ class AkrrDaemon:
                            WHERE resource like %s''', (resource,))
                     activate_task = self.dbCur.fetchall()
                     if len(activate_task) >= cfg.find_resource_by_name(resource).get('max_number_of_active_tasks', -1):
-                        log.debug(
+                        log.debug2(
                             "Can not activate Task too many active tasks on resource already\n" +
                             "Task Number: %s\n\t" % task_id +
                             "Start time: %s\n\t" % time_to_start +
@@ -225,7 +225,7 @@ class AkrrDaemon:
                                WHERE resource=%s AND app=%s''', (resource, app))
                         activate_task = self.dbCur.fetchall()
                         if len(activate_task) >= max_number_of_app_active_tasks:
-                            log.debug(
+                            log.debug2(
                                 "Can not activate Task too many active tasks on resource for this app already\n" +
                                 "Task Number: %s\n\t" % task_id +
                                 "Start time: %s\n\t" % time_to_start +
