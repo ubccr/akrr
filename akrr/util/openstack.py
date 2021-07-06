@@ -58,7 +58,13 @@ class OpenStack:
             raise FileNotFoundError(msg)
 
         # set environment
-        self.run_cmd("source " + self._which_env_set_script)
+        while True:
+            out = self.run_cmd("source " + self._which_env_set_script)
+            if out.count("HTTP Client Error (HTTP 429)") > 0:
+                time.sleep(30)
+            else:
+                break
+
         self._token = self.run_cmd("echo $OS_TOKEN").strip()
 
     def run_cmd(self, cmd):
