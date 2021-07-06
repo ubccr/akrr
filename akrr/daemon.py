@@ -441,7 +441,19 @@ class AkrrDaemon:
 
             self.dbCur.execute('''SELECT fatal_errors_count,fails_to_submit_to_the_queue FROM active_tasks
                 WHERE task_id=%s;''', (task_id,))
-            (fatal_errors_count, fails_to_submit_to_the_queue) = self.dbCur.fetchall()[0]
+            query_result = self.dbCur.fetchall()
+            if len(query_result) == 0:
+                # i.e. task were removed from db while daemon was working on it, need to free worker
+                while p.is_alive():
+                    p.terminate()
+                    time.sleep(0.1)
+                p.join(0.5)
+                # remove worker from list
+                self.workers.pop(i_worker)
+                workers_num = len(self.workers)
+                continue
+
+            (fatal_errors_count, fails_to_submit_to_the_queue) = query_result[0]
 
             while not self.ResultsQueue.empty():
                 r = self.ResultsQueue.get()
@@ -597,8 +609,8 @@ class AkrrDaemon:
                     SET task_lock=0, status=%s,status_info=%s,next_check_time=%s,status_update_time=%s
                     WHERE task_id=%s ;''', (status, status_info, next_round, time_now, task_id))
                 self.dbCon.commit()
-            # remove worker from list
 
+            # remove worker from list
             self.workers.pop(i_worker)
             workers_num = len(self.workers)
         if init_workers_num != len(self.workers):
