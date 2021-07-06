@@ -290,6 +290,10 @@ class OpenStackServer:
         if self.floating_ip_delete_after_use and self.flexible_ip:
             self.cloud_cli.run_cmd("floating ip delete %s" % self.flexible_ip)
 
+        self.internal_network_ip = None
+        self.flexible_ip = None
+        self.ip = None
+
 
 if __name__ == "__main__":
     log.set_verbose()

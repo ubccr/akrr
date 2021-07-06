@@ -66,6 +66,7 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
             openstack_server.create(delete_if_exists=True)
             self.openstack_server_ip = openstack_server.ip
             self.resource['remote_access_node'] = openstack_server.ip
+            log.debug(f"remote_access_node: " + str(self.resource['remote_access_node']))
 
         self.set_method_to_run_next(
             "create_batch_job_script_and_submit_it",
