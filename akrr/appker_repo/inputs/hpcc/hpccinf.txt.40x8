@@ -3,13 +3,13 @@ Innovative Computing Laboratory, University of Tennessee
 HPL.out      output file name (if any)
 8            device out (6=stdout,7=stderr,file)
 1            # of problems sizes (N)
-40000	Ns
+56568 	Ns
 1            # of NBs
 112     	NBs
 0            PMAP process mapping (0=Row-,1=Column-major)
 1            # of process grids (P x Q)
 16        	Ps
-11   		Qs
+20    		Qs
 16.0         threshold
 1            # of panel fact
 2       	PFACTs (0=left, 1=Crout, 2=Right)
@@ -34,3 +34,4 @@ HPL.out      output file name (if any)
 1200 10000 30000                values of N
 0                               number of additional blocking sizes for PTRANS
 40 9 8 13 13 20 16 32 64        values of NB
+
