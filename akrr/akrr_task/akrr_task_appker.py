@@ -996,9 +996,8 @@ VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
                          message, stderr, body, memory, cputime, walltime, job_id, nodes, internal_failure_code))
 
         if appstdout_file is not None:
-            fin = open(appstdout_file, "r", encoding="utf-8")
-            appstdout_file_content = fin.read()
-            fin.close()
+            with open(appstdout_file, "r", encoding="utf-8", errors='ignore') as fin:
+                appstdout_file_content = fin.read()
         else:
             appstdout_file_content = "Does Not Present"
         if stdout_file is not None:
