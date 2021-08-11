@@ -50,7 +50,25 @@ Generate Initiate Configuration File:
 akrr app add -a $APPKER -r $RESOURCE
 ```
 
-Edit Configuration File in particular appkernel_run_env_template to reflect system enviroment.
+Edit Configuration File in particular *appkernel_run_env_template* to reflect system enviroment:
+
+```python
+ppn = 32
+
+appkernel_run_env_template = """
+#Load application environment
+module list
+
+#set how to run app kernel
+RUN_APPKERNEL="ibrun $EXE"
+"""
+```
+
+Another importent parameter is *ppn*, which is MPI processes per node. Current implementation of Graph500 works 
+efficiently only on 2^N, where N is number of MPI processes so if you have non 2^something nodes for example 48 cores per node
+lower it to nearest power of too, i.e. 32. Graph500 can work on non power of 2 but it is very inefficient for systems with 48 and 68 cores per node
+we found that using 32 and 64 cores respectevly is faster.
+
 
 First generate the script to standard output and examine it (Optional) :
 
