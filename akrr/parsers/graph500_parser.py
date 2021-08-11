@@ -19,9 +19,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     # set common parameters and statistics
     parser.add_common_must_have_params_and_stats()
     # set app kernel custom sets
-    parser.add_must_have_parameter('App:Version')
+    # parser.add_must_have_parameter('App:Version')
     parser.add_must_have_parameter('Edge Factor')
-    parser.add_must_have_parameter('Input File')
+    # parser.add_must_have_parameter('Input File')
     parser.add_must_have_parameter('Number of Roots to Check')
     parser.add_must_have_parameter('Number of Edges')
     parser.add_must_have_parameter('Number of Vertices')
@@ -76,6 +76,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         if m:
             parser.set_parameter("Number of Roots to Check", m.group(1))
 
+        # old format
         m = re.match(r'^median_TEPS:\s+(\d[0-9.e+]+)', lines[j])
         if m:
             parser.set_statistic("Median TEPS", m.group(1), "Traversed Edges Per Second")
@@ -100,6 +101,50 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         m = re.match(r'^stddev_validate:\s+([\d.]+)\s+s', lines[j])
         if m:
             parser.set_statistic("Standard Deviation Validation Time", m.group(1), "Second")
+
+        # Graph500 v3.0.0 format
+        # BFS
+        m = re.match(r'^bfs\s+median_TEPS:\s+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.set_statistic("Median TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^bfs\s+harmonic_mean_TEPS:[ !]+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.successfulRun = True
+            parser.set_statistic("Harmonic Mean TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^bfs\s+harmonic_stddev_TEPS:\s+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.set_statistic("Harmonic Standard Deviation TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^bfs\s+median_validate:\s+([\d.]+)', lines[j])
+        if m:
+            parser.set_statistic("Median Validation Time", m.group(1), "Second")
+
+        m = re.match(r'^bfs\s+mean_validate:\s+([\d.]+)', lines[j])
+        if m:
+            parser.set_statistic("Mean Validation Time", m.group(1), "Second")
+
+        m = re.match(r'^bfs\s+stddev_validate:\s+([\d.]+)', lines[j])
+        if m:
+            parser.set_statistic("Standard Deviation Validation Time", m.group(1), "Second")
+        # SSSP
+        m = re.match(r'^sssp\s+median_TEPS:\s+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.set_statistic("SSSP Median TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^sssp\s+harmonic_mean_TEPS:[ !]+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.successfulRun = True
+            parser.set_statistic("SSSP Harmonic Mean TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^sssp\s+harmonic_stddev_TEPS:\s+(\d[0-9.e+]+)', lines[j])
+        if m:
+            parser.set_statistic("SSSP Harmonic Standard Deviation TEPS", m.group(1), "Traversed Edges Per Second")
+
+        m = re.match(r'^sssp\s+mean_validate:\s+([\d.]+)', lines[j])
+        if m:
+            parser.set_statistic("SSSP Mean Validation Time", m.group(1), "Second")
 
         j += 1
 

@@ -1,0 +1,9 @@
+
+Currently Loaded Modules:
+  1) intel/18.0.2      4) git/2.24.1       7) cmake/3.16.1
+  2) libfabric/1.7.0   5) autotools/1.1    8) xalt/2.10.2
+  3) impi/18.0.2       6) python2/2.7.15   9) TACC
+
+ 
+
+/opt/apps/gcc/6.3.0/lib64/libgcc_s.so.1 is not an executable binary file

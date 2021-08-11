@@ -46,6 +46,7 @@ jobs, this will help to ensure that `xdmod-appkernels` is working properly.
     * [NWChem Deployment](AKRR_NWChem_Deployment.md)
     * [GAMESS Deployment](AKRR_GAMESS_Deployment.md)
     * [ENZO Deployment](AKRR_ENZO_Deployment.md)
+    * [Grapth500 Deployment](AKRR_Graph500_Deployment.md)
     * [Creating New Application Kernel](AKRR_Creating_New_Application_Kernel.md)
   * [Scheduling and Rescheduling Application Kernels](AKRR_Tasks_Scheduling.md)
   * [Setting Walltime Limit](AKRR_Walltimelimit_Setting.md)
