@@ -135,5 +135,11 @@ docker push nsimakov/appker:hpcc
 
 ```
 
+
+```bash
+# update
+docker build -f ./docker/hpcc/update.dockerfile -t nsimakov/appker:hpcc2 .
+```
+
 TODO
 * Check -qopt-zmm-usage=high  option for SKX
