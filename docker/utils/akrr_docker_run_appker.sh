@@ -30,7 +30,7 @@ Options:
   --norun               Set if you don't want to immediately run hpcc
   -i | --interactive    Start a bash session after the run (need to also do
   -n NODES | --nodes NODES
-                        Specify number of nodes hpcc will be running on
+                        Specify number of nodes ak will be running on (used in few cases, set ppn for number of MPI processes to use )
   -ppn PROC_PER_NODE | --proc_per_node PROC_PER_NODE
                         Specify nymber of processes/cores per node
                         (if not specified, number of cpu cores is used,
