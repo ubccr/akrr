@@ -211,7 +211,9 @@ class OpenStackServer:
                 if len(out) == 0:
                     raise Exception("Openstack server didn't start!")
                 out = out[0]
-                if out["Networks"] == "":
+                if isinstance(out["Networks"], str) and out["Networks"] == "" :
+                    time.sleep(1)
+                elif isinstance(out["Networks"], dict) and self.network not in out["Networks"]:
                     time.sleep(1)
                 else:
                     break
