@@ -217,7 +217,12 @@ class OpenStackServer:
                     break
 
             s = out["Networks"]
-            self.internal_network_ip = s[s.find('=')+1:].replace(',', ' ').split()[0]
+            if isinstance(s, str):
+                self.internal_network_ip = s[s.find('=')+1:].replace(',', ' ').split()[0]
+            elif isinstance(s, dict) and self.network in s:
+                self.internal_network_ip = s[self.network]
+            else:
+                raise Exception("Can not get server ip!")
             log.debug("internal_network_ip:" + self.internal_network_ip)
             self.ip = self.internal_network_ip
 

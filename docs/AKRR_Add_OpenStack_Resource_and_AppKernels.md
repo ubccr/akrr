@@ -231,6 +231,17 @@ ssh -i <ssh identiry for cloud> centos@199.109.112.7
 
 # test that docker can be executed as centos user
 docker run hello-world
+
+# prepull ak
+docker pull nsimakov/appker:hpcc
+docker pull nsimakov/appker:hpcg
+docker pull nsimakov/appker:graph500
+docker pull nsimakov/appker:enzo
+docker pull nsimakov/appker:ior_mdtest
+docker pull nsimakov/appker:namd
+docker pull nsimakov/appker:nwchem
+
+
 ```
 
 If everything fine now we can terminate instance
