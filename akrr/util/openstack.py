@@ -184,14 +184,14 @@ class OpenStackServer:
 
         args = [
             "server create",
-            "--flavor " + self.flavor,
-            "--volume " + self.volume,
-            "--network " + self.network,
-            "--key-name " + self.key_name
+            "--flavor \"" + self.flavor + "\"",
+            "--volume \"" + self.volume + "\"",
+            "--network \"" + self.network + "\"",
+            "--key-name \"" + self.key_name + "\""
         ]
 
         if self.security_group is not None and isinstance(self.security_group, (list, tuple)):
-            args.append(" ".join(["--security-group " + v for v in self.security_group]))
+            args.append(" ".join(["--security-group \"" + v + "\"" for v in self.security_group]))
         args.append(self.name)
 
         self.cloud_cli.run_cloud_cmd(" ".join(args))
