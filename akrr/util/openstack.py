@@ -5,6 +5,7 @@ import os
 import json
 import time
 import random
+import re
 from akrr.util import log
 from akrr.util import ssh
 
@@ -43,7 +44,7 @@ class OpenStack:
             if os.path.isfile(self._env_set_script):
                 self._which_env_set_script = self._env_set_script
             else:
-                self._which_env_set_script = self._shell.run_command("which " + self._env_set_script)
+                self._which_env_set_script = self.run_cmd("which " + self._env_set_script)
                 self._which_env_set_script = self._which_env_set_script.strip()
 
                 if self._which_env_set_script.endswith(self._env_set_script):
@@ -69,15 +70,15 @@ class OpenStack:
 
     def run_cmd(self, cmd):
         out = self._shell.run_command(cmd)
+        out = re.sub(r'\x1b[^m]*m', "", out)
         log.debug(cmd+"\n"+out)
         return out
 
     def run_cloud_cmd(self, cmd):
-        out = self._shell.run_command("openstack "+cmd)
-        log.debug(cmd+"\n"+out)
+        out = self.run_cmd("openstack "+cmd)
         if out.count("Failed to validate token"):
             self._set_env()
-            out = self._shell.run_command("openstack "+cmd)
+            out = self.run_cmd("openstack "+cmd)
             log.debug(cmd+"\n"+out)
             if out.count("Failed to validate token"):
                 raise Exception("Can not execute openstack command!\n"+out)
