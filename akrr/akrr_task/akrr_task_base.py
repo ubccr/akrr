@@ -41,7 +41,7 @@ wait_expressions = {
     # 'lsf'         : ["bjobs $jobId` =~ /PEND|RUN|SUSP/",
     'pbs': [r"qstat $jobId 2>&1", re.search, r"-----", 0],
     'sge': [r"qstat 2>&1", re.search, r"^ *$jobId ", re.M],
-    'slurm': [r"squeue -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
+    'slurm': [r"squeue -a -u $$USER 2>&1", re.search, r"^ *$jobId ", re.M],
     'shell': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
     'openstack': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M],
     'googlecloud': [r"ps -p $jobId 2>&1", re.search, r"^ *$jobId ", re.M]
