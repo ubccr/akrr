@@ -1,0 +1,2 @@
+5000000 /* number of throws at dartboard per mpi process */
+100 /* number of times "darts" is iterated */
