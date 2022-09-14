@@ -92,8 +92,9 @@ docker run -it --rm -e AKRR_SETUP_WAY=src -e AKRR_SETUP_HOME=/home/akrruser/akrr
 ```bash
 docker run -it --rm --name akrr -h akrr \
     -v /home/nikolays/xdmod_wsp/access_akrr/mysql:/var/lib/mysql \
+    -v /home/nikolays/xdmod_wsp/access_akrr/akrr/akrr_home:/home/akrruser/akrr \
     -p 3370:3306 \
-    nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest 
+    nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest bash
 ```
 
 

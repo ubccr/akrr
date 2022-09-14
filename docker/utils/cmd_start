@@ -88,6 +88,7 @@ do
     case "$1" in
     mysqld)
         echo "Launching mysqld"
+        chown -R mysql:mysql /var/lib/mysql
         trap "/sbin/shutdown.sh mysqld; exit" SIGHUP SIGINT SIGTERM
         mysqld_safe &
         mysqladmin --silent --wait=30 ping
