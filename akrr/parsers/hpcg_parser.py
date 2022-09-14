@@ -12,7 +12,7 @@ import akrr.util.log as log
 
 def process_yaml(yaml_lines, parser):
     from pprint import pprint
-    import yaml
+    from akrr.util.yaml import yaml_load
     # fix some issues with yaml
     if re.search(r"After confirmation please upload results from the YAML",
                  yaml_lines[-1]):
@@ -27,7 +27,7 @@ def process_yaml(yaml_lines, parser):
         "  HPCG 2.4 Rating (for historical value) is:",
         yaml_text, flags=re.M)
 
-    results_yaml = yaml.load(yaml_text)
+    results_yaml = yaml_load(yaml_text)
 
     # Set Parameters
     # App version

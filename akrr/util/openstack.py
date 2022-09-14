@@ -306,7 +306,6 @@ class OpenStackServer:
 if __name__ == "__main__":
     log.set_verbose()
     server_param = {
-        "openstack": OpenStack(),
         "flavor": "c1.m4",
         "volume": "aktestvolume",
         "network": "XDMoD",

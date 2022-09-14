@@ -19,29 +19,22 @@ def test_parser(datadir):
     assert xml_out.find('./exitStatus/completed').text == "true"
 
     assert len(params.find(".//parameter[ID='App:ExeBinSignature']").find('value').text) > 5
-    assert params.find(".//parameter[ID='App:NCores']").find('value').text == "128"
-    assert params.find(".//parameter[ID='App:NNodes']").find('value').text == "4"
     assert len(params.find(".//parameter[ID='RunEnv:Nodes']").find('value').text) > 5
     assert params.find(".//parameter[ID='resource']").find('value').text == "HPC-Cluster"
-    assert params.find(".//parameter[ID='App:Version']").find('value').text == "2.13b1"
-    assert params.find(".//parameter[ID='Input:Coordinate File']").find('value').text == "apoa1.pdb"
-    assert params.find(".//parameter[ID='Input:Number of Angles']").find('value').text == "74136"
-    assert params.find(".//parameter[ID='Input:Number of Atoms']").find('value').text == "92224"
-    assert params.find(".//parameter[ID='Input:Number of Bonds']").find('value').text == "70660"
-    assert params.find(".//parameter[ID='Input:Number of Dihedrals']").find('value').text == "74130"
-    assert params.find(".//parameter[ID='Input:Number of Steps']").find('value').text == "1200"
-    assert params.find(".//parameter[ID='Input:Structure File']").find('value').text == "apoa1.psf"
-    assert params.find(".//parameter[ID='Input:Timestep']").find('value').text == "2e-15"
 
     assert floats_are_close(
-        float(stats.find(".//statistic[ID='Memory']").find('value').text), 586.160156)
+        float(stats.find(".//statistic[ID='Ping, Mean']").find('value').text), 25.6462)
     assert floats_are_close(
-        float(stats.find(".//statistic[ID='Molecular Dynamics Simulation Performance']").find('value').text),
-        1.8502551501852105e-08)
+        float(stats.find(".//statistic[ID='Secure Copy Bandwidth (in), Mean']").find('value').text), 47.635894)
     assert floats_are_close(
-        float(stats.find(".//statistic[ID='Wall Clock Time']").find('value').text), 36.651707)
+        float(stats.find(".//statistic[ID='Secure Copy Bandwidth (out), Mean']").find('value').text), 51.487587149999996)
+    assert floats_are_close(
+        float(stats.find(".//statistic[ID='WGet Bandwidth, Mean']").find('value').text), 44.2)
 
-    assert stats.find(".//statistic[ID='App kernel executable exists']").find('value').text == '1'
+    assert floats_are_close(
+        float(stats.find(".//statistic[ID='Wall Clock Time']").find('value').text), 336.0)
+
+    assert stats.find(".//statistic[ID='App kernel executable exists']").find('value').text == '0'
     assert stats.find(".//statistic[ID='App kernel input exists']").find('value').text == '1'
     assert stats.find(".//statistic[ID='Network scratch directory accessible']").find('value').text == '1'
     assert stats.find(".//statistic[ID='Network scratch directory exists']").find('value').text == '1'

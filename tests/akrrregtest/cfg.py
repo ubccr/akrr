@@ -41,10 +41,10 @@ sql_root_password = ""
 
 def load_cfg(config_filename):
     """load configuration for reg test from file"""
-    import yaml
+    from akrr.util.yaml import yaml_load
 
     global yml
-    yml = yaml.load(open(config_filename).read())
+    yml = yaml_load(open(config_filename).read())
 
     exec(yml['global'], globals())
 
