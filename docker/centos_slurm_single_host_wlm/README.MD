@@ -20,7 +20,7 @@ Here is listing on the whole process
 
 ```bash
 [[ -d "./centos_slurm_single_host_wlm/RPMS" ]] && rm -rf "./centos_slurm_single_host_wlm/RPMS" 
-#make image, in docker/centos_slurm_single_host_wlm/
+# make image, in docker/
 docker build -t slurm_rpm_maker:latest -f ./centos_slurm_single_host_wlm/DockerfileMakeSlurmRPM .
 
 #create directory for RPMS storage
@@ -31,7 +31,8 @@ docker run --name slurm_rpm_maker -h slurm_rpm_maker \
            -v `pwd`/centos_slurm_single_host_wlm/RPMS:/RPMS \
            --rm \
            -it slurm_rpm_maker:latest make_slurm_rpms
-```docker/centos_slurm_single_host_wlm/README.MD:35
+          
+```
 
 ## Making Single Host Slurm WLM Image
 
@@ -84,3 +85,15 @@ docker run -it --rm -e AKRR_SETUP_WAY=src -e AKRR_SETUP_HOME=/home/akrruser/akrr
     -v $HOMExdmod_wsp/akrr:/home/akrruser/akrr_src \
     pseudo_repo/akrr_runtest:latest
 ```
+
+# Other Tips and Tricks for Dev Needs
+## Run Copy of Appkernel
+
+```bash
+docker run -it --rm --name akrr -h akrr \
+    -v /home/nikolays/xdmod_wsp/access_akrr/mysql:/var/lib/mysql \
+    -p 3370:3306 \
+    nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest 
+```
+
+

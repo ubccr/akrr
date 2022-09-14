@@ -72,9 +72,11 @@ RUN chmod g+rw /var/lib/mysql /var/log/mariadb /var/run/mariadb && \
 EXPOSE 3306
 
 # configure slurm
-COPY ./centos_slurm_single_host_wlm/slurm.conf ./centos_slurm_single_host_wlm/slurmdbd.conf /etc/slurm/
+COPY ./centos_slurm_single_host_wlm/slurm.conf ./centos_slurm_single_host_wlm/slurmdbd.conf \
+    ./centos_slurm_single_host_wlm/cgroup.conf /etc/slurm/
 RUN mkdir /var/log/slurm && \
-    chmod a+r /etc/slurm/slurm.conf  /etc/slurm/slurmdbd.conf && \
+    chmod a+r /etc/slurm/slurm.conf && \
+    chmod 600 /etc/slurm/slurmdbd.conf && \
     cmd_start munged && \
     cmd_start mysqld && \
     cmd_start slurmdbd && \
