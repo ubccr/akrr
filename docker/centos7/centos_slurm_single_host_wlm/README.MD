@@ -37,7 +37,7 @@ docker run --name slurm_rpm_maker -h slurm_rpm_maker \
 ## Making Single Host Slurm WLM Image
 
 ```bash
-#make image, in docker/centos_slurm_single_host_wlm/
+#make image, in docker/centos7/centos_slurm_single_host_wlm/
 docker build -t nsimakov/centos_slurm_single_host_wlm:latest -f ./centos_slurm_single_host_wlm/Dockerfile .
 
 #run (to check workability)
@@ -51,7 +51,7 @@ docker push nsimakov/centos_slurm_single_host_wlm:latest
 ## Making Single Host Slurm WLM Image with Dependencies Installed for AKRR
 
 ```bash
-#make image, in docker/centos_slurm_single_host_wlm/
+#make image, in docker/centos7/centos_slurm_single_host_wlm/
 docker build -t nsimakov/akrr_ready_centos_slurm_single_host_wlm:latest \
        -f ./centos_slurm_single_host_wlm/DockerfileAKRRReady .
 
