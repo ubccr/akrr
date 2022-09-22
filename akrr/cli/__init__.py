@@ -134,6 +134,9 @@ class CLI:
         from .commands import add_command_update
         add_command_update(self.subparsers)
 
+        from akrr.perf.cli import add_command_ingestor
+        add_command_ingestor(self.subparsers)
+
         self.verbose = False
 
     def process_common_args(self, cli_args):
