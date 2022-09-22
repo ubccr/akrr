@@ -1,26 +1,27 @@
 #!/bin/bash
-
+echo "NOT UP TO DATE!!!! COPY FROM README"
 #exit on any error
 set -e
 
 ###################
 ## Making Slurm RPMs
 
-#make image, in docker/centos7/centos_slurm_single_host_wlm/
-docker build -t slurm_rpm_maker:1 -f DockerfileMakeSlurmRPM .
+# make slurm rpm making image
+[[ -d "./tests/RPMS" ]] && rm -rf "./tests/RPMS"
+# make image, in docker/
+docker build -t slurm_rpm_builder:latest -f ./tests/slurm_rpm_builder.dockerfile .
 
-#create directory for RPMS storage
-mkdir -p RPMS
+# create directory for RPMS storage
+[[ ! -d "./tests/RPMS" ]] && mkdir -p tests/RPMS
 
-#make slurm RPMS
-docker run --name slurm_rpm_maker -h slurm_rpm_maker \
-           -v `pwd`/RPMS:/RPMS \
+# make slurm RPMS
+docker run --name slurm_rpm_builder -h slurm_rpm_builder \
+           -v `pwd`/tests/RPMS:/RPMS \
            --rm \
-           -it slurm_rpm_maker:1 make_slurm_rpms
+           -it slurm_rpm_builder:latest make_slurm_rpms
 
-#delete image and container as they are not needed
-#docker container rm slurm_rpm_maker
-docker image rm slurm_rpm_maker:1
+# change owner on RPMS
+sudo chown -R $USER:$USER ./tests/RPMS
 
 ###################
 ## Making Single Host Slurm WLM Image

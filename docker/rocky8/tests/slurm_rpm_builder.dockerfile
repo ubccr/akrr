@@ -1,12 +1,15 @@
-FROM centos:7
+FROM rockylinux:8
 
 LABEL description="image to make slurm rpm"
 
 # install dependencies
 RUN \
-    yum -y update && \
-    yum -y install --setopt=tsflags=nodocs epel-release && \
-    yum -y install --setopt=tsflags=nodocs \
+    dnf -y update && \
+    dnf -y install --setopt=tsflags=nodocs dnf-plugins-core && \
+    dnf config-manager --set-enabled devel && \
+    dnf config-manager --set-enabled powertools && \
+    dnf -y update && \
+    dnf -y install --setopt=tsflags=nodocs \
         vim wget bzip2 \
         autoconf make gcc rpm-build \
         openssl openssh-clients openssl-devel \
@@ -15,17 +18,17 @@ RUN \
         readline readline-devel \
         pam-devel \
         perl perl-ExtUtils-MakeMaker \
-        python36
+        python3
 
 # source of slurm
 ENV SLURM_TAR_BZ2_SOURCE=https://download.schedmd.com/slurm/slurm-22.05.3.tar.bz2
 
 # volume for final rpms dump
-VOLUME ./centos_slurm_single_host_wlm/RPMS
+VOLUME ./tests/RPMS
 
 # setup entry point
 WORKDIR /root
 
-COPY ./centos_slurm_single_host_wlm/make_slurm_rpms ./utils/cmd_setup ./utils/cmd_start ./utils/cmd_stop /usr/local/sbin/
+COPY ./tests/make_slurm_rpms ./utils/cmd_setup ./utils/cmd_start ./utils/cmd_stop /usr/local/sbin/
 ENTRYPOINT ["/usr/local/sbin/cmd_start"]
 CMD ["make_slurm_rpms"]

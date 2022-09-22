@@ -25,8 +25,8 @@ catch() {
   echo "Error $1 occurred on line $2"
 }
 
-highlight='-e "\e[30;48;5;82m[AKRR_Reg_Test:0]\e[0m"'
-red_highlight='-e "\e[30;48;5;1m[AKRR_Reg_Test:0]\e[0m"'
+highlight='-e \e[30;48;5;82m[AKRR_Reg_Test:0]\e[0m'
+red_highlight='-e \e[30;48;5;1m[AKRR_Reg_Test:0]\e[0m'
 # Start all daemons
 sudo /usr/local/sbin/cmd_start self_contained_slurm_wlm
 
@@ -61,7 +61,7 @@ fi
 if [ "${AKRR_SHORT_TESTS}" == "false" ]; then
     #Run pylint tests
     echo $highlight "Running pylint tests"
-    pylint --errors-only akrr.util
+    pylint --errors-only --extension-pkg-whitelist=_mysql --unsafe-load-any-extension=yes akrr.util
 
     #Run unit tests
     echo $highlight "Running unit tests"

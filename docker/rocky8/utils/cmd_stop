@@ -1,4 +1,5 @@
 #!/bin/bash
+MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
 
 # sometimes /usr/local/sbin is not in PATH
 export PATH="/usr/local/sbin:$PATH"
@@ -27,7 +28,7 @@ do
     case "$var" in
     mysqld)
         echo "Stopping mysqld"
-        mysqladmin shutdown
+        mysqladmin -u root --password=${MYSQL_ROOT_PASSWORD} shutdown
         ;;
     munged)
         stop_process munged /run/munge/munged.pid
@@ -55,6 +56,13 @@ do
         ;;
     self_contained_slurm_wlm)
         cmd_stop slurmd slurmctld slurmdbd mysqld sshd munged
+        ;;
+    -env)
+        # set env
+        export $2=$3
+        echo "set environment variable $2 to $3"
+        shift
+        shift
         ;;
     *)
         echo "unknown command ${var}"

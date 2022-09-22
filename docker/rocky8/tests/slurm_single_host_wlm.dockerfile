@@ -1,22 +1,24 @@
-FROM centos:7
+FROM rockylinux:8
 
 LABEL description="slurm with single host WLM for various testing purposes"
 
 # install dependencies
 RUN \
-    yum -y update && \
-    yum -y install --setopt=tsflags=nodocs epel-release && \
-    yum -y install --setopt=tsflags=nodocs \
-        vim tmux mc perl-Switch\
+    dnf -y update && \
+    dnf -y install --setopt=tsflags=nodocs dnf-plugins-core && \
+    dnf config-manager --set-enabled powertools && \
+    dnf -y update && \
+    dnf -y install --setopt=tsflags=nodocs \
+        vim tmux mc perl-Switch procps \
         openssl openssh-server openssh-clients \
         mariadb-server \
         munge sudo && \
-    yum clean all
+    dnf clean all
 
 WORKDIR /root
 
 # copy slurm rpm
-COPY ./centos_slurm_single_host_wlm/RPMS/x86_64/slurm*.rpm /root/
+COPY ./tests/RPMS/x86_64/slurm*.rpm /root/
 
 #install Slurm
 RUN rpm --install \
@@ -48,6 +50,7 @@ RUN echo "secret munge key secret munge key secret munge key" >/etc/munge/munge.
 
 # configure sshd
 RUN mkdir /var/run/sshd && \
+    rm -f /run/nologin && \
     ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' && \
     ssh-keygen -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key -N '' && \
     ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N '' && \
@@ -61,19 +64,20 @@ EXPOSE 22
 RUN chmod g+rw /var/lib/mysql /var/log/mariadb /var/run/mariadb && \
     mysql_install_db && \
     chown -R mysql:mysql /var/lib/mysql && \
-    cmd_start mysqld && \
+    cmd_start -env MYSQL_ROOT_PASSWORD '' mysqld && \
     mysql -e 'DELETE FROM mysql.user WHERE user NOT LIKE "root";' && \
     mysql -e 'DELETE FROM mysql.user WHERE Host NOT IN ("localhost","127.0.0.1","%");' && \
-    mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "root"@"%" WITH GRANT OPTION;' && \
+    mysql -e 'UPDATE mysql.user SET Password=PASSWORD("root") WHERE User="root";' && \
     mysql -e 'GRANT ALL PRIVILEGES ON *.* TO "root"@"localhost" WITH GRANT OPTION;' && \
     mysql -e 'DROP DATABASE IF EXISTS test;' && \
+    mysql -e 'FLUSH PRIVILEGES;' && \
     cmd_stop mysqld
 
 EXPOSE 3306
 
 # configure slurm
-COPY ./centos_slurm_single_host_wlm/slurm.conf ./centos_slurm_single_host_wlm/slurmdbd.conf \
-    ./centos_slurm_single_host_wlm/cgroup.conf /etc/slurm/
+COPY ./tests/slurm_conf/slurm.conf ./tests/slurm_conf/slurmdbd.conf \
+    ./tests/slurm_conf/cgroup.conf /etc/slurm/
 RUN mkdir /var/log/slurm && \
     chmod a+r /etc/slurm/slurm.conf && \
     chmod 600 /etc/slurm/slurmdbd.conf && \

@@ -1,6 +1,6 @@
-FROM nsimakov/centos_slurm_single_host_wlm:latest
+FROM nsimakov/slurm_single_host_wlm:latest
 
-LABEL description="centos for akrr tests"
+LABEL description="container for akrr tests"
 
 # install dependencies
 # Needed for shippable:
@@ -9,22 +9,27 @@ LABEL description="centos for akrr tests"
 #    rpm-build
 # Needed to run:
 #    python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing
-#    python36-prettytable
+#    python3-prettytable
 #    openssl openssh-clients crontabs
 # Needed for tests:
 #     with yum: python34-PyYAML python34-pip gromacs
 #     with pip: pylint coverage pytest pytest-cov pytest-dependency
 #
-RUN yum -y update && \
-    yum -y install --setopt=tsflags=nodocs \
+RUN dnf -y update && \
+    dnf config-manager --set-enabled powertools && \
+    dnf -y install epel-release && crb enable && \
+    dnf -y update && \
+    dnf -y install --setopt=tsflags=nodocs \
         git sudo \
-        python36 python36-libs python36-bottle python36-requests python36-mysql python36-typing \
-        python36-prettytable python36-PyYAML python36-pip \
-        python36-dateutil python36-psutil \
+        python3 python3-libs python3-bottle python3-requests python3-mysqlclient python3-typing-extensions \
+        python3-prettytable python3-PyYAML python3-pip \
+        python3-dateutil python3-psutil \
+        python3-sqlalchemy \
         openssl  openssh-clients crontabs gromacs \
         rpm-build && \
-    yum clean all && \
+    dnf clean all && \
     pip3 install --upgrade pip && \
+    pip3 install bottle && \
     pip3 install pylint coverage pytest pytest-cov pytest-dependency
 
 COPY ./utils/cmd_setup ./utils/cmd_start ./utils/cmd_stop /usr/local/sbin/

@@ -1,7 +1,7 @@
 global: |
     import os
-    #This is python code
-    #top level settings
+    # This is python code
+    # top level settings
     akrr_home_dir = os.environ.get("AKRR_SETUP_HOME")
     xd_db_user = "akrruser"
     xd_db_passwd = ""
@@ -12,14 +12,14 @@ global: |
     ak_db_user = xd_db_user
     ak_db_passwd = xd_db_passwd
 
-    #administrative database user under which the installation sql script should
+    # administrative database user under which the installation sql script should
     sql_root_name="root"
-    sql_root_password=""
+    sql_root_password="root"
 
 
 setup:
     akrr_db_su_user_name: "root"
-    akrr_db_su_user_password: ""
+    akrr_db_su_user_password: "root"
     cron_email: ""
     
     add_fake_modw: True

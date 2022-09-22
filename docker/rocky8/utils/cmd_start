@@ -1,4 +1,6 @@
 #!/bin/bash
+MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+
 echo "Reach Entry Point"
 if [ "$USER" = "root" ]; then
     echo $$ > /var/run/enrypoint.pid
@@ -88,10 +90,11 @@ do
     case "$1" in
     mysqld)
         echo "Launching mysqld"
+        [[ -f "/var/log/mariadb/mariadb.log" ]] && rm -f /var/log/mariadb/mariadb.log
         chown -R mysql:mysql /var/lib/mysql
         trap "/sbin/shutdown.sh mysqld; exit" SIGHUP SIGINT SIGTERM
         mysqld_safe &
-        mysqladmin --silent --wait=30 ping
+        mysqladmin -u root --password=${MYSQL_ROOT_PASSWORD} --silent --wait=30 ping
         ;;
     munged)
         start_process munged munged /run/munge/munged.pid munge
@@ -135,6 +138,13 @@ do
     run_tests)
         echo "Start Tests: $RUN_TESTS"
         $RUN_TESTS
+        ;;
+    -env)
+        # set env
+        export $2=$3
+        echo "set environment variable $2 to $3"
+        shift
+        shift
         ;;
     -c)
         # from docker cmd skip to next

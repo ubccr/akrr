@@ -109,7 +109,7 @@ class Test_akrr_util_sql_Functions_with_SQL(unittest.TestCase):
     def __init__(self,methodName='runTest'):
         super(Test_akrr_util_sql_Functions_with_SQL, self).__init__(methodName=methodName)
 
-        self.su_sql = "root:@localhost"
+        self.su_sql = "root:root@localhost"
 
         self.user1 = "testuser1"
         self.password1 = ""

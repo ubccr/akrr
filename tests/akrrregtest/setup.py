@@ -35,7 +35,7 @@ akrr_db_port = None
 akrr_db_name = None
 
 akrr_db_su_user_name = "root"
-akrr_db_su_user_password = ""
+akrr_db_su_user_password = "root"
 
 ak_db_user_name = ""
 ak_db_user_password = None
@@ -183,11 +183,11 @@ def setup():
     _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)
 
     # XD database:
-    _send_user_password(
-        bash,
-        r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]:',
-        ak_db_user_name, ak_db_user_password
-    )
+    # _send_user_password(
+    #     bash,
+    #     r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]:',
+    #     ak_db_user_name, ak_db_user_password
+    # )
     _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)
 
     bash.expectSendline(r'.*INPUT.* Please enter the e-mail where cron will send messages.*\n',

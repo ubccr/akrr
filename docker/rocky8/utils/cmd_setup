@@ -154,6 +154,13 @@ do
     xdmod_appkernels)
         setup_xdmod_appkernels
         ;;
+    -env)
+        # set env
+        export $2=$3
+        echo "set environment variable $2 to $3"
+        shift
+        shift
+        ;;
     -set-no-exit-on-fail)
         set +e
         ;;
