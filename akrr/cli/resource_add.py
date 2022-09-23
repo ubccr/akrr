@@ -442,7 +442,7 @@ def get_remote_access_method():
                         private_keys = get_private_keys()
                         if len(private_keys) == 0:
                             log.error("Can not find private keys! Try again!")
-                        raise ValueError()
+                            raise ValueError()
                     break
                 except (ValueError, TypeError):
                     log.error("Incorrect entry, try again.")
