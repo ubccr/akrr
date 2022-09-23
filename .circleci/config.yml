@@ -1,10 +1,14 @@
 version: 2.1
 jobs:
   build-and-test:
+    working_directory: ~/akrr_src
     docker:
       - image: nsimakov/akrr_ci:latest
     steps:
       - checkout
+      - run:
+          name: Create Test Result Directories
+          command: tests/regtest1/run_tests.sh
 
 workflows:
   fresh-install:
