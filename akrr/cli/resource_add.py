@@ -458,7 +458,7 @@ def get_remote_access_method():
                 continue
             if action_list[action][0] == "UseExistingPrivateKey":
                 log.info(
-                    "Available private keys:" + "\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
+                    "Available private keys:\n" + "\n".join(["%3d  %s" % (i, p) for i, p in enumerate(private_keys)]))
                 while True:
                     log.log_input("Select key number from list above:")
                     try:

@@ -56,7 +56,7 @@ resource:
         # Use existing private and public key
         authentication_method: 1
         # use .ssh/id_rsa_localhost
-        private_keys_number: 0
+        private_keys_number: 1
         #password: batchuser
         #private_key_name: ""
         #private_key_passphrase: ""

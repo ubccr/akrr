@@ -30,6 +30,8 @@ red_highlight='-e \e[30;48;5;1m[AKRR_Reg_Test:0]\e[0m'
 # Start all daemons
 sudo /usr/local/sbin/cmd_start self_contained_slurm_wlm
 
+# check ~/.ssh/id_rsa
+[[ -f ~/.ssh/id_rsa ]] && ssh-keygen -t rsa -f ~/.ssh/id_rsa123456 -N ''
 # check slurm and log processes for debugging
 squeue
 sinfo
