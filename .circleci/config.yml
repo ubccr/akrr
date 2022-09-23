@@ -1,0 +1,12 @@
+version: 2.1
+jobs:
+  build-and-test:
+    docker:
+      - image: nsimakov/akrr_ci:latest
+    steps:
+      - checkout
+
+workflows:
+  fresh-install:
+    jobs:
+      - build-and-test

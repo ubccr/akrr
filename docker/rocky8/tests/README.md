@@ -106,3 +106,20 @@ docker run -it --rm --name akrr -h akrr \
     -p 3370:3306 -p 2270:22 \
     nsimakov/akrr_ready_tests:latest cmd_start sshd mysqld bash
 ```
+
+# CI
+
+```bash
+# make image
+docker build -t nsimakov/akrr_ci:latest \
+       -f ./tests/akrr_ci.dockerfile .
+
+# run (to check workability)
+docker run -it --rm \
+    -v ~/xmdow_wsp/akrr:/root/src/github.com/ubccr/akrr \
+    -e REPO_FULL_NAME=ubccr/akrr \
+    nsimakov/akrr_ci:latest bash
+
+# push to docker cloud
+docker push nsimakov/akrr_ci:latest
+```
