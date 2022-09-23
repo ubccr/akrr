@@ -180,15 +180,13 @@ def setup():
         r'Please specify a database user to access mod_appkernel database.*\n\[\S+\]:',
         ak_db_user_name, ak_db_user_password
     )
-    _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)
 
     # XD database:
-    # _send_user_password(
-    #     bash,
-    #     r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]:',
-    #     ak_db_user_name, ak_db_user_password
-    # )
-    _send_su_user_password(bash, ak_db_su_user_name, ak_db_su_user_password)
+    _send_user_password(
+         bash,
+         r'Please specify the user that will be connecting to the XDMoD database.*\n\[\S+\]:',
+         ak_db_user_name, ak_db_user_password
+    )
 
     bash.expectSendline(r'.*INPUT.* Please enter the e-mail where cron will send messages.*\n',
                         "" if cron_email is None else cron_email)

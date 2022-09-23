@@ -142,7 +142,7 @@ def get_con_to_db(user: str, password: str, host: str = 'localhost', port: int =
         "host": host,
         "port": port,
         "user": user,
-        "passwd": password
+        "passwd": "" if password is None else password
     }
     if db_name is not None:
         kwarg["db"] = db_name

@@ -124,7 +124,7 @@ def _check_and_read_su_credentials_for_dbserver(
     if user and password is provided check them first
     Returns: user, password
     """
-    if not user or not password:
+    if user is not None:
         try:
             get_con_to_db(user, password, host, port)
             return user, password
@@ -320,7 +320,7 @@ class AKRRSetup:
         if not user_exists or not db_exists or not user_rights_are_correct:
             self.xd_db_su_user_name, self.xd_db_su_user_password = \
                 _check_and_read_su_credentials_for_dbserver(self.akrr_db_su_user_name, self.akrr_db_su_user_password,
-                                                            self.ak_db_host, self.ak_db_port)
+                                                            self.xd_db_host, self.xd_db_port)
         log.empty_line()
 
     def get_akrr_db(self, su=False, dbname: Optional[str] = ""):
