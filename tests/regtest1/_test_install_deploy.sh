@@ -30,7 +30,7 @@ if [ ! -x "${which_akrrregtest}" ] ; then
     exit 1
 fi
 
-highlight='-e "\e[32;1m[AKRR_Reg_Test:1]\e[0m"'
+highlight='-e \e[32;1m[AKRR_Reg_Test:1]\e[0m'
 
 echo $highlight "akrr to use: ${which_akrr}"
 echo $highlight "akrrregtest to use: ${which_akrrregtest}"

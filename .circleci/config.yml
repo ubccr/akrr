@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create Test Result Directories
+          name: Build and Test
           command: tests/regtest1/run_tests.sh
 
 workflows:

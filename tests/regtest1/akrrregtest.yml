@@ -34,7 +34,7 @@ resource:
         queuing_system: slurm
         headnode: ""
         user: batchuser
-        authentication_method: 1
+        authentication_method: 2
         password: batchuser
         private_key_name: ""
         private_key_passphrase: ""

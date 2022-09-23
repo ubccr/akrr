@@ -403,16 +403,21 @@ def get_remote_access_method():
             # check private keys
             user_home_dir = os.path.expanduser("~")
             user_ssh_dir = os.path.join(user_home_dir, '.ssh')
-            if os.path.isdir(user_ssh_dir):
-                private_keys = [
-                    os.path.join(user_ssh_dir, f[:-4]) for f in os.listdir(user_ssh_dir)
-                    if os.path.isfile(os.path.join(user_ssh_dir, f))
-                    and f[-4:] == '.pub' and os.path.isfile(os.path.join(user_ssh_dir, f[:-4]))]
-            else:
-                private_keys = []
+            def get_private_keys():
+                if os.path.isdir(user_ssh_dir):
+                    private_keys = [
+                        os.path.join(user_ssh_dir, f[:-4]) for f in os.listdir(user_ssh_dir)
+                        if os.path.isfile(os.path.join(user_ssh_dir, f))
+                        and f[-4:] == '.pub' and os.path.isfile(os.path.join(user_ssh_dir, f[:-4]))]
+                else:
+                    private_keys = []
+                return private_keys
 
-            if len(private_keys) > 0:
-                action_list.append(("UseExistingPrivateKey", "Use existing private and public key."))
+            private_keys = get_private_keys()
+
+            action_existing_private_key = len(action_list)
+            action_list.append(("UseExistingPrivateKey",
+                                f"Use existing private and public key (found {len(private_keys)} keys)."))
 
             default_action = len(action_list)
             action_list.append(("GenNewKey", "Generate new private and public key."))
@@ -432,6 +437,11 @@ def get_remote_access_method():
                         action = int(action)
 
                     if action < 0 or action >= len(action_list):
+                        raise ValueError()
+                    if action == action_existing_private_key:
+                        private_keys = get_private_keys()
+                        if len(private_keys) == 0:
+                            log.error("Can not find private keys! Try again!")
                         raise ValueError()
                     break
                 except (ValueError, TypeError):
