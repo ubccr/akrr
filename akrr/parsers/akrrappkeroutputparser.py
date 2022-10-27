@@ -11,7 +11,8 @@ import xml.etree.ElementTree as ElementTree
 import xml.dom.minidom
 import traceback
 import akrr.util.log as log
-from akrr.util import base_gzip_encode
+import json
+from akrr.util import base_gzip_encode, get_float_or_int
 
 
 # add total_seconds function to datetime.timedelta if python is old
@@ -20,6 +21,12 @@ def total_seconds(d):
 
 
 class AppKerOutputParser:
+    METRIC_NAME = 0
+    METRIC_VAL = 1
+    METRIC_UNIT = 2
+    METRIC_BETTER = 3
+    METRIC_GROUP = 4
+    METRIC_TYPE = 5
     def __init__(self, name='', version=1, description='', url='', measurement_name=''):
         self.name = name
         self.version = version
@@ -47,20 +54,80 @@ class AppKerOutputParser:
         self.filesExistance = {}
         self.dirAccess = {}
 
-    def set_parameter(self, name, val, units=None, set_none_value=False):
+    def set_parameter(self, name, val, units=None, set_none_value=False, better=None, group="summary", metric_type=None):
         if val is None and set_none_value is False:
             return
 
         if not isinstance(val, str):
             val = str(val)
-        self.parameters.append([name, val, units])
+        self.parameters.append([name, val, units, better, group, metric_type])
 
-    def set_statistic(self, name, val, units=None, set_none_value=False):
+    def set_statistic(self, name, val, units=None, set_none_value=False, better=None, group="summary", metric_type=None):
+        """
+
+        Parameters
+        ----------
+        name
+        val
+        units
+        set_none_value
+        better - better direction +1 better larger, -1 better smaller, 0 does not have sense
+                 default behaviour: statistics: if units are Seconds then better smaller
+                 otherwise better larger, parameters: doesn't have sense
+        group - statistic/parameter group: 'summary' is main group, set 'details' is detailed metrics
+        metric_type - data type by default parameters are str and statistics are float
+
+        Returns
+        -------
+
+        """
         if val is None and set_none_value is False:
             return
         if not isinstance(val, str):
             val = str(val)
-        self.statistics.append([name, val, units])
+        self.statistics.append([name, val, units, better, group, metric_type])
+
+    def match_set_parameter(self, name, pattern, line, units=None, set_none_value=False, better=None, group="summary"):
+        """
+        Match pattern and set parameter
+        """
+        m = re.match(pattern, line)
+        if m:
+            self.set_parameter(name, m.group(1).strip(), units=units, set_none_value=set_none_value, better=better, group=group)
+            return True
+        return False
+
+    def match_set_statistic(self, name, pattern, line, units=None, set_none_value=False, better=None, group="summary"):
+        """
+        Match pattern and set statistic
+        """
+        m = re.match(pattern, line)
+        if m:
+            self.set_statistic(name, m.group(1).strip(), units=units, set_none_value=set_none_value, better=better, group=group)
+            return True
+        return False
+
+    def search_set_parameter(self, name, pattern, line, units=None, set_none_value=False, better=None,
+                            group="summary"):
+        """
+        Match pattern and set parameter
+        """
+        m = re.search(pattern, line)
+        if m:
+            self.set_parameter(name, m.group(1).strip(), units=units, set_none_value=set_none_value, better=better, group=group)
+            return True
+        return False
+
+    def search_set_statistic(self, name, pattern, line, units=None, set_none_value=False, better=None,
+                            group="summary"):
+        """
+        Match pattern and set statistic
+        """
+        m = re.search(pattern, line)
+        if m:
+            self.set_statistic(name, m.group(1).strip(), units=units, set_none_value=set_none_value, better=better, group=group)
+            return True
+        return False
 
     def get_parameter(self, name):
         for p in self.parameters:
@@ -289,6 +356,18 @@ class AppKerOutputParser:
                     complete = False
 
         return complete
+    def is_successfully_completed(self):
+        """app is successfully completed and parsing is successfully completed"""
+        if self.successfulRun is not None:
+            if self.parsing_complete(True) and self.successfulRun:
+                return True
+            else:
+                return False
+        else:
+            if self.parsing_complete(True):
+                return True
+            else:
+                return False
 
     def get_xml(self):
         root = ElementTree.Element('rep:report')
@@ -300,37 +379,95 @@ class AppKerOutputParser:
         benchmark = ElementTree.SubElement(performance, 'benchmark')
         benchmark_id = ElementTree.SubElement(benchmark, 'ID')
         benchmark_id.text = self.measurement_name
-
         parameters = ElementTree.SubElement(benchmark, 'parameters')
+        statistics = ElementTree.SubElement(benchmark, 'statistics')
+
+        details = ElementTree.SubElement(performance, 'details')
+        parameters_details = ElementTree.SubElement(details, 'parameters')
+        statistics_details = ElementTree.SubElement(details, 'statistics')
+
         pars = self.get_unique_parameters()
         for par in pars:
-            e = ElementTree.SubElement(parameters, 'parameter')
+            if par[AppKerOutputParser.METRIC_GROUP] == "details":
+                e = ElementTree.SubElement(parameters_details, 'parameter')
+            else:
+                e = ElementTree.SubElement(parameters, 'parameter')
             ElementTree.SubElement(e, 'ID').text = par[0]
             ElementTree.SubElement(e, 'value').text = par[1]
             if par[2]:
                 ElementTree.SubElement(e, 'units').text = par[2]
 
-        statistics = ElementTree.SubElement(benchmark, 'statistics')
         pars = self.get_unique_statistic()
         for par in pars:
-            e = ElementTree.SubElement(statistics, 'statistic')
+            if par[AppKerOutputParser.METRIC_GROUP] == "details":
+                e = ElementTree.SubElement(statistics_details, 'statistic')
+            else:
+                e = ElementTree.SubElement(statistics, 'statistic')
             ElementTree.SubElement(e, 'ID').text = par[0]
             ElementTree.SubElement(e, 'value').text = par[1]
             if par[2]:
                 ElementTree.SubElement(e, 'units').text = par[2]
+
+        if len(parameters_details) == 0:
+            details.remove(parameters_details)
+        if len(statistics_details) == 0:
+            details.remove(statistics_details)
+        if len(details) == 0:
+            performance.remove(details)
+
         exit_status = ElementTree.SubElement(root, 'exitStatus')
         completed = ElementTree.SubElement(exit_status, 'completed')
-        if self.successfulRun is not None:
-            if self.parsing_complete(True) and self.successfulRun:
-                completed.text = "true"
-            else:
-                completed.text = "false"
-        else:
-            if self.parsing_complete(True):
-                completed.text = "true"
-            else:
-                completed.text = "false"
+        completed.text = str(self.is_successfully_completed()).lower()
         return xml.dom.minidom.parseString(ElementTree.tostring(root)).toprettyxml(indent="  ")
+
+    def get_json(self):
+        results = {
+            'resource': None,
+            'app': self.name,
+            'resource_request': {'cores': None,'nodes': None,'apus': None},
+            'parameters':[],
+            'statistics':[],
+            'details':{
+                'parameters':[],
+                'statistics':[],
+            },
+            'completed': self.is_successfully_completed()
+        }
+
+        pars = self.get_unique_parameters()
+        for par in pars:
+            r = {'name': par[0]}
+            if par[AppKerOutputParser.METRIC_TYPE] is not None:
+                r['value'] = par[AppKerOutputParser.METRIC_TYPE](par[1])
+            else:
+                r['value'] = par[1]
+            if par[2] is not None:
+                r['units'] = par[2]
+            if par[AppKerOutputParser.METRIC_BETTER] is not None:
+                r['better'] = par[AppKerOutputParser.METRIC_BETTER]
+
+            if par[AppKerOutputParser.METRIC_GROUP] == "details":
+                results['details']['parameters'].append(r)
+            else:
+                results['parameters'].append(r)
+
+        pars = self.get_unique_statistic()
+        for par in pars:
+            r = {'name': par[0], 'value': (par[1])}
+            if par[AppKerOutputParser.METRIC_TYPE] is not None:
+                r['value'] = par[AppKerOutputParser.METRIC_TYPE](par[1])
+            else:
+                r['value'] = get_float_or_int(par[1])
+            if par[2] is not None:
+                r['units'] = par[2]
+            if par[AppKerOutputParser.METRIC_BETTER] is not None:
+                r['better'] = par[AppKerOutputParser.METRIC_BETTER]
+
+            if par[AppKerOutputParser.METRIC_GROUP] == "details":
+                results['details']['statistics'].append(r)
+            else:
+                results['statistics'].append(r)
+        return json.dumps(results, indent="  ")
 
     def print_params_stats_as_must_have(self):
         """print set parameters and statistics as part of code to set them as must have"""

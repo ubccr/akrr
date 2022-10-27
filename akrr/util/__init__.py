@@ -184,6 +184,16 @@ def get_float_or_int(a: Union[str, float, int]) -> Union[int, float]:
             return float(a)
     raise ValueError("Unknown type")
 
+def get_int_float_or_str(a: Union[str, float, int]) -> Union[int, float,str]:
+    """return float or int"""
+    if isinstance(a, (int, float)):
+        return a
+    if isinstance(a, str):
+        if is_int(a):
+            return int(a)
+        elif is_float(a):
+            return float(a)
+    return a
 
 def strip_empty_lines(m_str):
     """

@@ -1,7 +1,7 @@
 # coding: utf-8
 from sqlalchemy import Column, DateTime, Enum, Float, ForeignKey, ForeignKeyConstraint, Index, LargeBinary, String, Table, Text, text
 from sqlalchemy.dialects.mysql import BIGINT, INTEGER, LONGBLOB, LONGTEXT, TINYINT
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, column_property
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -352,7 +352,7 @@ class AkInstanceDebug(AkInstance):
     ak_id = Column(INTEGER(10), primary_key=True, nullable=False)
     collected = Column(DateTime, primary_key=True, nullable=False)
     resource_id = Column(INTEGER(10), primary_key=True, nullable=False)
-    instance_id = Column(INTEGER(11), index=True)
+    instance_id = column_property(Column(INTEGER(11), index=True), AkInstance.instance_id)
     message = Column(LargeBinary)
     stderr = Column(LargeBinary)
     walltime = Column(Float)
@@ -362,6 +362,8 @@ class AkInstanceDebug(AkInstance):
     ak_error_message = Column(LargeBinary)
     ak_queue_time = Column(INTEGER(11))
 
+# Implicitly combining column ak_instance.instance_id with column ak_instance_debug.instance_id under
+# attribute 'instance_id'.  Please configure one or more attributes for these same-named columns explicitly.
 
 class MetricDatum(Base):
     __tablename__ = 'metric_data'
