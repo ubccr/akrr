@@ -58,8 +58,8 @@ class AppKerOutputParser:
         if val is None and set_none_value is False:
             return
 
-        if not isinstance(val, str):
-            val = str(val)
+        #if not isinstance(val, str):
+        #    val = str(val)
         self.parameters.append([name, val, units, better, group, metric_type])
 
     def set_statistic(self, name, val, units=None, set_none_value=False, better=None, group="summary", metric_type=None):
@@ -76,6 +76,7 @@ class AppKerOutputParser:
                  otherwise better larger, parameters: doesn't have sense
         group - statistic/parameter group: 'summary' is main group, set 'details' is detailed metrics
         metric_type - data type by default parameters are str and statistics are float
+                 with json replacement val should be in proper format by this time
 
         Returns
         -------
@@ -83,8 +84,8 @@ class AppKerOutputParser:
         """
         if val is None and set_none_value is False:
             return
-        if not isinstance(val, str):
-            val = str(val)
+        #if not isinstance(val, str):
+        #    val = str(val)
         self.statistics.append([name, val, units, better, group, metric_type])
 
     def match_set_parameter(self, name, pattern, line, units=None, set_none_value=False, better=None, group="summary"):
@@ -150,10 +151,10 @@ class AppKerOutputParser:
 
         s += "parameters:\n"
         for p in self.parameters:
-            s += "\t%s: %s %s\n" % (p[0], p[1], str(p[2]))
+            s += "\t%s: %s %s\n" % (p[0], str(p[1]), str(p[2]))
         s += "statistics:\n"
         for p in self.statistics:
-            s += "\t%s: %s %s\n" % (p[0], p[1], str(p[2]))
+            s += "\t%s: %s %s\n" % (p[0], str(p[1]), str(p[2]))
 
         return s
 
@@ -393,7 +394,7 @@ class AppKerOutputParser:
             else:
                 e = ElementTree.SubElement(parameters, 'parameter')
             ElementTree.SubElement(e, 'ID').text = par[0]
-            ElementTree.SubElement(e, 'value').text = par[1]
+            ElementTree.SubElement(e, 'value').text = str(par[1])
             if par[2]:
                 ElementTree.SubElement(e, 'units').text = par[2]
 
@@ -404,7 +405,7 @@ class AppKerOutputParser:
             else:
                 e = ElementTree.SubElement(statistics, 'statistic')
             ElementTree.SubElement(e, 'ID').text = par[0]
-            ElementTree.SubElement(e, 'value').text = par[1]
+            ElementTree.SubElement(e, 'value').text = str(par[1])
             if par[2]:
                 ElementTree.SubElement(e, 'units').text = par[2]
 
@@ -456,8 +457,10 @@ class AppKerOutputParser:
             r = {'name': par[0], 'value': (par[1])}
             if par[AppKerOutputParser.METRIC_TYPE] is not None:
                 r['value'] = par[AppKerOutputParser.METRIC_TYPE](par[1])
-            else:
+            elif isinstance(par[1], str):
                 r['value'] = get_float_or_int(par[1])
+            else:
+                r['value'] = par[1]
             if par[2] is not None:
                 r['units'] = par[2]
             if par[AppKerOutputParser.METRIC_BETTER] is not None:
@@ -487,20 +490,20 @@ class AppKerOutputParser:
         pars = self.get_unique_parameters()
         for par in pars:
             if is_int(par[1]):
-                print('assert parstat_val_i(params, "%s") == %s' % (par[0], par[1]))
+                print('assert parstat_val_i(params, "%s") == %s' % (par[0], str(par[1])))
             elif is_float(par[1]):
-                print('assert floats_are_close(parstat_val_f(params, "%s"), %s)' % (par[0], par[1]))
+                print('assert floats_are_close(parstat_val_f(params, "%s"), %s)' % (par[0], str(par[1])))
             else:
-                print('assert parstat_val(params, "%s") == "%s"' % (par[0], par[1]))
+                print('assert parstat_val(params, "%s") == "%s"' % (par[0], str(par[1])))
         print()
         pars = self.get_unique_statistic()
         for par in pars:
             if is_int(par[1]):
-                print('assert parstat_val_i(stats, "%s") == %s' % (par[0], par[1]))
+                print('assert parstat_val_i(stats, "%s") == %s' % (par[0], str(par[1])))
             elif is_float(par[1]):
-                print('assert floats_are_close(parstat_val_f(stats, "%s"), %s)' % (par[0], par[1]))
+                print('assert floats_are_close(parstat_val_f(stats, "%s"), %s)' % (par[0], str(par[1])))
             else:
-                print('assert parstat_val(stats, "%s") == "%s"' % (par[0], par[1]))
+                print('assert parstat_val(stats, "%s") == "%s"' % (par[0], str(par[1])))
         print()
 
     @staticmethod

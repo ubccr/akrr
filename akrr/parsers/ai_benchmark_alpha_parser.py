@@ -1,7 +1,7 @@
 import re
 import os
 import sys
-from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser
+from akrr.parsers.akrrappkeroutputparser import AppKerOutputParser, total_seconds
 
 
 def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None, proclog=None,
@@ -27,6 +27,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     # parse common parameters and statistics
     parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo, resource_appker_vars)
 
+    if parser.appKerWallClockTime is not None:
+        parser.set_statistic("Wall Clock Time", total_seconds(parser.appKerWallClockTime), "Second")
+
     # read output
     lines = []
     if os.path.isfile(appstdout):
@@ -34,14 +37,27 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         lines = fin.readlines()
         fin.close()
 
+
+
     # process the output
     successful_run = False
     j = 0
-    while j < len(lines):
+    def process_subtest(test_name):
+        m = re.match(r'\d+/\d+\.\s+'+test_name, lines[j])
+        if m:
+            print("DSF")
 
+    while j < len(lines):
+        # Global parameters
         parser.match_set_parameter("App:Version", r'>>   AI-Benchmark-v\.(.+)$', lines[j])
         parser.match_set_parameter("TF Version", r'\*  TF Version: (.+)$', lines[j])
+        parser.match_set_parameter("Platform", r'\*  Platform: (.+)$', lines[j])
+        parser.match_set_parameter("CPU", r'\*  CPU: (.+)$', lines[j])
+        parser.match_set_parameter("CPU RAM", r'\*  CPU RAM: (.+)$', lines[j])
+        parser.match_set_parameter("GPU", r'\*  GPU/0: (.+)$', lines[j])
+        parser.match_set_parameter("GPU RAM", r'\*  GPU RAM: (.+)$', lines[j])
 
+        # Summary statistics
         parser.match_set_statistic("Inference Score", r'Device Inference Score: ([0-9.]+)$', lines[j])
         parser.match_set_statistic("Training Score", r'Device Training Score: ([0-9.]+)$', lines[j])
         parser.match_set_statistic("AI Score", r'Device AI Score: ([0-9.]+)$', lines[j])
@@ -50,10 +66,24 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         if m:
             successful_run = True
 
+        # detailed metrics
+        m_subtest = re.match(r'\d+/\d+[.]\s+(\S+)', lines[j])
+        if m_subtest :
+            for k in range(2,6):
+                if j + k >= len(lines):
+                    break
+                m_subtest2 = re.match(r'\d+.\d+ - (inference|training)\s+[|] batch=(\d+), (size=\S+): (\d+) ± (\d+) ms', lines[j+k])
+                if m_subtest2:
+                    parser.set_statistic(f"{m_subtest.group(1)}, {m_subtest2.group(1)}, {m_subtest2.group(3)}",
+                                         {'mean': int(m_subtest2.group(4)), 'stdev': int(m_subtest2.group(5)), 'n': int(m_subtest2.group(2))},
+                                         units="ms", group="details")
+                else:
+                    break
+
         j += 1
 
     parser.successfulRun = successful_run
-
+    # return
     if __name__ == "__main__":
         # output for testing purpose
         print("parsing complete:", parser.parsing_complete())
