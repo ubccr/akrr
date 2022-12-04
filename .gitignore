@@ -41,6 +41,7 @@
 /docker/namd/bin
 /singularity
 /docker/centos_slurm_single_host_wlm/RPMS
+/docker/centos7/centos_slurm_single_host_wlm/RPMS
 /docker/centos7/spack/license.lic
 /docker/centos7/namd/NAMD_2.14_Linux-x86_64-multicore.tar.gz
 /docker/centos7/namd/NAMD_2.14_Source.tar.gz
