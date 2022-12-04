@@ -14,3 +14,17 @@ Usage:
 ./inits.exe -d ReionizationRadHydro.inits
 mpirun -np 2 ./ring.exe pv ParticlePositions ParticleVelocities
 mpirun -np 2 ./enzo.exe -d ReionizationRadHydro.enzo
+
+
+"""
+unrelated maybe
+https://phys.org/news/2022-03-video-astronomers-reveal-remarkable-simulations.html
+simulating the formation of the first galaxies and reionization—the process by which
+neutral hydrogen atoms in space were transformed into positively charged, or
+ionized, hydrogen, allowing light to spread throughout the universe.
+
+The simulated period, known as the epoch of reionization, took place some 13 billion
+years ago and was challenging to reconstruct, as it involves immensely complicated,
+chaotic interactions, including those between gravity, gas and radiation, or light.
+"""
+

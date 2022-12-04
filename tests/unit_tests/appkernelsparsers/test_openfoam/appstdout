@@ -1,0 +1,297 @@
+===ExeBinSignature=== MD5: db25b1bb4c1e8365f62c649e872edf28 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/bin/simpleFoam
+===ExeBinSignature=== MD5: 6ccc9e85a7d0073f54cc93997e1c483d /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libfiniteVolume.so
+===ExeBinSignature=== MD5: 7afb9fb8105e035c411b25475864dd5b /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libfvOptions.so
+===ExeBinSignature=== MD5: d0d8126799b08ca528e8d09535d35d47 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libmeshTools.so
+===ExeBinSignature=== MD5: 25004eedef8c388bf5d97fcd285ffaf3 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libsampling.so
+===ExeBinSignature=== MD5: 10844b3f43633d7f9057a38e72647a65 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libturbulenceModels.so
+===ExeBinSignature=== MD5: 4cdc3fde67830f610665b62d7e505b68 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libincompressibleTurbulenceModels.so
+===ExeBinSignature=== MD5: ea167ad500308fef0c57003accfb9833 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libincompressibleTransportModels.so
+===ExeBinSignature=== MD5: f53f0f4d5a5f767dd41b048ede139421 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libatmosphericModels.so
+===ExeBinSignature=== MD5: 7d003398a21bbe283741eb03522446aa /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libOpenFOAM.so
+===ExeBinSignature=== MD5: 8be6a237b9237296c12cdad863941d94 /lib/x86_64-linux-gnu/libstdc++.so.6
+===ExeBinSignature=== MD5: 21d111dc9036eb22122a82a7bd542cf6 /lib/x86_64-linux-gnu/libm.so.6
+===ExeBinSignature=== MD5: a88102a1f04fa2e227cc27e9f681cb72 /lib/x86_64-linux-gnu/libgcc_s.so.1
+===ExeBinSignature=== MD5: ae3b936fcd88600d924e91d1c3c23772 /lib/x86_64-linux-gnu/libc.so.6
+===ExeBinSignature=== MD5: 7cbe28375a299f8fb3673a955afde8b9 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libPstream.so
+===ExeBinSignature=== MD5: 012eba1d0a60ebf9c3fc4179bd7bde75 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libfileFormats.so
+===ExeBinSignature=== MD5: 976a0cafb2fde820c5a52e82541d8719 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libsurfMesh.so
+===ExeBinSignature=== MD5: 430fd2c993cf467586f1ed6f1465e3d5 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libfluidThermophysicalModels.so
+===ExeBinSignature=== MD5: 0ad4b1e1a334e34faadf1c46daf8bf69 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libsolidThermo.so
+===ExeBinSignature=== MD5: 2db79a8ae04bd9712743b5c963eb4c5e /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libcompressibleTurbulenceModels.so
+===ExeBinSignature=== MD5: 14c520f2b525b0382db397d069452834 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libreactionThermophysicalModels.so
+===ExeBinSignature=== MD5: bf0eee91c135b72ae58d3eeffab3cfdb /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/liblagrangian.so
+===ExeBinSignature=== MD5: 34af535f9ab2553c2a9b941aacafc19f /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libtwoPhaseMixture.so
+===ExeBinSignature=== MD5: f3b4b4155486c833972c9bf91276e930 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/zlib-1.2.12-todqpb3whluvjzmpui5mqhmhyw4uiibh/lib/libz.so.1
+===ExeBinSignature=== MD5: 0bdeb7ceb616e407599aa71472550529 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openmpi-4.1.4-n45pbevr3mfaekkz7qgsvfa4snqnn2iq/lib/libmpi.so.40
+===ExeBinSignature=== MD5: ca832c87d57993b495a944abd37ec46c /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libcompressibleTransportModels.so
+===ExeBinSignature=== MD5: 5387bfce4090b2704d6858576b9e6538 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libspecie.so
+===ExeBinSignature=== MD5: 96cb1b30a857bb3a5f78436c77d84d9b /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libthermophysicalProperties.so
+===ExeBinSignature=== MD5: f5bc1238c542fa323366bcedf0aa8441 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libsolidSpecie.so
+===ExeBinSignature=== MD5: 30bb6111da2a94dcedf309138eb99aa5 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libradiationModels.so
+===ExeBinSignature=== MD5: 05696df1a4fe111178aa9fe72bbd1f0e /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openmpi-4.1.4-n45pbevr3mfaekkz7qgsvfa4snqnn2iq/lib/libopen-rte.so.40
+===ExeBinSignature=== MD5: b1bc9db6b946e634abcad91757192af4 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openmpi-4.1.4-n45pbevr3mfaekkz7qgsvfa4snqnn2iq/lib/libopen-pal.so.40
+===ExeBinSignature=== MD5: 0fba6ce402f462eaa14b1f4bc7c9ec5f /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/hwloc-2.8.0-p2z3hmswiszqqpxglwo3ehdd5cp76elx/lib/libhwloc.so.15
+===ExeBinSignature=== MD5: bcb5d4c866daff239fbf2eb2197d6942 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libSLGThermo.so
+===ExeBinSignature=== MD5: a779c1d956e18991cea52b9edf3f38e2 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libdistributed.so
+===ExeBinSignature=== MD5: 1348e50b647d7514decc1523f9a296ae /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/libevent-2.1.12-eyr2253m43qqocz2p5sm63j3voxgrfed/lib/libevent_core-2.1.so.7
+===ExeBinSignature=== MD5: ada3489abd958b93b52df82cca1e5aac /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/pmix-4.1.2-yilgmmlq73qdm35fhhxcthp3fi7inwjq/lib/libpmix.so.2
+===ExeBinSignature=== MD5: bf4126a67ef23afdacd9cc32046b279b /lib/x86_64-linux-gnu/libnl-3.so.200
+===ExeBinSignature=== MD5: 913d67a87992e1e21bc66dfd64c79a19 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/libevent-2.1.12-eyr2253m43qqocz2p5sm63j3voxgrfed/lib/libevent_pthreads-2.1.so.7
+===ExeBinSignature=== MD5: 15bfa0f7d7e7a55f9cd0ce9dfefef9e1 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/libpciaccess-0.16-s6mvjjahm3fsnjtbbimvookhnqoider6/lib/libpciaccess.so.0
+===ExeBinSignature=== MD5: bff9f4395b7973793ca8a9c96a776b08 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/libxml2-2.10.1-gt72got52rryonq5p7kaxx3xq5fdgxul/lib/libxml2.so.2
+===ExeBinSignature=== MD5: b390746d8f156a228026deb2520d784c /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libdecompositionMethods.so
+===ExeBinSignature=== MD5: 76937e560389dbee925320856a53abf6 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/xz-5.2.5-kb4jlcxv2vmxevmbbj6heuhqodlaqbz5/lib/liblzma.so.5
+===ExeBinSignature=== MD5: 693cc8391c10edeecba6ed571a46f864 /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/libiconv-1.16-khkejrz5bagnnpfuhqd7sokumjfysggu/lib/libiconv.so.2
+===ExeBinSignature=== MD5: 337be5a34a2d06a4968bef2e8a5665ab /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libdynamicMesh.so
+===ExeBinSignature=== MD5: 0fc4d44fdc54fd8b4b88604b58f4395e /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libextrudeModel.so
+===ExeBinSignature=== MD5: 5a2eca66e2a9d37ec25f2bd29a8cad1a /home/nikolays/spack/opt/spack/linux-ubuntu22.04-icelake/gcc-11.2.0/openfoam-2206-hrcumvxmraxjyeb5l2372juwlqb4f3fq/platforms/linux64GccDPInt32-spack/lib/libblockMesh.so
+Running surfaceFeatureExtract on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+Running blockMesh on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+Running decomposePar on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+Running snappyHexMesh (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Snappy run-time: 39.730171563
+Running topoSet (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Restore 0/ from 0.orig/  [processor directories]
+Running patchSummary (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Running potentialFoam (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Running checkMesh (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Running simpleFoam (8 processes) on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N 
+Solver run-time: 134.597537634
+Running reconstructParMesh on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+Running reconstructPar on /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+Total run-time: 180.217840265
+# log.checkMesh #
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2206                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _76d719d1e6-20220624 OPENFOAM=2206 version=v2206
+Arch   : "LSB;label=32;scalar=64"
+Exec   : checkMesh -parallel -writeFields (nonOrthoAngle) -constant
+Date   : Dec 04 2022
+Time   : 16:23:56
+Host   : bumblebee
+PID    : 87216
+I/O    : uncollated
+Case   : /home/nikolays/xdmod_wsp/akrr_scratch/ak.lHgV1vw3N
+nProcs : 8
+Hosts  :
+(
+    (bumblebee 8)
+)
+Pstream initialized with:
+    floatTransfer      : 0
+    nProcsSimpleSum    : 0
+    commsType          : nonBlocking
+    polling iterations : 0
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = constant
+
+Writing mesh quality as fields 1(nonOrthoAngle)
+
+Time = constant
+
+Mesh stats 
+    points:           423584
+    faces:            1125680
+    internal faces:   1046728
+    cells:            354705
+    faces per cell:   6.12455
+    boundary patches: 72 (74 79)
+    point zones:      1
+    face zones:       0
+    cell zones:       1
+
+Overall number of cells of each type:
+    hexahedra:     309056
+    prisms:        7519
+    wedges:        997
+    pyramids:      10
+    tet wedges:    1757
+    tetrahedra:    54
+    polyhedra:     35312
+    Breakdown of polyhedra by number of faces:
+        faces   number of cells
+            4   3939
+            5   6575
+            6   5520
+            7   3057
+            8   1344
+            9   10592
+           10   13
+           11   4
+           12   2359
+           13   3
+           14   3
+           15   1624
+           17   1
+           18   269
+           21   9
+
+Checking topology...
+    Boundary definition OK.
+    Cell to face addressing OK.
+    Point usage OK.
+    Upper triangular ordering OK.
+    Face vertices OK.
+    Number of regions: 1 (OK).
+
+Checking basic patch addressing...
+                   Patch    Faces   Points
+            frontAndBack      360      454
+                   inlet       72       90
+                  outlet       72       90
+               lowerWall     5358     5982
+               upperWall      160      198
+    motorBike_frt-fairing:001%1     5370    10312
+    motorBike_windshield:002%2       49       87
+    motorBike_rr-wh-rim:005%5      120      215
+    motorBike_rr-wh-rim:010%10      355      679
+    motorBike_fr-wh-rim:011%11      500      855
+    motorBike_fr-wh-brake-disk:012%12       47       90
+    motorBike_frame:016-shadow%13      108      235
+    motorBike_rear-susp:014%14      802     1519
+    motorBike_rear-susp:014-shadow%15      484     1261
+    motorBike_frame:016%16       56      164
+    motorBike_rr-wh-rim:005-shadow%17       67      162
+    motorBike_rr-wh-chain-hub:022%22      129      215
+    motorBike_rearseat%24      421      512
+    motorBike_frt-fairing%25      619      892
+    motorBike_windshield%26      378      823
+    motorBike_headlights%27      156      260
+    motorBike_driversseat%28      349      540
+    motorBike_rear-body%29     2053     2633
+    motorBike_fuel-tank%30      878     1216
+    motorBike_exhaust%31     2345     3086
+    motorBike_rr-wh-rim%32     1373     1736
+    motorBike_fr-mud-guard%33      606     1257
+    motorBike_fr-wh-rim%34      571      791
+    motorBike_fr-wh-brake-disk%35      439      688
+    motorBike_fr-brake-caliper%36      157      208
+    motorBike_fr-wh-tyre%37     1109     1622
+      motorBike_hbars%38      521      669
+    motorBike_fr-forks%39     1094     1598
+      motorBike_chain%40      456      582
+    motorBike_rr-wh-tyre%41     1847     2494
+    motorBike_square-dial%42        6       12
+    motorBike_round-dial%43       15       29
+    motorBike_dial-holder%44       89      134
+    motorBike_rear-susp%45     1724     2238
+    motorBike_rear-brake-lights%46       54       87
+    motorBike_rear-light-bracket%47      159      209
+      motorBike_frame%48     2023     2599
+    motorBike_rear-mud-guard%49      648     1204
+    motorBike_rear-susp-spring-damp%50       96      219
+    motorBike_fairing-inner-plate%51      441      591
+    motorBike_clutch-housing%52      921     1105
+    motorBike_radiator%53       48       84
+    motorBike_water-pipe%54       99      114
+    motorBike_water-pump%55       71       96
+     motorBike_engine%56     2287     2678
+    motorBike_rear-shock-link%57       26       59
+    motorBike_rear-brake-fluid-pot-bracket%58       41       73
+    motorBike_rear-brake-fluid-pot%59       51       78
+    motorBike_footpeg%60       90      125
+    motorBike_rr-wh-chain-hub%61      128      249
+    motorBike_rear-brake-caliper%62      144      174
+    motorBike_rider-helmet%65      764     1010
+    motorBike_rider-visor%66      165      266
+    motorBike_rider-boots%67     1010     1436
+    motorBike_rider-gloves%68      306      397
+    motorBike_rider-body%69     4591     6006
+    motorBike_frame:0%70       37       61
+    motorBike_frt-fairing:001-shadow%74     3305     8560
+    motorBike_windshield-shadow%75      261      700
+    motorBike_fr-mud-guard-shadow%81      364      964
+    motorBike_fr-wh-brake-disk-shadow%83      198      481
+    motorBike_rear-mud-guard-shadow%84      398     1005
+    motorBike_rear-susp-spring-damp-shadow%85       52      144
+    motorBike_radiator-shadow%86       27       63
+    motorBike_rear-shock-link-shadow%87       10       34
+    motorBike_rear-brake-fluid-pot-bracket-shadow%88       24       65
+    motorBike_rr-wh-chain-hub-shadow%89       66      180
+
+Checking basic faceZone addressing...
+    No faceZones found.
+
+Checking basic cellZone addressing...
+                CellZone        Cells       Points       VolumeBoundingBox
+                  inner       254052       312321      13.7098 (-1.00404 -0.502569 0) (6 0.502799 2.01171)
+
+Checking geometry...
+    Overall domain bounding box (-5 -4 0) (15 4 8)
+    Mesh has 3 geometric (non-empty/wedge) directions (1 1 1)
+    Mesh has 3 solution (non-empty) directions (1 1 1)
+    Boundary openness (-2.2264e-17 4.75111e-18 -3.9165e-16) OK.
+    Max cell openness = 5.35108e-16 OK.
+    Max aspect ratio = 41.1545 OK.
+    Minimum face area = 7.87853e-07. Maximum face area = 1.01354.  Face area magnitudes OK.
+    Min volume = 1.40658e-08. Max volume = 1.00656.  Total volume = 1279.68.  Cell volumes OK.
+    Mesh non-orthogonality Max: 64.9956 average: 9.84102
+    Non-orthogonality check OK.
+    Face pyramids OK.
+ ***Max skewness = 8.53038, 18 highly skew faces detected which may impair the quality of the results
+  <<Writing 18 skew faces to set skewFaces
+    Coupled point location match (average 0) OK.
+
+Failed 1 mesh checks.
+
+Writing fields with mesh quality parameters
+    Writing non-orthogonality (angle) to nonOrthoAngle
+
+End
+
+Finalising parallel run
+# log.simpleFoam #
+Time = 500
+
+smoothSolver:  Solving for Ux, Initial residual = 4.58742e-05, Final residual = 3.52184e-06, No Iterations 8
+smoothSolver:  Solving for Uy, Initial residual = 0.00109362, Final residual = 9.34949e-05, No Iterations 7
+smoothSolver:  Solving for Uz, Initial residual = 0.000969167, Final residual = 8.06366e-05, No Iterations 7
+GAMG:  Solving for p, Initial residual = 0.000490323, Final residual = 2.03797e-06, No Iterations 4
+time step continuity errors : sum local = 3.88073e-06, global = 8.64795e-08, cumulative = 7.53873e-05
+smoothSolver:  Solving for omega, Initial residual = 8.11234e-06, Final residual = 5.40141e-07, No Iterations 3
+smoothSolver:  Solving for k, Initial residual = 8.16205e-05, Final residual = 7.51954e-06, No Iterations 3
+ExecutionTime = 133.26 s  ClockTime = 134 s
+
+streamLine streamLines write:
+    seeded 20 particles
+    Tracks:20
+    Total samples:19569
+nearWallFields near write:
+    Sampling fields to 500
+    Writing sampled fields to 500
+wallBoundedStreamLine wallBoundedStreamLines write:
+wallBoundedStreamLine : seeded 19996 particles.
+    Tracks:19996
+    Total samples:445958
+forceCoeffs forceCoeffs1 write:
+    Coefficient	Total	Pressure	Viscous	Internal
+    Cd:	0.419548	0.0150516	0.404496	0
+    Cd(f):	0.202628	0.000260583	0.202368	0
+    Cd(r):	0.216919	0.0147911	0.202128	0
+    Cl:	0.0725787	-5.33267e-05	0.072632	0
+    Cl(f):	0.191817	0.149269	0.0425478	0
+    Cl(r):	-0.119238	-0.149322	0.0300842	0
+    CmPitch:	0.155527	0.149295	0.00623178	0
+    CmRoll:	-0.0071456	-0.00726524	0.000119635	0
+    CmYaw:	0.0025761	0.00275357	-0.000177466	0
+    Cs:	0.0064807	-0.000125228	0.00660593	0
+    Cs(f):	0.00581645	0.00269095	0.0031255	0
+    Cs(r):	0.00066425	-0.00281618	0.00348043	0
+
+    writing force and moment coefficient files.
+
+ensightWrite ensightWrite write: ( k omega p U )
+End
+
+Finalising parallel run
+End Allrun
