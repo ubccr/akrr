@@ -250,7 +250,7 @@ class AppKerOutputParser:
                     if 'start_time' in gi and 'end_time' in gi:
                         self.wallClockTime = self.endTime - self.startTime
                     if 'appkernel_start_time' in gi and 'appkernel_end_time' in gi:
-                        self.set_parameter("RunEnv:Script Start Time",
+                        self.set_parameter("RunEnv:Appkernel Start Time",
                                            self.get_datetime_utc(gi['appkernel_start_time'], string=True))
                         self.set_parameter("RunEnv:Appkernel End Time",
                                            self.get_datetime_utc(gi['appkernel_end_time'], string=True))
