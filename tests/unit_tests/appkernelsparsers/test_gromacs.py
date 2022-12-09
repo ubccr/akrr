@@ -34,6 +34,7 @@ def test_parser(datadir):
     assert parstat_val_i(stats, "Network scratch directory accessible") == 1
     assert parstat_val_i(stats, "Network scratch directory exists") == 1
 
+    assert parstat_val_i(params, "Input:nsteps") == 10000
     assert floats_are_close(parstat_val_f(stats, "Core Clock Time"), 6977.538)
     assert floats_are_close(parstat_val_f(stats, "Simulation Speed"), 3.963)
     assert floats_are_close(parstat_val_f(stats, "Wall Clock Time"), 436.098)

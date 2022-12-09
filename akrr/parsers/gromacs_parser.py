@@ -47,6 +47,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         m = re.search(r'gmx_mpi mdrun -v -nsteps ([0-9]+)$', lines[j])
         if m:
             parser.set_parameter("Input:nsteps", m.group(1))
+        m = re.search(r'gmx_mpi mdrun -nsteps ([0-9]+)$', lines[j])
+        if m:
+            parser.set_parameter("Input:nsteps", m.group(1))
 
         m = re.search(r'^Performance: \s+([0-9.]+)', lines[j])
         if m:
