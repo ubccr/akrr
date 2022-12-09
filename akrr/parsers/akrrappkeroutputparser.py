@@ -240,14 +240,22 @@ class AppKerOutputParser:
                     if 'node_list' in gi:
                         self.nodesList = base_gzip_encode(gi['node_list'])
                     if 'start_time' in gi:
+                        self.set_parameter("RunEnv:Script Start Time",
+                                           self.get_datetime_utc(gi['start_time'], string=True))
                         self.startTime = self.get_datetime_local(gi['start_time'])
                     if 'end_time' in gi:
+                        self.set_parameter("RunEnv:Script End Time",
+                                           self.get_datetime_utc(gi['end_time'], string=True))
                         self.endTime = self.get_datetime_local(gi['end_time'])
                     if 'start_time' in gi and 'end_time' in gi:
                         self.wallClockTime = self.endTime - self.startTime
                     if 'appkernel_start_time' in gi and 'appkernel_end_time' in gi:
-                        self.appKerWallClockTime = AppKerOutputParser.get_datetime_local(gi['appkernel_end_time']) - \
-                                                   AppKerOutputParser.get_datetime_local(gi['appkernel_start_time'])
+                        self.set_parameter("RunEnv:Script Start Time",
+                                           self.get_datetime_utc(gi['appkernel_start_time'], string=True))
+                        self.set_parameter("RunEnv:Appkernel End Time",
+                                           self.get_datetime_utc(gi['appkernel_end_time'], string=True))
+                        self.appKerWallClockTime = self.get_datetime_local(gi['appkernel_end_time']) - \
+                                                   self.get_datetime_local(gi['appkernel_start_time'])
                     self.geninfo = gi
         except:
             log.exception("ERROR: Can not process gen.info file\n"+traceback.format_exc())
@@ -506,6 +514,18 @@ class AppKerOutputParser:
                 print('assert parstat_val(stats, "%s") == "%s"' % (par[0], str(par[1])))
         print()
 
+    @staticmethod
+    def get_datetime_utc(datestr, usetz=True, string=False):
+        """Return local datatime, will convert the other zones to local. If original datestr does not have
+        zone information assuming it is already local"""
+        import dateutil.parser
+        from dateutil.tz import tzutc
+        m_datetime = dateutil.parser.parse(datestr).astimezone(tzutc())
+        if usetz is False:
+            m_datetime = m_datetime.replace(tzinfo=None)
+        if string is True:
+            m_datetime = m_datetime.isoformat()
+        return m_datetime
     @staticmethod
     def get_datetime_local(datestr):
         """Return local datatime, will convert the other zones to local. If original datestr does not have
