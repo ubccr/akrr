@@ -71,7 +71,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         # Summary statistics
         parser.match_set_statistic("Snappy run-time", r'Snappy run-time: ([0-9.]+)$', lines[j], units="Seconds")
         parser.match_set_statistic("Solver run-time", r'Solver run-time: ([0-9.]+)$', lines[j], units="Seconds")
-        parser.match_set_statistic("Wall Clock Time", r'Total run-time: ([0-9.]+)$', lines[j], units="Seconds")
+        parser.match_set_statistic("Wall Clock Time", r'Total run-time: ([0-9.]+)$', lines[j], units="Second")
 
         # This for determining is it a good run
 
