@@ -331,6 +331,8 @@ class AppKerOutputParser:
                 self.set_parameter("resource", resource_appker_vars["resource"]['name'])
             if 'app' in resource_appker_vars and 'name' in resource_appker_vars["app"]:
                 self.set_parameter("app", resource_appker_vars["app"]['name'])
+            if 'app' in resource_appker_vars and 'run_param' in resource_appker_vars["app"]:
+                self.set_parameter("run_param", resource_appker_vars["app"]['run_param'])
 
     def parsing_complete(self, verbose=False):
         """i.e. app output was having all mandatory parameters and statistics"""
