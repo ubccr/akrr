@@ -10,3 +10,5 @@ Other modifications:
 1. Added timings in AllrunAKRR script, used as final statistics
 2. add cat of log.checkMesh
 3. add printing last info on simulated timestep from log.simpleFoam
+
+motorBikeQ_v18 same as motorBikeQ but for openfoam of version 18
