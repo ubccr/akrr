@@ -121,7 +121,7 @@ def process_txt(txt_lines, parser):
             variable = line[0:line.index("=")]
             value = line[line.index("=")+1:]
             results_txt[variable.strip()] = value.strip()
-            print(variable, value)
+            print(variable,"===", value.strip())
 
     # Set Parameters
     # App version
@@ -179,6 +179,8 @@ def process_txt(txt_lines, parser):
                          results_txt['GB/s Summary::Raw Total B/W'],
                          'GB/s')
 
+    if 'Final Summary ::HPCG result is VALID with a GFLOP/s rating of' in results_txt:
+        results_txt['Final Summary::HPCG result is VALID with a GFLOP/s rating of']=results_txt['Final Summary ::HPCG result is VALID with a GFLOP/s rating of']
     parser.set_statistic(
         'Floating-Point Performance, Total',
         results_txt['Final Summary::HPCG result is VALID with a GFLOP/s rating of'], 'GFLOP/s')
@@ -273,13 +275,13 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
     txt_lines = []
     bool_in_txt_section = False
     for line in lines:
-        if re.match(r"^====== HPCG-Benchmark.*\.txt End   ======", line):
-            break
+        if re.match(r"^====== .*\.txt End   ======", line):
+            bool_in_txt_section = False
 
         if bool_in_txt_section:
             txt_lines.append(line)
 
-        if re.match(r"^====== HPCG-Benchmark.*\.txt Start ======", line):
+        if re.match(r"^====== .*\.txt Start ======", line):
             bool_in_txt_section = True
 
     if len(yaml_lines) > 5:

@@ -1,0 +1,118 @@
+#!/bin/bash
+#SBATCH --partition=short-96core
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=96
+#SBATCH --time=00:30:00
+#SBATCH --output=/gpfs/projects/BenchmarkGroup/appker/scratch/akrr_data/seawulf-test-milan/hpcg/2023.08.25.16.14.49.013577/stdout
+#SBATCH --error=/gpfs/projects/BenchmarkGroup/appker/scratch/akrr_data/seawulf-test-milan/hpcg/2023.08.25.16.14.49.013577/stderr
+#SBATCH --exclusive
+
+
+#Common commands
+export AKRR_NODES=1
+export AKRR_CORES=96
+export AKRR_CORES_PER_NODE=96
+export AKRR_NETWORK_SCRATCH="/gpfs/projects/BenchmarkGroup/appker/scratch"
+export AKRR_LOCAL_SCRATCH="/tmp"
+export AKRR_TASK_WORKDIR="/gpfs/projects/BenchmarkGroup/appker/scratch/akrr_data/seawulf-test-milan/hpcg/2023.08.25.16.14.49.013577"
+export AKRR_APPKER_DIR="/gpfs/projects/BenchmarkGroup/appker/milan"
+export AKRR_AKRR_DIR="/gpfs/projects/BenchmarkGroup/appker/scratch/akrr_data/seawulf-test-milan"
+
+export AKRR_APPKER_NAME="hpcg"
+export AKRR_RESOURCE_NAME="seawulf-test-milan"
+export AKRR_TIMESTAMP="2023.08.25.16.14.49.013577"
+export AKRR_APP_STDOUT_FILE="$AKRR_TASK_WORKDIR/appstdout"
+
+export AKRR_APPKERNEL_INPUT="/gpfs/projects/BenchmarkGroup/appker/milan/inputs/hpcg/hpcg.dat"
+export AKRR_APPKERNEL_EXECUTABLE="/gpfs/projects/BenchmarkGroup/appker/milan/execs"
+
+source "$AKRR_APPKER_DIR/execs/bin/akrr_util.bash"
+
+#Populate list of nodes per MPI process
+export AKRR_NODELIST=`srun -l hostname -s|sort -n| awk '{printf "%s ",$2}' `
+
+export PATH="$AKRR_APPKER_DIR/execs/bin:$PATH"
+
+cd "$AKRR_TASK_WORKDIR"
+
+#run common tests
+akrr_perform_common_tests
+
+#Write some info to gen.info, JSON-Like file
+akrr_write_to_gen_info "start_time" "`date`"
+akrr_write_to_gen_info "node_list" "$AKRR_NODELIST"
+akrr_write_to_gen_info "input_param" "inputs/hpcg/hpcg.dat"
+akrr_write_to_gen_info "run_param" ""
+
+
+# Create working dir
+export AKRR_TMP_WORKDIR=`mktemp -d /gpfs/projects/BenchmarkGroup/appker/scratch/ak.XXXXXXXXX`
+echo "Temporary working directory: $AKRR_TMP_WORKDIR"
+cd $AKRR_TMP_WORKDIR
+
+# Copy inputs
+cp /gpfs/projects/BenchmarkGroup/appker/milan/inputs/hpcg/hpcg.dat ./hpcg.dat
+
+ulimit -s unlimited
+
+
+
+# Load application environment
+module load gcc/12.1.0
+module load numactl/2.0.11
+
+source /gpfs/software/intel/oneAPI/2023_2/setvars.sh
+
+
+# set executable location
+EXE=$MKLROOT/benchmarks/hpcg/bin/xhpcg_avx2
+
+# Set how to run app kernel
+export OMP_NUM_THREADS=1
+RUN_APPKERNEL="mpirun $EXE"
+
+
+# Generate AppKer signature
+appsigcheck.sh $EXE $AKRR_TASK_WORKDIR/.. >> $AKRR_APP_STDOUT_FILE
+
+
+#Execute AppKer
+akrr_write_to_gen_info "appkernel_start_time" "`date`"
+$RUN_APPKERNEL >> $AKRR_APP_STDOUT_FILE 2>&1
+akrr_write_to_gen_info "appkernel_end_time" "`date`"
+
+
+
+
+akrr_write_to_gen_info "cpu_speed" "`grep 'cpu MHz' /proc/cpuinfo`"
+
+# cat results to AKRR_APP_STDOUT_FILE
+for f in *.yaml
+do
+    echo "====== $f Start ======"  >> $AKRR_APP_STDOUT_FILE 2>&1
+    cat $f  >> $AKRR_APP_STDOUT_FILE 2>&1
+    echo "====== $f End   ======" >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+for f in *.txt
+do
+    echo "====== $f Start ======"  >> $AKRR_APP_STDOUT_FILE 2>&1
+    cat $f  >> $AKRR_APP_STDOUT_FILE 2>&1
+    echo "====== $f End   ======" >> $AKRR_APP_STDOUT_FILE 2>&1
+done
+
+cd $AKRR_TASK_WORKDIR
+
+# Clean-up
+if [ "${AKRR_DEBUG=no}" = "no" ]
+then
+        echo "Deleting temporary files"
+        rm -rf $AKRR_TMP_WORKDIR
+else
+        echo "Copying temporary files"
+        cp -r $AKRR_TMP_WORKDIR workdir
+        rm -rf $AKRR_TMP_WORKDIR
+fi
+
+
+
+akrr_write_to_gen_info "end_time" "`date`"

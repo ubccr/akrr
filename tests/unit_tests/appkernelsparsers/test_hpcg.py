@@ -66,6 +66,30 @@ def test_intel_hpcg_parser(datadir):
     assert stats.find(".//statistic[ID='local scratch directory exists']").find('value').text == '1'
 
 
+def test_intel_v2_hpcg_parser(datadir):
+    from akrr.parsers.hpcg_parser import process_appker_output
+    import xml.etree.ElementTree as ElementTree
+    from akrr.util import floats_are_close
+
+    results = process_appker_output(
+        appstdout=str(datadir / "intel_v2_hpcg" / 'appstdout'),
+        stdout=str(datadir / "intel_v2_hpcg" / 'stdout'),
+        stderr=str(datadir / "intel_v2_hpcg" / 'stderr'),
+        geninfo=str(datadir / "intel_v2_hpcg" / 'gen.info'),
+        resource_appker_vars={'resource': {'name': 'HPC-Cluster'}}
+    )
+
+    # check resulting xml
+    xml_out = ElementTree.fromstring(results.replace("'", ""))
+    params = xml_out.find(".//parameters")
+    stats = xml_out.find(".//statistics")
+
+    assert xml_out.find('./exitStatus/completed').text == "true"
+
+    assert floats_are_close(float(stats.find(
+        ".//statistic[ID='Floating-Point Performance, Total']").find('value').text), 53.8206)
+
+
 def test_original_hpcg_parser(datadir):
     from akrr.parsers.hpcg_parser import process_appker_output
     import xml.etree.ElementTree as ElementTree
