@@ -1,0 +1,57 @@
+#!/bin/sh
+cd ${0%/*} || exit 1                        # Run from this directory
+. $WM_PROJECT_DIR/bin/tools/RunFunctions    # Tutorial run functions
+
+start=`date +%s.%N`
+
+# Alternative decomposeParDict name:
+decompDict="-decomposeParDict system/decomposeParDict.48"
+## Standard decomposeParDict name:
+# unset decompDict
+
+# copy motorbike surface from resources directory
+\cp $FOAM_TUTORIALS/resources/geometry/motorBike.obj.gz constant/triSurface/
+runApplication surfaceFeatureExtract
+
+runApplication blockMesh
+
+runApplication $decompDict decomposePar
+
+# Using distributedTriSurfaceMesh?
+if foamDictionary -entry geometry -value system/snappyHexMeshDict | \
+   grep -q distributedTriSurfaceMesh
+then
+    runParallel $decompDict surfaceRedistributePar motorBike.obj independent
+fi
+
+start_snappy=`date +%s.%N`
+runParallel $decompDict snappyHexMesh -overwrite
+end_snappy=`date +%s.%N`
+runtime_snappy=$( echo "$end_snappy - $start_snappy" | bc -l )
+echo "Snappy run-time: ${runtime_snappy}"
+
+#- For non-parallel running: - set the initial fields
+# restore0Dir
+
+#- For parallel running: set the initial fields
+restore0Dir -processor
+
+runParallel $decompDict patchSummary
+runParallel $decompDict potentialFoam
+runParallel $decompDict checkMesh -writeFields '(nonOrthoAngle)' -constant
+
+start_solver=`date +%s.%N`
+runParallel $decompDict $(getApplication)
+end_solver=`date +%s.%N`
+runtime_solver=$( echo "$end_solver - $start_solver" | bc -l )
+echo "Solver run-time: ${runtime_solver}"
+
+
+runApplication reconstructParMesh -constant
+runApplication reconstructPar -latestTime
+
+#------------------------------------------------------------------------------
+end=`date +%s.%N`
+runtime=$( echo "$end - $start" | bc -l )
+
+echo "Total run-time: ${runtime}"
