@@ -23,6 +23,7 @@ setup(
         'akrr/parsers',
         'akrr/akrr_task',
         'akrr/cli',
+        'akrr/perf',
         'akrr/pexpect',
         'akrr/pexpect/ptyprocess',
         'akrr/util'
