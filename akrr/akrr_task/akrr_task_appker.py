@@ -603,9 +603,12 @@ class AkrrTaskHandlerAppKer(AkrrTaskHandlerBase):
 
             resource_appker_vars = {
                 'resource': self.resource,
-                'app': self.app
+                'app': copy.deepcopy(self.app)
             }
-            resource_appker_vars['resource'].update(self.resourceParam)
+            if self.resourceName in self.app['appkernel_on_resource']:
+                resource_appker_vars['app'] = self.app['appkernel_on_resource'][self.resourceName]
+            elif 'default' in self.app['appkernel_on_resource']:
+                resource_appker_vars['app'] = self.app['appkernel_on_resource']['default']
             resource_appker_vars['app'].update(self.appParam)
 
             performance = this_appker_parser.process_appker_output(
