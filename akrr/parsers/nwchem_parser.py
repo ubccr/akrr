@@ -24,14 +24,14 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 
     parser.add_must_have_statistic('Wall Clock Time')
     parser.add_must_have_statistic('User Time')
-    parser.add_must_have_statistic("Global Arrays 'Create' Calls")
-    parser.add_must_have_statistic("Global Arrays 'Destroy' Calls")
-    parser.add_must_have_statistic("Global Arrays 'Get' Calls")
-    parser.add_must_have_statistic("Global Arrays 'Put' Calls")
-    parser.add_must_have_statistic("Global Arrays 'Accumulate' Calls")
-    parser.add_must_have_statistic("Global Arrays 'Get' Amount")
-    parser.add_must_have_statistic("Global Arrays 'Put' Amount")
-    parser.add_must_have_statistic("Global Arrays 'Accumulate' Amount")
+    # parser.add_must_have_statistic("Global Arrays 'Create' Calls")
+    # parser.add_must_have_statistic("Global Arrays 'Destroy' Calls")
+    # parser.add_must_have_statistic("Global Arrays 'Get' Calls")
+    # parser.add_must_have_statistic("Global Arrays 'Put' Calls")
+    # parser.add_must_have_statistic("Global Arrays 'Accumulate' Calls")
+    # parser.add_must_have_statistic("Global Arrays 'Get' Amount")
+    # parser.add_must_have_statistic("Global Arrays 'Put' Amount")
+    # parser.add_must_have_statistic("Global Arrays 'Accumulate' Amount")
     # parse common parameters and statistics
     parser.parse_common_params_and_stats(appstdout, stdout, stderr, geninfo, resource_appker_vars)
 
@@ -41,6 +41,8 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         fin = open(appstdout, "rt")
         lines = fin.readlines()
         fin.close()
+
+    parser.successfulRun = False
 
     # process the output
     j = 0
@@ -98,6 +100,9 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
         if m:
             parser.set_statistic("Floating-Point Performance (User Time)", 1000.0 * float(m.group(1).strip()),
                                  "MFLOP per Second")
+        m = re.search(r'Total CCSD\(T\) energy:', lines[j])
+        if m:
+            parser.successfulRun = True
         j += 1
 
     if __name__ == "__main__":
