@@ -53,7 +53,7 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
 
     # process the output
     time_more_than_zero = False
-    reach_end_allrun = False
+    reach_end_allrun = 0
     j = 0
 
     while j < len(lines):
@@ -82,13 +82,13 @@ def process_appker_output(appstdout=None, stdout=None, stderr=None, geninfo=None
                 m = re.match(r'^Time = (\d+)', lines[j])
                 if m and int(m.group(1)) > 0:
                     time_more_than_zero = True
-                if j + 1 < len(lines) and lines[j].strip()=="Finalising parallel run" and \
-                        lines[j+1].strip()=="End Allrun":
-                    reach_end_allrun = True
+                if lines[j].strip()=="Finalising parallel run" or \
+                        lines[j].strip()=="End Allrun":
+                    reach_end_allrun += 1
                 j += 1
         j += 1
 
-    parser.successfulRun = reach_end_allrun and time_more_than_zero
+    parser.successfulRun = (reach_end_allrun == 2) and time_more_than_zero
 
     # return
     if __name__ == "__main__":
